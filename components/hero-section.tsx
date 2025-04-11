@@ -1,15 +1,21 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function HeroSection() {
   return (
-    <section className="w-full py-12 md:py-24 lg:py-32 bg-purple-100">
+    <section className="w-full py-12 md:py-24 lg:py-32 bg-linear-to-t from-purple-100 to-pink-200">
       <div className="container w-full max-w-full px-4 md:px-6 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_500px]">
           <div className="flex flex-col justify-center space-y-4">
             <div className="space-y-2">
+              <Image
+                src="/images/samchan-1.png"
+                width={500}
+                height={500}
+                alt="Sam-chan"
+                className="absolute top-[10%] right-[35%]"
+              />
               <h1 className="text-5xl font-bold tracking-tighter sm:text-6xl xl:text-7xl/none">
                 <span className="bg-cyan-300 px-2 py-1 rotate-1 inline-block border-2 border-black">
                   ANIME
@@ -33,7 +39,6 @@ export function HeroSection() {
               >
                 <Link href="#join" className="flex items-center justify-center">
                   <span className="mr-2">🎉</span> Join Now{" "}
-                  <ChevronRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
               <Button

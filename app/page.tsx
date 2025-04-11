@@ -65,7 +65,6 @@ export default function AnimeSocietyLanding() {
 
   return (
     <div className="flex min-h-screen flex-col w-full">
-      <Header />
       <main className="flex-1">
         <HeroSection />
 
@@ -89,7 +88,10 @@ export default function AnimeSocietyLanding() {
           </div>
         </SectionContainer>
 
-        <SectionContainer id="events" background="bg-purple-100">
+        <SectionContainer
+          id="events"
+          background="bg-linear-to-bl from-purple-200 to-pink-200"
+        >
           <SectionHeading
             badge="CALENDAR"
             title="Upcoming Events"
