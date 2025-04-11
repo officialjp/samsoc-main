@@ -9,13 +9,6 @@ export function HeroSection() {
         <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_500px]">
           <div className="flex flex-col justify-center space-y-4">
             <div className="space-y-2">
-              <Image
-                src="/images/samchan-1.png"
-                width={500}
-                height={500}
-                alt="Sam-chan"
-                className="absolute top-[10%] right-[35%]"
-              />
               <h1 className="text-5xl font-bold tracking-tighter sm:text-6xl xl:text-7xl/none">
                 <span className="bg-cyan-300 px-2 py-1 rotate-1 inline-block border-2 border-black">
                   ANIME
