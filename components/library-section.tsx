@@ -90,7 +90,8 @@ export function LibrarySection() {
                       1
                     </span>
                     <p className="text-gray-700 text-sm sm:text-base">
-                      Paid members can borrow up to 3 volumes at a time
+                      Paid members can borrow as many volumes as they like as
+                      long as your deposit covers them.
                     </p>
                   </li>
                   <li className="flex items-start">
@@ -98,8 +99,10 @@ export function LibrarySection() {
                       2
                     </span>
                     <p className="text-gray-700 text-sm sm:text-base">
-                      Borrowing period is 2 weeks, with option to extend if no
-                      waiting list
+                      Borrowing period can go on for as long as you want, until
+                      another member requests the same manga, if so you must
+                      return it by 1 week. All manga to be returned at the end
+                      of the year.
                     </p>
                   </li>
                   <li className="flex items-start">
@@ -107,7 +110,9 @@ export function LibrarySection() {
                       3
                     </span>
                     <p className="text-gray-700 text-sm sm:text-base">
-                      Late returns incur a £1 fee per week per volume
+                      If a manga is returned in a state that is noticeably worse
+                      than the condition it was been handed out in, your deposit
+                      will be used to cover damages.
                     </p>
                   </li>
                   <li className="flex items-start">
@@ -115,7 +120,9 @@ export function LibrarySection() {
                       4
                     </span>
                     <p className="text-gray-700 text-sm sm:text-base">
-                      Damaged or lost items must be replaced or paid for
+                      We charge a £5-10 deposit on each manga to cover losses or
+                      damages incurred to them. You will get the deposit back
+                      once you return the manga.
                     </p>
                   </li>
                 </ul>
@@ -126,9 +133,10 @@ export function LibrarySection() {
                   How to Borrow
                 </h4>
                 <p className="text-gray-700 text-sm sm:text-base mb-3 md:mb-4">
-                  Browse our online catalog to find what you want, then visit
-                  our club room during library hours (Mon & Thu, 2-5PM) to check
-                  out your selections. Our librarian will help you!
+                  Browse our online catalog to find what you want, then request
+                  the manga via the form below and come to the Wednesday session
+                  at 6PM where a member of committee will bring the request
+                  manga.
                 </p>
 
                 <Button
