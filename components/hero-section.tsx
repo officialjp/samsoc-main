@@ -5,7 +5,7 @@ import { Trophy } from "lucide-react";
 
 export function HeroSection() {
   return (
-    <section className="w-full py-12 md:py-24 lg:py-32 bg-linear-to-t from-purple-100 to-pink-200">
+    <section className="w-full py-12 md:py-24 lg:py-32 bg-linear-to-b from-purple-200 via-pink-200 to-white">
       <div className="container w-full max-w-full px-4 md:px-6 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_500px]">
           <div className="flex flex-col justify-center space-y-4">

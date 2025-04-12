@@ -85,45 +85,61 @@ export function LibrarySection() {
                   Library Rules
                 </h4>
                 <ul className="space-y-1 md:space-y-2">
-                  <li className="flex items-start">
-                    <span className="bg-yellow-300 text-black font-bold h-4 w-4 md:h-5 md:w-5 rounded-full flex items-center justify-center mr-2 mt-0.5">
-                      1
-                    </span>
-                    <p className="text-gray-700 text-sm sm:text-base">
-                      Paid members can borrow as many volumes as they like as
-                      long as your deposit covers them.
-                    </p>
+                  <li className="flex">
+                    <div className="flex-shrink-0 mr-3">
+                      <span className="flex items-center justify-center bg-yellow-300 text-black font-bold rounded-full w-6 h-6 text-sm">
+                        1
+                      </span>
+                    </div>
+                    <div className="flex-grow pt-0.5">
+                      <p className="text-gray-700 text-sm sm:text-base">
+                        Paid members can borrow as many volumes as they like as
+                        long as your deposit covers them.
+                      </p>
+                    </div>
                   </li>
-                  <li className="flex items-start">
-                    <span className="bg-yellow-300 text-black font-bold h-4 w-4 md:h-5 md:w-5 rounded-full flex items-center justify-center mr-2 mt-0.5">
-                      2
-                    </span>
-                    <p className="text-gray-700 text-sm sm:text-base">
-                      Borrowing period can go on for as long as you want, until
-                      another member requests the same manga, if so you must
-                      return it by 1 week. All manga to be returned at the end
-                      of the year.
-                    </p>
+                  <li className="flex">
+                    <div className="flex-shrink-0 mr-3">
+                      <span className="flex items-center justify-center bg-yellow-300 text-black font-bold rounded-full w-6 h-6 text-sm">
+                        2
+                      </span>
+                    </div>
+                    <div className="flex-grow pt-0.5">
+                      <p className="text-gray-700 text-sm sm:text-base">
+                        Borrowing period can go on for as long as you want,
+                        until another member requests the same manga, if so you
+                        must return it by 1 week. All manga to be returned at
+                        the end of the year.
+                      </p>
+                    </div>
                   </li>
-                  <li className="flex items-start">
-                    <span className="bg-yellow-300 text-black font-bold h-4 w-4 md:h-5 md:w-5 rounded-full flex items-center justify-center mr-2 mt-0.5">
-                      3
-                    </span>
-                    <p className="text-gray-700 text-sm sm:text-base">
-                      If a manga is returned in a state that is noticeably worse
-                      than the condition it was been handed out in, your deposit
-                      will be used to cover damages.
-                    </p>
+                  <li className="flex">
+                    <div className="flex-shrink-0 mr-3">
+                      <span className="flex items-center justify-center bg-yellow-300 text-black font-bold rounded-full w-6 h-6 text-sm">
+                        3
+                      </span>
+                    </div>
+                    <div className="flex-grow pt-0.5">
+                      <p className="text-gray-700 text-sm sm:text-base">
+                        If a manga is returned in a state that is noticeably
+                        worse than the condition it was been handed out in, your
+                        deposit will be used to cover damages.
+                      </p>
+                    </div>
                   </li>
-                  <li className="flex items-start">
-                    <span className="bg-yellow-300 text-black font-bold h-4 w-4 md:h-5 md:w-5 rounded-full flex items-center justify-center mr-2 mt-0.5">
-                      4
-                    </span>
-                    <p className="text-gray-700 text-sm sm:text-base">
-                      We charge a £5-10 deposit on each manga to cover losses or
-                      damages incurred to them. You will get the deposit back
-                      once you return the manga.
-                    </p>
+                  <li className="flex">
+                    <div className="flex-shrink-0 mr-3">
+                      <span className="flex items-center justify-center bg-yellow-300 text-black font-bold rounded-full w-6 h-6 text-sm">
+                        4
+                      </span>
+                    </div>
+                    <div className="flex-grow pt-0.5">
+                      <p className="text-gray-700 text-sm sm:text-base">
+                        We charge a £5-10 deposit on each manga to cover losses
+                        or damages incurred to them. You will get the deposit
+                        back once you return the manga.
+                      </p>
+                    </div>
                   </li>
                 </ul>
               </div>
