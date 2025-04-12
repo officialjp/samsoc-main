@@ -10,7 +10,6 @@ import {
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Footer } from "@/components/footer";
 import { HeroSection } from "@/components/hero-section";
 import { SectionContainer } from "@/components/section-container";
 import { SectionHeading } from "@/components/section-heading";

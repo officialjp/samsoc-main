@@ -69,9 +69,6 @@ export function HeroSection() {
                   <div className="absolute -left-10 top-0 h-full w-20 bg-white/20 transform rotate-12 translate-x-0 group-hover:translate-x-[300px] transition-transform duration-700"></div>
                   <Trophy className="mr-2 h-5 w-5" />
                   <span className="font-bold">Meet Our Committee</span>
-                  <span className="ml-2 bg-white/80 px-2 py-1 text-xs font-bold rounded-full border border-black">
-                    HALL OF FAME
-                  </span>
                 </Link>
               </Button>
             </div>

@@ -28,7 +28,7 @@ const currentAnime = [
 
 export function NowStreaming() {
   return (
-    <section className="w-full py-12 md:py-16 bg-gradient-to-r from-yellow-300 via-pink-300 to-cyan-300">
+    <section className="w-full py-12 md:py-16 bg-gradient-to-r from-yellow-300 via-pink-300 to-cyan-300 overflow-hidden">
       <div className="container w-full max-w-full px-4 md:px-6 lg:px-8">
         <div className="flex flex-col items-center justify-center space-y-4 text-center mb-8">
           <div className="space-y-2">
