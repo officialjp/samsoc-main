@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
 import { SectionContainer } from "@/components/section-container";
 import { SectionHeading } from "@/components/section-heading";
 import { EventTypeCard } from "@/components/event-type-card";
@@ -144,7 +142,6 @@ export default function EventsPage() {
           </div>
         </SectionContainer>
       </main>
-      <Footer />
     </div>
   );
 }

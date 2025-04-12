@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ChevronLeft, BookOpen } from "lucide-react";
 
-import { Footer } from "@/components/footer";
 import { SectionContainer } from "@/components/section-container";
 import { SectionHeading } from "@/components/section-heading";
 import { MangaCard } from "@/components/manga-card";
@@ -96,7 +95,7 @@ const generateMangaData = () => {
     "Shoujo",
   ];
 
-  const mangaData = [];
+  const mangaData: any[] = [];
   let id = 1;
 
   // Create multiple volumes for each title
@@ -110,6 +109,8 @@ const generateMangaData = () => {
 
     // Create 3-10 volumes for each title
     const volumeCount = Math.floor(Math.random() * 8) + 3;
+    const dueDate = "";
+    const borrowedBy = "";
 
     for (let volume = 1; volume <= volumeCount; volume++) {
       const isAvailable = Math.random() > 0.3; // 70% chance of being available
@@ -124,6 +125,8 @@ const generateMangaData = () => {
         )}+Vol.${volume}`,
         genre: titleGenres,
         isAvailable,
+        dueDate,
+        borrowedBy,
       };
 
       if (!isAvailable) {
@@ -177,7 +180,7 @@ export default function LibraryPage() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredManga, setFilteredManga] = useState(mangaData);
-  const [paginatedManga, setPaginatedManga] = useState([]);
+  const [paginatedManga, setPaginatedManga] = useState<any[]>([]);
   const [totalPages, setTotalPages] = useState(1);
 
   // Apply filters to manga data
@@ -219,8 +222,9 @@ export default function LibraryPage() {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     // Scroll to top of results
+    const resultsElements = document.getElementById("manga-results");
     window.scrollTo({
-      top: document.getElementById("manga-results")?.offsetTop - 100 || 0,
+      top: resultsElements ? resultsElements.offsetTop - 100 : 0,
       behavior: "smooth",
     });
   };
@@ -307,16 +311,16 @@ export default function LibraryPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {paginatedManga.map((manga) => (
                       <MangaCard
-                        key={manga.id}
-                        id={manga.id}
-                        title={manga.title}
-                        author={manga.author}
-                        volume={manga.volume}
-                        coverImage={manga.coverImage}
-                        genre={manga.genre}
-                        isAvailable={manga.isAvailable}
-                        dueDate={manga.dueDate}
-                        borrowedBy={manga.borrowedBy}
+                        key={manga["id"]}
+                        id={manga["id"]}
+                        title={manga["title"]}
+                        author={manga["author"]}
+                        volume={manga["volume"]}
+                        coverImage={manga["coverImage"]}
+                        genre={manga["genre"]}
+                        isAvailable={manga["isAvailable"]}
+                        dueDate={manga["dueDate"]}
+                        borrowedBy={manga["borrowedBy"]}
                       />
                     ))}
                   </div>
@@ -340,7 +344,6 @@ export default function LibraryPage() {
           </div>
         </SectionContainer>
       </main>
-      <Footer />
     </div>
   );
 }

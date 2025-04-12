@@ -4,7 +4,6 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { parseISO, addDays, addWeeks } from "date-fns";
 
-import { Footer } from "@/components/footer";
 import { SectionContainer } from "@/components/section-container";
 import { SectionHeading } from "@/components/section-heading";
 import { Calendar } from "@/components/calendar/calendar";
@@ -267,7 +266,6 @@ export default function CalendarPage() {
           </div>
         </SectionContainer>
       </main>
-      <Footer />
     </div>
   );
 }

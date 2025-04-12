@@ -4,8 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
 import { SectionContainer } from "@/components/section-container";
 import { SectionHeading } from "@/components/section-heading";
 import { GalleryImage } from "@/components/gallery-image";
@@ -242,7 +240,6 @@ export default function GalleryPage() {
           </div>
         </SectionContainer>
       </main>
-      <Footer />
     </div>
   );
 }

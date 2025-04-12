@@ -184,7 +184,6 @@ export default function AnimeSocietyLanding() {
 
         <MembershipSection />
       </main>
-      <Footer />
     </div>
   );
 }

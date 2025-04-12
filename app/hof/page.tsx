@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 
-import { Footer } from "@/components/footer";
 import { SectionContainer } from "@/components/section-container";
 import { SectionHeading } from "@/components/section-heading";
 import { CommitteeYear } from "@/components/committee-year";
@@ -202,7 +201,6 @@ export default function HallOfFamePage() {
           </div>
         </SectionContainer>
       </main>
-      <Footer />
     </div>
   );
 }
