@@ -97,10 +97,7 @@ export default function AnimeSocietyLanding() {
           </div>
         </SectionContainer>
 
-        <SectionContainer
-          id="events"
-          background="bg-linear-to-b from-purple-200 to-pink-200"
-        >
+        <SectionContainer id="events" background="bg-purple-200">
           <SectionHeading
             badge="CALENDAR"
             title="Upcoming Events"
