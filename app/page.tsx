@@ -152,7 +152,7 @@ export default function AnimeSocietyLanding() {
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div
                 key={i}
-                className="overflow-hidden border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rotate-1"
+                className="overflow-hidden border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
               >
                 <Image
                   src={`/placeholder.svg?height=300&width=400&text=Anime+Event+${i}`}
