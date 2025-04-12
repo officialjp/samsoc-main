@@ -13,33 +13,41 @@ export function Header() {
         </Link>
         <nav className="hidden md:flex gap-6 ml-auto pr-6">
           <Link
-            href="#about"
+            href="/library"
             className="font-medium hover:underline underline-offset-4"
           >
-            About
+            Library
           </Link>
           <Link
-            href="#events"
+            href="/events"
             className="font-medium hover:underline underline-offset-4"
           >
             Events
           </Link>
           <Link
-            href="#gallery"
+            href="/calendar"
+            className="font-medium hover:underline underline-offset-4"
+          >
+            Calendar
+          </Link>
+          <Link
+            href="/gallery"
             className="font-medium hover:underline underline-offset-4"
           >
             Gallery
           </Link>
           <Link
-            href="#hof"
+            href="/hof"
             className="font-medium hover:underline underline-offset-4"
           >
             Hall of Fame
           </Link>
         </nav>
-        <Button className="bg-pink-500 hover:bg-pink-600 text-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-          <Link href="#join">Join Now</Link>
-        </Button>
+        <Link href="#join">
+          <Button className="bg-pink-500 cursor-pointer hover:bg-pink-600 text-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            Join Now
+          </Button>
+        </Link>
       </div>
     </header>
   );

@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { AnimeCard } from "@/components/anime-card";
+import Link from "next/link";
 
 const currentAnime = [
   {
@@ -64,8 +65,11 @@ export function NowStreaming() {
               Don't worry if you've missed previous episodes - you have plenty
               of time to catch-up!
             </p>
-            <Button className="bg-purple-500 hover:bg-purple-600 text-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              View Full Schedule
+            <Button
+              asChild
+              className="bg-purple-500 hover:bg-purple-600 text-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+            >
+              <Link href="/calendar">View Full Schedule</Link>
             </Button>
           </div>
         </div>

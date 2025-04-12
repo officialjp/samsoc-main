@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { Trophy } from "lucide-react";
 
 export function HeroSection() {
   return (
@@ -25,31 +26,58 @@ export function HeroSection() {
                 your passion!
               </p>
             </div>
-            <div className="flex flex-col gap-4 min-[400px]:flex-row mt-6">
+            {/* Button Container with Flex Layout */}
+            <div className="flex flex-col items-start gap-4 mt-6">
+              <div className="flex flex-col sm:flex-row gap-4">
+                {/* Join Now Button */}
+                <Button
+                  asChild
+                  className="bg-pink-500 hover:bg-pink-600 text-white text-lg py-4 px-6 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] animate-pulse"
+                >
+                  <Link
+                    href="#join"
+                    className="flex items-center justify-center whitespace-nowrap"
+                  >
+                    <span className="mr-2">🎉</span> Join Now{" "}
+                  </Link>
+                </Button>
+
+                {/* Upcoming Events Button */}
+                <Button
+                  asChild
+                  variant="outline"
+                  className="bg-yellow-300 hover:bg-yellow-400 text-black text-lg py-4 px-6 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                >
+                  <Link
+                    href="#events"
+                    className="flex items-center justify-center whitespace-nowrap"
+                  >
+                    <span className="mr-2">📅</span> Upcoming Events
+                  </Link>
+                </Button>
+              </div>
+
+              {/* Hall of Fame Button */}
               <Button
                 asChild
-                className="bg-pink-500 hover:bg-pink-600 text-white text-xl py-7 px-8 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] animate-pulse"
-              >
-                <Link href="#join" className="flex items-center justify-center">
-                  <span className="mr-2">🎉</span> Join Now{" "}
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                className="bg-yellow-300 hover:bg-yellow-400 text-black text-xl py-7 px-8 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                className="group relative overflow-hidden bg-cyan-300 hover:bg-cyan-400 text-black text-lg py-4 px-6 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
               >
                 <Link
-                  href="#events"
-                  className="flex items-center justify-center"
+                  href="/hof"
+                  className="flex items-center justify-center whitespace-nowrap"
                 >
-                  <span className="mr-2">📅</span> Upcoming Events
+                  <div className="absolute -left-10 top-0 h-full w-20 bg-white/20 transform rotate-12 translate-x-0 group-hover:translate-x-[300px] transition-transform duration-700"></div>
+                  <Trophy className="mr-2 h-5 w-5" />
+                  <span className="font-bold">Meet Our Committee</span>
+                  <span className="ml-2 bg-white/80 px-2 py-1 text-xs font-bold rounded-full border border-black">
+                    HALL OF FAME
+                  </span>
                 </Link>
               </Button>
             </div>
           </div>
           <Image
-            src="/placeholder.svg?height=500&width=500"
+            src="/images/samchan-1.png"
             width={500}
             height={500}
             alt="Anime Society Members"

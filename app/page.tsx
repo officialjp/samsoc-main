@@ -1,7 +1,15 @@
 import Image from "next/image";
-import { Calendar, Users, Star } from "lucide-react";
+import {
+  Calendar,
+  Users,
+  Star,
+  ImageIcon,
+  ListIcon,
+  CalendarDays,
+} from "lucide-react";
 
-import { Header } from "@/components/header";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { Footer } from "@/components/footer";
 import { HeroSection } from "@/components/hero-section";
 import { SectionContainer } from "@/components/section-container";
@@ -10,6 +18,7 @@ import { FeatureCard } from "@/components/feature-card";
 import { EventCard } from "@/components/event-card";
 import { NowStreaming } from "@/components/now-streaming";
 import { MembershipSection } from "@/components/membership-section";
+import { LibrarySection } from "@/components/library-section";
 
 export default function AnimeSocietyLanding() {
   const features = [
@@ -90,7 +99,7 @@ export default function AnimeSocietyLanding() {
 
         <SectionContainer
           id="events"
-          background="bg-linear-to-bl from-purple-200 to-pink-200"
+          background="bg-linear-to-b from-purple-200 to-pink-200"
         >
           <SectionHeading
             badge="CALENDAR"
@@ -109,9 +118,32 @@ export default function AnimeSocietyLanding() {
               />
             ))}
           </div>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+            <Button
+              asChild
+              className="bg-pink-300 hover:bg-pink-400 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+            >
+              <Link href="/events" className="flex items-center">
+                <ListIcon className="mr-2 h-4 w-4" />
+                See All Event Types
+              </Link>
+            </Button>
+
+            <Button
+              asChild
+              className="bg-yellow-300 hover:bg-yellow-400 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+            >
+              <Link href="/calendar" className="flex items-center">
+                <CalendarDays className="mr-2 h-4 w-4" />
+                View Full Calendar
+              </Link>
+            </Button>
+          </div>
         </SectionContainer>
 
         <NowStreaming />
+
+        <LibrarySection />
 
         <SectionContainer id="gallery" background="bg-white">
           <SectionHeading
@@ -135,6 +167,18 @@ export default function AnimeSocietyLanding() {
                 />
               </div>
             ))}
+          </div>
+
+          <div className="text-center mt-8">
+            <Button
+              asChild
+              className="bg-cyan-300 hover:bg-cyan-400 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+            >
+              <Link href="/gallery" className="flex items-center">
+                <ImageIcon className="mr-2 h-4 w-4" />
+                View Full Gallery
+              </Link>
+            </Button>
           </div>
         </SectionContainer>
 

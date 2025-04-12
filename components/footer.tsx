@@ -6,30 +6,36 @@ export function Footer() {
       <div className="container w-full max-w-full px-4 md:px-6 lg:px-8 flex flex-col gap-4 py-10 md:flex-row md:justify-between">
         <div className="flex flex-col gap-2">
           <Link href="#" className="flex items-center gap-2 font-bold text-xl">
-            <span className="bg-yellow-400 px-2 py-1 rounded-md border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <span className="bg-linear-65 from-red-500 to-pink-500 px-2 py-1 rounded-md border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               Surrey Anime and Manga
             </span>
             <span>Society</span>
           </Link>
           <p className="text-sm text-gray-500">
-            Bringing anime fans together since 2008
+            Bringing anime fans together since 2006
           </p>
         </div>
         <div className="grid grid-cols-2 gap-10 sm:grid-cols-3">
           <div className="space-y-3">
             <h3 className="text-lg font-medium">Links</h3>
             <nav className="flex flex-col gap-2">
-              <Link href="#" className="text-sm hover:underline">
+              <Link href="/" className="text-sm hover:underline">
                 Home
               </Link>
-              <Link href="#about" className="text-sm hover:underline">
-                About
+              <Link href="/Library" className="text-sm hover:underline">
+                Library
               </Link>
-              <Link href="#events" className="text-sm hover:underline">
+              <Link href="/events" className="text-sm hover:underline">
                 Events
               </Link>
-              <Link href="#gallery" className="text-sm hover:underline">
+              <Link href="/calendar" className="text-sm hover:underline">
+                Calendar
+              </Link>
+              <Link href="/gallery" className="text-sm hover:underline">
                 Gallery
+              </Link>
+              <Link href="/hof" className="text-sm hover:underline">
+                Hall of Fame
               </Link>
             </nav>
           </div>
@@ -42,8 +48,17 @@ export function Footer() {
               >
                 anime@surrey.ac.uk
               </Link>
-              <Link href="#" className="text-sm hover:underline">
+              <Link
+                href="https://www.instagram.com/unisamsoc/?hl=en"
+                className="text-sm hover:underline"
+              >
                 Instagram
+              </Link>
+              <Link
+                href="https://www.facebook.com/UniSAMSoc"
+                className="text-sm hover:underline"
+              >
+                Facebook
               </Link>
               <Link href="#" className="text-sm hover:underline">
                 Discord
