@@ -1,7 +1,10 @@
 "use client";
 
+import { cn } from "@/lib/utils";
+
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 interface CalendarHeaderProps {
   currentMonth: Date;
@@ -16,8 +19,10 @@ export function CalendarHeader({
   onNextMonth,
   onCurrentMonth,
 }: CalendarHeaderProps) {
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
   const dateFormat = new Intl.DateTimeFormat("en-US", {
-    month: "long",
+    month: isMobile ? "short" : "long",
     year: "numeric",
   });
 
@@ -28,25 +33,33 @@ export function CalendarHeader({
           onClick={onPrevMonth}
           variant="outline"
           className="border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+          size={isMobile ? "sm" : "default"}
         >
-          <ChevronLeft className="h-5 w-5" />
+          <ChevronLeft className={isMobile ? "h-4 w-4" : "h-5 w-5"} />
         </Button>
         <Button
           onClick={onNextMonth}
           variant="outline"
           className="border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+          size={isMobile ? "sm" : "default"}
         >
-          <ChevronRight className="h-5 w-5" />
+          <ChevronRight className={isMobile ? "h-4 w-4" : "h-5 w-5"} />
         </Button>
       </div>
 
-      <h2 className="text-2xl font-bold bg-yellow-300 px-4 py-2 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-1">
+      <h2
+        className={cn(
+          "font-bold bg-yellow-300 px-4 py-2 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-1",
+          isMobile ? "text-lg" : "text-2xl"
+        )}
+      >
         {dateFormat.format(currentMonth)}
       </h2>
 
       <Button
         onClick={onCurrentMonth}
         className="bg-pink-300 hover:bg-pink-400 text-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+        size={isMobile ? "sm" : "default"}
       >
         Today
       </Button>

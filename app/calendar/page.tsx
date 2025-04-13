@@ -1,5 +1,4 @@
 "use client";
-
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { parseISO, addDays, addWeeks } from "date-fns";
@@ -8,12 +7,14 @@ import { SectionContainer } from "@/components/section-container";
 import { SectionHeading } from "@/components/section-heading";
 import { Calendar } from "@/components/calendar/calendar";
 import { Button } from "@/components/ui/button";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 export default function CalendarPage() {
   // Current date for generating recurring events
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   // Find the next Friday for regular sessions
   const getNextFriday = (from = new Date()) => {
@@ -219,9 +220,15 @@ export default function CalendarPage() {
 
           <Calendar events={allEvents} />
 
-          <div className="mt-12 bg-white border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <div className="mt-12 bg-white border-4 border-black p-4 md:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
             <h3 className="text-xl font-bold mb-4">Event Color Guide</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            <div
+              className={`grid gap-4 ${
+                isMobile
+                  ? "grid-cols-1 sm:grid-cols-2"
+                  : "grid-cols-2 md:grid-cols-3 lg:grid-cols-5"
+              }`}
+            >
               <div className="flex items-center">
                 <div className="w-4 h-4 bg-purple-200 border border-black mr-2"></div>
                 <span>Weekly Anime Screenings</span>

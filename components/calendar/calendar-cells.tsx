@@ -122,10 +122,16 @@ export function CalendarCells({
 
       {/* Event Details Modal */}
       {selectedEvent && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+          onClick={() => setSelectedEvent(null)}
+        >
           <div className="bg-white border-4 border-black p-6 max-w-md w-full shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative">
             <button
-              onClick={() => setSelectedEvent(null)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedEvent(null);
+              }}
               className="absolute -top-4 -right-4 bg-pink-500 text-white rounded-full p-1 border-2 border-black"
             >
               <X className="h-6 w-6" />

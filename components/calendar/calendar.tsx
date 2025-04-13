@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { addMonths, subMonths } from "date-fns";
+import { useState, useEffect } from "react";
+import { addMonths, subMonths, format } from "date-fns";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 import { CalendarHeader } from "./calendar-header";
 import { CalendarDays } from "./calendar-days";
 import { CalendarCells } from "./calendar-cells";
+import { MobileCalendarView } from "./mobile-calendar-view";
 
 interface Event {
   id: string;
@@ -14,6 +16,7 @@ interface Event {
   location: string;
   date: Date;
   color: string;
+  isRegularSession?: boolean;
 }
 
 interface CalendarProps {
@@ -23,6 +26,7 @@ interface CalendarProps {
 export function Calendar({ events }: CalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   const prevMonth = () => {
     setCurrentMonth(subMonths(currentMonth, 1));
@@ -41,21 +45,73 @@ export function Calendar({ events }: CalendarProps) {
     setSelectedDate(new Date());
   };
 
+  // Group events by date for mobile view
+  const [groupedEvents, setGroupedEvents] = useState<Record<string, Event[]>>(
+    {}
+  );
+
+  useEffect(() => {
+    // Only process this for mobile view to save resources
+    if (isMobile) {
+      const monthStart = new Date(
+        currentMonth.getFullYear(),
+        currentMonth.getMonth(),
+        1
+      );
+      const monthEnd = new Date(
+        currentMonth.getFullYear(),
+        currentMonth.getMonth() + 1,
+        0
+      );
+
+      // Filter events for current month
+      const currentMonthEvents = events.filter((event) => {
+        const eventDate = new Date(event.date);
+        return eventDate >= monthStart && eventDate <= monthEnd;
+      });
+
+      // Group by date
+      const grouped = currentMonthEvents.reduce((acc, event) => {
+        const dateKey = format(new Date(event.date), "yyyy-MM-dd");
+        if (!acc[dateKey]) {
+          acc[dateKey] = [];
+        }
+        acc[dateKey].push(event);
+        return acc;
+      }, {} as Record<string, Event[]>);
+
+      setGroupedEvents(grouped);
+    }
+  }, [events, currentMonth, isMobile]);
+
   return (
-    <div className="bg-white border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+    <div className="bg-white border-4 border-black p-4 md:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
       <CalendarHeader
         currentMonth={currentMonth}
         onPrevMonth={prevMonth}
         onNextMonth={nextMonth}
         onCurrentMonth={onCurrentMonth}
       />
-      <CalendarDays />
-      <CalendarCells
-        currentMonth={currentMonth}
-        selectedDate={selectedDate}
-        events={events}
-        onDateClick={onDateClick}
-      />
+
+      {isMobile ? (
+        <MobileCalendarView
+          currentMonth={currentMonth}
+          selectedDate={selectedDate}
+          events={events}
+          groupedEvents={groupedEvents}
+          onDateClick={onDateClick}
+        />
+      ) : (
+        <>
+          <CalendarDays />
+          <CalendarCells
+            currentMonth={currentMonth}
+            selectedDate={selectedDate}
+            events={events}
+            onDateClick={onDateClick}
+          />
+        </>
+      )}
     </div>
   );
 }
