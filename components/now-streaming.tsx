@@ -4,24 +4,24 @@ import Link from "next/link";
 
 const currentAnime = [
   {
-    title: "Demon Slayer",
-    episode: "Season 2, Episode 5",
+    title: "Death Parade",
+    episode: "Finished",
     description:
-      "Tanjiro and the Sound Hashira face off against powerful demons in the Entertainment District.",
+      "After death, some souls go to Quindecim wher arbiter Decim judges them through death games for reincarnation or the void.",
     image: "/placeholder.svg?height=250&width=180&text=Demon+Slayer",
   },
   {
-    title: "My Hero Academia",
-    episode: "Season 6, Episode 12",
+    title: "Tomo-Chan is a girl",
+    episode: "Finished",
     description:
-      "The heroes continue their battle against the Paranormal Liberation Front.",
+      "Tomboy Tomo is in love with her best friend Jun, but he sees her as a brother. She tries to make him see her romantically.",
     image: "/placeholder.svg?height=250&width=180&text=My+Hero+Academia",
   },
   {
-    title: "Spy x Family",
-    episode: "Season 1, Episode 8",
+    title: "Fire Force",
+    episode: "Season 1 Finished",
     description:
-      "Anya prepares for her first day at the prestigious Eden Academy.",
+      "Spontaneous Human Combustion causes Infernals; pyrokinetics can control fire. The Special Fire Force fights Infernals and seeks the cause.",
     image: "/placeholder.svg?height=250&width=180&text=Spy+x+Family",
   },
 ];
@@ -40,8 +40,7 @@ export function NowStreaming() {
             </h2>
             <p className="max-w-[700px] text-gray-800 md:text-lg">
               Join us every Wednesday at 6PM in Lecture Theatre G for our weekly
-              anime screenings! It's located in Guildford, England, United
-              Kingdom.
+              anime screenings!
             </p>
           </div>
         </div>

@@ -150,9 +150,8 @@ export function LibrarySection() {
                 </h4>
                 <p className="text-gray-700 text-sm sm:text-base mb-3 md:mb-4">
                   Browse our online catalog to find what you want, then request
-                  the manga via the form below and come to the Wednesday session
-                  at 6PM where a member of committee will bring the request
-                  manga.
+                  the manga from committee and come to the Wednesday session
+                  at 6PM where you can pick-up the requested manga.
                 </p>
 
                 <Button

@@ -12,45 +12,43 @@ export default function EventsPage() {
     {
       title: "Social Nights",
       description:
-        "Let loose and have fun with fellow anime enthusiasts! Our social nights range from karaoke sessions where you can sing your favorite anime openings to club nights and bar crawls around the university area. These events are perfect for making new friends in a relaxed, fun atmosphere.",
+        "Let loose and have fun! Our social nights range from karaoke sessions, to club nights and even bar crawls around Guildford. These events are perfect for making new friends in a fun atmosphere.",
       frequency: "Monthly",
       image: "/placeholder.svg?height=400&width=300&text=Social+Nights",
       color: "bg-pink-200",
       examples: [
         "Anime Karaoke Night",
-        "Cosplay Club Night",
-        "Themed Bar Crawl",
-        "End of Term Party",
+        "Club Night",
+        "Bar Crawl",
       ],
     },
     {
       title: "Screenings & Discussions",
       description:
-        "The heart of our society! Join us for regular screenings of both classic and current anime series and films. Each screening is followed by a casual discussion where members can share their thoughts, analyze themes, and debate their favorite moments.",
-      frequency: "Weekly (Fridays)",
+        "The heart of our society! Join us for regular screenings of both classic and current anime series and films. These are very relaxed and chill, giving everyone plenty of time to talk and interact with each other in order to make friends!",
+      frequency: "Weekly (Wednesdays)",
       image: "/placeholder.svg?height=400&width=300&text=Screenings",
       color: "bg-cyan-200",
       examples: [
-        "Movie Marathon",
-        "Season Premiere Night",
-        "Director Spotlight",
-        "Genre Focus",
+        "Regular Screenings",
+        "Movie Night",
+        "Final Session Showcase",
       ],
     },
-    {
-      title: "Cosplay Workshops & Contests",
-      description:
-        "Showcase your creativity or learn how to bring your favorite characters to life! Our cosplay events include beginner-friendly workshops where you can learn techniques from experienced cosplayers, as well as contests where you can show off your amazing creations.",
-      frequency: "Once per semester",
-      image: "/placeholder.svg?height=400&width=300&text=Cosplay+Events",
-      color: "bg-yellow-200",
-      examples: [
-        "Spring Cosplay Contest",
-        "Makeup Workshop",
-        "Prop Making 101",
-        "Costume Repair Station",
-      ],
-    },
+    // {
+    //   title: "Cosplay Workshops & Contests",
+    //   description:
+    //     "Showcase your creativity or learn how to bring your favorite characters to life! Our cosplay events include beginner-friendly workshops where you can learn techniques from experienced cosplayers, as well as contests where you can show off your amazing creations.",
+    //   frequency: "Once per semester",
+    //   image: "/placeholder.svg?height=400&width=300&text=Cosplay+Events",
+    //   color: "bg-yellow-200",
+    //   examples: [
+    //     "Spring Cosplay Contest",
+    //     "Makeup Workshop",
+    //     "Prop Making 101",
+    //     "Costume Repair Station",
+    //   ],
+    // },
     {
       title: "Creative Collaborations",
       description:
@@ -59,40 +57,36 @@ export default function EventsPage() {
       image: "/placeholder.svg?height=400&width=300&text=Collaborations",
       color: "bg-purple-200",
       examples: [
-        "Anime Art Exhibition",
-        "Manga Drawing Workshop",
-        "Japanese Culture Day",
-        "Anime Music Concert",
+        "Games Night",
+        "Art Night",
+        "Club Night",
       ],
     },
     {
       title: "Convention Trips",
       description:
-        "Experience the excitement of anime conventions with fellow fans! We organize group trips to major conventions, offering discounted tickets, shared transportation, and accommodation options. These trips are highlights of our year and provide unforgettable memories.",
+        "Experience the excitement of anime conventions with fellow fans! We organize group trips to major conventions, offering discounted tickets, and shared transportation. These trips are highlights of our year and provide unforgettable memories.",
       frequency: "2-3 times per year",
       image: "/placeholder.svg?height=400&width=300&text=Conventions",
       color: "bg-green-200",
       examples: [
-        "AnimeConvention 2023",
-        "MangaFest",
-        "CosplayCon",
-        "Japan Expo Trip",
+        "MCM ComiCon",
       ],
     },
-    {
-      title: "Guest Speakers & Panels",
-      description:
-        "Learn from industry professionals and experts! We invite guest speakers including voice actors, animators, directors, and cultural experts to share their knowledge and experiences. These events provide valuable insights into the anime industry and Japanese culture.",
-      frequency: "Once per semester",
-      image: "/placeholder.svg?height=400&width=300&text=Guest+Speakers",
-      color: "bg-orange-200",
-      examples: [
-        "Voice Actor Q&A",
-        "Animation Workshop",
-        "Industry Panel",
-        "Cultural Lecture",
-      ],
-    },
+    // {
+    //   title: "Guest Speakers & Panels",
+    //   description:
+    //     "Learn from industry professionals and experts! We invite guest speakers including voice actors, animators, directors, and cultural experts to share their knowledge and experiences. These events provide valuable insights into the anime industry and Japanese culture.",
+    //   frequency: "Once per semester",
+    //   image: "/placeholder.svg?height=400&width=300&text=Guest+Speakers",
+    //   color: "bg-orange-200",
+    //   examples: [
+    //     "Voice Actor Q&A",
+    //     "Animation Workshop",
+    //     "Industry Panel",
+    //     "Cultural Lecture",
+    //   ],
+    // },
   ];
 
   return (
