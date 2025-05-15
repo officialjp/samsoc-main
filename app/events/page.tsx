@@ -5,16 +5,21 @@ import { SectionContainer } from "@/components/section-container";
 import { SectionHeading } from "@/components/section-heading";
 import { EventTypeCard } from "@/components/event-type-card";
 import { Button } from "@/components/ui/button";
+import ClubNight from "@/public/images/clubnight.jpg";
+import ComicCon from "@/public/images/comiccon.jpg";
+
+// Import the shared types
+import { EventType } from "@/lib/definitions"; // Adjust the path as needed
 
 export default function EventsPage() {
   // Event types data
-  const eventTypes = [
+  const eventTypes: EventType[] = [
     {
       title: "Social Nights",
       description:
         "Let loose and have fun with fellow anime enthusiasts! Our social nights range from karaoke sessions where you can sing your favorite anime openings to club nights and bar crawls around the university area. These events are perfect for making new friends in a relaxed, fun atmosphere.",
       frequency: "Monthly",
-      image: "/placeholder.svg?height=400&width=300&text=Social+Nights",
+      image: ClubNight, // No need for explicit casting with the shared type
       color: "bg-pink-200",
       examples: [
         "Anime Karaoke Night",
@@ -28,7 +33,7 @@ export default function EventsPage() {
       description:
         "The heart of our society! Join us for regular screenings of both classic and current anime series and films. Each screening is followed by a casual discussion where members can share their thoughts, analyze themes, and debate their favorite moments.",
       frequency: "Weekly (Fridays)",
-      image: "/placeholder.svg?height=400&width=300&text=Screenings",
+      image: "/placeholder.svg?height=400&width=300&text=Screenings", // Still works as it's a string
       color: "bg-cyan-200",
       examples: [
         "Movie Marathon",
@@ -70,7 +75,7 @@ export default function EventsPage() {
       description:
         "Experience the excitement of anime conventions with fellow fans! We organize group trips to major conventions, offering discounted tickets, shared transportation, and accommodation options. These trips are highlights of our year and provide unforgettable memories.",
       frequency: "2-3 times per year",
-      image: "/placeholder.svg?height=400&width=300&text=Conventions",
+      image: ComicCon, // No need for explicit casting
       color: "bg-green-200",
       examples: [
         "AnimeConvention 2023",
