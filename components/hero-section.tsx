@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Logo from "@/public/images/logo.png";
 
 export function HeroSection() {
   return (
@@ -52,13 +53,14 @@ export function HeroSection() {
             </div>
           </div>
           <div className="flex justify-center mt-8 lg:mt-0">
-            <Image
-              src="/placeholder.svg?height=500&width=500"
-              width={500}
-              height={500}
-              alt="Anime Society Members"
-              className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg aspect-square overflow-hidden rounded-xl object-cover border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rotate-2"
-            />
+            <div className="shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] border border-black p-2 rounded-[50%] inline-block rotate-4">
+              <Image
+                src={Logo}
+                width={500}
+                height={500}
+                alt="Anime Society Members"
+              />
+            </div>
           </div>
         </div>
       </div>
