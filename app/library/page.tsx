@@ -121,14 +121,6 @@ export default function LibraryPage() {
   ).length;
   const borrowedManga = totalManga - availableManga;
 
-  if (loading) {
-    return <div>Loading manga library...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
   return (
     <div className="flex min-h-screen flex-col w-full">
       <main className="flex-1">
