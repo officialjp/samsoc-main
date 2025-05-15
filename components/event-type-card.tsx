@@ -1,12 +1,15 @@
-import Image from "next/image";
+import Image from "next/image"; // No need to import StaticImageData here
 import { Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+// Import the shared type
+import { EventImageType } from "@/lib/definitions"; // Adjust the path as needed
 
 interface EventTypeCardProps {
   title: string;
   description: string;
   frequency: string;
-  image: string;
+  image: EventImageType; // Use the shared type
   color: string;
   examples: string[];
 }
