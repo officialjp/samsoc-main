@@ -9,38 +9,38 @@ import { Button } from "@/components/ui/button";
 export default function HallOfFamePage() {
   // Current committee data
   const currentCommittee = {
-    year: "2023-2024",
+    year: "2024-2025",
     members: [
       {
-        name: "Yuki Tanaka",
+        name: "Shu Sadiq",
         position: "President",
         image: "/placeholder.svg?height=300&width=300&text=Yuki",
-        quote: "Anime brings people together across all boundaries!",
+        quote: "N/A",
       },
       {
-        name: "Alex Chen",
+        name: "William Bartlett",
         position: "Vice-President",
         image: "/placeholder.svg?height=300&width=300&text=Alex",
         quote:
-          "I'm here to make sure our events are as epic as the anime we watch.",
+          "N/A",
       },
       {
-        name: "Olivia Kim",
+        name: "Dominik Knight",
         position: "Treasurer",
         image: "/placeholder.svg?height=300&width=300&text=Olivia",
-        quote: "Managing our funds so we can have the best anime experiences!",
+        quote: "N/A",
       },
       {
-        name: "Marcus Lee",
+        name: "Habiba",
         position: "Social Media Secretary",
         image: "/placeholder.svg?height=300&width=300&text=Marcus",
-        quote: "Follow us for the latest updates and anime memes!",
+        quote: "N/A",
       },
       {
-        name: "Sophia Patel",
+        name: "Josh Mills",
         position: "Events Secretary",
         image: "/placeholder.svg?height=300&width=300&text=Sophia",
-        quote: "Planning events that bring our favorite anime to life!",
+        quote: "N/A",
       },
     ],
   };
@@ -48,32 +48,62 @@ export default function HallOfFamePage() {
   // Past committees data
   const pastCommittees = [
     {
-      year: "2022-2023",
+      year: "2023-2024",
       members: [
         {
-          name: "Hiroshi Yamamoto",
+          name: "N/A",
           position: "President",
           image: "/placeholder.svg?height=300&width=300&text=Hiroshi",
         },
         {
-          name: "Emma Wilson",
+          name: "N/A",
           position: "Vice-President",
           image: "/placeholder.svg?height=300&width=300&text=Emma",
         },
         {
-          name: "David Park",
+          name: "N/A",
           position: "Treasurer",
           image: "/placeholder.svg?height=300&width=300&text=David",
         },
         {
-          name: "Lily Chen",
+          name: "N/A",
           position: "Social Media Secretary",
           image: "/placeholder.svg?height=300&width=300&text=Lily",
         },
         {
-          name: "James Rodriguez",
+          name: "N/A",
           position: "Events Secretary",
           image: "/placeholder.svg?height=300&width=300&text=James",
+        },
+      ],
+    },
+    {
+      year: "2022-2023",
+      members: [
+        {
+          name: "N/A",
+          position: "President",
+          image: "/placeholder.svg?height=300&width=300&text=Mei",
+        },
+        {
+          name: "N/A",
+          position: "Vice-President",
+          image: "/placeholder.svg?height=300&width=300&text=Thomas",
+        },
+        {
+          name: "N/A",
+          position: "Treasurer",
+          image: "/placeholder.svg?height=300&width=300&text=Sarah",
+        },
+        {
+          name: "N/A",
+          position: "Social Media Secretary",
+          image: "/placeholder.svg?height=300&width=300&text=Raj",
+        },
+        {
+          name: "N/A",
+          position: "Events Secretary",
+          image: "/placeholder.svg?height=300&width=300&text=Hannah",
         },
       ],
     },
@@ -81,57 +111,27 @@ export default function HallOfFamePage() {
       year: "2021-2022",
       members: [
         {
-          name: "Mei Lin",
-          position: "President",
-          image: "/placeholder.svg?height=300&width=300&text=Mei",
-        },
-        {
-          name: "Thomas Brown",
-          position: "Vice-President",
-          image: "/placeholder.svg?height=300&width=300&text=Thomas",
-        },
-        {
-          name: "Sarah Johnson",
-          position: "Treasurer",
-          image: "/placeholder.svg?height=300&width=300&text=Sarah",
-        },
-        {
-          name: "Raj Patel",
-          position: "Social Media Secretary",
-          image: "/placeholder.svg?height=300&width=300&text=Raj",
-        },
-        {
-          name: "Hannah Kim",
-          position: "Events Secretary",
-          image: "/placeholder.svg?height=300&width=300&text=Hannah",
-        },
-      ],
-    },
-    {
-      year: "2020-2021",
-      members: [
-        {
-          name: "Kenji Nakamura",
+          name: "N/A",
           position: "President",
           image: "/placeholder.svg?height=300&width=300&text=Kenji",
         },
         {
-          name: "Zoe Williams",
+          name: "N/A",
           position: "Vice-President",
           image: "/placeholder.svg?height=300&width=300&text=Zoe",
         },
         {
-          name: "Michael Chang",
+          name: "N/A",
           position: "Treasurer",
           image: "/placeholder.svg?height=300&width=300&text=Michael",
         },
         {
-          name: "Aisha Khan",
+          name: "N/A",
           position: "Social Media Secretary",
           image: "/placeholder.svg?height=300&width=300&text=Aisha",
         },
         {
-          name: "Daniel Lee",
+          name: "N/A",
           position: "Events Secretary",
           image: "/placeholder.svg?height=300&width=300&text=Daniel",
         },
