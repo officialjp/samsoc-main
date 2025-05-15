@@ -2,6 +2,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 interface MangaCardProps {
+  id: number;
   title: string;
   author: string;
   volume: number;
@@ -12,6 +13,7 @@ interface MangaCardProps {
 }
 
 export function MangaCard({
+  id,
   title,
   author,
   volume,
