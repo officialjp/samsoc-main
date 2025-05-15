@@ -12,21 +12,20 @@ export function HeroSection() {
           <div className="flex flex-col justify-center space-y-4">
             <div className="space-y-2">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tighter">
-                <span className="bg-cyan-300 px-2 py-1 rotate-1 inline-block border-2 border-black">
-                  ANIME
+                <span className="bg-cyan-500 px-2 py-1 rotate-1 inline-block border-2 border-black">
+                  WELCOME
                 </span>{" "}
                 <span className="bg-yellow-300 px-2 py-1 -rotate-2 inline-block border-2 border-black">
-                  LOVERS
+                  TO
                 </span>{" "}
-                <span className="block mt-2">UNITE!</span>
+                <span className="bg-red-500 px-2 py-1 -rotate-2 inline-block border-2 border-black">SAMsoc!</span>
               </h1>
               <p className="max-w-full sm:max-w-[600px] text-base sm:text-lg md:text-xl text-gray-700">
-                Join our vibrant community of anime enthusiasts at Surrey.{" "}
+                Join our vibrant community at Surrey!{" "}
                 <span className="hidden sm:inline">
                   <br />
                 </span>
-                Watch together, cosplay, discuss, and make friends who share
-                your passion!
+                Watch shows together and join us at one of our many events!
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 mt-4 sm:mt-6">
