@@ -10,165 +10,20 @@ import { MangaCard } from "@/components/manga-card";
 import { LibraryFilters } from "@/components/library-filters";
 import { Pagination } from "@/components/pagination";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/utils/supabase/client";
 
-// Generate a larger sample manga data set
-const generateMangaData = () => {
-  const titles = [
-    "Demon Slayer",
-    "My Hero Academia",
-    "Spy x Family",
-    "Attack on Titan",
-    "Jujutsu Kaisen",
-    "One Piece",
-    "Naruto",
-    "Fullmetal Alchemist",
-    "Tokyo Ghoul",
-    "Death Note",
-    "Dragon Ball",
-    "Bleach",
-    "Hunter x Hunter",
-    "One Punch Man",
-    "Chainsaw Man",
-    "Haikyuu!!",
-    "Black Clover",
-    "Dr. Stone",
-    "The Promised Neverland",
-    "Vinland Saga",
-    "Made in Abyss",
-    "Berserk",
-    "Vagabond",
-    "Monster",
-    "Slam Dunk",
-    "Goodnight Punpun",
-    "Yotsuba&!",
-  ];
+const supabase = await createClient();
 
-  const authors = [
-    "Koyoharu Gotouge",
-    "Kohei Horikoshi",
-    "Tatsuya Endo",
-    "Hajime Isayama",
-    "Gege Akutami",
-    "Eiichiro Oda",
-    "Masashi Kishimoto",
-    "Hiromu Arakawa",
-    "Sui Ishida",
-    "Tsugumi Ohba",
-    "Akira Toriyama",
-    "Tite Kubo",
-    "Yoshihiro Togashi",
-    "ONE",
-    "Tatsuki Fujimoto",
-    "Haruichi Furudate",
-    "Yūki Tabata",
-    "Riichiro Inagaki",
-    "Kaiu Shirai",
-    "Makoto Yukimura",
-    "Akihito Tsukushi",
-    "Kentaro Miura",
-    "Takehiko Inoue",
-    "Naoki Urasawa",
-    "Takehiko Inoue",
-    "Inio Asano",
-    "Kiyohiko Azuma",
-  ];
+interface Manga {
+  id: string;
+  title: string;
+  author: string;
+  volume: number;
+  coverImage: string;
+  genre: string[];
+  borrowedby: string | null | undefined;
+}
 
-  const genres = [
-    "Action",
-    "Adventure",
-    "Comedy",
-    "Drama",
-    "Fantasy",
-    "Horror",
-    "Mystery",
-    "Romance",
-    "Sci-Fi",
-    "Slice of Life",
-    "Sports",
-    "Supernatural",
-    "Thriller",
-    "Psychological",
-    "Historical",
-    "School",
-    "Seinen",
-    "Shounen",
-    "Shoujo",
-  ];
-
-  const mangaData: any[] = [];
-  let id = 1;
-
-  // Create multiple volumes for each title
-  titles.forEach((title, titleIndex) => {
-    const author = authors[titleIndex % authors.length];
-    const titleGenres = [
-      genres[Math.floor(Math.random() * genres.length)],
-      genres[Math.floor(Math.random() * genres.length)],
-      genres[Math.floor(Math.random() * genres.length)],
-    ].filter((value, index, self) => self.indexOf(value) === index); // Remove duplicates
-
-    // Create 3-10 volumes for each title
-    const volumeCount = Math.floor(Math.random() * 8) + 3;
-    const dueDate = "";
-    const borrowedBy = "";
-
-    for (let volume = 1; volume <= volumeCount; volume++) {
-      const isAvailable = Math.random() > 0.3; // 70% chance of being available
-
-      const manga = {
-        id: id.toString(),
-        title,
-        author,
-        volume,
-        coverImage: `/placeholder.svg?height=400&width=300&text=${encodeURIComponent(
-          title
-        )}+Vol.${volume}`,
-        genre: titleGenres,
-        isAvailable,
-        dueDate,
-        borrowedBy,
-      };
-
-      if (!isAvailable) {
-        const borrowers = [
-          "Alex Chen",
-          "Emma Wilson",
-          "David Park",
-          "Sophia Patel",
-          "Marcus Lee",
-          "Lily Chen",
-        ];
-        const borrower =
-          borrowers[Math.floor(Math.random() * borrowers.length)];
-
-        // Generate a random due date in the next 30 days
-        const dueDate = new Date();
-        dueDate.setDate(dueDate.getDate() + Math.floor(Math.random() * 30) + 1);
-
-        manga.dueDate = dueDate.toLocaleDateString("en-US", {
-          month: "long",
-          day: "numeric",
-          year: "numeric",
-        });
-        manga.borrowedBy = borrower;
-      }
-
-      mangaData.push(manga);
-      id++;
-    }
-  });
-
-  return mangaData;
-};
-
-const mangaData = generateMangaData();
-
-// Extract unique genres from manga data
-const allGenres = Array.from(
-  new Set(mangaData.flatMap((manga) => manga.genre))
-).sort();
-
-// Items per page
 const ITEMS_PER_PAGE = 12;
 
 export default function LibraryPage() {
@@ -177,62 +32,104 @@ export default function LibraryPage() {
     genre: "all",
     search: "",
   });
-
   const [currentPage, setCurrentPage] = useState(1);
-  const [filteredManga, setFilteredManga] = useState(mangaData);
-  const [paginatedManga, setPaginatedManga] = useState<any[]>([]);
   const [totalPages, setTotalPages] = useState(1);
+  const [mangaData, setMangaData] = useState<Manga[]>([]);
+  const [filteredManga, setFilteredManga] = useState<Manga[]>([]);
+  const [paginatedManga, setPaginatedManga] = useState<Manga[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [allGenres, setAllGenres] = useState<string[]>([]);
 
-  // Apply filters to manga data
-  useEffect(() => {
-    const filtered = mangaData.filter((manga) => {
-      // Filter by status
-      if (filters.status === "available" && !manga.isAvailable) return false;
-      if (filters.status === "borrowed" && manga.isAvailable) return false;
+  const fetchData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data: mangaDataResult, error: mangaError } = await supabase
+        .from("manga")
+        .select("*, genre (id, genre)");
 
-      // Filter by genre
-      if (filters.genre !== "all" && !manga.genre.includes(filters.genre))
-        return false;
-
-      // Filter by search term
-      if (filters.search) {
-        const searchTerm = filters.search.toLowerCase();
-        return (
-          manga.title.toLowerCase().includes(searchTerm) ||
-          manga.author.toLowerCase().includes(searchTerm)
-        );
+      if (mangaError) {
+        setError("Failed to load manga data.");
+        setLoading(false);
+        return;
       }
+      console.log("Manga Data from Supabase:", mangaDataResult);
+      setMangaData(mangaDataResult || []);
 
-      return true;
-    });
+      const { data: genresData, error: genresError } = await supabase
+        .from("genre")
+        .select("genre");
 
-    setFilteredManga(filtered);
-    setTotalPages(Math.ceil(filtered.length / ITEMS_PER_PAGE));
-    setCurrentPage(1); // Reset to first page when filters change
-  }, [filters]);
+      if (genresError) {
+        setError("Failed to load genres.");
+        setLoading(false);
+        return;
+      }
+      console.log("Genre data", genresData);
 
-  // Handle pagination
+      const genres = genresData ? genresData.map((genre) => genre.genre) : [];
+      setAllGenres(genres);
+    } catch (error) {
+      setError("An error occurred while fetching data.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (mangaData.length > 0 && allGenres.length > 0) {
+      const filtered = mangaData.filter((manga) => {
+        const isBorrowed = !!manga.borrowedby && manga.borrowedby !== "NULL";
+        if (filters.status === "available" && isBorrowed) return false;
+        if (filters.status === "borrowed" && !isBorrowed) return false;
+        if (filters.genre !== "all" && !manga.genre.includes(filters.genre))
+          return false;
+        if (filters.search) {
+          const searchTerm = filters.search.toLowerCase();
+          return (
+            manga.title.toLowerCase().includes(searchTerm) ||
+            manga.author.toLowerCase().includes(searchTerm)
+          );
+        }
+        return true;
+      });
+
+      setFilteredManga(filtered);
+      setTotalPages(Math.ceil(filtered.length / ITEMS_PER_PAGE));
+      setCurrentPage(1);
+    }
+  }, [filters, mangaData, allGenres]);
+
   useEffect(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
     setPaginatedManga(filteredManga.slice(startIndex, endIndex));
   }, [filteredManga, currentPage]);
 
-  // Handle page change
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    // Scroll to top of results
-    const resultsElements = document.getElementById("manga-results");
-    window.scrollTo({
-      top: resultsElements ? resultsElements.offsetTop - 100 : 0,
-      behavior: "smooth",
-    });
+    const resultsElement = document.getElementById("manga-results");
+    resultsElement?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  // Stats for the library
   const totalManga = mangaData.length;
-  const availableManga = mangaData.filter((manga) => manga.isAvailable).length;
+  const availableManga = mangaData.filter(
+    (manga) => !manga.borrowedby || manga.borrowedby === "NULL"
+  ).length;
   const borrowedManga = totalManga - availableManga;
+
+  if (loading) {
+    return <div>Loading manga library...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="flex min-h-screen flex-col w-full">
@@ -254,7 +151,6 @@ export default function LibraryPage() {
             className="mb-8"
           />
 
-          {/* Library stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-center">
               <h3 className="text-lg font-bold">Total Manga</h3>
@@ -278,7 +174,6 @@ export default function LibraryPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8">
-            {/* Sidebar with filters */}
             <div className="lg:sticky lg:top-24 h-fit">
               <LibraryFilters
                 genres={allGenres}
@@ -299,7 +194,6 @@ export default function LibraryPage() {
               </div>
             </div>
 
-            {/* Manga grid */}
             <div id="manga-results">
               {filteredManga.length > 0 ? (
                 <>
@@ -311,21 +205,25 @@ export default function LibraryPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {paginatedManga.map((manga) => (
                       <MangaCard
-                        key={manga["id"]}
-                        id={manga["id"]}
-                        title={manga["title"]}
-                        author={manga["author"]}
-                        volume={manga["volume"]}
-                        coverImage={manga["coverImage"]}
-                        genre={manga["genre"]}
-                        isAvailable={manga["isAvailable"]}
-                        dueDate={manga["dueDate"]}
-                        borrowedBy={manga["borrowedBy"]}
+                        key={manga.id}
+                        id={manga.id}
+                        title={manga.title}
+                        author={manga.author}
+                        volume={manga.volume}
+                        coverImage={manga.coverImage}
+                        genre={manga.genre}
+                        isAvailable={
+                          !manga.borrowedby || manga.borrowedby === "NULL"
+                        }
+                        borrowedBy={
+                          typeof manga.borrowedby === "string"
+                            ? manga.borrowedby
+                            : undefined
+                        } // Conditional prop passing
                       />
                     ))}
                   </div>
 
-                  {/* Pagination */}
                   {totalPages > 1 && (
                     <Pagination
                       currentPage={currentPage}

@@ -9,7 +9,6 @@ interface MangaCardProps {
   coverImage: string;
   genre: string[];
   isAvailable: boolean;
-  dueDate?: string;
   borrowedBy?: string;
 }
 
@@ -21,7 +20,6 @@ export function MangaCard({
   coverImage,
   genre,
   isAvailable,
-  dueDate,
   borrowedBy,
 }: MangaCardProps) {
   return (
@@ -64,10 +62,16 @@ export function MangaCard({
           ))}
         </div>
 
-        {!isAvailable && (
+        {!isAvailable && borrowedBy && (
           <div className="mt-auto pt-3 border-t border-gray-200">
-            <p className="text-xs text-gray-500">Borrowed by: {borrowedBy}</p>
-            <p className="text-xs font-medium text-red-500">Due: {dueDate}</p>
+            <p
+              className={cn(
+                "text-xs",
+                isAvailable ? "text-gray-500" : "text-red-500"
+              )}
+            >
+              Borrowed by: {borrowedBy}
+            </p>
           </div>
         )}
       </div>
