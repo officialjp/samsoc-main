@@ -32,42 +32,42 @@ export default function AnimeSocietyLanding() {
       icon: Users,
       title: "Community Events",
       description:
-        "Come and hang our with us with a multitude of events that are something idk man this description sucks",
+        "Come and hang our with us at one of the multitude of events we run!",
       color: "bg-pink-300",
     },
     {
       icon: Star,
       title: "Convention Trips",
       description:
-        "We organize group trips to major anime conventions. Travel together and enjoy exclusive discounts!",
+        "We organize group trips to both the November and May MCM ComiCon conventions!",
       color: "bg-yellow-300",
     },
   ];
 
   const events = [
     {
-      date: "April 15",
-      title: "Anime Movie Night",
-      description: "Screening of 'Your Name' followed by discussion",
-      location: "Student Union, Room 302",
+      date: "June 6",
+      title: "Karaoke Night",
+      description: "Come jam out with us on stage to a list of anime songs suggested by our members!",
+      location: "Wates Green Room",
     },
     {
-      date: "April 22",
-      title: "Manga Drawing Workshop",
-      description: "Learn manga drawing basics with professional artist",
-      location: "Arts Building, Studio 5",
+      date: "N/A",
+      title: "N/A",
+      description: "N/A",
+      location: "N/A",
     },
     {
-      date: "May 5",
-      title: "Spring Cosplay Contest",
-      description: "Show off your best cosplay and win prizes",
-      location: "Main Hall",
+      date: "N/A",
+      title: "N/A",
+      description: "N/A",
+      location: "N/A",
     },
     {
-      date: "May 20",
-      title: "AnimeConvention Trip",
-      description: "Group trip to the annual AnimeConvention",
-      location: "City Convention Center",
+      date: "N/A",
+      title: "N/A",
+      description: "N/A",
+      location: "N/A",
     },
   ];
 
@@ -80,7 +80,7 @@ export default function AnimeSocietyLanding() {
           <SectionHeading
             badge="ABOUT US"
             title="What We're All About"
-            description="Make a cringey description about the society here"
+            description="We're a society for all people that love or are interested in the medium of anime. Everyone is welcome!"
             badgeColor="bg-yellow-300"
           />
           <div className="mx-auto max-w-7xl items-center gap-6 py-12 grid lg:grid-cols-3 lg:gap-12">
@@ -145,7 +145,7 @@ export default function AnimeSocietyLanding() {
           <SectionHeading
             badge="MEMORIES"
             title="Our Gallery"
-            description="Highlights from our past events, cosplay contests, and anime screenings."
+            description="Highlights from our many past events!"
             badgeColor="bg-cyan-300"
           />
           <div className="mx-auto max-w-7xl gap-6 py-12 grid md:grid-cols-2 lg:grid-cols-3">
