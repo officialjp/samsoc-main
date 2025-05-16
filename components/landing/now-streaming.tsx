@@ -32,7 +32,7 @@ export function NowStreaming() {
       <div className="container w-full max-w-full px-4 md:px-6 lg:px-8">
         <div className="flex flex-col items-center justify-center space-y-4 text-center mb-6 md:mb-8">
           <div className="space-y-2">
-            <div className="inline-block rounded-lg bg-white px-3 py-1 text-sm border border-black md:border-2">
+            <div className="inline-block rounded-lg bg-yellow-200 px-3 py-1 text-sm border border-black md:border-2">
               NOW STREAMING
             </div>
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
