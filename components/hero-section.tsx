@@ -18,14 +18,17 @@ export function HeroSection() {
                 <span className="bg-yellow-300 px-2 py-1 -rotate-2 inline-block border-2 border-black">
                   TO
                 </span>{" "}
-                <span className="bg-red-500 px-2 py-1 -rotate-2 inline-block border-2 border-black">SAMsoc!</span>
+                <span className="bg-red-500 px-2 py-1 -rotate-2 inline-block border-2 border-black">
+                  SAMsoc!
+                </span>
               </h1>
               <p className="max-w-full sm:max-w-[600px] text-base sm:text-lg md:text-xl text-gray-700">
                 Join our vibrant community at Surrey!{" "}
                 <span className="hidden sm:inline">
                   <br />
                 </span>
-                Watch shows together and join us at one of our many events!
+                Watch anime screenings together and join us at one of our many
+                events!
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 mt-4 sm:mt-6">
