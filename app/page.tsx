@@ -25,14 +25,14 @@ export default function AnimeSocietyLanding() {
       icon: Calendar,
       title: "Weekly Screenings",
       description:
-        "Join us every Wednesday for anime screenings voted by members. From classics to the latest releases!",
+        "Join us every Wednesday for anime screenings. From classics to the latest releases!",
       color: "bg-cyan-300",
     },
     {
       icon: Users,
       title: "Community Events",
       description:
-        "Come and hang our with us at one of the multitude of events we run!",
+        "Come and hang out with us at one of the multitude of events we run!",
       color: "bg-pink-300",
     },
     {
@@ -48,7 +48,8 @@ export default function AnimeSocietyLanding() {
     {
       date: "June 6",
       title: "Karaoke Night",
-      description: "Come jam out with us on stage to a list of anime songs suggested by our members!",
+      description:
+        "Come jam out with us on stage to a list of anime songs suggested by our members!",
       location: "Wates Green Room",
     },
     {
