@@ -12,7 +12,7 @@ export default function GallerySection() {
         badge="MEMORIES"
         title="Our Gallery"
         description="Highlights from our many past events!"
-        badgeColor="bg-cyan-300"
+        badgeColor="bg-yellow-200"
       />
       <div className="mx-auto max-w-7xl gap-6 py-12 grid md:grid-cols-2 lg:grid-cols-3">
         {[1, 2, 3, 4, 5, 6].map((i) => (
