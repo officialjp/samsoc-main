@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 export function LibrarySection() {
   return (
-    <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-r from-cyan-100 to-purple-100 overflow-hidden">
+    <section className="w-full py-12 md:py-24 lg:py-32 overflow-hidden">
       <div className="container w-full max-w-full px-4 md:px-6 lg:px-8">
         <div className="flex flex-col items-center justify-center space-y-4 text-center mb-8 md:mb-12">
           <div className="space-y-2">
@@ -150,8 +150,8 @@ export function LibrarySection() {
                 </h4>
                 <p className="text-gray-700 text-sm sm:text-base mb-3 md:mb-4">
                   Browse our online catalog to find what you want, then request
-                  the manga from committee and come to the Wednesday session
-                  at 6PM where you can pick-up the requested manga.
+                  the manga from committee and come to the Wednesday session at
+                  6PM where you can pick-up the requested manga.
                 </p>
 
                 <Button

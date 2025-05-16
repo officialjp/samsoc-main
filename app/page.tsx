@@ -73,11 +73,11 @@ export default function AnimeSocietyLanding() {
   ];
 
   return (
-    <div className="flex min-h-screen flex-col w-full">
+    <div className="flex min-h-screen flex-col w-full bg-linear-to-b from-cyan-200 via-pink-200 to-purple-200">
       <main className="flex-1">
         <HeroSection />
 
-        <SectionContainer id="about" background="bg-white">
+        <SectionContainer id="about" background="">
           <SectionHeading
             badge="ABOUT US"
             title="What We're All About"
@@ -97,7 +97,7 @@ export default function AnimeSocietyLanding() {
           </div>
         </SectionContainer>
 
-        <SectionContainer id="events" background="bg-purple-200">
+        <SectionContainer id="events" background="">
           <SectionHeading
             badge="CALENDAR"
             title="Upcoming Events"
@@ -142,7 +142,7 @@ export default function AnimeSocietyLanding() {
 
         <LibrarySection />
 
-        <SectionContainer id="gallery" background="bg-white">
+        <SectionContainer id="gallery" background="">
           <SectionHeading
             badge="MEMORIES"
             title="Our Gallery"
