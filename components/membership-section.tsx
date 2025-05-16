@@ -27,7 +27,7 @@ export function MembershipSection() {
   return (
     <section
       id="join"
-      className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400 overflow-hidden"
+      className="w-full py-12 md:py-24 lg:py-32 overflow-hidden"
     >
       <div className="container w-full max-w-full px-4 md:px-6 lg:px-8">
         <div className="relative mx-auto max-w-7xl border-4 md:border-8 border-black bg-white p-4 sm:p-6 md:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] md:shadow-[16px_16px_0px_0px_rgba(0,0,0,1)]">
