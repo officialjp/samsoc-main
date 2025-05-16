@@ -1,23 +1,11 @@
 import { CommitteeMember } from "./committee-card";
-
-interface CommitteeMemberData {
-  name: string;
-  position: string;
-  image: string;
-  quote?: string;
-}
-
-interface CommitteeYearProps {
-  year: string;
-  members: CommitteeMemberData[];
-  current?: boolean;
-}
+import { TypeCommitteeYearProps } from "@/lib/definitions";
 
 export function CommitteeYear({
   year,
   members,
   current = false,
-}: CommitteeYearProps) {
+}: TypeCommitteeYearProps) {
   return (
     <div className="mb-16">
       <div className="mb-8 flex items-center">
@@ -33,7 +21,7 @@ export function CommitteeYear({
           <CommitteeMember
             key={index}
             name={member.name}
-            position={member.position}
+            position={member.role}
             image={member.image}
             quote={member.quote}
             current={current}
