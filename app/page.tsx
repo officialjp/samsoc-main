@@ -1,7 +1,7 @@
 import { HeroSection } from "@/components/landing/hero-section";
 import { NowStreaming } from "@/components/landing/now-streaming";
 import { MembershipSection } from "@/components/landing/membership-section";
-import { LibrarySection } from "@/components/library-section";
+import { LibrarySection } from "@/components/landing/library-section";
 import { AboutSection } from "@/components/landing/about-section";
 import EventsSection from "@/components/landing/events-section";
 import GallerySection from "@/components/landing/gallery-section";

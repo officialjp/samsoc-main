@@ -1,5 +1,5 @@
 import { Calendar, Star, Users } from "lucide-react";
-import { FeatureCard } from "../feature-card";
+import { FeatureCard } from "./feature-card";
 import { SectionContainer } from "../section-container";
 import { SectionHeading } from "../section-heading";
 

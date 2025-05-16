@@ -1,5 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
-import LibraryPageClient from "@/components/library-client";
+import LibraryPageClient from "@/components/library/library-client";
 import { MangaType } from "@/lib/definitions";
 
 //genres don't work ask michael

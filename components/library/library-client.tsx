@@ -6,8 +6,8 @@ import { ChevronLeft, BookOpen } from "lucide-react";
 
 import { SectionContainer } from "@/components/section-container";
 import { SectionHeading } from "@/components/section-heading";
-import { MangaCard } from "@/components/manga-card";
-import { LibraryFilters } from "@/components/library-filters";
+import { MangaCard } from "@/components/library/manga-card";
+import { LibraryFilters } from "@/components/library/library-filters";
 import { Pagination } from "@/components/pagination";
 import { Button } from "@/components/ui/button";
 import { MangaType } from "@/lib/definitions";
