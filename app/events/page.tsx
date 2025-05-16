@@ -83,7 +83,7 @@ export default function EventsPage() {
   return (
     <div className="flex min-h-screen flex-col w-full">
       <main className="flex-1">
-        <SectionContainer background="bg-purple-100">
+        <SectionContainer>
           <div className="mb-4">
             <Button asChild variant="outline" className="border-2 border-black">
               <Link href="/" className="flex items-center">
