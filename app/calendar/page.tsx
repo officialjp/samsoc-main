@@ -7,80 +7,50 @@ import { SectionHeading } from "@/components/section-heading";
 import { Calendar } from "@/components/calendar/calendar";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/server";
+import { CalendarEventType } from "@/lib/definitions";
 
 export default async function CalendarPage() {
+  function addDays(date: Date, days: number): Date {
+    const newDate = new Date(date);
+    newDate.setDate(newDate.getDate() + days);
+    return newDate;
+  }
+
   const supabase = await createClient();
   const { data: events } = await supabase
     .from("events")
     .select()
     .eq("isregularsession", false);
-  // Current date for generating recurring events
 
-  // Find the next Friday for regular sessions
-  // const getNextFriday = (from = new Date()) => {
-  //   const dayOfWeek = from.getDay();
-  //   const daysUntilFriday = dayOfWeek <= 5 ? 5 - dayOfWeek : 5 + 7 - dayOfWeek;
-  //   return addDays(from, daysUntilFriday);
-  // };
+  const { data: regSession } = await supabase
+    .from("events")
+    .select()
+    .eq("isregularsession", true);
 
-  // Generate weekly anime sessions for the next 3 months
-  // const generateWeeklySessions = () => {
-  //   const sessions = [];
-  //   let nextFriday = getNextFriday();
+  const generateWeeklySession = (): CalendarEventType[] => {
+    const sessions: CalendarEventType[] = [];
 
-  //   // Current anime being streamed
-  //   const currentAnime = [
-  //     {
-  //       title: "Demon Slayer",
-  //       episode: "Season 2, Episode 5",
-  //       description:
-  //         "Tanjiro and the Sound Hashira face off against powerful demons in the Entertainment District.",
-  //     },
-  //     {
-  //       title: "My Hero Academia",
-  //       episode: "Season 6, Episode 12",
-  //       description:
-  //         "The heroes continue their battle against the Paranormal Liberation Front.",
-  //     },
-  //     {
-  //       title: "Spy x Family",
-  //       episode: "Season 1, Episode 8",
-  //       description:
-  //         "Anya prepares for her first day at the prestigious Eden Academy.",
-  //     },
-  //   ];
+    regSession?.forEach((session) => {
+      let currentDate: Date = parseISO(session.date);
+      for (let i = 0; i < 12; i++) {
+        sessions.push({
+          id: session.id,
+          title: session.title,
+          description: session.description,
+          location: session.location,
+          date: new Date(currentDate),
+          color: "bg-purple-200",
+          isRegularSession: true,
+        });
+        currentDate = addDays(currentDate, 7);
+      }
+    });
 
-  //   // Generate 12 weekly sessions (3 months)
-  //   for (let i = 0; i < 12; i++) {
-  //     const animeIndex = i % 3; // Cycle through the 3 anime
-  //     const episodeNumber =
-  //       Math.floor(i / 3) +
-  //       Number.parseInt(currentAnime[animeIndex].episode.split("Episode ")[1]);
+    return sessions;
+  };
 
-  //     sessions.push({
-  //       id: `weekly-${i}`,
-  //       title: `Weekly Anime: ${currentAnime[animeIndex].title}`,
-  //       description: `${currentAnime[animeIndex].title} ${
-  //         currentAnime[animeIndex].episode.split(",")[0]
-  //       }, Episode ${episodeNumber}. ${currentAnime[animeIndex].description}`,
-  //       location: "Student Union, Room 302",
-  //       date: parseISO("2025-09-" + nextFriday.getDay),
-  //       color: "bg-purple-200",
-  //       isRegularSession: true,
-  //     });
-
-  //     // Move to next Friday
-  //     nextFriday = addWeeks(nextFriday, 1);
-  //   }
-
-  //   return sessions;
-  // };
-
-  // Get weekly anime sessions
-  // const weeklySessions = generateWeeklySessions();
-
-  // Combine all events add ...weeklySessions to this once that is done
-  const allEvents = [...(events as [])];
+  const weeklySessions = generateWeeklySession();
+  const allEvents = [...(events as []), ...weeklySessions];
 
   return (
     <div className="flex min-h-screen flex-col w-full">

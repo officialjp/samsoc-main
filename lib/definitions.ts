@@ -12,3 +12,15 @@ export interface EventType {
   color: string;
   examples: string[];
 }
+
+interface Event {
+  id: string;
+  title: string;
+  description: string;
+  location: string;
+  date: Date;
+  color: string;
+  isRegularSession?: boolean;
+}
+
+export type { Event as CalendarEventType };
