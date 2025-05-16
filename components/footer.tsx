@@ -17,29 +17,6 @@ export function Footer() {
         </div>
         <div className="grid grid-cols-2 gap-10 sm:grid-cols-3">
           <div className="space-y-3">
-            <h3 className="text-lg font-medium">Links</h3>
-            <nav className="flex flex-col gap-2">
-              <Link href="/" className="text-sm hover:underline">
-                Home
-              </Link>
-              <Link href="/Library" className="text-sm hover:underline">
-                Library
-              </Link>
-              <Link href="/events" className="text-sm hover:underline">
-                Events
-              </Link>
-              <Link href="/calendar" className="text-sm hover:underline">
-                Calendar
-              </Link>
-              <Link href="/gallery" className="text-sm hover:underline">
-                Gallery
-              </Link>
-              <Link href="/hof" className="text-sm hover:underline">
-                Hall of Fame
-              </Link>
-            </nav>
-          </div>
-          <div className="space-y-3">
             <h3 className="text-lg font-medium">Contact</h3>
             <nav className="flex flex-col gap-2">
               <Link

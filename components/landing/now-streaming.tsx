@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { AnimeCard } from "@/components/anime-card";
+import { AnimeCard } from "@/components/landing/anime-card";
 import Link from "next/link";
 
 const currentAnime = [

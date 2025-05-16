@@ -6,8 +6,8 @@ import { ChevronLeft } from "lucide-react";
 
 import { SectionContainer } from "@/components/section-container";
 import { SectionHeading } from "@/components/section-heading";
-import { GalleryImage } from "@/components/gallery-image";
-import { GalleryFilter } from "@/components/gallery-filter";
+import { GalleryImage } from "@/components/gallery/gallery-image";
+import { GalleryFilter } from "@/components/gallery/gallery-filter";
 import { Button } from "@/components/ui/button";
 // Gallery data structure
 interface GalleryItem {
