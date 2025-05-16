@@ -84,7 +84,7 @@ export default function LibraryPageClient({
   return (
     <div className="flex min-h-screen flex-col w-full">
       <main className="flex-1">
-        <SectionContainer background="bg-purple-50">
+        <SectionContainer>
           <div className="mb-4">
             <Button asChild variant="outline" className="border-2 border-black">
               <Link href="/" className="flex items-center">
