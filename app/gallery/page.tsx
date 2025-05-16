@@ -18,7 +18,7 @@ interface GalleryItem {
   year: string;
 }
 
-export default async function GalleryPage() {
+export default function GalleryPage() {
   // Categories and years for filtering
   const categories = ["All", "Events", "Regular Sessions", "Collaborations"];
   const years = ["All", "2026", "2025", "2024", "2023", "2022", "2021", "2020"];
