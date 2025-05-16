@@ -23,4 +23,34 @@ interface Event {
   isRegularSession?: boolean;
 }
 
+interface Manga {
+  id: string;
+  title: string;
+  author: string;
+  volume: number;
+  coverImage: string;
+  genre: string[];
+  borrowedby: string | null | undefined;
+}
+
+interface CommitteeMemberData {
+  name: string;
+  role: string;
+  image: string;
+  quote?: string;
+  year: number;
+}
+
+interface CommitteeYearProps {
+  year: string;
+  members: CommitteeMemberData[];
+  current?: boolean;
+}
+
+export type { CommitteeYearProps as TypeCommitteeYearProps };
+
+export type { CommitteeMemberData as TypeCommitteeMemberData };
+
+export type { Manga as MangaType };
+
 export type { Event as CalendarEventType };

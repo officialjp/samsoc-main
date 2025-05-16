@@ -10,19 +10,10 @@ import { MangaCard } from "@/components/manga-card";
 import { LibraryFilters } from "@/components/library-filters";
 import { Pagination } from "@/components/pagination";
 import { Button } from "@/components/ui/button";
-
-interface Manga {
-  id: string;
-  title: string;
-  author: string;
-  volume: number;
-  coverImage: string;
-  genre: string[];
-  borrowedby: string | null | undefined;
-}
+import { MangaType } from "@/lib/definitions";
 
 interface LibraryPageClientProps {
-  initialMangaData: Manga[];
+  initialMangaData: MangaType[];
   initialGenres: string[];
 }
 
@@ -39,9 +30,10 @@ export default function LibraryPageClient({
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [mangaData, setMangaData] = useState<Manga[]>(initialMangaData);
-  const [filteredManga, setFilteredManga] = useState<Manga[]>(initialMangaData);
-  const [paginatedManga, setPaginatedManga] = useState<Manga[]>(
+  const [mangaData, setMangaData] = useState<MangaType[]>(initialMangaData);
+  const [filteredManga, setFilteredManga] =
+    useState<MangaType[]>(initialMangaData);
+  const [paginatedManga, setPaginatedManga] = useState<MangaType[]>(
     initialMangaData.slice(0, ITEMS_PER_PAGE)
   );
   const [loading, setLoading] = useState(false);

@@ -5,139 +5,94 @@ import { SectionContainer } from "@/components/section-container";
 import { SectionHeading } from "@/components/section-heading";
 import { CommitteeYear } from "@/components/committee-year";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/utils/supabase/server";
+import {
+  TypeCommitteeMemberData,
+  TypeCommitteeYearProps,
+} from "@/lib/definitions";
 
-export default function HallOfFamePage() {
+// Define the desired order of positions
+const positionOrder = [
+  "President",
+  "Vice-President",
+  "Treasurer",
+  "Social Media Secretary",
+  "Events Secretary",
+];
+
+// Function to determine the sort order of a member based on their position
+const getPositionOrder = (position: string): number => {
+  const index = positionOrder.indexOf(position);
+  return index === -1 ? positionOrder.length : index; // Put unknown positions at the end
+};
+
+export default async function HallOfFamePage() {
+  const supabase = await createClient();
+
+  const { data: allCommittee, error } = await supabase
+    .from("committee")
+    .select("name, role, image, quote, year")
+    .order("year", { ascending: false });
+
+  const members: TypeCommitteeMemberData[] = [];
+  allCommittee?.forEach((element) => members.push(element));
+
+  // Get the most recent year to separate current and past committees
+  const latestYear = members[0]?.year;
+
+  // Function to format the year as "yyyy-yyyy"
+  const formatYearSpan = (year: number | undefined): string => {
+    if (year === undefined) {
+      return "";
+    }
+    return `${year - 1}-${year}`;
+  };
+
+  // Sort members by position according to the defined order (right to left)
+  const sortMembersByPosition = (
+    members: TypeCommitteeMemberData[]
+  ): TypeCommitteeMemberData[] => {
+    return [...members].sort(
+      (a, b) => getPositionOrder(a.role) - getPositionOrder(b.role)
+    );
+  };
+
   // Current committee data
-  const currentCommittee = {
-    year: "2024-2025",
-    members: [
-      {
-        name: "Shu Sadiq",
-        position: "President",
-        image: "/placeholder.svg?height=300&width=300&text=Yuki",
-        quote: "N/A",
-      },
-      {
-        name: "William Bartlett",
-        position: "Vice-President",
-        image: "/placeholder.svg?height=300&width=300&text=Alex",
-        quote:
-          "N/A",
-      },
-      {
-        name: "Dominik Knight",
-        position: "Treasurer",
-        image: "/placeholder.svg?height=300&width=300&text=Olivia",
-        quote: "N/A",
-      },
-      {
-        name: "Habiba",
-        position: "Social Media Secretary",
-        image: "/placeholder.svg?height=300&width=300&text=Marcus",
-        quote: "N/A",
-      },
-      {
-        name: "Josh Mills",
-        position: "Events Secretary",
-        image: "/placeholder.svg?height=300&width=300&text=Sophia",
-        quote: "N/A",
-      },
-    ],
+  const currentCommitteeData = members.filter(
+    (member) => member.year === latestYear
+  );
+  const sortedCurrentCommittee = sortMembersByPosition(currentCommitteeData);
+  const currentCommittee: TypeCommitteeYearProps = {
+    year: formatYearSpan(latestYear),
+    members: sortedCurrentCommittee,
+    current: true,
   };
 
   // Past committees data
-  const pastCommittees = [
-    {
-      year: "2023-2024",
-      members: [
-        {
-          name: "N/A",
-          position: "President",
-          image: "/placeholder.svg?height=300&width=300&text=Hiroshi",
-        },
-        {
-          name: "N/A",
-          position: "Vice-President",
-          image: "/placeholder.svg?height=300&width=300&text=Emma",
-        },
-        {
-          name: "N/A",
-          position: "Treasurer",
-          image: "/placeholder.svg?height=300&width=300&text=David",
-        },
-        {
-          name: "N/A",
-          position: "Social Media Secretary",
-          image: "/placeholder.svg?height=300&width=300&text=Lily",
-        },
-        {
-          name: "N/A",
-          position: "Events Secretary",
-          image: "/placeholder.svg?height=300&width=300&text=James",
-        },
-      ],
-    },
-    {
-      year: "2022-2023",
-      members: [
-        {
-          name: "N/A",
-          position: "President",
-          image: "/placeholder.svg?height=300&width=300&text=Mei",
-        },
-        {
-          name: "N/A",
-          position: "Vice-President",
-          image: "/placeholder.svg?height=300&width=300&text=Thomas",
-        },
-        {
-          name: "N/A",
-          position: "Treasurer",
-          image: "/placeholder.svg?height=300&width=300&text=Sarah",
-        },
-        {
-          name: "N/A",
-          position: "Social Media Secretary",
-          image: "/placeholder.svg?height=300&width=300&text=Raj",
-        },
-        {
-          name: "N/A",
-          position: "Events Secretary",
-          image: "/placeholder.svg?height=300&width=300&text=Hannah",
-        },
-      ],
-    },
-    {
-      year: "2021-2022",
-      members: [
-        {
-          name: "N/A",
-          position: "President",
-          image: "/placeholder.svg?height=300&width=300&text=Kenji",
-        },
-        {
-          name: "N/A",
-          position: "Vice-President",
-          image: "/placeholder.svg?height=300&width=300&text=Zoe",
-        },
-        {
-          name: "N/A",
-          position: "Treasurer",
-          image: "/placeholder.svg?height=300&width=300&text=Michael",
-        },
-        {
-          name: "N/A",
-          position: "Social Media Secretary",
-          image: "/placeholder.svg?height=300&width=300&text=Aisha",
-        },
-        {
-          name: "N/A",
-          position: "Events Secretary",
-          image: "/placeholder.svg?height=300&width=300&text=Daniel",
-        },
-      ],
-    },
-  ];
+  const pastCommitteeData: TypeCommitteeMemberData[] = members.filter(
+    (member) => member.year !== latestYear
+  );
+
+  // Group past committee members by year
+  const pastCommitteesByYear: { [year: number]: TypeCommitteeMemberData[] } =
+    {};
+  pastCommitteeData.forEach((member) => {
+    if (pastCommitteesByYear[member.year]) {
+      pastCommitteesByYear[member.year].push(member);
+    } else {
+      pastCommitteesByYear[member.year] = [member];
+    }
+  });
+
+  // Convert the grouped data into the format expected by CommitteeYear
+  const pastCommittees: TypeCommitteeYearProps[] = Object.entries(
+    pastCommitteesByYear
+  )
+    .sort(([, a], [, b]) => b[0].year - a[0].year) // Sort by year descending
+    .map(([year, unsortedMembers]) => ({
+      year: formatYearSpan(parseInt(year)),
+      members: sortMembersByPosition(unsortedMembers),
+    }));
 
   return (
     <div className="flex min-h-screen flex-col w-full">
@@ -160,7 +115,6 @@ export default function HallOfFamePage() {
           />
 
           <div className="relative">
-            {/* Current committee */}
             <div className="relative z-10">
               <CommitteeYear
                 year={currentCommittee.year}
@@ -169,7 +123,6 @@ export default function HallOfFamePage() {
               />
             </div>
 
-            {/* Past committees */}
             <div className="relative z-10 mt-16">
               <div className="mb-12">
                 <h2 className="inline-block bg-cyan-300 px-4 py-2 text-2xl font-bold border-4 border-black -rotate-1">

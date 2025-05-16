@@ -1,16 +1,8 @@
 import { createClient } from "@/utils/supabase/server";
 import LibraryPageClient from "@/components/library-client";
+import { MangaType } from "@/lib/definitions";
 
-interface Manga {
-  id: string;
-  title: string;
-  author: string;
-  volume: number;
-  coverImage: string;
-  genre: string[];
-  borrowedby: string | null | undefined;
-}
-
+//genres don't work ask michael
 export default async function LibraryPage() {
   const supabase = await createClient();
 
@@ -22,7 +14,7 @@ export default async function LibraryPage() {
     .from("genre")
     .select("genre");
 
-  const mangaData: Manga[] = mangaDataResult || [];
+  const mangaData: MangaType[] = mangaDataResult || [];
   const genres: string[] = genresData ? genresData.map((g) => g.genre) : [];
 
   return (
