@@ -3,7 +3,7 @@ import { ChevronLeft } from "lucide-react";
 
 import { SectionContainer } from "@/components/section-container";
 import { SectionHeading } from "@/components/section-heading";
-import { CommitteeYear } from "@/components/committee-year";
+import { CommitteeYear } from "@/components/committee/committee-year";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/server";
 import {
