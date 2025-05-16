@@ -9,8 +9,6 @@ import { SectionHeading } from "@/components/section-heading";
 import { GalleryImage } from "@/components/gallery-image";
 import { GalleryFilter } from "@/components/gallery-filter";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/utils/supabase/server";
-
 // Gallery data structure
 interface GalleryItem {
   id: string;
@@ -21,7 +19,6 @@ interface GalleryItem {
 }
 
 export default async function GalleryPage() {
-  const supabase = await createClient();
   // Categories and years for filtering
   const categories = ["All", "Events", "Regular Sessions", "Collaborations"];
   const years = ["All", "2026", "2025", "2024", "2023", "2022", "2021", "2020"];
@@ -30,10 +27,10 @@ export default async function GalleryPage() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeYear, setActiveYear] = useState("All");
 
-  const pathToImage = "game_one/gameOneGameTile.jpeg";
-  const { data: image_url } = supabase.storage
-    .from("gallery")
-    .getPublicUrl(pathToImage);
+  // const pathToImage = "game_one/gameOneGameTile.jpeg";
+  // const { data: image_url } = supabase.storage
+  //   .from("gallery")
+  //   .getPublicUrl(pathToImage);
 
   //do the rest of this shit tomorrow
   // Sample gallery data
