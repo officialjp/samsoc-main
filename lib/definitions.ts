@@ -47,6 +47,13 @@ interface CommitteeYearProps {
   current?: boolean;
 }
 
+interface EventCardProps {
+  date: string;
+  title: string;
+  description: string;
+  location: string;
+}
+
 export type { CommitteeYearProps as TypeCommitteeYearProps };
 
 export type { CommitteeMemberData as TypeCommitteeMemberData };
@@ -54,3 +61,5 @@ export type { CommitteeMemberData as TypeCommitteeMemberData };
 export type { Manga as MangaType };
 
 export type { Event as CalendarEventType };
+
+export type { EventCardProps as EventCardPropsType };
