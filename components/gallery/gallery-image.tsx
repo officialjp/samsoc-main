@@ -17,7 +17,7 @@ export function GalleryImage({ src, alt, width, height }: GalleryImageProps) {
   return (
     <>
       <div
-        className="overflow-hidden border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] cursor-pointer transition-transform hover:scale-[1.02]"
+        className="overflow-hidden border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] cursor-pointer transition-transform hover:scale-[1.02]"
         onClick={() => setIsOpen(true)}
       >
         <Image
