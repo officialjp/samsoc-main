@@ -2,7 +2,6 @@
 import { Button } from "@/components/ui/button";
 import { AnimeCard } from "@/components/landing/anime-card";
 import Link from "next/link";
-import Image from "next/image";
 import useIsMobile from "../mobile-check";
 import {
   Carousel,
