@@ -55,7 +55,7 @@ export function Pagination({
     <div className="flex items-center justify-center space-x-2 mt-8">
       <Button
         variant="outline"
-        className="border-2 border-black"
+        className="border-2 border-black hover:cursor-pointer"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
       >
@@ -76,9 +76,9 @@ export function Pagination({
             key={`page-${page}`}
             variant="outline"
             className={cn(
-              "border-2 border-black h-10 w-10 p-0",
+              "border-2 border-black h-10 w-10 p-0 hover:cursor-pointer",
               currentPage === page
-                ? "bg-yellow-300 hover:bg-yellow-400 text-black"
+                ? "bg-button2 hover:bg-button1 text-black"
                 : "bg-white hover:bg-gray-100 text-black"
             )}
             onClick={() => onPageChange(Number(page))}
@@ -90,7 +90,7 @@ export function Pagination({
 
       <Button
         variant="outline"
-        className="border-2 border-black"
+        className="border-2 border-black hover:cursor-pointer"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
       >

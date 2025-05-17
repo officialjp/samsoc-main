@@ -95,7 +95,7 @@ export default async function HallOfFamePage() {
     }));
 
   return (
-    <div className="flex min-h-screen flex-col w-full">
+    <div className="flex min-h-screen flex-col w-full bg-gradient-to-b from-bg1 to-bg2">
       <main className="flex-1">
         <SectionContainer>
           <div className="mb-4">
@@ -125,7 +125,7 @@ export default async function HallOfFamePage() {
 
             <div className="relative z-10 mt-16">
               <div className="mb-12">
-                <h2 className="inline-block bg-cyan-300 px-4 py-2 text-2xl font-bold border-4 border-black -rotate-1">
+                <h2 className="inline-block bg-button1 px-4 py-2 text-2xl font-bold border-4 border-black -rotate-1">
                   PAST COMMITTEES
                 </h2>
                 <div className="mt-2 h-1 w-full bg-black"></div>
@@ -142,7 +142,7 @@ export default async function HallOfFamePage() {
           </div>
 
           <div className="mt-16 text-center">
-            <div className="inline-block bg-yellow-300 px-4 py-3 border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-2">
+            <div className="inline-block bg-button2 px-4 py-3 border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-2">
               <h3 className="text-xl font-bold">Want to join the committee?</h3>
               <p className="mb-4">
                 Elections are held at the end of each academic year.

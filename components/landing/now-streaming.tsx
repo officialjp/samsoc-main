@@ -50,7 +50,7 @@ export function NowStreaming() {
           title="This Week's Anime"
           description="Join us every Wednesday at 6PM in Lecture Theatre G for our weekly
               anime screenings!"
-          badgeColor="bg-yellow-200"
+          badgeColor="bg-button3"
         />
         <div className="mx-auto max-w-7xl gap-8 py-12 ">
           <div className="mx-auto max-w-7xl gap-6 flex justify-center items-center">
@@ -87,7 +87,7 @@ export function NowStreaming() {
             </p>
             <Button
               asChild
-              className="bg-yellow-300 hover:bg-yellow-400 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+              className="bg-button2 hover:bg-button1 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
             >
               <Link href="/calendar" className="flex items-center">
                 <CalendarDays className="mr-2 h-4 w-4" />
@@ -106,7 +106,7 @@ export function NowStreaming() {
         title="This Week's Anime"
         description="Join us every Wednesday at 6PM in Lecture Theatre G for our weekly
               anime screenings!"
-        badgeColor="bg-yellow-200"
+        badgeColor="bg-button3"
       />
       <div className="container w-full max-w-full py-8 px-8">
         <div className="relative mx-auto max-w-7xl p-4 ">
@@ -123,13 +123,13 @@ export function NowStreaming() {
           </div>
         </div>
         <div className="mt-8 text-center">
-          <p className="font-medium mb-4">
+          <p className="font-medium mb-4 text-text1">
             Don't worry if you've missed previous episodes - you have plenty of
             time to catch-up!
           </p>
           <Button
             asChild
-            className="bg-yellow-300 hover:bg-yellow-400 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+            className="bg-button2 hover:bg-button1 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
           >
             <Link href="/calendar" className="flex items-center">
               <CalendarDays className="mr-2 h-4 w-4" />

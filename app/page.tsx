@@ -8,7 +8,7 @@ import GallerySection from "@/components/landing/gallery-section";
 
 export default function AnimeSocietyLanding() {
   return (
-    <div className="flex min-h-screen flex-col w-full bg-linear-to-b  from-violet-200 via-pink-200 to-purple-200">
+    <div className="flex min-h-screen flex-col w-full bg-gradient-to-b from-bg1 to-bg2">
       <main className="flex-1">
         <HeroSection />
 

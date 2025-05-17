@@ -168,7 +168,7 @@ export default function GalleryPage() {
   });
 
   return (
-    <div className="flex min-h-screen flex-col w-full">
+    <div className="flex min-h-screen flex-col w-full bg-gradient-to-b from-bg1 to-bg2">
       <main className="flex-1">
         <SectionContainer>
           <div className="mb-4">
@@ -183,7 +183,7 @@ export default function GalleryPage() {
             badge="MEMORIES"
             title="Photo Gallery"
             description="Browse through our collection of photos from events, weekly sessions, and collaborations over the years."
-            badgeColor="bg-pink-300"
+            badgeColor="bg-button3"
             className="mb-12"
           />
 

@@ -81,7 +81,7 @@ export default function EventsPage() {
   ];
 
   return (
-    <div className="flex min-h-screen flex-col w-full">
+    <div className="flex min-h-screen flex-col w-full bg-gradient-to-b from-bg1 to-bg2">
       <main className="flex-1">
         <SectionContainer>
           <div className="mb-4">
@@ -96,7 +96,7 @@ export default function EventsPage() {
             badge="ACTIVITIES"
             title="Our Events"
             description="Discover the wide range of events we host throughout the academic year. From weekly screenings to special collaborations, there's something for every anime enthusiast!"
-            badgeColor="bg-pink-300"
+            badgeColor="bg-button3"
             className="mb-12"
           />
 
@@ -115,7 +115,7 @@ export default function EventsPage() {
           </div>
 
           <div className="mt-16 text-center">
-            <div className="inline-block bg-yellow-300 px-6 py-4 border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-1">
+            <div className="inline-block bg-button2 px-6 py-4 border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-1">
               <h3 className="text-xl font-bold mb-2">Have an event idea?</h3>
               <p className="mb-4">
                 We're always open to suggestions from our members!

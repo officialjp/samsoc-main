@@ -21,7 +21,7 @@ export function FeatureCard({
         <Icon className="h-10 w-10" />
       </div>
       <h3 className="text-xl font-bold">{title}</h3>
-      <p className="text-center text-gray-700">{description}</p>
+      <p className="text-center text-text1">{description}</p>
     </div>
   );
 }

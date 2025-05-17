@@ -22,7 +22,7 @@ export function CommitteeMember({
     <div
       className={cn(
         "flex flex-col items-center border-2 rounded-md border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]",
-        current ? "bg-yellow-100" : "bg-white",
+        current ? "bg-button2" : "bg-button3",
         className
       )}
     >
@@ -42,13 +42,13 @@ export function CommitteeMember({
           />
         </div>
         {current && (
-          <div className="absolute -top-2 -right-2 z-20 rounded-full bg-yellow-300 px-2 py-1 text-xs font-bold border-2 border-black rotate-12">
+          <div className="absolute -top-2 -right-2 z-20 rounded-full bg-button1 px-2 py-1 text-xs font-bold border-2 border-black rotate-12">
             CURRENT
           </div>
         )}
       </div>
       <h3 className="text-xl font-bold">{name}</h3>
-      <div className="mt-1 inline-block bg-cyan-300 px-3 py-1 text-sm font-bold border-2 border-black">
+      <div className="mt-1 inline-block bg-red-100 px-3 py-1 text-sm font-bold border-2 border-black">
         {position}
       </div>
       {quote && (

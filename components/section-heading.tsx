@@ -1,11 +1,11 @@
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 interface SectionHeadingProps {
-  badge: string
-  title: string
-  description?: string
-  badgeColor?: string
-  className?: string
+  badge: string;
+  title: string;
+  description?: string;
+  badgeColor?: string;
+  className?: string;
 }
 
 export function SectionHeading({
@@ -16,16 +16,30 @@ export function SectionHeading({
   className,
 }: SectionHeadingProps) {
   return (
-    <div className={cn("flex flex-col items-center justify-center space-y-4 text-center", className)}>
+    <div
+      className={cn(
+        "flex flex-col items-center justify-center space-y-4 text-center",
+        className
+      )}
+    >
       <div className="space-y-2">
-        <div className={cn("inline-block rounded-lg px-3 py-1 text-sm border-2 border-black", badgeColor)}>{badge}</div>
-        <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">{title}</h2>
+        <div
+          className={cn(
+            "inline-block rounded-lg px-3 py-1 text-sm border-2 border-black",
+            badgeColor
+          )}
+        >
+          {badge}
+        </div>
+        <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+          {title}
+        </h2>
         {description && (
-          <p className="max-w-[900px] text-gray-700 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+          <p className="max-w-[900px] text-text1 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
             {description}
           </p>
         )}
       </div>
     </div>
-  )
+  );
 }

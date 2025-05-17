@@ -24,7 +24,7 @@ export function HeroSection() {
                   SAMsoc!
                 </span>
               </h1>
-              <p className="max-w-full sm:max-w-[600px] text-base sm:text-lg md:text-xl text-gray-700">
+              <p className="max-w-full sm:max-w-[600px] text-base sm:text-lg md:text-xl text-text1">
                 Join our vibrant community at Surrey!{" "}
                 <span className="hidden sm:inline">
                   <br />
@@ -41,18 +41,6 @@ export function HeroSection() {
                 <Link href="#join" className="flex items-center justify-center">
                   <span className="mr-2">🎉</span> Join Now{" "}
                   <ChevronRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                className="bg-yellow-300 hover:bg-yellow-400 text-black text-base sm:text-lg md:text-xl py-4 sm:py-5 md:py-7 px-4 sm:px-6 md:px-8 border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-              >
-                <Link
-                  href="#events"
-                  className="flex items-center justify-center"
-                >
-                  <span className="mr-2">📅</span> Upcoming Events
                 </Link>
               </Button>
             </div>

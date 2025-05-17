@@ -47,7 +47,7 @@ export default function EventsSection() {
           badge="CALENDAR"
           title="Upcoming Events"
           description="Check out what's coming up and mark your calendars! All events are open to members and sometimes guests too."
-          badgeColor="bg-yellow-200"
+          badgeColor="bg-button3"
         />
         <div className="mx-auto max-w-7xl gap-8 py-12">
           <div className="w-full flex-col items-center gap-4 flex">
@@ -73,7 +73,7 @@ export default function EventsSection() {
         <div className="flex items-center justify-center flex-col gap-4 mt-8">
           <Button
             asChild
-            className="bg-pink-300 hover:bg-pink-400 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+            className="bg-button2 hover:bg-button1 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
           >
             <Link href="/events" className="flex items-center">
               <ListIcon className="mr-2 h-4 w-4" />
@@ -83,7 +83,7 @@ export default function EventsSection() {
 
           <Button
             asChild
-            className="bg-yellow-300 hover:bg-yellow-400 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+            className="bg-button2 hover:bg-button1 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
           >
             <Link href="/calendar" className="flex items-center">
               <CalendarDays className="mr-2 h-4 w-4" />
@@ -100,7 +100,7 @@ export default function EventsSection() {
           badge="CALENDAR"
           title="Upcoming Events"
           description="Check out what's coming up and mark your calendars! All events are open to members and sometimes guests too."
-          badgeColor="bg-yellow-200"
+          badgeColor="bg-button3"
         />
         <div className="mx-auto max-w-7xl gap-8 py-12 grid lg:grid-cols-2">
           {events.map((event, index) => (
@@ -117,7 +117,7 @@ export default function EventsSection() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
           <Button
             asChild
-            className="bg-pink-300 hover:bg-pink-400 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+            className="bg-button2 hover:bg-button1 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
           >
             <Link href="/events" className="flex items-center">
               <ListIcon className="mr-2 h-4 w-4" />
@@ -127,7 +127,7 @@ export default function EventsSection() {
 
           <Button
             asChild
-            className="bg-yellow-300 hover:bg-yellow-400 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+            className="bg-button2 hover:bg-button1 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
           >
             <Link href="/calendar" className="flex items-center">
               <CalendarDays className="mr-2 h-4 w-4" />
