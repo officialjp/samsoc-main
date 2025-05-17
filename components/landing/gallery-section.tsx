@@ -1,5 +1,5 @@
 "use client";
-import { ImageIcon } from "lucide-react";
+import { ChevronLeft, ChevronRight, ImageIcon } from "lucide-react";
 import { SectionContainer } from "../section-container";
 import { SectionHeading } from "../section-heading";
 import { Button } from "../ui/button";
@@ -45,10 +45,19 @@ export default function GallerySection() {
               </CarouselItem>
             ))}
           </CarouselContent>
-          {!useIsMobile() && (
-            <div>
+          {!useIsMobile() ? (
+            <>
               <CarouselPrevious /> <CarouselNext />
-            </div>
+            </>
+          ) : (
+            <>
+              <div className="absolute inset-y-0 left-2 flex items-center">
+                <ChevronLeft className="text-gray-400 text-lg" />
+              </div>
+              <div className="absolute inset-y-0 right-2 flex items-center">
+                <ChevronRight className="text-gray-400 text-lg" />
+              </div>
+            </>
           )}
         </Carousel>
       </div>

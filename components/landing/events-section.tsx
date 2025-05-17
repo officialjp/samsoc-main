@@ -1,5 +1,10 @@
 "use client";
-import { ListIcon, CalendarDays } from "lucide-react";
+import {
+  ListIcon,
+  CalendarDays,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { EventCard } from "./event-card";
 import { SectionContainer } from "../section-container";
 import { SectionHeading } from "../section-heading";
@@ -50,7 +55,7 @@ export default function EventsSection() {
         description="Check out what's coming up and mark your calendars! All events are open to members and sometimes guests too."
         badgeColor="bg-yellow-200"
       />
-      <div className="mx-auto max-w-7xl gap-8 py-12 flex">
+      <div className="mx-auto max-w-7xl gap-8 py-12">
         <div className="w-full flex-col items-center gap-4 flex">
           <Carousel className="w-full lg:max-w-[500]">
             <CarouselContent>
@@ -62,10 +67,19 @@ export default function EventsSection() {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            {!useIsMobile() && (
-              <div>
+            {!useIsMobile() ? (
+              <>
                 <CarouselPrevious /> <CarouselNext />
-              </div>
+              </>
+            ) : (
+              <>
+                <div className="absolute inset-y-0 left-2 flex items-center">
+                  <ChevronLeft className="text-gray-400 text-lg" />
+                </div>
+                <div className="absolute inset-y-0 right-2 flex items-center">
+                  <ChevronRight className="text-gray-400 text-lg" />
+                </div>
+              </>
             )}
           </Carousel>
         </div>
