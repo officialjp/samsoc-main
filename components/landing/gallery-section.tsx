@@ -33,30 +33,29 @@ export default function GallerySection() {
                     key={index}
                     className="overflow-hidden border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
                   >
-                    <Image
-                      src={`/placeholder.svg?height=300&width=400&text=Anime+Event+${index}`}
-                      width={400}
-                      height={300}
-                      alt={`Gallery image ${index}`}
-                      className="aspect-video object-cover"
-                    />
+                    <div className="relative flex items-center">
+                      {useIsMobile() && index != 0 && (
+                        <ChevronLeft className="absolute text-gray-500 -left-2 top-1/2 -translate-y-1/2" />
+                      )}
+                      <Image
+                        src={`/placeholder.svg?height=300&width=400&text=Anime+Event+${index}`}
+                        width={400}
+                        height={300}
+                        alt={`Gallery image ${index}`}
+                        className="aspect-video object-cover"
+                      />
+                      {useIsMobile() && index != 5 && (
+                        <ChevronRight className="absolute text-gray-500 -right-2 top-1/2 -translate-y-1/2" />
+                      )}
+                    </div>
                   </div>
                 </div>
               </CarouselItem>
             ))}
           </CarouselContent>
-          {!useIsMobile() ? (
+          {!useIsMobile() && (
             <>
               <CarouselPrevious /> <CarouselNext />
-            </>
-          ) : (
-            <>
-              <div className="absolute inset-y-0 left-2 flex items-center">
-                <ChevronLeft className="text-gray-400 text-lg" />
-              </div>
-              <div className="absolute inset-y-0 right-2 flex items-center">
-                <ChevronRight className="text-gray-400 text-lg" />
-              </div>
             </>
           )}
         </Carousel>

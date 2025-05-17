@@ -52,13 +52,16 @@ export function NowStreaming() {
         badgeColor="bg-yellow-200"
       />
       <div className="mx-auto max-w-7xl gap-8 py-12 ">
-        <div className="relative mx-auto max-w-2xl border-4 md:border-8 border-black bg-white p-4 sm:p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] md:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
-          <div className="mx-auto max-w-7xl gap-6 flex justify-center items-center">
-            <Carousel className="w-full lg:max-w-[500]">
-              <CarouselContent>
-                {currentAnime.map((anime, index) => (
-                  <CarouselItem key={index}>
-                    <div className="p-[10px]">
+        <div className="mx-auto max-w-7xl gap-6 flex justify-center items-center">
+          <Carousel className="w-full lg:max-w-[500]">
+            <CarouselContent>
+              {currentAnime.map((anime, index) => (
+                <CarouselItem key={index}>
+                  <div className="p-[10px]">
+                    <div className="relative flex items-center">
+                      {useIsMobile() && index != 0 && (
+                        <ChevronLeft className="absolute text-gray-500 left-2 top-1/2 -translate-y-1/2" />
+                      )}
                       <AnimeCard
                         key={index}
                         title={anime.title}
@@ -66,38 +69,32 @@ export function NowStreaming() {
                         description={anime.description}
                         image={anime.image}
                       />
+                      {useIsMobile() && index != 2 && (
+                        <ChevronRight className="absolute text-gray-500 right-2 top-1/2 -translate-y-1/2" />
+                      )}
                     </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              {!useIsMobile() ? (
-                <>
-                  <CarouselPrevious /> <CarouselNext />
-                </>
-              ) : (
-                <>
-                  <div className="absolute inset-y-0 left-2 flex items-center">
-                    <ChevronLeft className="text-gray-400 text-lg" />
                   </div>
-                  <div className="absolute inset-y-0 right-2 flex items-center">
-                    <ChevronRight className="text-gray-400 text-lg" />
-                  </div>
-                </>
-              )}
-            </Carousel>
-          </div>
-          <div className="mt-8 text-center">
-            <p className="font-medium mb-4">
-              Don't worry if you've missed previous episodes - you have plenty
-              of time to catch-up!
-            </p>
-            <Button
-              asChild
-              className="bg-purple-500 hover:bg-purple-600 text-white border border-black md:border-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-sm md:text-base"
-            >
-              <Link href="/calendar">View Full Schedule</Link>
-            </Button>
-          </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            {!useIsMobile() && (
+              <>
+                <CarouselPrevious /> <CarouselNext />
+              </>
+            )}
+          </Carousel>
+        </div>
+        <div className="mt-8 text-center">
+          <p className="font-medium mb-4">
+            Don't worry if you've missed previous episodes - you have plenty of
+            time to catch-up!
+          </p>
+          <Button
+            asChild
+            className="bg-purple-500 hover:bg-purple-600 text-white border border-black md:border-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-sm md:text-base"
+          >
+            <Link href="/calendar">View Full Schedule</Link>
+          </Button>
         </div>
       </div>
     </SectionContainer>
