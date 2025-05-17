@@ -21,7 +21,7 @@ export function LibrarySection() {
       <div className="flex items-center justify-center mx-auto max-w-7xl py-12 flex-col">
         {/* Left side - Image and stats */}
         <div className="relative">
-          <div className="overflow-hidden border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <div className="overflow-hidden border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             {useIsMobile() ? (
               <Image
                 src={`/placeholder.svg?height=300&width=400&text=Anime+Event`}
@@ -43,7 +43,7 @@ export function LibrarySection() {
 
           {/* Stats overlay - Adjusted for mobile */}
           {useIsMobile() ? (
-            <div className="absolute -left-4 -bottom-20 bg-white border-2 sm:border-4 border-black p-2 sm:p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rotate-3">
+            <div className="absolute -left-4 -bottom-20 bg-white border-2 rounded-md border-black p-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-3">
               <h3 className="text-base md:text-xl font-bold mb-1 md:mb-2">
                 Library Stats
               </h3>
@@ -67,7 +67,7 @@ export function LibrarySection() {
               </ul>
             </div>
           ) : (
-            <div className="absolute -left-10 -bottom-20 bg-white border-2 sm:border-4 border-black p-2 sm:p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rotate-3">
+            <div className="absolute -left-10 -bottom-20 bg-white border-2 border-black p-4 rounded-md md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-3">
               <h3 className="text-base md:text-xl font-bold mb-1 md:mb-2">
                 Library Stats
               </h3>
@@ -94,7 +94,7 @@ export function LibrarySection() {
         </div>
         <div className="text-center pt-32">
           <Button className="bg-blue-300 hover:bg-blue-400 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-            <Link href="/gallery" className="flex items-center">
+            <Link href="/library" className="flex items-center">
               <Library className="mr-2 h-4 w-4" />
               View Full Library
             </Link>

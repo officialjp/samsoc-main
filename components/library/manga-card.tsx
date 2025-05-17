@@ -23,7 +23,7 @@ export function MangaCard({
   borrowedBy,
 }: MangaCardProps) {
   return (
-    <div className="border-4 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden h-full flex flex-col">
+    <div className="border-2 rounded-md border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden h-full flex flex-col">
       <div className="relative">
         {/* Status badge */}
         <div

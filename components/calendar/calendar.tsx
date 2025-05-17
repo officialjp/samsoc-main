@@ -85,7 +85,7 @@ export function Calendar({ events }: CalendarProps) {
   }, [events, currentMonth, isMobile]);
 
   return (
-    <div className="bg-white border-4 border-black p-4 md:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+    <div className="bg-white border-2 rounded-md border-black p-4 md:p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
       <CalendarHeader
         currentMonth={currentMonth}
         onPrevMonth={prevMonth}

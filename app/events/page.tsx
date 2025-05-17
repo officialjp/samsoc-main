@@ -115,12 +115,12 @@ export default function EventsPage() {
           </div>
 
           <div className="mt-16 text-center">
-            <div className="inline-block bg-yellow-300 px-6 py-4 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rotate-1">
+            <div className="inline-block bg-yellow-300 px-6 py-4 border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-1">
               <h3 className="text-xl font-bold mb-2">Have an event idea?</h3>
               <p className="mb-4">
                 We're always open to suggestions from our members!
               </p>
-              <Button className="bg-pink-500 hover:bg-pink-600 text-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <Button className="bg-pink-500 hover:bg-pink-600 text-white border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <Link href="#join">Contact Events Secretary</Link>
               </Button>
             </div>

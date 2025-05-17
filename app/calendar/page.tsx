@@ -74,7 +74,7 @@ export default async function CalendarPage() {
 
           <Calendar events={allEvents} />
 
-          <div className="mt-12 bg-white border-4 border-black p-4 md:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <div className="mt-12 bg-white border-2 rounded-md border-black p-4 md:p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <h3 className="text-xl font-bold mb-4">Event Color Guide</h3>
             <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
               <div className="flex items-center">

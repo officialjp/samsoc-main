@@ -142,12 +142,12 @@ export default async function HallOfFamePage() {
           </div>
 
           <div className="mt-16 text-center">
-            <div className="inline-block bg-yellow-300 px-4 py-3 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rotate-2">
+            <div className="inline-block bg-yellow-300 px-4 py-3 border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-2">
               <h3 className="text-xl font-bold">Want to join the committee?</h3>
               <p className="mb-4">
                 Elections are held at the end of each academic year.
               </p>
-              <Button className="bg-pink-500 hover:bg-pink-600 text-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <Button className="bg-pink-500 hover:bg-pink-600 text-white border-2 border-black rounded-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <Link href="#join">Learn About Positions</Link>
               </Button>
             </div>

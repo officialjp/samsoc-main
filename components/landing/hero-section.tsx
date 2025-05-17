@@ -36,7 +36,7 @@ export function HeroSection() {
             <div className="flex flex-col sm:flex-row gap-4 mt-4 sm:mt-6">
               <Button
                 asChild
-                className="bg-pink-500 hover:bg-pink-600 text-white text-base sm:text-lg md:text-xl py-4 sm:py-5 md:py-7 px-4 sm:px-6 md:px-8 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] animate-pulse"
+                className="bg-pink-500 hover:bg-pink-600 text-white text-base sm:text-lg md:text-xl py-4 sm:py-5 md:py-7 px-4 sm:px-6 md:px-8 border-4 rounded-md border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] animate-pulse"
               >
                 <Link href="#join" className="flex items-center justify-center">
                   <span className="mr-2">🎉</span> Join Now{" "}
@@ -46,7 +46,7 @@ export function HeroSection() {
               <Button
                 asChild
                 variant="outline"
-                className="bg-yellow-300 hover:bg-yellow-400 text-black text-base sm:text-lg md:text-xl py-4 sm:py-5 md:py-7 px-4 sm:px-6 md:px-8 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                className="bg-yellow-300 hover:bg-yellow-400 text-black text-base sm:text-lg md:text-xl py-4 sm:py-5 md:py-7 px-4 sm:px-6 md:px-8 border-4 rounded-md border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
               >
                 <Link
                   href="#events"
