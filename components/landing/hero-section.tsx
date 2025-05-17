@@ -1,8 +1,10 @@
+"use client";
 import Link from "next/link";
 import Image from "next/image";
 import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Logo from "@/public/images/logo.png";
+import useIsMobile from "../mobile-check";
 
 export function HeroSection() {
   return (
@@ -55,16 +57,18 @@ export function HeroSection() {
               </Button>
             </div>
           </div>
-          <div className="flex justify-center mt-8 lg:mt-0">
-            <div className="shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] border border-black p-2 rounded-[50%] inline-block rotate-4">
-              <Image
-                src={Logo}
-                width={500}
-                height={500}
-                alt="Anime Society Members"
-              />
+          {!useIsMobile() && (
+            <div className="flex justify-center mt-8 lg:mt-0">
+              <div className="shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] border border-black p-2 rounded-[50%] inline-block rotate-4">
+                <Image
+                  src={Logo}
+                  width={500}
+                  height={500}
+                  alt="Anime Society Members"
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </section>

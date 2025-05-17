@@ -1,9 +1,23 @@
-import { ListIcon, CalendarDays } from "lucide-react";
+"use client";
+import {
+  ListIcon,
+  CalendarDays,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { EventCard } from "./event-card";
 import { SectionContainer } from "../section-container";
 import { SectionHeading } from "../section-heading";
 import { Button } from "../ui/button";
 import Link from "next/link";
+import useIsMobile from "../mobile-check";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from "../ui/carousel";
 
 export default function EventsSection() {
   const events = [
@@ -41,16 +55,34 @@ export default function EventsSection() {
         description="Check out what's coming up and mark your calendars! All events are open to members and sometimes guests too."
         badgeColor="bg-yellow-200"
       />
-      <div className="mx-auto max-w-7xl gap-8 py-12 grid lg:grid-cols-2">
-        {events.map((event, index) => (
-          <EventCard
-            key={index}
-            date={event.date}
-            title={event.title}
-            description={event.description}
-            location={event.location}
-          />
-        ))}
+      <div className="mx-auto max-w-7xl gap-8 py-12">
+        <div className="w-full flex-col items-center gap-4 flex">
+          <Carousel className="w-full lg:max-w-[500]">
+            <CarouselContent>
+              {Array.from({ length: 4 }).map((_, index) => (
+                <CarouselItem key={index}>
+                  <div className="p-[10px]">
+                    <EventCard {...events[index]} />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            {!useIsMobile() ? (
+              <>
+                <CarouselPrevious /> <CarouselNext />
+              </>
+            ) : (
+              <>
+                <div className="absolute inset-y-0 left-2 flex items-center">
+                  <ChevronLeft className="text-gray-400 text-lg" />
+                </div>
+                <div className="absolute inset-y-0 right-2 flex items-center">
+                  <ChevronRight className="text-gray-400 text-lg" />
+                </div>
+              </>
+            )}
+          </Carousel>
+        </div>
       </div>
       <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
         <Button
