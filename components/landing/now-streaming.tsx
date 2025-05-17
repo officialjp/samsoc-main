@@ -109,7 +109,7 @@ export function NowStreaming() {
         badgeColor="bg-yellow-200"
       />
       <div className="container w-full max-w-full py-8 px-8">
-        <div className="relative mx-auto max-w-7xl p-4">
+        <div className="relative mx-auto max-w-7xl p-4 ">
           <div className="grid gap-8 md:grid-cols-3">
             {currentAnime.map((anime, index) => (
               <AnimeCard

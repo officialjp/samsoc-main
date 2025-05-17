@@ -10,7 +10,7 @@ export function EventCard({
   location,
 }: EventCardPropsType) {
   return (
-    <div className="relative flex items-center border-4 border-black bg-white p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+    <div className="relative flex items-center border-2 rounded-md border-black bg-white p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
       {useIsMobile() && id != 0 && (
         <ChevronLeft className="absolute text-gray-500 -left-2 top-1/2 -translate-y-1/2" />
       )}

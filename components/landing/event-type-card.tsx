@@ -25,7 +25,7 @@ export function EventTypeCard({
   return (
     <div
       className={cn(
-        "border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]",
+        "border-2 border-black p-6 rounded-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]",
         color
       )}
     >

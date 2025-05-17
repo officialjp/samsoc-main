@@ -102,19 +102,19 @@ export default function LibraryPageClient({
           />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <div className="bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-center">
+            <div className="bg-white border-2 rounded-md border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-center">
               <h3 className="text-lg font-bold">Total Manga</h3>
               <p className="text-3xl font-bold">{totalManga}</p>
               <p className="text-sm text-gray-500">volumes in collection</p>
             </div>
-            <div className="bg-green-100 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-center">
+            <div className="bg-green-100 border-2 rounded-md border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-center">
               <h3 className="text-lg font-bold">Available</h3>
               <p className="text-3xl font-bold text-green-600">
                 {availableManga}
               </p>
               <p className="text-sm text-gray-500">volumes ready to borrow</p>
             </div>
-            <div className="bg-red-100 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-center">
+            <div className="bg-red-100 border-2 rounded-md border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-center">
               <h3 className="text-lg font-bold">Borrowed</h3>
               <p className="text-3xl font-bold text-red-600">{borrowedManga}</p>
               <p className="text-sm text-gray-500">
@@ -130,7 +130,7 @@ export default function LibraryPageClient({
                 onFilterChange={(newFilters) => setFilters(newFilters)}
               />
 
-              <div className="mt-6 bg-yellow-100 border-4 border-black p-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+              <div className="mt-6 bg-yellow-100 border-2 border-black p-4 rounded-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <h3 className="text-lg font-bold mb-2 flex items-center">
                   <BookOpen className="h-5 w-5 mr-2" /> Library Rules
                 </h3>
@@ -183,7 +183,7 @@ export default function LibraryPageClient({
                   )}
                 </>
               ) : (
-                <div className="bg-white border-4 border-black p-8 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                <div className="bg-white border-2 border-black p-8 rounded-md text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                   <h3 className="text-xl font-bold mb-2">No manga found</h3>
                   <p>Try adjusting your filters to see more results.</p>
                 </div>

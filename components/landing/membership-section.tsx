@@ -29,7 +29,7 @@ export function MembershipSection() {
       className="w-full py-12 md:py-24 lg:py-32 overflow-hidden"
     >
       <div className="container w-full max-w-full px-4 md:px-6 lg:px-8">
-        <div className="relative mx-auto max-w-7xl border-4 md:border-8 border-black bg-white p-4 sm:p-6 md:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] md:shadow-[16px_16px_0px_0px_rgba(0,0,0,1)]">
+        <div className="relative mx-auto max-w-7xl border-2 md:border-2 border-black bg-white p-4 sm:p-6 md:p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-md">
           <div className="absolute -top-4 -rotate-3 -left-4 md:-top-6 md:-left-6 bg-yellow-300 px-3 md:px-4 py-1 md:py-2 text-lg md:text-xl font-bold border-2 md:border-4 border-black">
             JOIN US!
           </div>

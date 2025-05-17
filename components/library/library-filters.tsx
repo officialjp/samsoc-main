@@ -51,7 +51,7 @@ export function LibraryFilters({
     status !== "all" || selectedGenre !== "all" || search !== "";
 
   return (
-    <div className="bg-white border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+    <div className="bg-white border-2 border-black rounded-md p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Filter Manga</h2>
         {hasActiveFilters && (
