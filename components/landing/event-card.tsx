@@ -1,19 +1,30 @@
 import { EventCardPropsType } from "@/lib/definitions";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import useIsMobile from "../mobile-check";
 
 export function EventCard({
+  id,
   date,
   title,
   description,
   location,
 }: EventCardPropsType) {
   return (
-    <div className="flex flex-col space-y-2 border-4 border-black bg-white p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-      <div className="bg-yellow-300 px-3 py-1 text-sm font-bold inline-block border-2 border-black self-start">
-        {date}
+    <div className="relative flex items-center border-4 border-black bg-white p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+      {useIsMobile() && id != 0 && (
+        <ChevronLeft className="absolute text-gray-500 -left-2 top-1/2 -translate-y-1/2" />
+      )}
+      <div className="flex flex-col space-y-2 w-full">
+        <div className="bg-yellow-300 px-3 py-1 text-sm font-bold inline-block border-2 border-black self-start">
+          {date}
+        </div>
+        <h3 className="text-2xl font-bold">{title}</h3>
+        <p className="text-gray-700">{description}</p>
+        <p className="text-sm text-gray-500">📍 {location}</p>
       </div>
-      <h3 className="text-2xl font-bold">{title}</h3>
-      <p className="text-gray-700">{description}</p>
-      <p className="text-sm text-gray-500">📍 {location}</p>
+      {useIsMobile() && id != 3 && (
+        <ChevronRight className="absolute text-gray-500 -right-2 top-1/2 -translate-y-1/2" />
+      )}
     </div>
   );
 }

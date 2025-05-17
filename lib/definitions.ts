@@ -48,6 +48,7 @@ interface CommitteeYearProps {
 }
 
 interface EventCardProps {
+  id: number;
   date: string;
   title: string;
   description: string;
