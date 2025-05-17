@@ -12,7 +12,7 @@ import {
 } from "../ui/carousel";
 import { SectionContainer } from "../section-container";
 import { SectionHeading } from "../section-heading";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
 
 const currentAnime = [
   {
@@ -39,11 +39,68 @@ const currentAnime = [
 ];
 
 export function NowStreaming() {
+  if (useIsMobile()) {
+    return (
+      <SectionContainer
+        id="now-streaming"
+        className="w-full py-12 md:py-16 overflow-hidden"
+      >
+        <SectionHeading
+          badge="NOW STREAMING"
+          title="This Week's Anime"
+          description="Join us every Wednesday at 6PM in Lecture Theatre G for our weekly
+              anime screenings!"
+          badgeColor="bg-yellow-200"
+        />
+        <div className="mx-auto max-w-7xl gap-8 py-12 ">
+          <div className="mx-auto max-w-7xl gap-6 flex justify-center items-center">
+            <Carousel className="w-full lg:max-w-[500]">
+              <CarouselContent>
+                {currentAnime.map((anime, index) => (
+                  <CarouselItem key={index}>
+                    <div className="p-[10px]">
+                      <div className="relative flex items-center">
+                        {index != 0 && (
+                          <ChevronLeft className="absolute text-gray-500 left-2 top-1/2 -translate-y-1/2" />
+                        )}
+                        <AnimeCard
+                          key={index}
+                          title={anime.title}
+                          episode={anime.episode}
+                          description={anime.description}
+                          image={anime.image}
+                        />
+                        {index != 2 && (
+                          <ChevronRight className="absolute text-gray-500 right-2 top-1/2 -translate-y-1/2" />
+                        )}
+                      </div>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
+          </div>
+          <div className="mt-8 text-center">
+            <p className="font-medium mb-4">
+              Don't worry if you've missed previous episodes - you have plenty
+              of time to catch-up!
+            </p>
+            <Button
+              asChild
+              className="bg-yellow-300 hover:bg-yellow-400 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+            >
+              <Link href="/calendar" className="flex items-center">
+                <CalendarDays className="mr-2 h-4 w-4" />
+                View Full Calendar
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </SectionContainer>
+    );
+  }
   return (
-    <SectionContainer
-      id="now-streaming"
-      className="w-full py-12 md:py-16 overflow-hidden"
-    >
+    <SectionContainer id="now-streaming">
       <SectionHeading
         badge="NOW STREAMING"
         title="This Week's Anime"
@@ -51,38 +108,19 @@ export function NowStreaming() {
               anime screenings!"
         badgeColor="bg-yellow-200"
       />
-      <div className="mx-auto max-w-7xl gap-8 py-12 ">
-        <div className="mx-auto max-w-7xl gap-6 flex justify-center items-center">
-          <Carousel className="w-full lg:max-w-[500]">
-            <CarouselContent>
-              {currentAnime.map((anime, index) => (
-                <CarouselItem key={index}>
-                  <div className="p-[10px]">
-                    <div className="relative flex items-center">
-                      {useIsMobile() && index != 0 && (
-                        <ChevronLeft className="absolute text-gray-500 left-2 top-1/2 -translate-y-1/2" />
-                      )}
-                      <AnimeCard
-                        key={index}
-                        title={anime.title}
-                        episode={anime.episode}
-                        description={anime.description}
-                        image={anime.image}
-                      />
-                      {useIsMobile() && index != 2 && (
-                        <ChevronRight className="absolute text-gray-500 right-2 top-1/2 -translate-y-1/2" />
-                      )}
-                    </div>
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            {!useIsMobile() && (
-              <>
-                <CarouselPrevious /> <CarouselNext />
-              </>
-            )}
-          </Carousel>
+      <div className="container w-full max-w-full py-8 px-8">
+        <div className="relative mx-auto max-w-7xl p-4">
+          <div className="grid gap-8 md:grid-cols-3">
+            {currentAnime.map((anime, index) => (
+              <AnimeCard
+                key={index}
+                title={anime.title}
+                episode={anime.episode}
+                description={anime.description}
+                image={anime.image}
+              />
+            ))}
+          </div>
         </div>
         <div className="mt-8 text-center">
           <p className="font-medium mb-4">
@@ -91,9 +129,12 @@ export function NowStreaming() {
           </p>
           <Button
             asChild
-            className="bg-purple-500 hover:bg-purple-600 text-white border border-black md:border-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-sm md:text-base"
+            className="bg-yellow-300 hover:bg-yellow-400 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
           >
-            <Link href="/calendar">View Full Schedule</Link>
+            <Link href="/calendar" className="flex items-center">
+              <CalendarDays className="mr-2 h-4 w-4" />
+              View Full Calendar
+            </Link>
           </Button>
         </div>
       </div>

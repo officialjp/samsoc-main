@@ -70,7 +70,7 @@ export default function EventsSection() {
             </Carousel>
           </div>
         </div>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+        <div className="flex items-center justify-center flex-col gap-4 mt-8">
           <Button
             asChild
             className="bg-pink-300 hover:bg-pink-400 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
