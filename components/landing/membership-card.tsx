@@ -28,7 +28,7 @@ export function MembershipCard({
       className={`border-2 border-black p-6 ${color} rounded-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] relative`}
     >
       {recommended && (
-        <div className="absolute -top-4 -right-4 bg-yellow-300 px-3 py-1 text-sm font-bold border-2 border-black rotate-6">
+        <div className="absolute -top-4 -right-4 bg-button1 px-3 py-1 text-sm font-bold border-2 border-black rotate-6">
           RECOMMENDED
         </div>
       )}
@@ -36,7 +36,7 @@ export function MembershipCard({
         {title}
       </div>
       <div className="space-y-4">
-        <p className="text-gray-700">Join our community with basic access:</p>
+        <p className="text-text1">Join our community with basic access:</p>
         <ul className="space-y-2">
           {features.map((feature, index) => (
             <li key={index} className="flex items-center">
@@ -56,7 +56,7 @@ export function MembershipCard({
           ))}
         </ul>
         <p className="font-bold text-center text-2xl mt-6">{price}</p>
-        <p className="text-center text-sm text-gray-500">{period}</p>
+        <p className="text-center text-sm text-text1">{period}</p>
       </div>
     </div>
   );

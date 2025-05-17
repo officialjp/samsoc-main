@@ -16,7 +16,7 @@ export default function GallerySection() {
           badge="MEMORIES"
           title="Our Gallery"
           description="Highlights from our many past events!"
-          badgeColor="bg-yellow-200"
+          badgeColor="bg-button3"
         />
         <div className="mx-auto max-w-7xl gap-6 py-12 flex justify-center items-center">
           <Carousel className="w-full max-w-[500] ">
@@ -52,7 +52,7 @@ export default function GallerySection() {
         </div>
 
         <div className="text-center mt-8">
-          <Button className="bg-cyan-300 hover:bg-cyan-400 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <Button className="bg-button2 hover:bg-button1 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <Link href="/gallery" className="flex items-center">
               <ImageIcon className="mr-2 h-4 w-4" />
               View Full Gallery
@@ -68,7 +68,7 @@ export default function GallerySection() {
           badge="MEMORIES"
           title="Our Gallery"
           description="Highlights from our many past events!"
-          badgeColor="bg-yellow-200"
+          badgeColor="bg-button3"
         />
         <div className="mx-auto max-w-7xl gap-6 py-12 grid md:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -87,7 +87,7 @@ export default function GallerySection() {
           ))}
         </div>
         <div className="text-center mt-8">
-          <Button className="bg-cyan-300 hover:bg-cyan-400 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <Button className="bg-button2 hover:bg-button1 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <Link href="/gallery" className="flex items-center">
               <ImageIcon className="mr-2 h-4 w-4" />
               View Full Gallery

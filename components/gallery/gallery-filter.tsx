@@ -29,7 +29,7 @@ export function GalleryFilter({
               key={category}
               onClick={() => onCategoryChange(category)}
               className={cn(
-                "border-2 border-black",
+                "border-2 border-black hover:cursor-pointer",
                 activeCategory === category
                   ? "bg-pink-500 text-white hover:bg-pink-600"
                   : "bg-white text-black hover:bg-gray-100"
@@ -49,7 +49,7 @@ export function GalleryFilter({
               key={year}
               onClick={() => onYearChange(year)}
               className={cn(
-                "border-2 border-black",
+                "border-2 border-black hover:cursor-pointer",
                 activeYear === year
                   ? "bg-cyan-500 text-white hover:bg-cyan-600"
                   : "bg-white text-black hover:bg-gray-100"

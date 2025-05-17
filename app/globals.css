@@ -3,6 +3,16 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@theme {
+  --color-bg1: #ede3ff;
+  --color-bg2: #fff1f8;
+  --color-button1: #e63946;
+  --color-button2: #ff6b6b;
+  --color-button3: #fdcb82;
+  --color-text1: #2e2e2e;
+  --color-accent1: #56ccf2;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

@@ -15,11 +15,11 @@ export function EventCard({
         <ChevronLeft className="absolute text-gray-500 -left-2 top-1/2 -translate-y-1/2" />
       )}
       <div className="flex flex-col space-y-2 w-full">
-        <div className="bg-yellow-300 px-3 py-1 text-sm font-bold inline-block border-2 border-black self-start">
+        <div className="bg-button1 px-3 py-1 text-sm font-bold inline-block border-2 border-black self-start">
           {date}
         </div>
         <h3 className="text-2xl font-bold">{title}</h3>
-        <p className="text-gray-700">{description}</p>
+        <p className="text-text1">{description}</p>
         <p className="text-sm text-gray-500">📍 {location}</p>
       </div>
       {useIsMobile() && id != 3 && (

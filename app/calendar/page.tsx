@@ -53,7 +53,7 @@ export default async function CalendarPage() {
   const allEvents = [...(events as []), ...weeklySessions];
 
   return (
-    <div className="flex min-h-screen flex-col w-full">
+    <div className="flex min-h-screen flex-col w-full bg-gradient-to-b from-bg1 to-bg2">
       <main className="flex-1">
         <SectionContainer>
           <div className="mb-4">
@@ -68,7 +68,7 @@ export default async function CalendarPage() {
             badge="SCHEDULE"
             title="Event Calendar"
             description="Browse our upcoming events and regular anime screenings. Click on any event for more details!"
-            badgeColor="bg-pink-300"
+            badgeColor="bg-button3"
             className="mb-12"
           />
 

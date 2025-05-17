@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
+import Image from "next/image";
+import Logo from "@/public/images/logo.png";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -16,10 +18,13 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b-4 border-black bg-white">
       <div className="container w-full max-w-full px-4 md:px-6 lg:px-8 flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center gap-2 font-bold text-xl">
-          <span className="bg-linear-65 from-red-500 to-pink-500 px-2 py-1 rounded-md border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-            Surrey Anime and Manga
-          </span>
-          <span className="hidden sm:inline">Society</span>
+          <Image
+            src={Logo}
+            className="border-1 border-black rounded-[50%]"
+            alt="logo"
+            height={48}
+            width={48}
+          />
         </Link>
 
         {/* Desktop Navigation */}

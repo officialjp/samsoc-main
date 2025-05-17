@@ -59,7 +59,7 @@ export function LibraryFilters({
             variant="outline"
             size="sm"
             onClick={clearFilters}
-            className="text-xs border border-gray-300 hover:bg-gray-100"
+            className="hover:cursor-pointer text-xs border border-gray-300 hover:bg-gray-100"
           >
             <X className="h-3 w-3 mr-1" /> Clear Filters
           </Button>
@@ -92,7 +92,7 @@ export function LibraryFilters({
               key={statusOption}
               onClick={() => handleStatusChange(statusOption)}
               className={cn(
-                "border-2 border-black",
+                "border-2 border-black hover:cursor-pointer",
                 status === statusOption
                   ? statusOption === "available"
                     ? "bg-green-300 hover:bg-green-400 text-black"
@@ -119,7 +119,7 @@ export function LibraryFilters({
           <Button
             onClick={() => handleGenreChange("all")}
             className={cn(
-              "border-2 border-black",
+              "border-2 border-black hover:cursor-pointer",
               selectedGenre === "all"
                 ? "bg-yellow-300 hover:bg-yellow-400 text-black"
                 : "bg-white hover:bg-gray-100 text-black"
@@ -132,7 +132,7 @@ export function LibraryFilters({
               key={genre}
               onClick={() => handleGenreChange(genre)}
               className={cn(
-                "border-2 border-black",
+                "border-2 border-black hover:cursor-pointer",
                 selectedGenre === genre
                   ? "bg-cyan-300 hover:bg-cyan-400 text-black"
                   : "bg-white hover:bg-gray-100 text-black"

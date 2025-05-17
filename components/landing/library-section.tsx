@@ -16,7 +16,7 @@ export function LibrarySection() {
         description="Our extensive manga library is one of the exclusive benefits for
               paid members. With hundreds of volumes across various genres,
               there's something for every anime fan!"
-        badgeColor="bg-yellow-200"
+        badgeColor="bg-button3"
       />
       <div className="flex items-center justify-center mx-auto max-w-7xl py-12 flex-col">
         {/* Left side - Image and stats */}
@@ -93,7 +93,7 @@ export function LibrarySection() {
           )}
         </div>
         <div className="text-center pt-32">
-          <Button className="bg-blue-300 hover:bg-blue-400 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <Button className="bg-button2 hover:bg-button1 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <Link href="/library" className="flex items-center">
               <Library className="mr-2 h-4 w-4" />
               View Full Library

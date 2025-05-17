@@ -82,7 +82,7 @@ export default function LibraryPageClient({
   const borrowedManga = totalManga - availableManga;
 
   return (
-    <div className="flex min-h-screen flex-col w-full">
+    <div className="flex min-h-screen flex-col w-full bg-gradient-to-b from-bg1 to-bg2">
       <main className="flex-1">
         <SectionContainer>
           <div className="mb-4">
@@ -97,7 +97,7 @@ export default function LibraryPageClient({
             badge="MANGA"
             title="Our Library"
             description="Browse our collection of manga available to borrow. Paid members can check out up to 3 volumes at a time for up to 2 weeks."
-            badgeColor="bg-cyan-300"
+            badgeColor="bg-button3"
             className="mb-8"
           />
 
@@ -130,7 +130,7 @@ export default function LibraryPageClient({
                 onFilterChange={(newFilters) => setFilters(newFilters)}
               />
 
-              <div className="mt-6 bg-yellow-100 border-2 border-black p-4 rounded-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <div className="mt-6 bg-button3 border-2 border-black p-4 rounded-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <h3 className="text-lg font-bold mb-2 flex items-center">
                   <BookOpen className="h-5 w-5 mr-2" /> Library Rules
                 </h3>
