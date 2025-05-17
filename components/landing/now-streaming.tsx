@@ -10,6 +10,8 @@ import {
   CarouselPrevious,
   CarouselNext,
 } from "../ui/carousel";
+import { SectionContainer } from "../section-container";
+import { SectionHeading } from "../section-heading";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const currentAnime = [
@@ -38,23 +40,18 @@ const currentAnime = [
 
 export function NowStreaming() {
   return (
-    <section className="w-full py-12 md:py-16 overflow-hidden">
-      <div className="container w-full max-w-full px-4 md:px-6 lg:px-8">
-        <div className="flex flex-col items-center justify-center space-y-4 text-center mb-6 md:mb-8">
-          <div className="space-y-2">
-            <div className="inline-block rounded-lg bg-yellow-200 px-3 py-1 text-sm border border-black md:border-2">
-              NOW STREAMING
-            </div>
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
-              This Week's Anime
-            </h2>
-            <p className="max-w-[700px] text-gray-800 md:text-lg">
-              Join us every Wednesday at 6PM in Lecture Theatre G for our weekly
-              anime screenings!
-            </p>
-          </div>
-        </div>
-
+    <SectionContainer
+      id="now-streaming"
+      className="w-full py-12 md:py-16 overflow-hidden"
+    >
+      <SectionHeading
+        badge="NOW STREAMING"
+        title="This Week's Anime"
+        description="Join us every Wednesday at 6PM in Lecture Theatre G for our weekly
+              anime screenings!"
+        badgeColor="bg-yellow-200"
+      />
+      <div className="mx-auto max-w-7xl gap-8 py-12 ">
         <div className="relative mx-auto max-w-2xl border-4 md:border-8 border-black bg-white p-4 sm:p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] md:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
           <div className="mx-auto max-w-7xl gap-6 flex justify-center items-center">
             <Carousel className="w-full lg:max-w-[500]">
@@ -103,6 +100,6 @@ export function NowStreaming() {
           </div>
         </div>
       </div>
-    </section>
+    </SectionContainer>
   );
 }
