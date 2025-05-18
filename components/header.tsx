@@ -15,7 +15,7 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b-4 border-black bg-white">
+    <header className="sticky top-0 z-50 border-b-2 border-black bg-white">
       <div className="container w-full max-w-full px-4 md:px-6 lg:px-8 flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center gap-2 font-bold text-xl">
           <Image
