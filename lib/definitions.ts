@@ -28,7 +28,7 @@ interface Manga {
   title: string;
   author: string;
   volume: number;
-  coverImage: string;
+  coverimage: string;
   genre: string[];
   borrowedby: string | null | undefined;
 }
