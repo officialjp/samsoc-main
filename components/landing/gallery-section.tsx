@@ -26,7 +26,7 @@ export default function GallerySection() {
                   <div className="p-[10px]">
                     <div
                       key={index}
-                      className="overflow-hidden border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
+                      className="overflow-hidden border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                     >
                       <div className="relative flex items-center">
                         {index != 0 && (
