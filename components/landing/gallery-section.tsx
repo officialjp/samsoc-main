@@ -16,7 +16,7 @@ export default function GallerySection() {
           badge="MEMORIES"
           title="Our Gallery"
           description="Highlights from our many past events!"
-          badgeColor="bg-about1"
+          badgeColor="bg-purple-200"
         />
         <div className="mx-auto max-w-7xl gap-6 py-12 flex justify-center items-center">
           <Carousel className="w-full max-w-[500] ">
@@ -68,7 +68,7 @@ export default function GallerySection() {
           badge="MEMORIES"
           title="Our Gallery"
           description="Highlights from our many past events!"
-          badgeColor="bg-about1"
+          badgeColor="bg-purple-200"
         />
         <div className="mx-auto max-w-7xl gap-6 py-12 grid md:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3, 4, 5, 6].map((i) => (

@@ -16,7 +16,7 @@ export function LibrarySection() {
         description="Our extensive manga library is one of the exclusive benefits for
               paid members. With hundreds of volumes across various genres,
               there's something for every anime fan!"
-        badgeColor="bg-about1"
+        badgeColor="bg-purple-200"
       />
       <div className="flex items-center justify-center mx-auto max-w-7xl py-12 flex-col">
         {/* Left side - Image and stats */}
