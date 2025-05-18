@@ -80,16 +80,6 @@ export default function EventsSection() {
               See All Event Types
             </Link>
           </Button>
-
-          <Button
-            asChild
-            className="bg-button2 hover:bg-button1 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-          >
-            <Link href="/calendar" className="flex items-center">
-              <CalendarDays className="mr-2 h-4 w-4" />
-              View Full Calendar
-            </Link>
-          </Button>
         </div>
       </SectionContainer>
     );
@@ -122,16 +112,6 @@ export default function EventsSection() {
             <Link href="/events" className="flex items-center">
               <ListIcon className="mr-2 h-4 w-4" />
               See All Event Types
-            </Link>
-          </Button>
-
-          <Button
-            asChild
-            className="bg-button2 hover:bg-button1 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-          >
-            <Link href="/calendar" className="flex items-center">
-              <CalendarDays className="mr-2 h-4 w-4" />
-              View Full Calendar
             </Link>
           </Button>
         </div>
