@@ -68,7 +68,7 @@ export default async function CalendarPage() {
             badge="SCHEDULE"
             title="Event Calendar"
             description="Browse our upcoming events and regular anime screenings. Click on any event for more details!"
-            badgeColor="bg-button3"
+            badgeColor="bg-purple-200"
             className="mb-12"
           />
 

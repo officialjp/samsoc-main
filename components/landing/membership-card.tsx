@@ -28,7 +28,7 @@ export function MembershipCard({
       className={`border-2 border-black p-6 ${color} rounded-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] relative`}
     >
       {recommended && (
-        <div className="absolute -top-4 -right-4 bg-button1 px-3 py-1 text-sm font-bold border-2 border-black rotate-6">
+        <div className="absolute -top-4 -right-4 bg-membership2 px-3 py-1 text-sm font-bold border-2 border-black rotate-6">
           RECOMMENDED
         </div>
       )}

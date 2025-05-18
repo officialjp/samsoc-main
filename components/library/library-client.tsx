@@ -97,7 +97,7 @@ export default function LibraryPageClient({
             badge="MANGA"
             title="Our Library"
             description="Browse our collection of manga available to borrow. Paid members can check out up to 3 volumes at a time for up to 2 weeks."
-            badgeColor="bg-button3"
+            badgeColor="bg-purple-200"
             className="mb-8"
           />
 

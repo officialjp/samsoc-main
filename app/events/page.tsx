@@ -96,7 +96,7 @@ export default function EventsPage() {
             badge="ACTIVITIES"
             title="Our Events"
             description="Discover the wide range of events we host throughout the academic year. From weekly screenings to special collaborations, there's something for every anime enthusiast!"
-            badgeColor="bg-button3"
+            badgeColor="bg-purple-200"
             className="mb-12"
           />
 

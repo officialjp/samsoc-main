@@ -11,6 +11,15 @@
   --color-button3: #fdcb82;
   --color-text1: #2e2e2e;
   --color-accent1: #56ccf2;
+  --color-accent2: #c3edc8;
+  --color-accent3: #f1e4c6;
+  --color-membership1: #f9bbc9;
+  --color-membership2: #eacceb;
+  --color-membership3: #f3a7c5;
+  --color-membership4: #ed7ca0;
+  --color-about1: #cbccfe;
+  --color-about2: #e8cefd;
+  --color-about3: #fdcdfd;
 }
 
 @theme inline {
