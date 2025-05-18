@@ -16,7 +16,7 @@ export default function GallerySection() {
           badge="MEMORIES"
           title="Our Gallery"
           description="Highlights from our many past events!"
-          badgeColor="bg-button3"
+          badgeColor="bg-purple-200"
         />
         <div className="mx-auto max-w-7xl gap-6 py-12 flex justify-center items-center">
           <Carousel className="w-full max-w-[500] ">
