@@ -34,7 +34,7 @@ export function AboutSection() {
         badge="ABOUT US"
         title="What We're All About"
         description="We're a society for all people that love or are interested in the medium of anime. Everyone is welcome!"
-        badgeColor="bg-about1"
+        badgeColor="bg-purple-200"
       />
       <div className="mx-auto max-w-7xl items-center gap-6 py-12 grid lg:grid-cols-3 lg:gap-12">
         {features.map((feature, index) => (

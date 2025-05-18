@@ -25,7 +25,7 @@ export function AnimeCard({
         />
       </div>
       <h3 className="text-xl font-bold">{title}</h3>
-      <div className="bg-red-300 px-3 py-1 text-sm font-bold inline-block border-2 border-black">
+      <div className="bg-about1 px-3 py-1 text-sm font-bold inline-block border-2 border-black">
         {episode}
       </div>
       <p className="text-sm text-text1 text-center">{description}</p>
