@@ -30,14 +30,11 @@ export default function LibraryPageClient({
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [mangaData, setMangaData] = useState<MangaType[]>(initialMangaData);
   const [filteredManga, setFilteredManga] =
     useState<MangaType[]>(initialMangaData);
   const [paginatedManga, setPaginatedManga] = useState<MangaType[]>(
     initialMangaData.slice(0, ITEMS_PER_PAGE)
   );
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [allGenres, setAllGenres] = useState<string[]>(initialGenres);
 
   useEffect(() => {
@@ -86,7 +83,11 @@ export default function LibraryPageClient({
       <main className="flex-1">
         <SectionContainer>
           <div className="mb-4">
-            <Button asChild variant="outline" className="border-2 border-black">
+            <Button
+              asChild
+              variant="outline"
+              className="border-2 bg-button2 hover:bg-button1 border-black"
+            >
               <Link href="/" className="flex items-center">
                 <ChevronLeft className="mr-2 h-4 w-4" /> Back to Home
               </Link>
@@ -130,7 +131,7 @@ export default function LibraryPageClient({
                 onFilterChange={(newFilters) => setFilters(newFilters)}
               />
 
-              <div className="mt-6 bg-button3 border-2 border-black p-4 rounded-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <div className="mt-6 bg-white border-2 border-black p-4 rounded-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <h3 className="text-lg font-bold mb-2 flex items-center">
                   <BookOpen className="h-5 w-5 mr-2" /> Library Rules
                 </h3>
@@ -160,7 +161,7 @@ export default function LibraryPageClient({
                         title={manga.title}
                         author={manga.author}
                         volume={manga.volume}
-                        coverImage={manga.coverImage}
+                        coverImage={manga.coverimage}
                         genre={manga.genre}
                         isAvailable={
                           !manga.borrowedby || manga.borrowedby === "NULL"

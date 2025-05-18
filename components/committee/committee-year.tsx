@@ -11,7 +11,7 @@ export function CommitteeYear({
       <div className="mb-8 flex items-center">
         <h2 className="text-3xl font-bold">{year}</h2>
         {current && (
-          <span className="ml-4 inline-block bg-button1 px-3 py-1 text-sm font-bold text-white border-2 border-black">
+          <span className="ml-4 inline-block bg-about1 px-3 py-1 text-sm font-bold text-text1 border-2 border-black">
             CURRENT COMMITTEE
           </span>
         )}

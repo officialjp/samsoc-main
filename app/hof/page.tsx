@@ -99,7 +99,11 @@ export default async function HallOfFamePage() {
       <main className="flex-1">
         <SectionContainer>
           <div className="mb-4">
-            <Button asChild variant="outline" className="border-2 border-black">
+            <Button
+              asChild
+              variant="outline"
+              className="border-2 bg-button2 hover:bg-button1 border-black"
+            >
               <Link href="/" className="flex items-center">
                 <ChevronLeft className="mr-2 h-4 w-4" /> Back to Home
               </Link>
@@ -125,7 +129,7 @@ export default async function HallOfFamePage() {
 
             <div className="relative z-10 mt-16">
               <div className="mb-12">
-                <h2 className="inline-block bg-button1 px-4 py-2 text-2xl font-bold border-4 border-black -rotate-1">
+                <h2 className="inline-block bg-about1 px-4 py-2 text-2xl font-bold border-4 border-black -rotate-1">
                   PAST COMMITTEES
                 </h2>
                 <div className="mt-2 h-1 w-full bg-black"></div>
@@ -142,12 +146,12 @@ export default async function HallOfFamePage() {
           </div>
 
           <div className="mt-16 text-center">
-            <div className="inline-block bg-button2 px-4 py-3 border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-2">
+            <div className="inline-block bg-white px-4 py-3 border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-2">
               <h3 className="text-xl font-bold">Want to join the committee?</h3>
               <p className="mb-4">
                 Elections are held at the end of each academic year.
               </p>
-              <Button className="bg-pink-500 hover:bg-pink-600 text-white border-2 border-black rounded-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <Button className="bg-button2 hover:bg-button1 text-text1 border-2 border-black rounded-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <Link href="#join">Learn About Positions</Link>
               </Button>
             </div>
