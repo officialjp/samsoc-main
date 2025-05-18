@@ -47,7 +47,7 @@ export default function EventsSection() {
           badge="CALENDAR"
           title="Upcoming Events"
           description="Check out what's coming up and mark your calendars! All events are open to members and sometimes guests too."
-          badgeColor="bg-purple-200"
+          badgeColor="bg-about1"
         />
         <div className="mx-auto max-w-7xl gap-8 py-12">
           <div className="w-full flex-col items-center gap-4 flex">
@@ -80,16 +80,6 @@ export default function EventsSection() {
               See All Event Types
             </Link>
           </Button>
-
-          <Button
-            asChild
-            className="bg-button2 hover:bg-button1 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-          >
-            <Link href="/calendar" className="flex items-center">
-              <CalendarDays className="mr-2 h-4 w-4" />
-              View Full Calendar
-            </Link>
-          </Button>
         </div>
       </SectionContainer>
     );
@@ -100,7 +90,7 @@ export default function EventsSection() {
           badge="CALENDAR"
           title="Upcoming Events"
           description="Check out what's coming up and mark your calendars! All events are open to members and sometimes guests too."
-          badgeColor="bg-purple-200"
+          badgeColor="bg-about1"
         />
         <div className="mx-auto max-w-7xl gap-8 py-12 grid lg:grid-cols-2">
           {events.map((event, index) => (
@@ -122,16 +112,6 @@ export default function EventsSection() {
             <Link href="/events" className="flex items-center">
               <ListIcon className="mr-2 h-4 w-4" />
               See All Event Types
-            </Link>
-          </Button>
-
-          <Button
-            asChild
-            className="bg-button2 hover:bg-button1 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-          >
-            <Link href="/calendar" className="flex items-center">
-              <CalendarDays className="mr-2 h-4 w-4" />
-              View Full Calendar
             </Link>
           </Button>
         </div>
