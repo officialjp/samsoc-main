@@ -14,13 +14,13 @@ export function HeroSection() {
           <div className="flex flex-col justify-center space-y-4">
             <div className="space-y-2">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tighter">
-                <span className="bg-cyan-500 px-2 py-1 rotate-1 inline-block border-2 border-black">
+                <span className="bg-about3 px-2 py-1 rotate-1 inline-block border-2 border-black">
                   WELCOME
                 </span>{" "}
-                <span className="bg-yellow-300 px-2 py-1 -rotate-2 inline-block border-2 border-black">
+                <span className="bg-about2 px-2 py-1 -rotate-2 inline-block border-2 border-black">
                   TO
                 </span>{" "}
-                <span className="bg-red-500 px-2 py-1 -rotate-2 inline-block border-2 border-black">
+                <span className="bg-about1 px-2 py-1 -rotate-2 inline-block border-2 border-black">
                   SAMsoc!
                 </span>
               </h1>

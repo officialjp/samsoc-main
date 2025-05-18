@@ -47,7 +47,7 @@ export default function EventsSection() {
           badge="CALENDAR"
           title="Upcoming Events"
           description="Check out what's coming up and mark your calendars! All events are open to members and sometimes guests too."
-          badgeColor="bg-purple-200"
+          badgeColor="bg-about1"
         />
         <div className="mx-auto max-w-7xl gap-8 py-12">
           <div className="w-full flex-col items-center gap-4 flex">
@@ -100,7 +100,7 @@ export default function EventsSection() {
           badge="CALENDAR"
           title="Upcoming Events"
           description="Check out what's coming up and mark your calendars! All events are open to members and sometimes guests too."
-          badgeColor="bg-purple-200"
+          badgeColor="bg-about1"
         />
         <div className="mx-auto max-w-7xl gap-8 py-12 grid lg:grid-cols-2">
           {events.map((event, index) => (
