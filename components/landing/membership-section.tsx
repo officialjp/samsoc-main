@@ -30,9 +30,6 @@ export function MembershipSection() {
     >
       <div className="container w-full max-w-full px-4 md:px-6 lg:px-8">
         <div className="relative mx-auto max-w-7xl border-2 md:border-2 border-black bg-white p-4 sm:p-6 md:p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-md">
-          <div className="absolute -top-4 -rotate-3 -left-4 md:-top-6 md:-left-6 bg-button1 px-3 md:px-4 py-1 md:py-2 text-lg md:text-xl font-bold border-2 md:border-4 border-black">
-            JOIN US!
-          </div>
           <div className="space-y-8">
             <h2 className="text-2xl md:text-3xl font-bold text-center">
               Choose Your Membership
@@ -41,14 +38,14 @@ export function MembershipSection() {
             <div className="grid gap-8 md:grid-cols-2">
               <MembershipCard
                 title="FREE MEMBERSHIP"
-                color="bg-accent1"
+                color="bg-membership2"
                 price="£0"
                 period="Forever free"
                 features={freeFeatures}
               />
               <MembershipCard
                 title="PAID MEMBERSHIP"
-                color="bg-button2"
+                color="bg-membership1"
                 price="£2 per year"
                 period="Satiate your manga reading hunger"
                 features={paidFeatures}
@@ -56,7 +53,7 @@ export function MembershipSection() {
               />
             </div>
             <div className="md:col-span-2">
-              <Button className="w-full hover:cursor-pointer bg-pink-500 hover:bg-pink-600 text-white text-base md:text-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <Button className="w-full hover:cursor-pointer bg-membership1 text-text1 text-base md:text-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 Sign Up Now <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>

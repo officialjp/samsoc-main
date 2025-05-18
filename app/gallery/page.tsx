@@ -183,7 +183,7 @@ export default function GalleryPage() {
             badge="MEMORIES"
             title="Photo Gallery"
             description="Browse through our collection of photos from events, weekly sessions, and collaborations over the years."
-            badgeColor="bg-button3"
+            badgeColor="bg-purple-200"
             className="mb-12"
           />
 

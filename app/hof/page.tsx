@@ -110,7 +110,7 @@ export default async function HallOfFamePage() {
             badge="LEADERSHIP"
             title="Hall of Fame"
             description="Meet the dedicated individuals who have led our Anime Society through the years. Their passion and hard work have made our community what it is today."
-            badgeColor="bg-pink-300"
+            badgeColor="bg-purple-200"
             className="mb-16"
           />
 

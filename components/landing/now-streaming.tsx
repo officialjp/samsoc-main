@@ -50,7 +50,7 @@ export function NowStreaming() {
           title="This Week's Anime"
           description="Join us every Wednesday at 6PM in Lecture Theatre G for our weekly
               anime screenings!"
-          badgeColor="bg-button3"
+          badgeColor="bg-purple-200"
         />
         <div className="mx-auto max-w-7xl gap-8 py-12 ">
           <div className="mx-auto max-w-7xl gap-6 flex justify-center items-center">
@@ -106,7 +106,7 @@ export function NowStreaming() {
         title="This Week's Anime"
         description="Join us every Wednesday at 6PM in Lecture Theatre G for our weekly
               anime screenings!"
-        badgeColor="bg-button3"
+        badgeColor="bg-purple-200"
       />
       <div className="container w-full max-w-full py-8 px-8">
         <div className="relative mx-auto max-w-7xl p-4 ">
