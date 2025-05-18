@@ -2,14 +2,11 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="border-t-4 border-black bg-white">
+    <footer className="border-t-2 border-black bg-white">
       <div className="container w-full max-w-full px-4 md:px-6 lg:px-8 flex flex-col gap-4 py-10 md:flex-row md:justify-between">
         <div className="flex flex-col gap-2">
-          <Link href="#" className="flex items-center gap-2 font-bold text-xl">
-            <span className="bg-linear-65 from-red-500 to-pink-500 px-2 py-1 rounded-md border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              Surrey Anime and Manga
-            </span>
-            <span>Society</span>
+          <Link href="/" className="flex items-center gap-2 font-bold text-xl">
+            Surrey Anime and Manga Society
           </Link>
           <p className="text-sm text-gray-500">
             Bringing anime fans together since 2006
