@@ -6,33 +6,21 @@ import useIsMobile from "../mobile-check";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import { SectionContainer } from "../section-container";
 import { SectionHeading } from "../section-heading";
-import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 
-const currentAnime = [
-  {
-    title: "Death Parade",
-    episode: "Finished",
-    description:
-      "After death, some souls go to Quindecim wher arbiter Decim judges them through death games for reincarnation or the void.",
-    image: "/placeholder.svg?height=250&width=180&text=Demon+Slayer",
-  },
-  {
-    title: "Tomo-Chan is a girl",
-    episode: "Finished",
-    description:
-      "Tomboy Tomo is in love with her best friend Jun, but he sees her as a brother. She tries to make him see her romantically.",
-    image: "/placeholder.svg?height=250&width=180&text=My+Hero+Academia",
-  },
-  {
-    title: "Fire Force",
-    episode: "Season 1 Finished",
-    description:
-      "Spontaneous Human Combustion causes Infernals; pyrokinetics can control fire. The Special Fire Force fights Infernals and seeks the cause.",
-    image: "/placeholder.svg?height=250&width=180&text=Spy+x+Family",
-  },
-];
+interface AnimeType {
+  id: number;
+  title: string;
+  episode: string;
+  description: string;
+  public_url: string;
+}
 
-export function NowStreaming() {
+interface NowStreamingProps {
+  animes: AnimeType[];
+}
+
+export function NowStreaming({ animes }: NowStreamingProps) {
   if (useIsMobile()) {
     return (
       <SectionContainer
@@ -50,16 +38,15 @@ export function NowStreaming() {
           <div className="mx-auto max-w-7xl gap-6 flex justify-center items-center">
             <Carousel className="w-full lg:max-w-[500]">
               <CarouselContent>
-                {currentAnime.map((anime, index) => (
-                  <CarouselItem key={index}>
+                {animes.map((anime) => (
+                  <CarouselItem key={anime.id}>
                     <div className="p-[10px]">
                       <div className="relative flex items-center">
                         <AnimeCard
-                          key={index}
                           title={anime.title}
                           episode={anime.episode}
                           description={anime.description}
-                          image={anime.image}
+                          image={anime.public_url}
                         />
                       </div>
                     </div>
@@ -99,13 +86,13 @@ export function NowStreaming() {
       <div className="container w-full max-w-full py-8 px-8">
         <div className="relative mx-auto max-w-7xl p-4 ">
           <div className="grid gap-8 md:grid-cols-3">
-            {currentAnime.map((anime, index) => (
+            {animes.map((anime) => (
               <AnimeCard
-                key={index}
+                key={anime.id}
                 title={anime.title}
                 episode={anime.episode}
                 description={anime.description}
-                image={anime.image}
+                image={anime.public_url}
               />
             ))}
           </div>

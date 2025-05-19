@@ -9,7 +9,17 @@ import useIsMobile from "../mobile-check";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import { ImageIcon } from "lucide-react";
 
-export default function GallerySection() {
+interface ImageType {
+  id: number;
+  public_url: string;
+  alt: string;
+}
+
+interface ImagePropType {
+  images: ImageType[];
+}
+
+export default function GallerySection({ images }: ImagePropType) {
   if (useIsMobile()) {
     return (
       <SectionContainer id="gallery">
@@ -22,19 +32,16 @@ export default function GallerySection() {
         <div className="mx-auto max-w-7xl gap-6 py-12 flex justify-center items-center">
           <Carousel className="w-full max-w-[500] ">
             <CarouselContent>
-              {Array.from({ length: 6 }).map((_, index) => (
-                <CarouselItem key={index}>
+              {images.map((image) => (
+                <CarouselItem key={image.id}>
                   <div className="p-[10px]">
-                    <div
-                      key={index}
-                      className="overflow-hidden border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-                    >
+                    <div className="overflow-hidden border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                       <div className="relative flex items-center">
                         <Image
-                          src={`/placeholder.svg?height=300&width=400&text=Anime+Event+${index}`}
+                          src={image.public_url}
                           width={400}
                           height={300}
-                          alt={`Gallery image ${index}`}
+                          alt={image.alt}
                           className="aspect-video object-cover"
                         />
                         <Image
@@ -73,16 +80,16 @@ export default function GallerySection() {
           badgeColor="bg-purple-200"
         />
         <div className="mx-auto max-w-7xl gap-6 py-12 grid md:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
+          {images.map((i) => (
             <div
-              key={i}
+              key={i.id}
               className="overflow-hidden border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
             >
               <Image
-                src={`/placeholder.svg?height=300&width=400&text=Anime+Event+${i}`}
+                src={i.public_url}
                 width={400}
                 height={300}
-                alt={`Gallery image ${i}`}
+                alt={i.alt}
                 className="aspect-video object-cover transition-all hover:scale-105"
               />
             </div>

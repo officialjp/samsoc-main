@@ -78,6 +78,15 @@ export default async function AnimeSocietyLanding() {
     location: event.location,
   }));
 
+  const { data: galleryData } = await supabase
+    .from("gallery")
+    .select("id, public_url, alt")
+    .limit(6);
+
+  const { data: regularData } = await supabase
+    .from("regular")
+    .select("title, public_url, episode, description, id");
+
   return (
     <div className="flex min-h-screen flex-col w-full bg-gradient-to-b from-bg1 to-bg2">
       <main className="flex-1">
@@ -85,13 +94,13 @@ export default async function AnimeSocietyLanding() {
 
         <AboutSection />
 
-        <NowStreaming />
+        <NowStreaming animes={regularData || []} />
 
         <EventsSection events={formattedEvents || []} />
 
         <LibrarySection />
 
-        <GallerySection />
+        <GallerySection images={galleryData || []} />
 
         <MembershipSection />
       </main>
