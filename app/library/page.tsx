@@ -1,68 +1,39 @@
-import { createClient } from "@/utils/supabase/server";
-import LibraryPageClient from "@/components/library/library-client";
-import { MangaType } from "@/lib/definitions";
+import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 
-async function getMangaWithGenres() {
-  const supabase = await createClient();
-  const { data, error } = await supabase.from("manga").select(`
-        id,
-        title,
-        author,
-        volume,
-        borrowedby,
-        coverimage,
-        genre (
-          genre
-        )
-      `);
+import { SectionContainer } from "@/components/section-container";
+import { SectionHeading } from "@/components/section-heading";
+import { Button } from "@/components/ui/button";
+import LibraryContent from "@/components/library/library-client";
 
-  if (error) {
-    console.error("Error fetching manga with genres:", error);
-    return null;
-  }
-
-  const actualMangaData = data.map((manga) => ({
-    id: manga.id,
-    title: manga.title,
-    author: manga.author,
-    volume: manga.volume,
-    borrowedby: manga.borrowedby,
-    coverimage: manga.coverimage,
-    genre: manga.genre.map((genre) => genre.genre),
-  }));
-
-  return actualMangaData;
-}
-
-async function getGenres() {
-  const supabase = await createClient();
-  const { data: allGenres, error } = await supabase
-    .from("genre")
-    .select("genre");
-
-  if (error) {
-    console.error("Error fetching all genres");
-    return null;
-  }
-
-  return allGenres;
-}
-
-export default async function LibraryPage() {
-  const mangaDataResult = await getMangaWithGenres();
-  const mangaData: MangaType[] = mangaDataResult || [];
-  const genreData: { genre: string }[] | null = await getGenres(); // Assuming you know genre is always string
-
-  let allGenres: string[] = [];
-
-  if (genreData) {
-    allGenres = genreData.map((item) => item.genre);
-  } else {
-    console.warn("Genre data could not be loaded.");
-    allGenres = [];
-  }
-
+export default function LibraryPage() {
   return (
-    <LibraryPageClient initialMangaData={mangaData} initialGenres={allGenres} />
+    <div className="flex min-h-screen flex-col w-full bg-gradient-to-b from-bg1 to-bg2">
+      <main className="flex-1">
+        <SectionContainer>
+          <div className="mb-4">
+            <Button
+              asChild
+              variant="outline"
+              className="border-2 bg-button2 hover:bg-button1 border-black"
+            >
+              <Link href="/" className="flex items-center">
+                <ChevronLeft className="mr-2 h-4 w-4" /> Back to Home
+              </Link>
+            </Button>
+          </div>
+
+          <SectionHeading
+            badge="MANGA"
+            title="Our Library"
+            description="Browse our collection of manga available to borrow. Paid members can check out up to 3 volumes at a time for up to 2 weeks."
+            badgeColor="bg-purple-200"
+            className="mb-8"
+          />
+
+          <LibraryContent />
+        </SectionContainer>
+      </main>
+    </div>
   );
 }
