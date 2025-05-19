@@ -40,7 +40,7 @@ const HallOfFameContent: React.FC = () => {
 
         const { data: allCommittee, error: fetchError } = await supabase
           .from("committee")
-          .select("name, role, image, quote, year")
+          .select("name, role, image, year")
           .order("year", { ascending: false });
 
         if (fetchError) {
