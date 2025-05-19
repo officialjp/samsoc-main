@@ -20,7 +20,7 @@ export function Header() {
         <Link href="/" className="flex items-center gap-2 font-bold text-xl">
           <Image
             src={Logo}
-            className="border-1 border-black rounded-[50%]"
+            className="border-1 border-black rounded-[50%] shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] rotate-2"
             alt="logo"
             height={48}
             width={48}

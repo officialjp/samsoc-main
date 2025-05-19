@@ -120,14 +120,6 @@ export function HeroSection() {
                   </ul>
                 </div>
               </div>
-              <div className="shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] border hidden border-black p-2 rounded-[50%] lg:inline-block rotate-4">
-                <Image
-                  src={Logo}
-                  width={300}
-                  height={300}
-                  alt="Anime Society Members"
-                />
-              </div>
             </div>
           </div>
           <div className="flex flex-col sm:flex-row gap-4 mt-4 sm:mt-6">
@@ -231,14 +223,6 @@ export function HeroSection() {
                     ))}
                   </ul>
                 </div>
-              </div>
-              <div className="shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] border hidden border-black p-2 rounded-[50%] lg:inline-block rotate-4">
-                <Image
-                  src={Logo}
-                  width={300}
-                  height={300}
-                  alt="Anime Society Members"
-                />
               </div>
             </div>
           </div>
