@@ -33,9 +33,10 @@ const LibraryContent: React.FC = () => {
         const supabase = createClient();
 
         // Fetch manga data with joined genre table
-        const { data: mangaData, error: mangaError } = await supabase.from(
-          "manga"
-        ).select(`
+        const { data: mangaData, error: mangaError } = await supabase
+          .from("manga")
+          .select(
+            `
             id,
             title,
             author,
@@ -45,7 +46,9 @@ const LibraryContent: React.FC = () => {
             genre (
               genre
             )
-          `);
+          `
+          )
+          .order("id", { ascending: true });
 
         if (mangaError) {
           setError(`Error fetching manga data: ${mangaError.message}`);
