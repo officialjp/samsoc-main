@@ -1,45 +1,40 @@
 "use client";
 import Link from "next/link";
+import Instagram from "@/public/instagram.svg";
+import Facebook from "@/public/facebook.svg";
 import Image from "next/image";
-import {
-  ChevronRight,
-  Trophy,
-  Award,
-  Ribbon,
-  Star,
-  Circle,
-} from "lucide-react";
+import { ChevronRight, Trophy, Ribbon, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Logo from "@/public/images/logo.png";
 import { cn } from "@/lib/utils";
 import useIsMobile from "../mobile-check";
+import Discord from "@/public/discord.svg";
 
 // Data for the awards
 const awardsData = [
   {
-    title: "Best Society 2023",
+    title: "Society of the Year 2024/25",
     description: "Student Union Awards",
     icon: Trophy,
   },
   {
-    title: "Most Improved 2022",
-    description: "Guild of Students",
-    icon: Award,
+    title: "Society of the Year 2022/23",
+    description: "Student Union Awards",
+    icon: Trophy,
   },
   {
-    title: "Gold Star Accreditation 2021",
-    description: "University Recognition",
-    icon: Star,
+    title: "Society of the Year 2021/22",
+    description: "Student Union Awards",
+    icon: Trophy,
   },
   {
-    title: "Community Impact 2020",
-    description: "Local Council",
+    title: "Alan Sutherland Award 2022/23",
+    description: "Student Union Awards",
     icon: Ribbon,
   },
   {
-    title: "Event of the Year 2024",
-    description: "Student Choice",
-    icon: Circle,
+    title: "Gold RAG Award 2021/22",
+    description: "Student Union Awards",
+    icon: Star,
   },
 ];
 
@@ -64,11 +59,7 @@ export function HeroSection() {
                     SAMsoc!
                   </span>
                 </h1>
-                <p className="max-w-full sm:max-w-[600px] text-base sm:text-lg md:text-xl text-text1">
-                  Join our vibrant community at Surrey!{" "}
-                  <span className="hidden sm:inline">
-                    <br />
-                  </span>
+                <p className="max-w-full text-base sm:text-lg md:text-xl text-text1">
                   Watch anime screenings together and join us at one of our many
                   events!
                 </p>
@@ -125,7 +116,7 @@ export function HeroSection() {
           <div className="flex flex-col sm:flex-row gap-4 mt-4 sm:mt-6">
             <Button
               asChild
-              className="bg-button2 hover:bg-button1 text-white text-base sm:text-lg md:text-xl py-4 sm:py-5 md:py-7 px-4 sm:px-6 md:px-8 border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] animate-pulse"
+              className="bg-thebutton text-white text-base sm:text-lg md:text-xl py-4 sm:py-5 md:py-7 px-4 sm:px-6 md:px-8 border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] "
             >
               <Link href="#join" className="flex items-center justify-center">
                 <span className="mr-2">🎉</span> Join Now{" "}
@@ -142,41 +133,49 @@ export function HeroSection() {
         <div className="container w-full max-w-full px-4 md:px-6 lg:px-8">
           <div className="grid gap-6 md:gap-8 lg:gap-12 lg:grid-cols-2 xl:grid-cols-[1fr_auto]">
             {" "}
-            <div className="flex flex-col justify-center space-y-6 md:space-y-8">
+            <div className="flex flex-col justify-center space-y-6 md:space-y-12">
               <div className="space-y-2">
                 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tighter">
                   <span className="bg-about3 px-2 py-1 rotate-1 inline-block border-2 border-black">
                     WELCOME
                   </span>{" "}
-                  <span className="bg-about2 px-2 py-1 -rotate-2 inline-block border-2 border-black">
+                  <span className="bg-about2 px-2 py-1 -rotate-1 inline-block border-2 border-black">
                     TO
                   </span>{" "}
-                  <span className="bg-about1 px-2 py-1 -rotate-2 inline-block border-2 border-black">
+                  <span className="bg-about1 px-2 py-1 -rotate-1 inline-block border-2 border-black">
                     SAMsoc!
                   </span>
                 </h1>
-                <p className="max-w-full sm:max-w-[600px] text-base sm:text-lg md:text-xl text-text1">
-                  Join our vibrant community at Surrey!{" "}
-                  <span className="hidden sm:inline">
-                    <br />
-                  </span>
-                  Watch anime screenings together and join us at one of our many
-                  events!
+                <p className="max-w-full sm:max-w-[700px] text-base sm:text-lg md:text-xl text-text1 pt-14">
+                  Join our Anime and Manga Society at Surrey and watch anime
+                  screenings together or join us at one of our many events!
                 </p>
               </div>
-              <div className="flex flex-col sm:flex-row gap-4 mt-4 sm:mt-6">
-                <Button
-                  asChild
-                  className="bg-button2 hover:bg-button1 text-white text-base sm:text-lg md:text-xl py-4 sm:py-5 md:py-7 px-4 sm:px-6 md:px-8 border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] animate-pulse"
-                >
-                  <Link
-                    href="#join"
-                    className="flex items-center justify-center"
-                  >
-                    <span className="mr-2">🎉</span> Join Now{" "}
-                    <ChevronRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
-                  </Link>
-                </Button>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link href="https://www.instagram.com/unisamsoc/?hl=en">
+                  <Image
+                    src={Instagram}
+                    alt="Instagram logo"
+                    height={48}
+                    width={48}
+                  />
+                </Link>
+                <Link href="https://www.facebook.com/UniSAMSoc">
+                  <Image
+                    src={Facebook}
+                    alt="Facebook logo"
+                    height={48}
+                    width={48}
+                  />
+                </Link>
+                <Link href="https://www.discord.com">
+                  <Image
+                    src={Discord}
+                    alt="Discord logo"
+                    height={48}
+                    width={48}
+                  />
+                </Link>
               </div>
             </div>
             <div className="lg:block justify-center mt-8 lg:mt-0 flex flex-row items-center">
@@ -225,6 +224,17 @@ export function HeroSection() {
                 </div>
               </div>
             </div>
+          </div>
+          <div className="flex flex-row py-6 items-center justify-center">
+            <Button
+              asChild
+              className="bg-thebutton hover:bg-thebutton2 text-white text-base sm:text-lg md:text-xl py-4 sm:py-5 md:py-7 px-4 sm:px-6 md:px-8 border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+            >
+              <Link href="#join" className="flex items-center justify-center">
+                <span className="mr-2">🎉</span> Join Now!{" "}
+                <ChevronRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
