@@ -54,9 +54,6 @@ export function NowStreaming() {
                   <CarouselItem key={index}>
                     <div className="p-[10px]">
                       <div className="relative flex items-center">
-                        {index != 0 && (
-                          <ChevronLeft className="absolute text-gray-500 left-2 top-1/2 -translate-y-1/2" />
-                        )}
                         <AnimeCard
                           key={index}
                           title={anime.title}
@@ -64,9 +61,6 @@ export function NowStreaming() {
                           description={anime.description}
                           image={anime.image}
                         />
-                        {index != 2 && (
-                          <ChevronRight className="absolute text-gray-500 right-2 top-1/2 -translate-y-1/2" />
-                        )}
                       </div>
                     </div>
                   </CarouselItem>
