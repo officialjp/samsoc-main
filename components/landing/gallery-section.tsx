@@ -1,5 +1,5 @@
 "use client";
-import { ChevronLeft, ChevronRight, ImageIcon } from "lucide-react";
+import SwipeRight from "@/public/hand-swipe-right.svg";
 import { SectionContainer } from "../section-container";
 import { SectionHeading } from "../section-heading";
 import { Button } from "../ui/button";
@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import useIsMobile from "../mobile-check";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
+import { ImageIcon } from "lucide-react";
 
 export default function GallerySection() {
   if (useIsMobile()) {
@@ -29,9 +30,6 @@ export default function GallerySection() {
                       className="overflow-hidden border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                     >
                       <div className="relative flex items-center">
-                        {index != 0 && (
-                          <ChevronLeft className="absolute text-gray-500 -left-2 top-1/2 -translate-y-1/2" />
-                        )}
                         <Image
                           src={`/placeholder.svg?height=300&width=400&text=Anime+Event+${index}`}
                           width={400}
@@ -39,9 +37,13 @@ export default function GallerySection() {
                           alt={`Gallery image ${index}`}
                           className="aspect-video object-cover"
                         />
-                        {index != 5 && (
-                          <ChevronRight className="absolute text-gray-500 -right-2 top-1/2 -translate-y-1/2" />
-                        )}
+                        <Image
+                          alt="icon"
+                          className="lg:hidden absolute bottom-1 right-1"
+                          src={SwipeRight}
+                          height={20}
+                          width={20}
+                        />
                       </div>
                     </div>
                   </div>
