@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import Image from "next/image";
 import Logo from "@/public/images/logo.png";
+import Instagram from "@/public/instagram.svg";
+import Facebook from "@/public/facebook.svg";
+import Discord from "@/public/discord.svg";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -26,7 +29,22 @@ export function Header() {
             width={48}
           />
         </Link>
-
+        <div className="flex-row flex gap-6 lg:hidden">
+          <Link href="https://www.instagram.com/unisamsoc/?hl=en">
+            <Image
+              src={Instagram}
+              alt="Instagram logo"
+              height={30}
+              width={30}
+            />
+          </Link>
+          <Link href="https://www.facebook.com/UniSAMSoc">
+            <Image src={Facebook} alt="Facebook logo" height={30} width={30} />
+          </Link>
+          <Link href="https://www.discord.com">
+            <Image src={Discord} alt="Discord logo" height={30} width={30} />
+          </Link>
+        </div>
         {/* Desktop Navigation */}
         <nav className="hidden md:flex gap-6 ml-auto pr-6">
           <Link
