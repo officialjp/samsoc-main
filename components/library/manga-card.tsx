@@ -26,7 +26,7 @@ const MangaCard: React.FC<MangaCardProps> = ({
     <div className="bg-white rounded-md p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-row items-center border-2 border-black">
       <div className="mr-4 h-48 w-32 relative border-2 border-black">
         <Image
-          src={coverImage}
+          src={coverImage || "/placeholder.svg"}
           alt={`${title} Volume ${volume} cover`}
           fill
           className="object-contain"
