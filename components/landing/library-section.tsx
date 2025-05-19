@@ -20,7 +20,6 @@ export function LibrarySection() {
         badgeColor="bg-purple-200"
       />
       <div className="flex items-center justify-center mx-auto max-w-7xl py-12 flex-col">
-        {/* Left side - Image and stats */}
         <div className="relative">
           <div className="overflow-hidden border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             {useIsMobile() ? (
@@ -41,8 +40,6 @@ export function LibrarySection() {
               />
             )}
           </div>
-
-          {/* Stats overlay - Adjusted for mobile */}
           {useIsMobile() ? (
             <div className="absolute -left-4 -bottom-20 bg-white border-2 rounded-md border-black p-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-3">
               <h3 className="text-base md:text-xl font-bold mb-1 md:mb-2">
@@ -94,7 +91,7 @@ export function LibrarySection() {
           )}
         </div>
         <div className="text-center pt-32">
-          <Button className="bg-button2 hover:bg-button1 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <Button className="bg-button2 hover:bg-button1 hover:cursor-pointer text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <Link href="/library" className="flex items-center">
               <Library className="mr-2 h-4 w-4" />
               View Full Library

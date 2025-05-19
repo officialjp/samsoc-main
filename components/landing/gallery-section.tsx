@@ -102,10 +102,10 @@ export function GalleryContent() {
           >
             <Image
               src={i.public_url}
-              width={400}
+              width={450}
               height={300}
               alt={i.alt}
-              className="aspect-video object-cover transition-all hover:scale-105"
+              className="aspect-video object-cover"
             />
           </div>
         ))}
