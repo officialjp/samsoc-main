@@ -76,7 +76,7 @@ export default async function AnimeSocietyLanding() {
             description="Highlights from our many past events!"
             badgeColor="bg-purple-200"
           />
-          <GalleryContent /> {/* Render the client-side gallery content */}
+          <GalleryContent />
           <div className="text-center mt-8">
             <Button className="bg-button2 hover:bg-button1 hover:cursor-pointer text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <Link href="/gallery" className="flex items-center">
