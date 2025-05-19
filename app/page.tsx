@@ -1,92 +1,17 @@
 import { HeroSection } from "@/components/landing/hero-section";
-import { NowStreaming } from "@/components/landing/now-streaming";
+import { NowStreamingContent } from "@/components/landing/now-streaming";
 import { MembershipSection } from "@/components/landing/membership-section";
 import { LibrarySection } from "@/components/landing/library-section";
 import { AboutSection } from "@/components/landing/about-section";
-import EventsSection from "@/components/landing/events-section";
-import GallerySection from "@/components/landing/gallery-section";
-import { createClient } from "@/utils/supabase/server";
-
-function formatDate(inputDate: string): string {
-  try {
-    const dateParts = inputDate.split("-");
-    if (dateParts.length !== 3) {
-      return "null"; // Invalid input format
-    }
-
-    const year = parseInt(dateParts[0], 10);
-    const month = parseInt(dateParts[1], 10) - 1; // Month is 0-indexed
-    const day = parseInt(dateParts[2], 10);
-
-    const date = new Date(year, month, day);
-
-    const monthNames = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
-
-    const dayWithSuffix = (day: number): string => {
-      if (day >= 11 && day <= 13) {
-        return `${day}th`;
-      }
-      switch (day % 10) {
-        case 1:
-          return `${day}st`;
-        case 2:
-          return `${day}nd`;
-        case 3:
-          return `${day}rd`;
-        default:
-          return `${day}th`;
-      }
-    };
-
-    const formattedMonth = monthNames[date.getMonth()];
-    const formattedDay = dayWithSuffix(date.getDate());
-
-    return `${formattedMonth} ${formattedDay}`;
-  } catch (error) {
-    console.error("Error formatting date:", error);
-    return "null";
-  }
-}
+import { EventsContent } from "@/components/landing/events-section";
+import { GalleryContent } from "@/components/landing/gallery-section"; // Import the new content component
+import { SectionContainer } from "@/components/section-container";
+import { SectionHeading } from "@/components/section-heading";
+import { Button } from "@/components/ui/button";
+import { CalendarDays, ListIcon, ImageIcon } from "lucide-react";
+import Link from "next/link";
 
 export default async function AnimeSocietyLanding() {
-  const supabase = await createClient();
-
-  const { data: fourEvents } = await supabase
-    .from("events")
-    .select("id, date, title, description, location")
-    .order("date", { ascending: false })
-    .limit(4);
-
-  const formattedEvents = fourEvents?.map((event) => ({
-    id: event.id,
-    date: formatDate(event.date),
-    title: event.title,
-    description: event.description,
-    location: event.location,
-  }));
-
-  const { data: galleryData } = await supabase
-    .from("gallery")
-    .select("id, public_url, alt")
-    .limit(6);
-
-  const { data: regularData } = await supabase
-    .from("regular")
-    .select("title, public_url, episode, description, id");
-
   return (
     <div className="flex min-h-screen flex-col w-full bg-gradient-to-b from-bg1 to-bg2">
       <main className="flex-1">
@@ -94,13 +19,75 @@ export default async function AnimeSocietyLanding() {
 
         <AboutSection />
 
-        <NowStreaming animes={regularData || []} />
+        <SectionContainer
+          id="now-streaming"
+          className="w-full py-12 md:py-16 overflow-hidden"
+        >
+          <SectionHeading
+            badge="NOW STREAMING"
+            title="This Week's Anime"
+            description="Join us every Wednesday at 6PM in Lecture Theatre G for our weekly
+              anime screenings!"
+            badgeColor="bg-purple-200"
+          />
+          <NowStreamingContent />
+          <div className="mt-8 text-center">
+            <p className="font-medium mb-4">
+              Don't worry if you've missed previous episodes - you have plenty
+              of time to catch-up!
+            </p>
+            <Button
+              asChild
+              className="bg-button2 hover:bg-button1 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+            >
+              <Link href="/calendar" className="flex items-center">
+                <CalendarDays className="mr-2 h-4 w-4" />
+                View Full Calendar
+              </Link>
+            </Button>
+          </div>
+        </SectionContainer>
 
-        <EventsSection events={formattedEvents || []} />
+        <SectionContainer id="events">
+          <SectionHeading
+            badge="CALENDAR"
+            title="Upcoming Events"
+            description="Check out what's coming up and mark your calendars! All events are open to members and sometimes guests too."
+            badgeColor="bg-purple-200"
+          />
+          <EventsContent />
+          <div className="flex items-center justify-center flex-col gap-4 mt-8">
+            <Button
+              asChild
+              className="bg-button2 hover:bg-button1 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+            >
+              <Link href="/events" className="flex items-center">
+                <ListIcon className="mr-2 h-4 w-4" />
+                See All Event Types
+              </Link>
+            </Button>
+          </div>
+        </SectionContainer>
+
+        <SectionContainer id="gallery">
+          <SectionHeading
+            badge="MEMORIES"
+            title="Our Gallery"
+            description="Highlights from our many past events!"
+            badgeColor="bg-purple-200"
+          />
+          <GalleryContent /> {/* Render the client-side gallery content */}
+          <div className="text-center mt-8">
+            <Button className="bg-button2 hover:bg-button1 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <Link href="/gallery" className="flex items-center">
+                <ImageIcon className="mr-2 h-4 w-4" />
+                View Full Gallery
+              </Link>
+            </Button>
+          </div>
+        </SectionContainer>
 
         <LibrarySection />
-
-        <GallerySection images={galleryData || []} />
 
         <MembershipSection />
       </main>
