@@ -28,7 +28,7 @@ export function EventsContent() {
 
         const { data: fourEvents, error: fetchError } = await supabase
           .from("events")
-          .select("id, date, title, description, location")
+          .select("id, date, title, description, location, isregularsession")
           .order("date", { ascending: false })
           .limit(4);
 
@@ -91,13 +91,15 @@ export function EventsContent() {
           }
         };
 
-        const formattedEvents = fourEvents?.map((event) => ({
-          id: event.id,
-          date: formatDate(event.date),
-          title: event.title,
-          description: event.description,
-          location: event.location,
-        })) as EventsItem[];
+        const formattedEvents = fourEvents
+          ?.filter((event) => !event.isregularsession)
+          .map((event) => ({
+            id: event.id,
+            date: formatDate(event.date),
+            title: event.title,
+            description: event.description,
+            location: event.location,
+          })) as EventsItem[];
 
         setEvents(formattedEvents);
       } catch (err: any) {
