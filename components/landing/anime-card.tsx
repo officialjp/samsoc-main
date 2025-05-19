@@ -30,7 +30,7 @@ export function AnimeCard({
       <div className="bg-about1 rounded-md px-3 py-1 text-sm font-bold inline-block border-2 border-black">
         {episode}
       </div>
-      <p className="text-sm text-text1 text-center">{description}</p>
+      <p className="text-sm text-text1 text-center mt-auto">{description}</p>
       <Image
         alt="icon"
         className="lg:hidden absolute bottom-1 right-1"
