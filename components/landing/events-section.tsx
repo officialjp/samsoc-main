@@ -8,38 +8,19 @@ import Link from "next/link";
 import useIsMobile from "../mobile-check";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 
-export default function EventsSection() {
-  const events = [
-    {
-      date: "June 6",
-      title: "Karaoke Night",
-      description:
-        "Come jam out with us on stage to a list of anime songs suggested by our members!",
-      location: "Wates Green Room",
-    },
-    {
-      date: "June 6",
-      title: "Karaoke Night",
-      description:
-        "Come jam out with us on stage to a list of anime songs suggested by our members!",
-      location: "Wates Green Room",
-    },
-    {
-      date: "June 6",
-      title: "Karaoke Night",
-      description:
-        "Come jam out with us on stage to a list of anime songs suggested by our members!",
-      location: "Wates Green Room",
-    },
-    {
-      date: "June 6",
-      title: "Karaoke Night",
-      description:
-        "Come jam out with us on stage to a list of anime songs suggested by our members!",
-      location: "Wates Green Room",
-    },
-  ];
+interface EventsItem {
+  id: number;
+  date: string;
+  title: string;
+  description: string;
+  location: string;
+}
 
+interface EventsData {
+  events: EventsItem[];
+}
+
+export default function EventsSection({ events }: EventsData) {
   if (useIsMobile()) {
     return (
       <SectionContainer id="events">
@@ -53,15 +34,15 @@ export default function EventsSection() {
           <div className="w-full flex-col items-center gap-4 flex">
             <Carousel className="w-full lg:max-w-[500]">
               <CarouselContent>
-                {Array.from({ length: 4 }).map((_, index) => (
-                  <CarouselItem key={index}>
+                {events.map((event) => (
+                  <CarouselItem key={event.id}>
                     <div className="p-[10px]">
                       <EventCard
-                        id={index}
-                        date={events[index].date}
-                        location={events[index].location}
-                        description={events[index].description}
-                        title={events[index].title}
+                        id={event.id}
+                        date={event.date}
+                        location={event.location}
+                        description={event.description}
+                        title={event.title}
                       />
                     </div>
                   </CarouselItem>
@@ -93,10 +74,10 @@ export default function EventsSection() {
           badgeColor="bg-purple-200"
         />
         <div className="mx-auto max-w-7xl gap-8 py-12 grid lg:grid-cols-2">
-          {events.map((event, index) => (
+          {events.map((event) => (
             <EventCard
-              key={index}
-              id={index}
+              key={event.id}
+              id={event.id}
               date={event.date}
               description={event.description}
               location={event.location}

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { SectionHeading } from "../section-heading";
 import { SectionContainer } from "../section-container";
 import useIsMobile from "../mobile-check";
+import LibraryPhoto from "@/public/images/library-placeholder.webp";
 
 export function LibrarySection() {
   return (
@@ -24,7 +25,7 @@ export function LibrarySection() {
           <div className="overflow-hidden border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             {useIsMobile() ? (
               <Image
-                src={`/placeholder.svg?height=300&width=400&text=Anime+Event`}
+                src={LibraryPhoto}
                 height={200}
                 width={360}
                 alt={`Gallery image`}
@@ -32,7 +33,7 @@ export function LibrarySection() {
               />
             ) : (
               <Image
-                src={`/placeholder.svg?height=300&width=400&text=Anime+Event`}
+                src={LibraryPhoto}
                 height={360}
                 width={640}
                 alt={`Gallery image`}
