@@ -3,13 +3,7 @@ import { Button } from "@/components/ui/button";
 import { AnimeCard } from "@/components/landing/anime-card";
 import Link from "next/link";
 import useIsMobile from "../mobile-check";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselPrevious,
-  CarouselNext,
-} from "../ui/carousel";
+import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import { SectionContainer } from "../section-container";
 import { SectionHeading } from "../section-heading";
 import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";

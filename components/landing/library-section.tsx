@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { BookOpen, Check, ArrowRight, Library } from "lucide-react";
+import { Check, Library } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SectionHeading } from "../section-heading";
 import { SectionContainer } from "../section-container";
