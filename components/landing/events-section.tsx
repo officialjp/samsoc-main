@@ -1,5 +1,5 @@
 "use client";
-import { ListIcon, CalendarDays } from "lucide-react";
+import { ListIcon } from "lucide-react";
 import { EventCard } from "./event-card";
 import { SectionContainer } from "../section-container";
 import { SectionHeading } from "../section-heading";
