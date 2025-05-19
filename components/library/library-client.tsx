@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { BookOpen } from "lucide-react";
-import { MangaCard } from "@/components/library/manga-card";
+import MangaCard from "@/components/library/manga-card";
 import { LibraryFilters } from "@/components/library/library-filters";
 import { Pagination } from "@/components/pagination";
 import { MangaType } from "@/lib/definitions";
@@ -74,7 +74,7 @@ const LibraryContent: React.FC = () => {
           // Don't block the page if genres fail, but log the error
         } else {
           const fetchedGenres = genresData.map((g) => g.genre);
-          setAllGenres(["all", ...Array.from(new Set(fetchedGenres)).sort()]);
+          setAllGenres([...Array.from(new Set(fetchedGenres)).sort()]);
         }
       } catch (err: any) {
         setError(`An unexpected error occurred: ${err.message}`);

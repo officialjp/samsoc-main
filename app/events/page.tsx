@@ -29,7 +29,7 @@ export default function EventsPage() {
         "The heart of our society! Join us for regular screenings of both classic and current anime series and films. Each screening is followed by a casual discussion where members can share their thoughts, analyze themes, and debate their favorite moments.",
       frequency: "Weekly (Wednesday)",
       image: "/placeholder.svg?height=400&width=300&text=Screenings",
-      color: "bg-cyan-200",
+      color: "bg-about1",
       examples: ["Regular Screenings", "Movie Night", "Final Session Showcase"],
     },
     // {

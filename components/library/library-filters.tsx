@@ -98,7 +98,7 @@ export function LibraryFilters({
                     ? "bg-green-300 hover:bg-green-400 text-black"
                     : statusOption === "borrowed"
                     ? "bg-red-300 hover:bg-red-400 text-black"
-                    : "bg-yellow-300 hover:bg-yellow-400 text-black"
+                    : "bg-about1 hover:bg-about-1 text-black"
                   : "bg-white hover:bg-gray-100 text-black"
               )}
             >
@@ -121,7 +121,7 @@ export function LibraryFilters({
             className={cn(
               "border-2 border-black hover:cursor-pointer",
               selectedGenre === "all"
-                ? "bg-yellow-300 hover:bg-yellow-400 text-black"
+                ? "bg-about1 hover:bg-about1 text-black"
                 : "bg-white hover:bg-gray-100 text-black"
             )}
           >
@@ -134,7 +134,7 @@ export function LibraryFilters({
               className={cn(
                 "border-2 border-black hover:cursor-pointer",
                 selectedGenre === genre
-                  ? "bg-cyan-300 hover:bg-cyan-400 text-black"
+                  ? "bg-green-300 hover:bg-green-400 text-black"
                   : "bg-white hover:bg-gray-100 text-black"
               )}
             >
