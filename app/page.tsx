@@ -59,7 +59,7 @@ export default async function AnimeSocietyLanding() {
           <div className="flex items-center justify-center flex-col gap-4 mt-8">
             <Button
               asChild
-              className="bg-button2 hover:bg-button1 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+              className="bg-button2 hover:bg-button1 hover:cursor-pointer text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
             >
               <Link href="/events" className="flex items-center">
                 <ListIcon className="mr-2 h-4 w-4" />
@@ -78,7 +78,7 @@ export default async function AnimeSocietyLanding() {
           />
           <GalleryContent /> {/* Render the client-side gallery content */}
           <div className="text-center mt-8">
-            <Button className="bg-button2 hover:bg-button1 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <Button className="bg-button2 hover:bg-button1 hover:cursor-pointer text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <Link href="/gallery" className="flex items-center">
                 <ImageIcon className="mr-2 h-4 w-4" />
                 View Full Gallery
