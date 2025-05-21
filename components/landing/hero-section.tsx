@@ -2,7 +2,6 @@
 import Link from 'next/link';
 import Instagram from '@/public/instagram.svg';
 import Facebook from '@/public/facebook.svg';
-import Image from 'next/image';
 import { ChevronRight, Trophy, Ribbon, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SvgIcon } from '@/components/ui/svgIcon';
