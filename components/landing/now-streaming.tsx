@@ -65,13 +65,13 @@ export function NowStreamingContent() {
 
 	if (isMobile) {
 		return (
-			<div className="mx-auto max-w-7xl gap-8 py-12 ">
-				<div className="mx-auto max-w-7xl gap-6 flex justify-center items-center">
+			<div className="mx-0 m-w-screen w-screen gap-8 py-12 -ml-4 md:-ml-6 lg:-ml-8">
+				<div className="mx-0 w-screen gap-6 flex justify-center items-center">
 					<Carousel className="w-full lg:max-w-[500]">
 						<CarouselContent>
 							{animes.map((anime) => (
 								<CarouselItem key={anime.id}>
-									<div className="p-[10px]">
+									<div className="p-[16px]">
 										<div className="relative flex items-center">
 											<AnimeCard
 												title={anime.title}
