@@ -39,7 +39,7 @@ export function Header() {
 							src={Instagram.src}
 							height={30}
 							width={30}
-							className={'bg-black'}
+							className={'bg-[#ff0069]'}
 						></SvgIcon>
 					</Link>
 					<Link href="https://www.facebook.com/UniSAMSoc">
@@ -47,7 +47,7 @@ export function Header() {
 							src={Facebook.src}
 							height={30}
 							width={30}
-							className={'bg-black'}
+							className={'bg-[#0866ff]'}
 						></SvgIcon>
 					</Link>
 					<Link href="https://www.discord.com">
@@ -55,7 +55,7 @@ export function Header() {
 							src={Discord.src}
 							height={30}
 							width={30}
-							className={'bg-black'}
+							className={'bg-[#5865f2]'}
 						></SvgIcon>
 					</Link>
 				</div>

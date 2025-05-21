@@ -161,7 +161,7 @@ export function HeroSection() {
 										src={Instagram.src}
 										height={48}
 										width={48}
-										className={'bg-black'}
+										className={'bg-[#ff0069]'}
 									></SvgIcon>
 								</Link>
 								<Link href="https://www.facebook.com/UniSAMSoc">
@@ -169,7 +169,7 @@ export function HeroSection() {
 										src={Facebook.src}
 										height={48}
 										width={48}
-										className={'bg-black'}
+										className={'bg-[#0866ff]'}
 									></SvgIcon>
 								</Link>
 								<Link href="https://www.discord.com">
@@ -177,7 +177,7 @@ export function HeroSection() {
 										src={Discord.src}
 										height={48}
 										width={48}
-										className={'bg-black'}
+										className={'bg-[#5865f2]'}
 									></SvgIcon>
 								</Link>
 							</div>
