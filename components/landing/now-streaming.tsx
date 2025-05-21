@@ -11,6 +11,7 @@ interface AnimeType {
 	episode: string;
 	description: string;
 	public_url: string;
+	mal: string;
 }
 
 export function NowStreamingContent() {
@@ -78,6 +79,7 @@ export function NowStreamingContent() {
 												episode={anime.episode}
 												description={anime.description}
 												image={anime.public_url}
+												url={anime.mal}
 											/>
 										</div>
 									</div>
@@ -100,6 +102,7 @@ export function NowStreamingContent() {
 							episode={anime.episode}
 							description={anime.description}
 							image={anime.public_url}
+							url={anime.mal}
 						/>
 					))}
 				</div>
