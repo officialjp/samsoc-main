@@ -11,6 +11,7 @@ interface AnimeType {
 	episode: string;
 	description: string;
 	public_url: string;
+	mal: string;
 }
 
 export function NowStreamingContent() {
@@ -71,13 +72,14 @@ export function NowStreamingContent() {
 						<CarouselContent>
 							{animes.map((anime) => (
 								<CarouselItem key={anime.id}>
-									<div className="p-[16px]">
-										<div className="relative flex items-center">
+									<div className="p-[16px] h-full">
+										<div className="relative flex items-center h-full">
 											<AnimeCard
 												title={anime.title}
 												episode={anime.episode}
 												description={anime.description}
 												image={anime.public_url}
+												url={anime.mal}
 											/>
 										</div>
 									</div>
@@ -100,6 +102,7 @@ export function NowStreamingContent() {
 							episode={anime.episode}
 							description={anime.description}
 							image={anime.public_url}
+							url={anime.mal}
 						/>
 					))}
 				</div>
