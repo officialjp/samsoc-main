@@ -1,6 +1,13 @@
 import { cn } from '@/lib/utils';
 
-function SvgIcon({ className, src, height, width }: React.ComponentProps<any>) {
+interface SvgIconProps {
+	className: string;
+	width: number;
+	height: number;
+	src: string;
+}
+
+function SvgIcon({ className, height, width, src }: SvgIconProps) {
 	return (
 		<span
 			className={cn(
