@@ -1,5 +1,6 @@
 import { ImageResponse } from 'next/og';
-import Samsoc from '@/public/images/logo.png';
+import { join } from 'node:path';
+import { readFile } from 'node:fs/promises';
 
 export const alt = 'samsoc logo';
 export const size = {
@@ -8,7 +9,10 @@ export const size = {
 };
 export const contentType = 'image/png';
 
-export default function Image() {
+export default async function Image() {
+	const data = await readFile(join(process.cwd(), 'public/images/logo.png'));
+	const src = Uint8Array.from(data).buffer;
+
 	return new ImageResponse(
 		(
 			<img
@@ -17,7 +21,7 @@ export default function Image() {
 					height: '100%',
 					background: '#c01a21',
 				}}
-				src={Samsoc.src}
+				src={src}
 				alt="samsoc"
 			/>
 		),
