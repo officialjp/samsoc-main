@@ -102,7 +102,7 @@ export function Header() {
 
 					{/* Mobile Menu Button */}
 					<button
-						className="md:hidden p-2 text-black"
+						className="md:hidden p-2 text-black hover:cursor-pointer"
 						onClick={toggleMenu}
 						aria-label="Toggle menu"
 					>
