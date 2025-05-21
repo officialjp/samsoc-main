@@ -72,8 +72,8 @@ export function NowStreamingContent() {
 						<CarouselContent>
 							{animes.map((anime) => (
 								<CarouselItem key={anime.id}>
-									<div className="p-[16px]">
-										<div className="relative flex items-center">
+									<div className="p-[16px] h-full">
+										<div className="relative flex items-center h-full">
 											<AnimeCard
 												title={anime.title}
 												episode={anime.episode}

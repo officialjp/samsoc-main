@@ -11,7 +11,7 @@ function SvgIcon({ className, height, width, src }: SvgIconProps) {
 	return (
 		<span
 			className={cn(
-				'mask-no-repeat mask-center block relative',
+				'mask-no-repeat mask-contain mask-center block relative',
 				className,
 			)}
 			style={{
