@@ -49,7 +49,8 @@ export function generateImageMetadata() {
 
 export default async function Icon({ size }: any) {
 	const data = await readFile(join(process.cwd(), 'public/images/logo.png'));
-	const src = Uint8Array.from(data).buffer;
+	const base64Image = data.toString('base64');
+	const src = `data:image/png;base64,${base64Image}`;
 
 	return new ImageResponse(
 		(
