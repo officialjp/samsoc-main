@@ -156,7 +156,7 @@ function CarouselContent({ className, ...props }: React.ComponentProps<'div'>) {
 		>
 			<div
 				className={cn(
-					'flex',
+					'flex pr-[50px]',
 					orientation === 'horizontal' ? '-ml-4' : '-mt-4 flex-col',
 					className,
 				)}
