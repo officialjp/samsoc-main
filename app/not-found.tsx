@@ -64,7 +64,7 @@ export default function NotFound() {
 					>
 						<SectionHeading
 							badge="uh oh..."
-							title="404 Page Not Found"
+							title="404: Page Not Found"
 							description="The page you were looking for doesnt exist"
 							badgeColor="bg-purple-200"
 						/>
