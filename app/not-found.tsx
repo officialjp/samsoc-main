@@ -90,6 +90,7 @@ export default function NotFound() {
 							width={200}
 							height={200}
 							alt={'404 image'}
+							draggable={false}
 							className="mx-auto"
 						/>
 						<SectionHeading
