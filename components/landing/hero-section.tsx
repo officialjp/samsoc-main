@@ -52,16 +52,17 @@ export function HeroSection() {
 									<span className="bg-about3 px-2 py-1 rotate-1 inline-block border-2 border-black">
 										WELCOME
 									</span>{' '}
-									<span className="bg-about2 px-2 py-1 -rotate-2 inline-block border-2 border-black">
+									<span className="bg-about2 px-2 py-1 -rotate-1 inline-block border-2 border-black">
 										TO
 									</span>{' '}
-									<span className="bg-about1 px-2 py-1 -rotate-2 inline-block border-2 border-black">
+									<span className="bg-about1 px-2 py-1 -rotate-1 inline-block border-2 border-black">
 										SAMsoc!
 									</span>
 								</h1>
 								<p className="max-w-full text-base sm:text-lg md:text-xl text-text1">
-									Watch anime screenings together and join us
-									at one of our many events!
+									Join our Anime and Manga Society at Surrey
+									and watch anime screenings together or join
+									us at one of our many events!
 								</p>
 							</div>
 						</div>
@@ -155,7 +156,7 @@ export function HeroSection() {
 									us at one of our many events!
 								</p>
 							</div>
-							<div className="flex flex-col sm:flex-row gap-4">
+							<div className="lg:flex flex-col sm:flex-row gap-4 hidden">
 								<Link href="https://www.instagram.com/unisamsoc/?hl=en">
 									<SvgIcon
 										src={Instagram.src}
