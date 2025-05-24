@@ -14,6 +14,12 @@ export function Footer() {
 					<p className="text-sm text-gray-500">
 						Bringing anime fans together since 2006
 					</p>
+					<p className="text-sm text-gray-500">
+						Created by:
+						<span> JP</span>,<span> Michael </span>
+						and
+						<span> David</span>
+					</p>
 				</div>
 				<div className="grid grid-cols-2 gap-10 sm:grid-cols-3">
 					<div className="space-y-3">
