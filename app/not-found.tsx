@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { SectionContainer } from '@/components/section-container';
 import { Button } from '@/components/ui/button';
 import { SectionHeading } from '@/components/section-heading';
+import { ChevronRight } from 'lucide-react';
 
 export default function NotFound() {
 	const [links, setLinks] = useState<any | undefined>(<></>);
@@ -20,33 +21,55 @@ export default function NotFound() {
 		.split('/')[usePathname().split('/').length - 1];
 
 	const pageIndex = {
-		library: '/library',
-		events: '/events',
-		calendar: '/calendar',
-		gallery: '/gallery',
-		'hall of fame': '/hof',
-		hof: '/hof',
+		library: {
+			route: '/library',
+			icon: '📚',
+		},
+		events: {
+			route: '/events',
+			icon: '🥳',
+		},
+		calendar: {
+			route: '/calendar',
+			icon: '🗓️',
+		},
+		gallery: {
+			route: '/gallery',
+			icon: '🖼️',
+		},
+		'hall of fame': {
+			route: '/hof',
+			icon: '🏆',
+		},
+		hof: {
+			route: '/hof',
+			icon: '🏆',
+		},
 	};
 
 	useEffect(() => {
 		setLinks(
 			Object.entries(pageIndex)
-				.filter(([name, route]) => name.includes(pathName))
-				.map(([name, route], index) => {
+				.filter(([name, data]) => name.includes(pathName))
+				.map(([name, data], index) => {
 					return (
 						<Button
-							asChild
-							className="bg-button2 hover:bg-button1 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
 							key={name + index}
+							asChild
+							className="bg-thebutton text-white text-base sm:text-lg md:text-xl py-4 sm:py-5 md:py-7 px-4 sm:px-6 md:px-8 border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] w-fit mb-3"
 						>
-							<Link href={route}>
-								<SvgIcon
-									className="bg-[#000]"
-									height={15}
-									width={15}
-									src={ExternalLink.src}
-								></SvgIcon>
-								{name}
+							<Link href={data.route}>
+								<span className="mr-2">{data.icon}</span>
+								{name
+									.split(' ')
+									.map((word) => {
+										return (
+											word.slice(0, 1).toUpperCase() +
+											word.slice(1)
+										);
+									})
+									.join(' ')}
+								<ChevronRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
 							</Link>
 						</Button>
 					);
@@ -68,7 +91,7 @@ export default function NotFound() {
 							description="The page you were looking for doesnt exist"
 							badgeColor="bg-purple-200"
 						/>
-						<div className="mt-8 text-center">
+						<div className="mt-8 text-center flex flex-col items-center">
 							<h1 className="mb-4">Did you mean:</h1>
 							{links}
 						</div>
@@ -96,3 +119,12 @@ export default function NotFound() {
 		</>
 	);
 }
+
+/*
+								<SvgIcon
+									className="bg-[#000]"
+									height={15}
+									width={15}
+									src={ExternalLink.src}
+								></SvgIcon>
+								*/
