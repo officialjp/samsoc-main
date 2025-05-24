@@ -1,5 +1,6 @@
 'use client';
 
+const levenshtein = require('js-levenshtein');
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -50,7 +51,11 @@ export default function NotFound() {
 	useEffect(() => {
 		setLinks(
 			Object.entries(pageIndex)
-				.filter(([name, data]) => name.includes(pathName))
+				.filter(
+					([name, data]) =>
+						levenshtein(name, pathName) < 3 ||
+						name.includes(pathName),
+				)
 				.map(([name, data], index) => {
 					return (
 						<Button
@@ -134,12 +139,3 @@ export default function NotFound() {
 		</>
 	);
 }
-
-/*
-								<SvgIcon
-									className="bg-[#000]"
-									height={15}
-									width={15}
-									src={ExternalLink.src}
-								></SvgIcon>
-								*/
