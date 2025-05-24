@@ -1,6 +1,4 @@
 import { ImageResponse } from 'next/og';
-import { join } from 'node:path';
-import { readFile } from 'node:fs/promises';
 
 export const alt = 'samsoc logo';
 export const size = {

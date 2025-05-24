@@ -94,7 +94,7 @@ export function Header() {
 				</nav>
 
 				<div className="flex items-center gap-4">
-					<Link href="#join" className="hidden sm:block">
+					<Link href="/#join" className="hidden sm:block">
 						<Button className="bg-pink-500 cursor-pointer hover:bg-pink-600 text-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
 							Join Now
 						</Button>
