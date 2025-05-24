@@ -46,8 +46,8 @@ export function Footer() {
 			</div>
 			<div className="border-t border-gray-200 py-6 text-center">
 				<p className="text-sm text-gray-700">
-					© {new Date().getFullYear()} Anime University Society. All
-					rights reserved.
+					© {new Date().getFullYear()} University of Surrey Anime
+					Society. All rights reserved.
 				</p>
 			</div>
 		</footer>
