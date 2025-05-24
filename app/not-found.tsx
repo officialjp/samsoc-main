@@ -1,9 +1,9 @@
 'use client';
 
-import { SvgIcon } from '@/components/ui/svgIcon';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import ExternalLink from '@/public/external-link.svg';
+import Miku from '@/public/miku.png';
 import { useEffect, useState } from 'react';
 import { SectionContainer } from '@/components/section-container';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,7 @@ import { SectionHeading } from '@/components/section-heading';
 import { ChevronRight } from 'lucide-react';
 
 export default function NotFound() {
-	const [links, setLinks] = useState<any | undefined>(<></>);
+	const [links, setLinks] = useState<any | undefined>();
 
 	const pathName = usePathname()
 		.toLowerCase()
@@ -85,6 +85,13 @@ export default function NotFound() {
 						id="404"
 						className="w-full py-12 md:py-16 overflow-hidden"
 					>
+						<Image
+							src={Miku.src}
+							width={200}
+							height={200}
+							alt={'404 image'}
+							className="mx-auto"
+						/>
 						<SectionHeading
 							badge="uh oh..."
 							title="404: Page Not Found"
@@ -108,6 +115,13 @@ export default function NotFound() {
 					id="404"
 					className="w-full py-12 md:py-16 overflow-hidden"
 				>
+					<Image
+						src={Miku.src}
+						width={200}
+						height={200}
+						alt={'404 image'}
+						className="mx-auto"
+					/>
 					<SectionHeading
 						badge="uh oh..."
 						title="404 Page Not Found"
