@@ -8,8 +8,6 @@ import { useEffect, useState } from 'react';
 import { SectionContainer } from '@/components/section-container';
 import { Button } from '@/components/ui/button';
 import { SectionHeading } from '@/components/section-heading';
-import { NowStreamingContent } from '@/components/landing/now-streaming';
-import { CalendarDays } from '@/components/calendar/calendar-days';
 
 export default function NotFound() {
 	const [links, setLinks] = useState<any | undefined>(<></>);
