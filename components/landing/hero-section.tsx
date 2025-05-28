@@ -4,7 +4,7 @@ import Instagram from '@/public/instagram.svg';
 import Facebook from '@/public/facebook.svg';
 import { ChevronRight, Trophy, Ribbon, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { SvgIcon } from '@/components/ui/svgIcon';
+import { SvgIcon } from '@/components/svgIcon';
 import { cn } from '@/lib/utils';
 import useIsMobile from '../mobile-check';
 import Discord from '@/public/discord.svg';
@@ -233,7 +233,7 @@ export function HeroSection() {
 					<div className="flex flex-row py-6 items-center justify-center">
 						<Button
 							asChild
-							className="bg-thebutton hover:bg-thebutton2 text-white text-base sm:text-lg md:text-xl py-4 sm:py-5 md:py-7 px-4 sm:px-6 md:px-8 border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+							className="bg-thebutton hover:bg-thebutton2 text-white text-base sm:text-lg md:text-xl py-4 sm:py-5 md:py-7 px-4 sm:px-6 md:px-8 border-2 rounded-md border-black"
 						>
 							<Link
 								href="#join"

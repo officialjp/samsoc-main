@@ -1,5 +1,6 @@
 'use client';
 
+const levenshtein = require('js-levenshtein');
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -50,13 +51,17 @@ export default function NotFound() {
 	useEffect(() => {
 		setLinks(
 			Object.entries(pageIndex)
-				.filter(([name, data]) => name.includes(pathName))
+				.filter(
+					([name, data]) =>
+						levenshtein(name, pathName) < 3 ||
+						name.includes(pathName),
+				)
 				.map(([name, data], index) => {
 					return (
 						<Button
 							key={name + index}
 							asChild
-							className="bg-thebutton text-white text-base sm:text-lg md:text-xl py-4 sm:py-5 md:py-7 px-4 sm:px-6 md:px-8 border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] w-fit mb-3"
+							className="hover:cursor-pointer bg-button2 hover:bg-button1"
 						>
 							<Link href={data.route}>
 								<span className="mr-2">{data.icon}</span>
@@ -134,12 +139,3 @@ export default function NotFound() {
 		</>
 	);
 }
-
-/*
-								<SvgIcon
-									className="bg-[#000]"
-									height={15}
-									width={15}
-									src={ExternalLink.src}
-								></SvgIcon>
-								*/

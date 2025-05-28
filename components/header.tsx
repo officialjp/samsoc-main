@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { SvgIcon } from '@/components/ui/svgIcon';
+import { SvgIcon } from '@/components/svgIcon';
 import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
 import Logo from '@/public/images/logo.png';
