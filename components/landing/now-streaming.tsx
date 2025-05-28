@@ -29,7 +29,7 @@ export function NowStreamingContent() {
 
 				const { data: regularData, error: fetchError } = await supabase
 					.from('regular')
-					.select('title, public_url, episode, description, id');
+					.select('title, public_url, episode, description, id, mal');
 
 				if (fetchError) {
 					setError(
