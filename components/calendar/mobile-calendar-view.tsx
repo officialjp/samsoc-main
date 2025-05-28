@@ -5,8 +5,10 @@ import {
 	format,
 	startOfMonth,
 	endOfMonth,
-	eachDayOfInterval,
+	startOfWeek,
+	isSameMonth,
 	isSameDay,
+	eachDayOfInterval,
 } from 'date-fns';
 import { ChevronDown, ChevronUp, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -39,8 +41,11 @@ export function MobileCalendarView({
 	const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 	const [expandedDate, setExpandedDate] = useState<string | null>(null);
 
-	const monthStart = startOfMonth(currentMonth);
-	const monthEnd = endOfMonth(monthStart);
+	console.log(currentMonth);
+
+	const monthStart = startOfWeek(startOfMonth(currentMonth));
+	const monthEnd = endOfMonth(startOfMonth(currentMonth));
+
 	const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
 	// Toggle expanded state for a date
@@ -68,7 +73,7 @@ export function MobileCalendarView({
 		<div className="mt-4">
 			{/* Mini month view */}
 			<div className="grid grid-cols-7 gap-1 mb-6">
-				{['T', 'F', 'S', 'S', 'M', 'T', 'W'].map((day, i) => (
+				{['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
 					<div
 						key={`header-${i}`}
 						className="text-center text-xs font-bold"
@@ -88,6 +93,9 @@ export function MobileCalendarView({
 							key={`day-${i}`}
 							className={cn(
 								'h-8 w-8 flex items-center justify-center text-sm rounded-full cursor-pointer mx-auto',
+								isSameMonth(day, currentMonth)
+									? 'text-gray-700'
+									: 'text-gray-300',
 								isToday ? 'bg-pink-500 text-white' : '',
 								isSelected && !isToday ? 'bg-yellow-300' : '',
 								dayHasEvents && !isToday && !isSelected
