@@ -1,9 +1,8 @@
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
-import DialogWithStickyFooter from '@/components/dialog';
 import { SectionContainer } from '@/components/section-container';
 import { SectionHeading } from '@/components/section-heading';
-import { EventTypeCard } from '@/components/landing/event-type-card';
+import { EventTypeCard } from '@/components/event/event-type-card';
 import { Button } from '@/components/ui/button';
 import ClubNight from '@/public/images/clubnight.jpg';
 import ComicCon from '@/public/images/comiccon.jpg';

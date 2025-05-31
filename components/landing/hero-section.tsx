@@ -8,6 +8,8 @@ import { SvgIcon } from '@/components/svgIcon';
 import { cn } from '@/lib/utils';
 import useIsMobile from '../mobile-check';
 import Discord from '@/public/discord.svg';
+import HeroCarousel from '@/components/landing/hero-carousel';
+import { EmblaOptionsType } from 'embla-carousel';
 
 // Data for the awards
 const awardsData = [
@@ -39,13 +41,32 @@ const awardsData = [
 ];
 
 export function HeroSection() {
+	const OPTIONS: EmblaOptionsType = { loop: true };
+	const SLIDES = [
+		<div className="bg-red-400 h-full w-full"></div>,
+		<div className="bg-red-400 h-full w-full"></div>,
+	];
+
+	return (
+		<section className="w-full pb-3 pt-0 md:pt-6 lg:pt-20">
+			<div className="container w-full max-w-full px-0 md:px-6 lg:px-8">
+				<HeroCarousel
+					slides={SLIDES}
+					options={OPTIONS}
+					useSocials={true}
+				></HeroCarousel>
+			</div>
+		</section>
+	);
+
+	/*
 	if (useIsMobile()) {
 		return (
 			<section className="w-full py-8 pt-10 sm:py-12 md:py-20 lg:py-32">
 				<div className="container w-full max-w-full px-4 md:px-6 lg:px-8">
 					<div className="grid gap-6 md:gap-8 lg:gap-12 lg:grid-cols-2 xl:grid-cols-[1fr_auto]">
 						{' '}
-						{/* Adjusted grid-cols */}
+						
 						<div className="flex flex-col justify-center space-y-6 md:space-y-8">
 							<div className="space-y-2">
 								<h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tighter">
@@ -66,7 +87,7 @@ export function HeroSection() {
 								</p>
 							</div>
 						</div>
-						{/* Move the awards section into the right column */}
+						
 						<div className="lg:block justify-center mt-8 lg:mt-0 flex flex-row items-center">
 							<div className="mb-6 flex flex-col items-center justify-center">
 								<h2
@@ -84,7 +105,7 @@ export function HeroSection() {
 								>
 									<ul className="space-y-2 p-4 sm:p-6">
 										{' '}
-										{/* Reduced vertical spacing and padding */}
+										
 										{awardsData.map((award, index) => (
 											<li
 												key={index}
@@ -200,7 +221,7 @@ export function HeroSection() {
 								>
 									<ul className="space-y-2 p-4 sm:p-6">
 										{' '}
-										{/* Reduced vertical spacing and padding */}
+										
 										{awardsData.map((award, index) => (
 											<li
 												key={index}
@@ -248,4 +269,5 @@ export function HeroSection() {
 			</section>
 		);
 	}
+*/
 }
