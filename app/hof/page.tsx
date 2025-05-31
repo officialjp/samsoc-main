@@ -45,10 +45,16 @@ export default function HallOfFamePage() {
 								year.
 							</p>
 							<DialogWithStickyFooter
-								description=""
+								description="The team that keeps the whole society running!"
 								buttonName="Learn About Positions"
-								content=""
-								title=""
+								content={[
+									'President - The face of the whole society! Ensures all runs smoothly.',
+									'Vice-President - Assists the President. Handles booking and logistics.',
+									'Treasurer - Handles finances and manages the manga library.',
+									'Social Media Secretary - Keeps our socials up to date and advertises events.',
+									'Events Secretary - Plans, sets up, and helps run all social events.',
+								]}
+								title="Committee Positions"
 							></DialogWithStickyFooter>
 						</div>
 					</div>

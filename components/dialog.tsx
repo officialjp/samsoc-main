@@ -13,7 +13,7 @@ import {
 interface Diag {
 	description: string;
 	buttonName: string;
-	content: string;
+	content: Array<string>;
 	title: string;
 }
 
@@ -33,10 +33,20 @@ export default function DialogWithStickyFooter({
 			<DialogContent className="sm:max-w-lg">
 				<DialogHeader>
 					<DialogTitle>{title}</DialogTitle>
-					<DialogDescription>{description}</DialogDescription>
+					<DialogDescription>
+						{description}
+						<br />
+					</DialogDescription>
 				</DialogHeader>
 				<div className="-mx-6 max-h-[500px] overflow-y-auto px-6 text-sm">
-					<p className="mb-4 leading-normal">{content}</p>
+					{content.map((value, index) => {
+						return (
+							<p key={index} className="mb-4 leading-normal">
+								{value}
+								<br />
+							</p>
+						);
+					})}
 				</div>
 				<DialogFooter>
 					<DialogClose asChild>
