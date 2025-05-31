@@ -63,7 +63,7 @@ export default function NotFound() {
 							asChild
 							className="hover:cursor-pointer bg-button2 hover:bg-button1"
 						>
-							<Link href={data.route}>
+							<Link href={data.route} className="mb-2">
 								<span className="mr-2">{data.icon}</span>
 								{name
 									.split(' ')
