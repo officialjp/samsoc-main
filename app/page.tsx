@@ -3,8 +3,6 @@ import { NowStreamingContent } from '@/components/landing/now-streaming';
 import { MembershipSection } from '@/components/landing/membership-section';
 import { LibrarySection } from '@/components/landing/library-section';
 import { AboutSection } from '@/components/landing/about-section';
-import { EventsContent } from '@/components/landing/events-section';
-import { GalleryContent } from '@/components/landing/gallery-section'; // Import the new content component
 import { SectionContainer } from '@/components/section-container';
 import { SectionHeading } from '@/components/section-heading';
 import { Button } from '@/components/ui/button';
@@ -46,45 +44,6 @@ export default async function AnimeSocietyLanding() {
 							>
 								<CalendarDays className="mr-2 h-4 w-4" />
 								View Full Calendar
-							</Link>
-						</Button>
-					</div>
-				</SectionContainer>
-
-				<SectionContainer id="events">
-					<SectionHeading
-						badge="CALENDAR"
-						title="Upcoming Events"
-						description="Check out what's coming up and mark your calendars! All events are open to members and sometimes guests too."
-						badgeColor="bg-purple-200"
-					/>
-					<EventsContent />
-					<div className="flex items-center justify-center flex-col gap-4 mt-8">
-						<Button
-							asChild
-							className="bg-button2 hover:bg-button1 hover:cursor-pointer text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-						>
-							<Link href="/events" className="flex items-center">
-								<ListIcon className="mr-2 h-4 w-4" />
-								See All Event Types
-							</Link>
-						</Button>
-					</div>
-				</SectionContainer>
-
-				<SectionContainer id="gallery">
-					<SectionHeading
-						badge="MEMORIES"
-						title="Our Gallery"
-						description="Highlights from our many past events!"
-						badgeColor="bg-purple-200"
-					/>
-					<GalleryContent />
-					<div className="text-center mt-8">
-						<Button className="bg-button2 hover:bg-button1 hover:cursor-pointer text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-							<Link href="/gallery" className="flex items-center">
-								<ImageIcon className="mr-2 h-4 w-4" />
-								View Full Gallery
 							</Link>
 						</Button>
 					</div>
