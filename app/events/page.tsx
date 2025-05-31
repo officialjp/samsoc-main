@@ -133,10 +133,10 @@ export default function EventsPage() {
 								members!
 							</p>
 							<DialogWithStickyFooter
-								description=""
+								description="boobs"
 								buttonName="Contact Events Secretary"
-								content=""
-								title=""
+								content="bigger boobs"
+								title="biggest boobs"
 							></DialogWithStickyFooter>
 						</div>
 					</div>
