@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { GalleryFilter } from '@/components/gallery/gallery-filter';
 import { GalleryImage } from '@/components/gallery/gallery-image';
 import { createClient } from '@/utils/supabase/client';
+import { Button } from '../ui/button';
+import { X } from 'lucide-react';
 
 interface GalleryItem {
 	id: string;
@@ -14,6 +16,7 @@ interface GalleryItem {
 }
 
 export default function GalleryContent() {
+    
         const supabase = createClient();
         const [galleryItems, setGalleryItems] = useState<GalleryItem[] | null>(
             null,
@@ -56,10 +59,31 @@ export default function GalleryContent() {
             return categoryMatch && yearMatch;
         });
 
+
+        const clearFilters = () => {
+            setActiveCategory('All');
+            setActiveYear('All');
+        };
+
+        const hasActiveFilters =
+		activeCategory !== 'All' || activeYear !== 'All';
+
     return (
             <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8">
                             {/* Sidebar with filters */}
                             <div className="lg:sticky lg:top-24 h-fit">
+                                <div className="flex justify-between items-center mb-6">
+                                                {hasActiveFilters && (
+                                                    <Button
+                                                        variant="default"
+                                                        size="sm"
+                                                        onClick={clearFilters}
+                                                        className="hover:cursor-pointer "
+                                                    >
+                                                        <X className="h-3 w-3 mr-1" /> Clear Filters
+                                                    </Button>
+                                                )}
+                                            </div>
                                 <div className="border-2 rounded-md border-black bg-white p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                                     <h2 className="text-2xl font-bold mb-6">
                                         Filter Gallery
