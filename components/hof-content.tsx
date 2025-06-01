@@ -2,10 +2,13 @@
 import { useEffect, useState } from "react";
 import { CommitteeYear } from "@/components/committee/committee-year";
 import { createClient } from "@/utils/supabase/client";
+import { Button } from "./ui/button";
 import {
   TypeCommitteeMemberData,
   TypeCommitteeYearProps,
 } from "@/lib/definitions";
+import { CollapsibleContent, Collapsible, CollapsibleTrigger } from "./ui/collapsible";
+import { ChevronsUpDown } from "lucide-react";
 
 // Define the desired order of positions
 const positionOrder = [
@@ -150,11 +153,30 @@ const HallOfFameContent: React.FC = () => {
         </div>
 
         {pastCommittees.map((committee, index) => (
-          <CommitteeYear
-            key={index}
-            year={committee.year}
-            members={committee.members}
-          />
+          <Collapsible>
+            <div className="rounded-base flex items-center justify-between space-x-4 border-2 border-border text-main-foreground bg-main px-4 py-2">
+              <h4 className="text-sm font-heading">
+                {committee.year}
+              </h4>
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant="noShadow"
+                  size="sm"
+                  className="w-9 bg-secondary-background text-foreground p-0"
+                >
+                  <ChevronsUpDown className="size-4" />
+                  <span className="sr-only">Toggle</span>
+                </Button>
+              </CollapsibleTrigger>
+            </div>
+            <CollapsibleContent>
+              <CommitteeYear
+              key={index}
+              year={committee.year}
+              members={committee.members}
+            />
+            </CollapsibleContent>
+          </Collapsible>
         ))}
       </div>
     </div>
