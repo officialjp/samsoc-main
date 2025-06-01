@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { SvgIcon } from '@/components/svgIcon';
+import { SvgIcon } from '@/components/util/svgIcon';
 import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
 import Logo from '@/public/images/logo.png';
@@ -23,7 +23,7 @@ export function Header() {
 			<div className="container w-full max-w-full px-4 md:px-6 lg:px-8 flex h-16 items-center justify-between">
 				<Link
 					href="/"
-					className="flex items-center gap-2 font-bold text-xl"
+					className="flex items-center gap-2 font-bold text-xl md:mr-2"
 				>
 					<Image
 						src={Logo}

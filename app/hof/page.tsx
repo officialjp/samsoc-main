@@ -5,7 +5,25 @@ import { SectionContainer } from '@/components/section-container';
 import { SectionHeading } from '@/components/section-heading';
 import { Button } from '@/components/ui/button';
 import DialogWithStickyFooter from '@/components/dialog';
-import HallOfFameContent from '@/components/hof-content';
+import HallOfFameContent from '@/components/committee/hof-content';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+	title: 'Surrey Anime and Manga Society',
+	description:
+		'Meet the dedicated individuals who have led our Anime Society through the years. Their passion and hard work have made our community what it is today.',
+	openGraph: {
+		title: 'Surrey Anime and Manga Society',
+		description:
+			'Meet the dedicated individuals who have led our Anime Society through the years. Their passion and hard work have made our community what it is today.',
+	},
+	twitter: {
+		card: 'summary',
+		title: 'Surrey Anime and Manga Society',
+		description:
+			'Meet the dedicated individuals who have led our Anime Society through the years. Their passion and hard work have made our community what it is today.',
+	},
+};
 
 export default function HallOfFamePage() {
 	return (
