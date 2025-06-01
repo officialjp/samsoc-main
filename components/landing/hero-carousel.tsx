@@ -31,7 +31,7 @@ export default function HeroCarousel({
 	return (
 		<section className="relative w-full m-auto h-fit flex flex-col items-center">
 			<div
-				className="overflow-hidden w-full max-w-[1200px] rounded-0 md:rounded-4xl aspect-[9/11] md:aspect-[16/9]"
+				className="overflow-hidden w-full max-w-[1200px] max-h-[70vh] rounded-0 md:rounded-4xl aspect-[9/11] md:aspect-[16/9] lg:aspect-[16/9]"
 				ref={emblaRef}
 			>
 				<div className="flex touch-pinch-zoom h-full touch-pan-y">
