@@ -133,7 +133,7 @@ export function CalendarCells({
 					className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 hover:cursor-pointer"
 					onClick={() => setSelectedEvent(null)}
 				>
-					<div className="bg-white border-4 border-black p-6 max-w-md w-full shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative hover:cursor-default">
+					<div className="bg-white border-4 border-black p-6 max-w-md w-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-md relative hover:cursor-default">
 						<button
 							onClick={(e) => {
 								e.stopPropagation();

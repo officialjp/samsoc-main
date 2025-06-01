@@ -14,7 +14,7 @@ export function CalendarDays() {
       {days.map((day) => (
         <div
           key={day}
-          className="text-center py-2 font-bold bg-cyan-300 border-2 border-black mx-1"
+          className="text-center py-2 font-bold bg-about2 border-2 border-black mx-1"
         >
           <span className="hidden md:inline">{day}</span>
           <span className="md:hidden">{day.slice(0, 3)}</span>
