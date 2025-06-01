@@ -8,6 +8,9 @@ import ClubNight from '@/public/images/clubnight.jpg';
 import ComicCon from '@/public/images/comiccon.jpg';
 import Pokemon from '@/public/images/pokemon.png';
 import Voting from '@/public/images/voting.png';
+import Filipino from '@/public/images/filipino.webp';
+import Art from '@/public/images/art.webp';
+import SVGS from '@/public/images/svgs.webp';
 
 // Import the shared types
 import { EventType } from '@/lib/definitions'; // Adjust the path as needed
@@ -93,19 +96,27 @@ export default function EventsPage() {
 			frequency: 'Bi-monthly',
 			collageImage: [
 				{
-					src: Pokemon,
-					alt: 'pokemon',
+					src: Art,
+					alt: 'art',
 					dimentions: {
 						x: 300,
 						y: 300,
 					},
 				},
 				{
-					src: Voting,
-					alt: 'voting',
+					src: SVGS,
+					alt: 'svgs',
 					dimentions: {
 						x: 300,
 						y: 300,
+					},
+				},
+				{
+					src: Filipino,
+					alt: 'filipino',
+					dimentions: {
+						x: 300,
+						y: 400,
 					},
 				},
 			],
