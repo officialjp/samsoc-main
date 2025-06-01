@@ -57,7 +57,7 @@ const HallOfFameContent: React.FC = () => {
           if (year === undefined) {
             return "";
           }
-          return `${year - 1}-${year}`;
+          return `${year}-${year + 1}`;
         };
 
         const sortMembersByPosition = (
