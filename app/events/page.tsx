@@ -1,9 +1,8 @@
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
-import DialogWithStickyFooter from '@/components/dialog';
 import { SectionContainer } from '@/components/section-container';
 import { SectionHeading } from '@/components/section-heading';
-import { EventTypeCard } from '@/components/landing/event-type-card';
+import { EventTypeCard } from '@/components/event/event-type-card';
 import { Button } from '@/components/ui/button';
 import ClubNight from '@/public/images/clubnight.jpg';
 import ComicCon from '@/public/images/comiccon.jpg';
@@ -121,24 +120,6 @@ export default function EventsPage() {
 								examples={event.examples}
 							/>
 						))}
-					</div>
-
-					<div className="mt-16 text-center">
-						<div className="inline-block bg-white px-6 py-4 border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-1">
-							<h3 className="text-xl font-bold mb-2">
-								Have an event idea?
-							</h3>
-							<p className="mb-4">
-								We're always open to suggestions from our
-								members!
-							</p>
-							<DialogWithStickyFooter
-								description="boobs"
-								buttonName="Contact Events Secretary"
-								content="bigger boobs"
-								title="biggest boobs"
-							></DialogWithStickyFooter>
-						</div>
 					</div>
 				</SectionContainer>
 			</main>
