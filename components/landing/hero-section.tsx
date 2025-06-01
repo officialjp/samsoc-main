@@ -41,7 +41,7 @@ export function HeroSection() {
 	];
 
 	return (
-		<section className="w-full pb-3 pt-0 md:pt-6 lg:pt-20">
+		<section className="w-full pb-3 pt-0 md:pt-3 lg:pt-10">
 			<div className="container w-full max-w-full px-0 md:px-6 lg:px-8">
 				<HeroCarousel
 					slides={SLIDES}
