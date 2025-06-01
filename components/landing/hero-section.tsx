@@ -1,13 +1,6 @@
 'use client';
-import Link from 'next/link';
-import Instagram from '@/public/instagram.svg';
-import Facebook from '@/public/facebook.svg';
-import { ChevronRight, Trophy, Ribbon, Star } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { SvgIcon } from '@/components/svgIcon';
-import { cn } from '@/lib/utils';
-import useIsMobile from '../mobile-check';
-import Discord from '@/public/discord.svg';
+
+import { Trophy, Ribbon, Star } from 'lucide-react';
 import HeroCarousel from '@/components/landing/hero-carousel';
 import { EmblaOptionsType } from 'embla-carousel';
 
