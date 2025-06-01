@@ -10,21 +10,6 @@ import { SectionContainer } from '@/components/section-container';
 import { Button } from '@/components/ui/button';
 import { SectionHeading } from '@/components/section-heading';
 import { ChevronRight } from 'lucide-react';
-import { Metadata } from 'next';
-
-export const metadata: Metadata = {
-	title: 'Surrey Anime and Manga Society',
-	description: "You're not supposed to be here 🗣️‼️‼️‼️‼️‼️‼️‼️‼️‼️",
-	openGraph: {
-		title: 'Surrey Anime and Manga Society',
-		description: "You're not supposed to be here 🗣️‼️‼️‼️‼️‼️‼️‼️‼️‼️",
-	},
-	twitter: {
-		card: 'summary',
-		title: 'Surrey Anime and Manga Society',
-		description: "You're not supposed to be here 🗣️‼️‼️‼️‼️‼️‼️‼️‼️‼️",
-	},
-};
 
 export default function NotFound() {
 	const [links, setLinks] = useState<any | undefined>();
