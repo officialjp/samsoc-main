@@ -1,58 +1,75 @@
-import { StaticImageData } from "next/image";
+import { StaticImageData } from 'next/image';
 
 // Represents the type of an image in your event data
 export type EventImageType = string | StaticImageData;
 
 // Represents the structure of an event type
 export interface EventType {
-  title: string;
-  description: string;
-  frequency: string;
-  image: EventImageType; // Use the shared type
-  color: string;
-  examples: string[];
+	title: string;
+	description: string;
+	frequency: string;
+	image?: EventImageType; // Use the shared type
+	color: string;
+	examples: string[];
+	collageImage?: ImageTypes[];
 }
 
 interface Event {
-  id: string;
-  title: string;
-  description: string;
-  location: string;
-  date: Date;
-  color: string;
-  isRegularSession?: boolean;
+	id: string;
+	title: string;
+	description: string;
+	location: string;
+	date: Date;
+	color: string;
+	isRegularSession?: boolean;
 }
 
 interface Manga {
-  id: string;
-  title: string;
-  author: string;
-  volume: number;
-  coverimage: string;
-  genre: string[];
-  borrowedby: string | null | undefined;
+	id: string;
+	title: string;
+	author: string;
+	volume: number;
+	coverimage: string;
+	genre: string[];
+	borrowedby: string | null | undefined;
 }
 
 interface CommitteeMemberData {
-  name: string;
-  role: string;
-  image: string;
-  quote?: string;
-  year: number;
+	name: string;
+	role: string;
+	image: string;
+	quote?: string;
+	year: number;
 }
 
 interface CommitteeYearProps {
-  year: string;
-  members: CommitteeMemberData[];
-  current?: boolean;
+	year?: string;
+	members: CommitteeMemberData[];
+	current?: boolean;
 }
 
 interface EventCardProps {
-  id: number;
-  date: string;
-  title: string;
-  description: string;
-  location: string;
+	id: number;
+	date: string;
+	title: string;
+	description: string;
+	location: string;
+}
+
+interface DimenitonTypes {
+	x: number;
+	y: number;
+}
+
+export interface ImageTypes {
+	src: EventImageType;
+	alt: string;
+	dimentions: DimenitonTypes;
+}
+
+export interface ImageProps {
+	images?: ImageTypes[];
+	className?: string;
 }
 
 export type { CommitteeYearProps as TypeCommitteeYearProps };

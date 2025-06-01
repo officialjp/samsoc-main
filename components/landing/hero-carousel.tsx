@@ -31,10 +31,10 @@ export default function HeroCarousel({
 	return (
 		<section className="relative w-full m-auto h-fit flex flex-col items-center">
 			<div
-				className="overflow-hidden w-full max-w-[1200px] rounded-0 md:rounded-4xl aspect-[16/9]"
+				className="overflow-hidden w-full max-w-[1200px] rounded-0 md:rounded-4xl aspect-[9/11] md:aspect-[16/9]"
 				ref={emblaRef}
 			>
-				<div className="flex touch-pinch-zoom h-full touch-pan-y ml-[calc(1rem * -1)]">
+				<div className="flex touch-pinch-zoom h-full touch-pan-y">
 					{slides &&
 						slides.map((elements: any, index: number) => (
 							<div

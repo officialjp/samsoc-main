@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { GalleryFilter } from '@/components/gallery/gallery-filter';
 import { GalleryImage } from '@/components/gallery/gallery-image';
 import { createClient } from '@/utils/supabase/client';
+import { Metadata } from 'next';
 
 interface GalleryItem {
 	id: string;
@@ -17,7 +18,24 @@ interface GalleryItem {
 	year: string;
 	public_url: string;
 }
-
+/*
+export const metadata: Metadata = {
+	title: 'Surrey Anime and Manga Society',
+	description:
+		'Browse through our collection of photos from events, weekly sessions, and collaborations over the years.',
+	openGraph: {
+		title: 'Surrey Anime and Manga Society',
+		description:
+			'Browse through our collection of photos from events, weekly sessions, and collaborations over the years.',
+	},
+	twitter: {
+		card: 'summary',
+		title: 'Surrey Anime and Manga Society',
+		description:
+			'Browse through our collection of photos from events, weekly sessions, and collaborations over the years.',
+	},
+};
+*/
 export default function GalleryPage() {
 	const supabase = createClient();
 	const [galleryItems, setGalleryItems] = useState<GalleryItem[] | null>(

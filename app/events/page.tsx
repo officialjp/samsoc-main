@@ -6,9 +6,29 @@ import { EventTypeCard } from '@/components/event/event-type-card';
 import { Button } from '@/components/ui/button';
 import ClubNight from '@/public/images/clubnight.jpg';
 import ComicCon from '@/public/images/comiccon.jpg';
+import Pokemon from '@/public/images/pokemon.png';
+import Voting from '@/public/images/voting.png';
 
 // Import the shared types
 import { EventType } from '@/lib/definitions'; // Adjust the path as needed
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+	title: 'Surrey Anime and Manga Society',
+	description:
+		"Discover the wide range of events we host throughout the academic year. From weekly screenings to special collaborations, there's something for every anime enthusiast!",
+	openGraph: {
+		title: 'Surrey Anime and Manga Society',
+		description:
+			"Discover the wide range of events we host throughout the academic year. From weekly screenings to special collaborations, there's something for every anime enthusiast!",
+	},
+	twitter: {
+		card: 'summary',
+		title: 'Surrey Anime and Manga Society',
+		description:
+			"Discover the wide range of events we host throughout the academic year. From weekly screenings to special collaborations, there's something for every anime enthusiast!",
+	},
+};
 
 export default function EventsPage() {
 	// Event types data
@@ -27,7 +47,24 @@ export default function EventsPage() {
 			description:
 				'The heart of our society! Join us for regular screenings of both classic and current anime series and films.',
 			frequency: 'Weekly (Wednesday)',
-			image: '/placeholder.svg?height=400&width=300&text=Screenings',
+			collageImage: [
+				{
+					src: Pokemon,
+					alt: 'pokemon',
+					dimentions: {
+						x: 100,
+						y: 100,
+					},
+				},
+				{
+					src: Voting,
+					alt: 'voting',
+					dimentions: {
+						x: 100,
+						y: 100,
+					},
+				},
+			],
 			color: 'bg-about1',
 			examples: [
 				'Regular Screenings',
@@ -54,7 +91,24 @@ export default function EventsPage() {
 			description:
 				'We regularly team up with other societies for special cross-over events! From art workshops with the Art Society to themed game nights with the Gaming Society, these collaborations offer unique experiences that combine different interests and bring communities together.',
 			frequency: 'Bi-monthly',
-			image: '/placeholder.svg?height=400&width=300&text=Collaborations',
+			collageImage: [
+				{
+					src: Pokemon,
+					alt: 'pokemon',
+					dimentions: {
+						x: 100,
+						y: 100,
+					},
+				},
+				{
+					src: Voting,
+					alt: 'voting',
+					dimentions: {
+						x: 100,
+						y: 100,
+					},
+				},
+			],
 			color: 'bg-purple-200',
 			examples: ['Games Night', 'Art Night', 'Club Night'],
 		},
@@ -116,6 +170,7 @@ export default function EventsPage() {
 								description={event.description}
 								frequency={event.frequency}
 								image={event.image}
+								collageImage={event.collageImage}
 								color={event.color}
 								examples={event.examples}
 							/>
