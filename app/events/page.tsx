@@ -52,16 +52,16 @@ export default function EventsPage() {
 					src: Pokemon,
 					alt: 'pokemon',
 					dimentions: {
-						x: 100,
-						y: 100,
+						x: 300,
+						y: 300,
 					},
 				},
 				{
 					src: Voting,
 					alt: 'voting',
 					dimentions: {
-						x: 100,
-						y: 100,
+						x: 300,
+						y: 300,
 					},
 				},
 			],
@@ -96,16 +96,16 @@ export default function EventsPage() {
 					src: Pokemon,
 					alt: 'pokemon',
 					dimentions: {
-						x: 100,
-						y: 100,
+						x: 300,
+						y: 300,
 					},
 				},
 				{
 					src: Voting,
 					alt: 'voting',
 					dimentions: {
-						x: 100,
-						y: 100,
+						x: 300,
+						y: 300,
 					},
 				},
 			],
