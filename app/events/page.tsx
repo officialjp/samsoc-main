@@ -23,9 +23,9 @@ export default function EventsPage() {
 			examples: ['Anime Karaoke Night', 'Club Night', 'Bar Crawl'],
 		},
 		{
-			title: 'Screenings & Discussions',
+			title: 'Screenings',
 			description:
-				'The heart of our society! Join us for regular screenings of both classic and current anime series and films. Each screening is followed by a casual discussion where members can share their thoughts, analyze themes, and debate their favorite moments.',
+				'The heart of our society! Join us for regular screenings of both classic and current anime series and films.',
 			frequency: 'Weekly (Wednesday)',
 			image: '/placeholder.svg?height=400&width=300&text=Screenings',
 			color: 'bg-about1',
