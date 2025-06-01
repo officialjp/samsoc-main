@@ -1,6 +1,6 @@
 import ExternalLink from '@/public/external-link.svg';
 import Image from 'next/image';
-import { SvgIcon } from '@/components/svgIcon';
+import { SvgIcon } from '@/components/util/svgIcon';
 
 interface AnimeCardProps {
 	title: string;

@@ -10,7 +10,7 @@ import Discord from '@/public/discord.svg';
 import useIsMobile from '../mobile-check';
 import useEmblaCarousel from 'embla-carousel-react';
 import Link from 'next/link';
-import { SvgIcon } from '../svgIcon';
+import { SvgIcon } from '@/components/util/svgIcon';
 
 type PropType = {
 	slides?: any;
