@@ -41,8 +41,6 @@ export function MobileCalendarView({
 	const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 	const [expandedDate, setExpandedDate] = useState<string | null>(null);
 
-	console.log(currentMonth);
-
 	const monthStart = startOfWeek(startOfMonth(currentMonth));
 	const monthEnd = endOfMonth(startOfMonth(currentMonth));
 
