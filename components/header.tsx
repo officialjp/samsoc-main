@@ -59,7 +59,6 @@ export function Header() {
 						></SvgIcon>
 					</Link>
 				</div>
-				{/* Desktop Navigation */}
 				<nav className="hidden md:flex gap-6 ml-auto pr-6">
 					<Link
 						href="/library"
