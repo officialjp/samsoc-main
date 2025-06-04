@@ -171,10 +171,9 @@ const LibraryContent: React.FC = () => {
 					</h3>
 					<ul className="text-sm space-y-2">
 						<li>• Paid members only</li>
-						<li>• £10 deposit per volume borrowed</li>
+						<li>• £10 deposit per volume borrowed as insurance if anything gets damaged</li>
 						<li>• Academic year borrowing period</li>
 						<li>• No late fees</li>
-						<li>• Replacement cost for damaged items</li>
 					</ul>
 				</div>
 			</div>
