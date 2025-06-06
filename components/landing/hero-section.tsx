@@ -4,6 +4,8 @@ import HeroCarousel from '@/components/landing/hero-carousel';
 import { EmblaOptionsType } from 'embla-carousel';
 import Image from 'next/image';
 import Banner from '@/public/images/SAMSoC_banner.png';
+import MobileBanner from '@/public/images/SAMSoC_banner potrait.png';
+import useIsMobile from '../mobile-check';
 
 // Data for the awards
 // const awardsData = [
@@ -36,10 +38,18 @@ import Banner from '@/public/images/SAMSoC_banner.png';
 
 export function HeroSection() {
 	const OPTIONS: EmblaOptionsType = { loop: true };
-	const SLIDES = [
-		<div className="bg-red-400 h-full w-full"><Image src={Banner} alt='samsoc-banner'/></div>,
-		<div className="bg-red-400 h-full w-full"></div>,
-	];
+	let SLIDES = [];
+	if (!useIsMobile()) {
+		SLIDES = [
+			<div className="bg-red-400 h-full w-full"><Image src={Banner} alt='samsoc-banner'/></div>,
+			<div className="bg-red-400 h-full w-full"></div>,
+		];
+	} else {
+		SLIDES = [
+			<div className="bg-red-400 h-full w-full"><Image src={MobileBanner} alt='samsoc-banner'/></div>,
+			<div className="bg-red-400 h-full w-full"></div>,
+		];
+	}
 
 	return (
 		<section className="w-full pb-3 pt-0 md:pt-3 lg:pt-10">
