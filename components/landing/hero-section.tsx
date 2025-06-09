@@ -5,36 +5,35 @@ import { EmblaOptionsType } from 'embla-carousel';
 import Image from 'next/image';
 import Banner from '@/public/images/SAMSoC_banner.png';
 import MobileBanner from '@/public/images/SAMSoC_banner potrait.png';
-import useIsMobile from '../mobile-check';
-
+import { DynamicIcon } from 'lucide-react/dynamic';
 // Data for the awards
-// const awardsData = [
-// 	{
-// 		title: 'Society of the Year 2024/25',
-// 		description: 'Student Union Awards',
-// 		icon: Trophy,
-// 	},
-// 	{
-// 		title: 'Society of the Year 2022/23',
-// 		description: 'Student Union Awards',
-// 		icon: Trophy,
-// 	},
-// 	{
-// 		title: 'Society of the Year 2021/22',
-// 		description: 'Student Union Awards',
-// 		icon: Trophy,
-// 	},
-// 	{
-// 		title: 'Alan Sutherland Award 2022/23',
-// 		description: 'Student Union Awards',
-// 		icon: Ribbon,
-// 	},
-// 	{
-// 		title: 'Gold RAG Award 2021/22',
-// 		description: 'Student Union Awards',
-// 		icon: Star,
-// 	},
-// ];
+const awardsData = [
+	{
+		title: 'Society of the Year 2024/25',
+		description: 'Student Union Awards',
+		icon: 'Trophy',
+	},
+	{
+		title: 'Society of the Year 2022/23',
+		description: 'Student Union Awards',
+		icon: 'Trophy',
+	},
+	{
+		title: 'Society of the Year 2021/22',
+		description: 'Student Union Awards',
+		icon: 'Trophy',
+	},
+	{
+		title: 'Alan Sutherland Award 2022/23',
+		description: 'Student Union Awards',
+		icon: 'Ribbon',
+	},
+	{
+		title: 'Gold RAG Award 2021/22',
+		description: 'Student Union Awards',
+		icon: 'Star',
+	},
+];
 
 export function HeroSection() {
 	const OPTIONS: EmblaOptionsType = { loop: true };
@@ -56,7 +55,23 @@ export function HeroSection() {
 				/>
 			</div>
 		</div>,
-		<div className="bg-red-400 h-full w-full"></div>,
+		<div className="bg-red-400 h-full w-full">
+			<div></div>
+
+			<ul>
+				{awardsData.map((event, index) => {
+					return (
+						<li key={index}>
+							<h1>
+								<DynamicIcon name={event.icon} size={32} />
+								{event.title}
+							</h1>
+							<p>{event.description}</p>
+						</li>
+					);
+				})}
+			</ul>
+		</div>,
 	];
 
 	return (
