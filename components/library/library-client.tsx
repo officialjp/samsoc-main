@@ -171,7 +171,10 @@ const LibraryContent: React.FC = () => {
 					</h3>
 					<ul className="text-sm space-y-2">
 						<li>• Paid members only</li>
-						<li>• £10 deposit per volume borrowed as insurance if anything gets damaged</li>
+						<li>
+							• £10 deposit per volume borrowed as insurance if
+							anything gets damaged
+						</li>
 						<li>• Academic year borrowing period</li>
 						<li>• No late fees</li>
 					</ul>
@@ -186,7 +189,7 @@ const LibraryContent: React.FC = () => {
 							{filteredManga.length} results
 						</div>
 
-						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+						<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
 							{paginatedManga.map((manga) => (
 								<MangaCard
 									key={manga.id}
