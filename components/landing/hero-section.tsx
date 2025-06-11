@@ -11,33 +11,32 @@ const awardsData = [
 	{
 		title: 'Society of the Year 2024/25',
 		description: 'Student Union Awards',
-		icon: 'Trophy',
+		icon: 'trophy',
 	},
 	{
 		title: 'Society of the Year 2022/23',
 		description: 'Student Union Awards',
-		icon: 'Trophy',
+		icon: 'trophy',
 	},
 	{
 		title: 'Society of the Year 2021/22',
 		description: 'Student Union Awards',
-		icon: 'Trophy',
+		icon: 'trophy',
 	},
 	{
 		title: 'Alan Sutherland Award 2022/23',
 		description: 'Student Union Awards',
-		icon: 'Ribbon',
+		icon: 'ribbon',
 	},
 	{
 		title: 'Gold RAG Award 2021/22',
 		description: 'Student Union Awards',
-		icon: 'Star',
+		icon: 'star',
 	},
 ];
 
 export function HeroSection() {
 	const OPTIONS: EmblaOptionsType = { loop: true };
-
 	const SLIDES = [
 		<div className="bg-red-400 h-full w-full">
 			<div className="md:hidden h-full w-full">
@@ -55,18 +54,27 @@ export function HeroSection() {
 				/>
 			</div>
 		</div>,
-		<div className="bg-red-400 h-full w-full">
-			<div></div>
+		<div className="relative h-full w-full border-2 border-solid rounded-4xl flex items-center justify-center">
+			<div className="absolute top-0 left-0 w-full py-5">
+				<h1 className="w-full text-center"> our achievements </h1>
+			</div>
 
 			<ul>
 				{awardsData.map((event, index) => {
 					return (
-						<li key={index}>
-							<h1>
-								<DynamicIcon name={event.icon} size={32} />
-								{event.title}
-							</h1>
-							<p>{event.description}</p>
+						<li
+							key={index}
+							className="flex justify-center items-center mb-3"
+						>
+							<DynamicIcon
+								name={event.icon}
+								size={32}
+								className="mr-3"
+							/>
+							<span className="flex flex-col">
+								<h1>{event.title}</h1>
+								<p>{event.description}</p>
+							</span>
 						</li>
 					);
 				})}
