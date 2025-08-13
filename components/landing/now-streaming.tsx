@@ -38,56 +38,31 @@ export async function NowStreamingContent() {
 	const { data: animes }: AnimeCardProps = await supabase
 		.from('regular')
 		.select('title, public_url, episode, description, id, mal');
-	console.log(animes);
 
 	return (
-		<>
-			{isMobile ? (
-				<div className="mx-0 m-w-screen w-screen gap-8 py-12 -ml-4 md:-ml-6 lg:-ml-8">
-					<div className="mx-0 w-screen gap-6 flex justify-center items-center">
-						<Carousel className="w-full lg:max-w-[500]">
-							<CarouselContent>
-								{animes &&
-									animes.map((anime) => (
-										<CarouselItem key={anime.id}>
-											<div className="p-[16px] h-full">
-												<div className="relative flex items-center h-full">
-													<AnimeCard
-														title={anime.title}
-														episode={anime.episode}
-														description={
-															anime.description
-														}
-														image={anime.public_url}
-														url={anime.mal}
-													/>
-												</div>
-											</div>
-										</CarouselItem>
-									))}
-							</CarouselContent>
-						</Carousel>
-					</div>
-				</div>
-			) : (
-				<div className="container w-full max-w-full py-8 px-8">
-					<div className="relative mx-auto max-w-7xl p-4 ">
-						<div className="grid gap-8 md:grid-cols-3">
-							{animes &&
-								animes.map((anime) => (
-									<AnimeCard
-										key={anime.id}
-										title={anime.title}
-										episode={anime.episode}
-										description={anime.description}
-										image={anime.public_url}
-										url={anime.mal}
-									/>
-								))}
-						</div>
-					</div>
-				</div>
-			)}
-		</>
+		<div className="mx-0 m-w-screen w-screen gap-8 py-12 -ml-4 md:-ml-6 lg:-ml-8">
+			<div className="mx-0 w-screen gap-6 flex justify-center items-center">
+				<Carousel className="w-full">
+					<CarouselContent>
+						{animes &&
+							animes.map((anime) => (
+								<CarouselItem key={anime.id}>
+									<div className="p-[16px] h-full">
+										<div className="relative flex items-center h-full">
+											<AnimeCard
+												title={anime.title}
+												episode={anime.episode}
+												description={anime.description}
+												image={anime.public_url}
+												url={anime.mal}
+											/>
+										</div>
+									</div>
+								</CarouselItem>
+							))}
+					</CarouselContent>
+				</Carousel>
+			</div>
+		</div>
 	);
 }

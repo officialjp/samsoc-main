@@ -156,7 +156,7 @@ function CarouselContent({ className, ...props }: React.ComponentProps<'div'>) {
 		>
 			<div
 				className={cn(
-					'flex pr-[50px]',
+					'flex pr-[50px] lg:pr-4 lg:justify-between',
 					orientation === 'horizontal' ? '-ml-4' : '-mt-4 flex-col',
 					className,
 				)}
@@ -175,7 +175,7 @@ function CarouselItem({ className, ...props }: React.ComponentProps<'div'>) {
 			role="group"
 			aria-roledescription="slide"
 			className={cn(
-				'min-w-0 shrink-0 grow w-[85%]',
+				'min-w-0 shrink-0 grow w-[85%] lg:w-[30%] ',
 				orientation === 'horizontal' ? 'pl-4' : 'pt-4',
 				className,
 			)}

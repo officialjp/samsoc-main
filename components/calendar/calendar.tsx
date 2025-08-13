@@ -81,7 +81,6 @@ export function Calendar({ events }: CalendarProps) {
 			setGroupedEvents(grouped);
 		}
 	}, [events, currentMonth, isMobile]);
-
 	return (
 		<div className="bg-white border-2 rounded-md border-black p-4 md:p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
 			<CalendarHeader

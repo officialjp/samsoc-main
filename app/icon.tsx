@@ -1,51 +1,12 @@
 import { ImageResponse } from 'next/og';
 
-export function generateImageMetadata() {
-	return [
-		{
-			contentType: 'image/png',
-			size: {
-				width: 16,
-				height: 16,
-			},
-			id: 's',
-		},
-		{
-			contentType: 'image/png',
-			size: {
-				width: 32,
-				height: 32,
-			},
-			id: 'm',
-		},
-		{
-			contentType: 'image/png',
-			size: {
-				width: 96,
-				height: 96,
-			},
-			id: 'l',
-		},
-		{
-			contentType: 'image/png',
-			size: {
-				width: 128,
-				height: 128,
-			},
-			id: 'xl',
-		},
-		{
-			contentType: 'image/png',
-			size: {
-				width: 196,
-				height: 196,
-			},
-			id: 'xxl',
-		},
-	];
-}
+export const size = {
+	width: 32,
+	height: 32,
+};
+export const contentType = 'image/png';
 
-export default function Icon({ size }: any) {
+export default function Icon() {
 	return new ImageResponse(
 		(
 			<div
@@ -124,6 +85,8 @@ m-6046 -546 c-7 -104 -285 -5480 -285 -5516 l0 -22 -882 2 -883 3 -3 2813 -2
 				</svg>
 			</div>
 		),
-		{ ...size },
+		{
+			...size,
+		},
 	);
 }
