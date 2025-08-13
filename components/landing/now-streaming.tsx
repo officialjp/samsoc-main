@@ -34,8 +34,8 @@ export async function generateStaticParams() {
 	return data;
 }
 
-export async function NowStreamingContent({ data: nard }: AnimeCardProps) {
-	const { data: animes, error: error }: AnimeCardProps = await supabase
+export async function NowStreamingContent() {
+	const { data: animes }: AnimeCardProps = await supabase
 		.from('regular')
 		.select('title, public_url, episode, description, id, mal');
 	console.log(animes);
