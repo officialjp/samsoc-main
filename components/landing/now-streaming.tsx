@@ -18,6 +18,17 @@ interface AnimeCardProps {
 	error: PostgrestError | null;
 }
 
+export async function getStaticProps() {
+	const { data }: AnimeCardProps = await supabase
+		.from('regular')
+		.select('title, public_url, episode, description, id, mal');
+
+	return {
+		props: { data },
+		revalidate: 86400,
+	};
+}
+
 export async function NowStreamingContent() {
 	const { data: animes }: AnimeCardProps = await supabase
 		.from('regular')
