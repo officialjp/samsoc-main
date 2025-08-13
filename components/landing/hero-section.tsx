@@ -54,7 +54,7 @@ export function HeroSection() {
 				/>
 			</div>
 		</div>,
-		/*
+
 		<div className="relative h-full w-full border-2 border-solid rounded-4xl flex items-center justify-center">
 			<div className="absolute top-0 left-0 w-full py-5">
 				<h1 className="w-full text-center"> our achievements </h1>
@@ -80,7 +80,7 @@ export function HeroSection() {
 					);
 				})}
 			</ul>
-		</div>,*/
+		</div>,
 	];
 
 	return (
