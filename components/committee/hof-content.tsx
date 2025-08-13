@@ -1,9 +1,7 @@
 import { CommitteeYear } from '@/components/committee/committee-year';
 import supabase from '@/utils/supabase/client';
 import { Button } from '@/components/ui/button';
-import {
-	TypeCommitteeMemberData
-} from '@/lib/definitions';
+import { TypeCommitteeMemberData } from '@/lib/definitions';
 import {
 	CollapsibleContent,
 	Collapsible,
@@ -11,6 +9,18 @@ import {
 } from '@/components/ui/collapsible';
 import { ChevronsUpDown } from 'lucide-react';
 import { Key } from 'react';
+
+export async function getStaticProps() {
+	const { data } = await supabase
+		.from('committee')
+		.select('name, role, image, year')
+		.order('year', { ascending: false });
+
+	return {
+		props: { data },
+		revalidate: 86400,
+	};
+}
 
 export default async function HallOfFameContent() {
 	let { data: data, error: fetchError } = await supabase
