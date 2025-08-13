@@ -16,7 +16,7 @@ export function Footer() {
 					</p>
 					<p className="text-sm text-gray-500">
 						Created by:
-						<span> JP</span>,<span> Michael</span>,
+						<span> J.P</span>,<span> Michael</span>,
 						<span> Maiham </span>
 						and
 						<span> David</span> ❤️
