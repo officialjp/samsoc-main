@@ -26,7 +26,7 @@ export function Pagination({
 		const start = Math.max(2, currentPage - 1);
 		const end = Math.min(totalPages - 1, currentPage + 1);
 
-		// Add ellipsis after first page if needed
+		// Add ellipsi after first page if needed
 		if (start > 2) {
 			pages.push('ellipsis-start');
 		}
