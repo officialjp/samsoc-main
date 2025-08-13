@@ -1,5 +1,5 @@
 import Link from 'next/link';
-
+//add discords
 export function Footer() {
 	return (
 		<footer className="border-t-2 border-black bg-white">
