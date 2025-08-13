@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { CommitteeYear } from '@/components/committee/committee-year';
-import { createClient } from '@/utils/supabase/client';
+import supabase from '@/utils/supabase/client';
 import { Button } from '@/components/ui/button';
 import {
 	TypeCommitteeMemberData,
@@ -43,7 +43,6 @@ const HallOfFameContent: React.FC = () => {
 			try {
 				setLoading(true);
 				setError(null);
-				const supabase = createClient();
 
 				const { data: allCommittee, error: fetchError } = await supabase
 					.from('committee')

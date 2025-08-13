@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useMediaQuery } from '@/hooks/use-media-query';
+import { isMobile } from 'react-device-detect';
 
 interface CalendarHeaderProps {
 	currentMonth: Date;
@@ -19,8 +19,6 @@ export function CalendarHeader({
 	onNextMonth,
 	onCurrentMonth,
 }: CalendarHeaderProps) {
-	const isMobile = useMediaQuery('(max-width: 768px)');
-
 	const dateFormat = new Intl.DateTimeFormat('en-US', {
 		month: isMobile ? 'short' : 'long',
 		year: 'numeric',

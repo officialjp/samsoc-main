@@ -7,7 +7,7 @@ import {
 import Instagram from '@/public/instagram.svg';
 import Facebook from '@/public/facebook.svg';
 import Discord from '@/public/discord.svg';
-import useIsMobile from '../mobile-check';
+import { isMobile } from 'react-device-detect';
 import useEmblaCarousel from 'embla-carousel-react';
 import Link from 'next/link';
 import { SvgIcon } from '@/components/util/svgIcon';
@@ -49,7 +49,7 @@ export default function HeroCarousel({
 				</div>
 			</div>
 
-			{useSocials && !useIsMobile() && (
+			{useSocials && !isMobile && (
 				<div className="flex flex-row gap-4 flex-nowrap w-full max-w-[1200px] absolute -bottom-1">
 					<Link href="https://www.instagram.com/unisamsoc/?hl=en">
 						<SvgIcon

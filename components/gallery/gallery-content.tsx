@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { GalleryFilter } from '@/components/gallery/gallery-filter';
 import { GalleryImage } from '@/components/gallery/gallery-image';
-import { createClient } from '@/utils/supabase/client';
+import supabase from '@/utils/supabase/client';
 import { Button } from '../ui/button';
 import { X } from 'lucide-react';
 
@@ -16,7 +16,6 @@ interface GalleryItem {
 }
 
 export default function GalleryContent() {
-	const supabase = createClient();
 	const [galleryItems, setGalleryItems] = useState<GalleryItem[] | null>(
 		null,
 	);

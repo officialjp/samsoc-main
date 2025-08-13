@@ -6,7 +6,7 @@ import MangaCard from '@/components/library/manga-card';
 import { LibraryFilters } from '@/components/library/library-filters';
 import { Pagination } from '@/components/pagination';
 import { MangaType } from '@/lib/definitions';
-import { createClient } from '@/utils/supabase/client';
+import supabase from '@/utils/supabase/client';
 
 const ITEMS_PER_PAGE = 12;
 
@@ -30,7 +30,6 @@ const LibraryContent: React.FC = () => {
 			try {
 				setLoading(true);
 				setError(null);
-				const supabase = createClient();
 
 				// Fetch manga data with joined genre table
 				const { data: mangaData, error: mangaError } = await supabase
