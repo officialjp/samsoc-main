@@ -1,9 +1,8 @@
-'use client';
-import { useState, useEffect } from 'react';
 import { AnimeCard } from '@/components/landing/anime-card';
 import { Carousel, CarouselContent, CarouselItem } from '../ui/carousel';
 import useIsMobile from '../mobile-check';
 import { createClient } from '@/utils/supabase/client';
+import { PostgrestError } from "@supabase/supabase-js";
 
 interface AnimeType {
 	id: number;
@@ -14,55 +13,33 @@ interface AnimeType {
 	mal: string;
 }
 
-export function NowStreamingContent() {
-	const [animes, setAnimes] = useState<AnimeType[]>([]);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+interface AnimeCardProps {
+    data: AnimeType[] | null;
+    error: PostgrestError | null;
+}
+
+export async function getStaticProps()  {
+    const supabase = createClient();
+
+    const { data: data, error: error }: AnimeCardProps = await supabase
+        .from('regular')
+        .select('title, public_url, episode, description, id, mal')
+        .overrideTypes<Array<AnimeType>, { merge: false }>();
+    console.log(data);
+    if (error) {
+        console.error(`Error fetching streaming anime: ${error.message}`);
+        return;
+    }
+
+    return {
+        props: { data },
+        revalidate: 86400
+    }
+}
+
+export function NowStreamingContent({ data }: AnimeCardProps ) {
+	const animes = data;
 	const isMobile = useIsMobile();
-
-	useEffect(() => {
-		const fetchRegularAnime = async () => {
-			try {
-				setLoading(true);
-				setError(null);
-				const supabase = createClient();
-
-				const { data: regularData, error: fetchError } = await supabase
-					.from('regular')
-					.select('title, public_url, episode, description, id, mal');
-
-				if (fetchError) {
-					setError(
-						`Error fetching streaming anime: ${fetchError.message}`,
-					);
-					return;
-				}
-
-				setAnimes(regularData as AnimeType[]);
-			} catch (err: any) {
-				setError(`An unexpected error occurred: ${err.message}`);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		fetchRegularAnime();
-	}, []);
-
-	if (loading) {
-		return (
-			<div className="border-2 border-black bg-gray-100 rounded-md p-8 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-				<h3 className="text-xl font-bold mb-2">
-					Loading this week's anime...
-				</h3>
-				<p>Please wait while we gather the schedule.</p>
-			</div>
-		);
-	}
-
-	if (error) {
-		return <div>Error loading streaming anime: {error}</div>;
-	}
 
 	if (isMobile) {
 		return (
@@ -70,7 +47,7 @@ export function NowStreamingContent() {
 				<div className="mx-0 w-screen gap-6 flex justify-center items-center">
 					<Carousel className="w-full lg:max-w-[500]">
 						<CarouselContent>
-							{animes.map((anime) => (
+							{animes && animes.map((anime) => (
 								<CarouselItem key={anime.id}>
 									<div className="p-[16px] h-full">
 										<div className="relative flex items-center h-full">
@@ -95,7 +72,7 @@ export function NowStreamingContent() {
 		<div className="container w-full max-w-full py-8 px-8">
 			<div className="relative mx-auto max-w-7xl p-4 ">
 				<div className="grid gap-8 md:grid-cols-3">
-					{animes.map((anime) => (
+					{animes && animes.map((anime) => (
 						<AnimeCard
 							key={anime.id}
 							title={anime.title}
