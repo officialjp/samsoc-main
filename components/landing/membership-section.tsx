@@ -54,8 +54,14 @@ export function MembershipSection() {
 						</div>
 						<div className="md:col-span-2">
 							<Button className="w-full hover:cursor-pointer bg-membership1 hover:bg-pink-300 text-text1 text-base md:text-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-								Sign Up Now{' '}
-								<ArrowRight className="ml-2 h-4 w-4" />
+								<a
+									href="https://surreyunion.org/your-activity/clubs-and-societies-a-z/anime-manga-society"
+									target="_target"
+									className="flex items-center"
+								>
+									Sign Up Now{' '}
+									<ArrowRight className="ml-2 h-4 w-4" />
+								</a>
 							</Button>
 						</div>
 					</div>
