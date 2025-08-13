@@ -59,27 +59,6 @@ export function HeroSection() {
 			<div className="absolute top-0 left-0 w-full py-5">
 				<h1 className="w-full text-center"> our achievements </h1>
 			</div>
-
-			<ul>
-				{awardsData.map((event, index) => {
-					return (
-						<li
-							key={index}
-							className="flex justify-center items-center mb-3"
-						>
-							<DynamicIcon
-								name={event.icon}
-								size={32}
-								className="mr-3"
-							/>
-							<span className="flex flex-col">
-								<h1>{event.title}</h1>
-								<p>{event.description}</p>
-							</span>
-						</li>
-					);
-				})}
-			</ul>
 		</div>,
 	];
 
