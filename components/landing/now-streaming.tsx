@@ -18,22 +18,6 @@ interface AnimeCardProps {
 	error: PostgrestError | null;
 }
 
-export const revalidate = 86000;
-
-export async function generateStaticParams() {
-	const { data: data, error: error }: AnimeCardProps = await supabase
-		.from('regular')
-		.select('title, public_url, episode, description, id, mal');
-
-	//	console.log(data);
-	if (error) {
-		console.error(`Error fetching streaming anime: ${error.message}`);
-		return;
-	}
-
-	return data;
-}
-
 export async function NowStreamingContent() {
 	const { data: animes }: AnimeCardProps = await supabase
 		.from('regular')

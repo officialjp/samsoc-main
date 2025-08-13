@@ -15,7 +15,7 @@ export function CommitteeYear({
 				</div>
 			)}
 			<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-				{members.map((member, index) => (
+				{members?.map((member, index) => (
 					<CommitteeMember
 						key={index}
 						name={member.name}

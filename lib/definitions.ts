@@ -44,7 +44,7 @@ interface CommitteeMemberData {
 
 interface CommitteeYearProps {
 	year?: string;
-	members: CommitteeMemberData[];
+	members?: CommitteeMemberData[];
 	current?: boolean;
 }
 
