@@ -49,8 +49,8 @@ export default function HeroCarousel({
 				</div>
 			</div>
 
-			{useSocials && !isMobile && (
-				<div className="flex flex-row gap-4 flex-nowrap w-full max-w-[1200px] absolute -bottom-1">
+			{useSocials && (
+				<div className=" flex-row gap-4 flex-nowrap w-full max-w-[1200px] absolute -bottom-1 hidden lg:flex">
 					<Link href="https://www.instagram.com/unisamsoc/?hl=en">
 						<SvgIcon
 							src={Instagram.src}
