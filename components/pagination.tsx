@@ -19,7 +19,7 @@ export function Pagination({
 	const getPageNumbers = () => {
 		const pages = [];
 
-		// Always show first page
+		// Always show first pag
 		pages.push(1);
 
 		// Calculate range around current page
