@@ -12,7 +12,7 @@ export function MembershipSection() {
 	];
 
 	const paidFeatures = [
-		{ included: true, text: 'Access to weekly screenings' },
+		{ included: true, text: 'Access to weekly screenings :)' },
 		{ included: true, text: 'Participate in society events' },
 		{ included: true, text: 'Join our Discord community' },
 		{ included: true, text: 'Voting rights for anime selections' },
