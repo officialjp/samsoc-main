@@ -2,8 +2,7 @@ import { CommitteeYear } from '@/components/committee/committee-year';
 import supabase from '@/utils/supabase/client';
 import { Button } from '@/components/ui/button';
 import {
-	TypeCommitteeMemberData,
-	TypeCommitteeYearProps,
+	TypeCommitteeMemberData
 } from '@/lib/definitions';
 import {
 	CollapsibleContent,
