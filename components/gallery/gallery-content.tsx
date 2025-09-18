@@ -63,7 +63,6 @@ export default function GalleryContent() {
 
 	return (
 		<div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8">
-			{/* Sidebar with filters */}
 			<div className="lg:sticky lg:top-24 h-fit">
 				<div className="border-2 rounded-md border-black bg-white p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
 					<h2 className="text-2xl font-bold mb-6">Filter Gallery</h2>

@@ -46,7 +46,8 @@ const CalendarWithData: React.FC = () => {
 					fetchedRegSession?.forEach((session) => {
 						let currentDate: Date = parseISO(session.date);
 						for (let i = 0; i < 12; i++) {
-							sessions.push({
+							if (i>0) {
+								sessions.push({
 								id: session.id,
 								title: session.title,
 								description: session.description,
@@ -54,10 +55,24 @@ const CalendarWithData: React.FC = () => {
 								date: new Date(currentDate),
 								color: 'bg-purple-200',
 								isRegularSession: true,
-							});
-							currentDate = new Date(
-								currentDate.setDate(currentDate.getDate() + 7),
-							);
+								});
+								currentDate = new Date(
+									currentDate.setDate(currentDate.getDate() + 7),
+								);
+							} else {
+								sessions.push({
+								id: session.id,
+								title: "Voting Session",
+								description: "Sit down with us and vote on which 3 animes we will be watching this semester!",
+								location: session.location,
+								date: new Date(currentDate),
+								color: 'bg-purple-200',
+								isRegularSession: true,
+								});
+								currentDate = new Date(
+									currentDate.setDate(currentDate.getDate() + 7),
+								);
+							}
 						}
 					});
 
