@@ -43,6 +43,7 @@ export default function GalleryContent() {
 		'2025',
 		'2024',
 		'2023',
+		'2022',
 	];
 	const [activeCategory, setActiveCategory] = useState<string>('All');
 	const [activeYear, setActiveYear] = useState<string>('All');
