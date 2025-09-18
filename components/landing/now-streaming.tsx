@@ -1,6 +1,5 @@
 import { AnimeCard } from '@/components/landing/anime-card';
 import { Carousel, CarouselContent, CarouselItem } from '../ui/carousel';
-import { isMobile } from 'react-device-detect';
 import supabase from '@/utils/supabase/client';
 import { PostgrestError } from '@supabase/supabase-js';
 
