@@ -5,7 +5,6 @@ import { EmblaOptionsType } from 'embla-carousel';
 import Image from 'next/image';
 import Banner from '@/public/images/SAMSoC_banner.png';
 import MobileBanner from '@/public/images/SAMSoC_banner potrait.png';
-// Data for the awards
 
 export function HeroSection() {
 	const OPTIONS: EmblaOptionsType = { loop: true };
@@ -24,6 +23,12 @@ export function HeroSection() {
 					alt="samsoc-banner"
 					className="object-cover object-center w-full h-full"
 				/>
+			</div>
+		</div>,
+
+		<div className="relative h-full w-full border-2 border-solid rounded-4xl flex items-center justify-center">
+			<div className="absolute top-0 left-0 w-full py-5">
+				<h1 className="w-full text-center"> Placeholder </h1>
 			</div>
 		</div>,
 	];
