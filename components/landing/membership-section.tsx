@@ -57,7 +57,7 @@ export function MembershipSection() {
 								<a
 									href="https://surreyunion.org/your-activity/clubs-and-societies-a-z/anime-manga-society"
 									target="_target"
-									className="flex items-center"
+									className="flex items-center w-full"
 								>
 									Sign Up Now{' '}
 									<ArrowRight className="ml-2 h-4 w-4" />
