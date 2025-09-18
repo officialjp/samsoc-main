@@ -27,10 +27,10 @@ export function Footer() {
 						<h3 className="text-lg font-medium">Contact</h3>
 						<nav className="flex flex-col gap-2">
 							<Link
-								href="mailto:anime@university.edu"
+								href="mailto:Ussu.Anime@surrey.ac.uk"
 								className="text-sm hover:underline"
 							>
-								anime@surrey.ac.uk
+								Ussu.Anime@surrey.ac.uk
 							</Link>
 							<Link
 								href="https://www.instagram.com/unisamsoc/?hl=en"
