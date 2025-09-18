@@ -7,7 +7,6 @@ import {
 import Instagram from '@/public/instagram.svg';
 import Facebook from '@/public/facebook.svg';
 import Discord from '@/public/discord.svg';
-import { isMobile } from 'react-device-detect';
 import useEmblaCarousel from 'embla-carousel-react';
 import Link from 'next/link';
 import { SvgIcon } from '@/components/util/svgIcon';
