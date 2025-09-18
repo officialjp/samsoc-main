@@ -36,16 +36,13 @@ export default function GalleryContent() {
 		fetchGalleryData();
 	}, []);
 
-	const categories = ['All', 'Events', 'Regular Sessions', 'Collaborations'];
+	const categories = ['All', 'Events', 'Collaborations'];
 	const years = [
 		'All',
 		'2026',
 		'2025',
 		'2024',
 		'2023',
-		'2022',
-		'2021',
-		'2020',
 	];
 	const [activeCategory, setActiveCategory] = useState<string>('All');
 	const [activeYear, setActiveYear] = useState<string>('All');
