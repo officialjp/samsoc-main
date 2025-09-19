@@ -140,7 +140,7 @@ export function MobileCalendarView({
 									>
 										<div>
 											<span className="font-bold">
-												{format(day, 'EEEE, MMMM d, p')}
+												{format(day, 'EEEE, MMMM d')}
 											</span>
 											<span className="ml-2 text-sm text-gray-500">
 												({dayEvents.length} event
