@@ -12,6 +12,7 @@ import Facebook from '@/public/facebook.svg';
 import Discord from '@/public/discord.svg';
 
 export function Header() {
+	const [isOpen, setIsOpen] = useState(false);
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 
 	const toggleMenu = () => {
@@ -50,14 +51,31 @@ export function Header() {
 							className={'bg-[#0866ff]'}
 						></SvgIcon>
 					</Link>
-					<Link href="https://www.discord.com">
+					<button
+						onClick={() => setIsOpen(true)}>
 						<SvgIcon
 							src={Discord.src}
-							height={30}
-							width={30}
-							className={'bg-[#5865f2]'}
-						></SvgIcon>
-					</Link>
+							height={32}
+							width={32}
+							className='bg-[#7289da]'>
+						</SvgIcon>
+					</button>
+					{isOpen && (
+						<div
+							className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 hover:cursor-pointer"
+							onClick={() => setIsOpen(false)}
+						>
+							<div className="relative max-w-5xl max-h-[90vh] bg-white rounded-md border-4 border-black p-2 hover:cursor-default">
+								<button
+									className="absolute -top-4 -right-4 bg-pink-500 text-white rounded-full p-1 border-2 border-black hover:cursor-pointer"
+									onClick={() => setIsOpen(false)}
+								>
+									<X className="h-6 w-6" />
+								</button>
+								<p className="mt-2 text-center font-medium">The discord link can be found in our Microsoft Teams, please wait up to 24 hours to get added to the teams once you have acquired a membership!</p>
+							</div>
+						</div>
+					)}
 				</div>
 				<nav className="hidden md:flex gap-6 ml-auto pr-6">
 					<Link

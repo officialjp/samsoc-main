@@ -1,6 +1,10 @@
+'use client'
+import { X } from 'lucide-react';
 import Link from 'next/link';
+import { useState } from 'react';
 //add discords
 export function Footer() {
+	const [isOpen, setIsOpen] = useState(false);
 	return (
 		<footer className="border-t-2 border-black bg-white">
 			<div className="container w-full max-w-full px-4 md:px-6 lg:px-8 flex flex-col gap-4 py-10 md:flex-row md:justify-between">
@@ -44,9 +48,27 @@ export function Footer() {
 							>
 								Facebook
 							</Link>
-							<Link href="https://teams.microsoft.com/l/message/19:c054364e937e4c6e97ef22cf2a05efc2@thread.skype/1728301250741?groupId=c7d2a134-f194-4aa3-9c58-a727bf0cddfa&parentMessageId=1728301250741&tenantId=6b902693-1074-40aa-9e21-d89446a2ebb5" className="text-sm hover:underline">
+							<button
+								className="text-sm hover:underline justify-start items-start text-start"
+								onClick={() => setIsOpen(true)}>
 								Discord
-							</Link>
+							</button>
+							{isOpen && (
+								<div
+									className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 hover:cursor-pointer"
+									onClick={() => setIsOpen(false)}
+								>
+									<div className="relative max-w-5xl max-h-[90vh] bg-white rounded-md border-4 border-black p-2 hover:cursor-default">
+										<button
+											className="absolute -top-4 -right-4 bg-pink-500 text-white rounded-full p-1 border-2 border-black hover:cursor-pointer"
+											onClick={() => setIsOpen(false)}
+										>
+											<X className="h-6 w-6" />
+										</button>
+										<p className="mt-2 text-center font-medium">The discord link can be found in our Microsoft Teams, please wait up to 24 hours to get added to the teams once you have acquired a membership!</p>
+									</div>
+								</div>
+							)}
 						</nav>
 					</div>
 				</div>
