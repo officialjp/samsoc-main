@@ -44,7 +44,7 @@ export function Footer() {
 							>
 								Facebook
 							</Link>
-							<Link href="#" className="text-sm hover:underline">
+							<Link href="https://teams.microsoft.com/l/message/19:c054364e937e4c6e97ef22cf2a05efc2@thread.skype/1728301250741?groupId=c7d2a134-f194-4aa3-9c58-a727bf0cddfa&parentMessageId=1728301250741&tenantId=6b902693-1074-40aa-9e21-d89446a2ebb5" className="text-sm hover:underline">
 								Discord
 							</Link>
 						</nav>
