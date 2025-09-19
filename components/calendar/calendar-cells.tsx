@@ -164,7 +164,7 @@ export function CalendarCells({
 							<div className="text-sm text-gray-500 mb-1">
 								{format(
 									selectedEvent.date,
-									'EEEE, MMMM d, yyyy',
+									'EEEE, MMMM d, yyyy, p',
 								)}
 							</div>
 							<div className="text-sm font-medium">
