@@ -5,11 +5,13 @@ import { EmblaOptionsType } from 'embla-carousel';
 import Image from 'next/image';
 import Banner from '@/public/images/SAMSoC_banner.png';
 import MobileBanner from '@/public/images/SAMSoC_banner potrait.png';
+import IceBanner from '@/public/images/SAMSOC_ICEBREAKER_SESSION.webp';
+import IceBannerMobile from '@/public/images/SAMSOC_ICEBREAKER_SESSION_MOBILE.png';
 
 export function HeroSection() {
 	const OPTIONS: EmblaOptionsType = { loop: true };
 	const SLIDES = [
-		<div className="bg-red-400 h-full w-full">
+		<div className="h-full w-full">
 			<div className="md:hidden h-full w-full">
 				<Image
 					src={MobileBanner}
@@ -26,9 +28,20 @@ export function HeroSection() {
 			</div>
 		</div>,
 
-		<div className="relative h-full w-full border-2 border-solid rounded-4xl flex items-center justify-center">
-			<div className="absolute top-0 left-0 w-full py-5">
-				<h1 className="w-full text-center"> Placeholder </h1>
+		<div className="h-full w-full">
+			<div className="md:hidden h-full w-full">
+				<Image
+					src={IceBannerMobile}
+					alt="samsoc-banner-iceBreaker"
+					className="object-cover object-top w-full h-full"
+				/>
+			</div>
+			<div className="hidden md:inline-flex h-full w-full">
+				<Image
+					src={IceBanner}
+					alt="samsoc-banner-iceBreaker"
+					className="object-cover object-center w-full h-full"
+				/>
 			</div>
 		</div>,
 	];
