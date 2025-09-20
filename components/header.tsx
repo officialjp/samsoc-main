@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { SvgIcon } from '@/components/util/svgIcon';
 import { Menu, X } from 'lucide-react';
@@ -15,12 +15,57 @@ export function Header() {
 	const [isOpen, setIsOpen] = useState(false);
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+	const navRef = useRef(null);
+
+	let transformPosY = 0;
+	let lastScroll = 0;
+
 	const toggleMenu = () => {
+		transformPosY = 0;
+		lastScroll = 0;
+
 		setIsMenuOpen(!isMenuOpen);
 	};
 
+	const animateOnScrollController = (self: any) => {
+		const scroll = window.scrollY;
+		const scrollDelta = lastScroll - scroll;
+		const hiddenHeight = self.offsetHeight + 40;
+
+		lastScroll = scroll;
+
+		if (transformPosY < hiddenHeight || scrollDelta > 0) {
+			transformPosY = Math.min(
+				Math.max(transformPosY + scrollDelta, -hiddenHeight),
+				0,
+			);
+		}
+
+		const range = transformPosY / -hiddenHeight;
+
+		if (range >= 0.5) {
+			setIsMenuOpen(false);
+		}
+
+		self.style.opacity = (1 - range).toString();
+		self.style.filter = `blur(${range * 5}px)`;
+	};
+
+	useEffect(() => {
+		window.addEventListener('scroll', () => {
+			animateOnScrollController(navRef.current);
+		});
+		return () =>
+			window.removeEventListener('scroll', () => {
+				animateOnScrollController(navRef.current);
+			});
+	}, []);
+
 	return (
-		<header className="sticky top-0 z-50 border-b-2 border-black bg-white">
+		<header
+			ref={navRef}
+			className="fixed top-0 z-50 w-full border-b-2 border-black bg-white"
+		>
 			<div className="container w-full max-w-full px-4 md:px-6 lg:px-8 flex h-16 items-center justify-between">
 				<Link
 					href="/"
@@ -51,14 +96,13 @@ export function Header() {
 							className={'bg-[#0866ff]'}
 						></SvgIcon>
 					</Link>
-					<button
-						onClick={() => setIsOpen(true)}>
+					<button onClick={() => setIsOpen(true)}>
 						<SvgIcon
 							src={Discord.src}
 							height={32}
 							width={32}
-							className='bg-[#7289da]'>
-						</SvgIcon>
+							className="bg-[#7289da]"
+						></SvgIcon>
 					</button>
 					{isOpen && (
 						<div
@@ -72,7 +116,12 @@ export function Header() {
 								>
 									<X className="h-6 w-6" />
 								</button>
-								<p className="mt-2 text-center font-medium">The discord link can be found in our Microsoft Teams, please wait up to 24 hours to get added to the teams once you have acquired a membership!</p>
+								<p className="mt-2 text-center font-medium">
+									The discord link can be found in our
+									Microsoft Teams, please wait up to 24 hours
+									to get added to the teams once you have
+									acquired a membership!
+								</p>
 							</div>
 						</div>
 					)}
