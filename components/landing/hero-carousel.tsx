@@ -9,6 +9,7 @@ import Instagram from '@/public/instagram.svg';
 import Facebook from '@/public/facebook.svg';
 import Discord from '@/public/discord.svg';
 import useEmblaCarousel from 'embla-carousel-react';
+import Autoplay from 'embla-carousel-autoplay';
 import Link from 'next/link';
 import { SvgIcon } from '@/components/util/svgIcon';
 import { useState } from 'react';
@@ -25,7 +26,11 @@ export default function HeroCarousel({
 	options,
 	useSocials,
 }: PropType) {
-	const [emblaRef, emblaApi] = useEmblaCarousel(options);
+	const [emblaRef, emblaApi] = useEmblaCarousel(options, [
+		Autoplay({
+			delay: 5000,
+		}),
+	]);
 	const [isOpen, setIsOpen] = useState(false);
 
 	const { selectedIndex, scrollSnaps, onDotButtonClick } =
