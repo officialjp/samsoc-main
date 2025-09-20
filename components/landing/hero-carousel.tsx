@@ -1,4 +1,4 @@
-"use client"
+'use client';
 import React from 'react';
 import { EmblaOptionsType } from 'embla-carousel';
 import {
@@ -71,13 +71,15 @@ export default function HeroCarousel({
 						></SvgIcon>
 					</Link>
 					<button
-						onClick={() => setIsOpen(true)}>
+						className="cursor-pointer"
+						onClick={() => setIsOpen(true)}
+					>
 						<SvgIcon
 							src={Discord.src}
 							height={32}
 							width={32}
-							className='bg-[#7289da]'>
-						</SvgIcon>
+							className="bg-[#7289da]"
+						></SvgIcon>
 					</button>
 					{isOpen && (
 						<div
@@ -91,7 +93,12 @@ export default function HeroCarousel({
 								>
 									<X className="h-6 w-6" />
 								</button>
-								<p className="mt-2 text-center font-medium">The discord link can be found in our Microsoft Teams, please wait up to 24 hours to get added to the teams once you have acquired a membership!</p>
+								<p className="mt-2 text-center font-medium">
+									The discord link can be found in our
+									Microsoft Teams, please wait up to 24 hours
+									to get added to the teams once you have
+									acquired a membership!
+								</p>
 							</div>
 						</div>
 					)}
