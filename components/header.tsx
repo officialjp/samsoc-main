@@ -27,7 +27,11 @@ export function Header() {
 	const animateOnScrollController = (self: any) => {
 		const scroll = window.scrollY;
 
-		if (scroll <= 0) return; // maybe change if no workie work
+		if (scroll <= 0) {
+			self.style.opacity = '1';
+			self.style.filter = 'blur(0px)';
+			return;
+		}
 
 		const scrollDelta = lastScroll - scroll;
 		const hiddenHeight = self.offsetHeight + 40;
