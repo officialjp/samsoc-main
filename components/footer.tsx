@@ -1,7 +1,8 @@
-'use client'
+'use client';
 import { X } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import { SvgIcon } from './util/svgIcon';
 //add discords
 export function Footer() {
 	const [isOpen, setIsOpen] = useState(false);
@@ -20,10 +21,43 @@ export function Footer() {
 					</p>
 					<p className="text-sm text-gray-500">
 						Created by:
-						<span> J.P</span>,<span> Michael</span>,
-						<span> Maiham </span>
-						and
-						<span> David</span> ❤️
+						<span>
+							<Link
+								href="https://github.com/officialjp"
+								className="flex items-center"
+							>
+								J.P
+							</Link>
+						</span>
+						<span>
+							<Link
+								href="https://natski.dev"
+								className="flex items-center"
+							>
+								<SvgIcon
+									className={'bg-gray-500 mr-1'}
+									width={15}
+									height={15}
+									src={
+										'https://natski.vercel.app/apis/encore/icon-system/dependencies/svg/NATSKI.svg'
+									}
+								></SvgIcon>
+								Michael
+							</Link>
+						</span>
+						<span>
+							<Link href="" className="flex items-center">
+								Maiham
+							</Link>
+						</span>
+						<span>
+							<Link
+								href="https://github.com/BLT19"
+								className="flex items-center"
+							>
+								David
+							</Link>
+						</span>
 					</p>
 				</div>
 				<div className="grid grid-cols-2 gap-10 sm:grid-cols-3">
@@ -50,7 +84,8 @@ export function Footer() {
 							</Link>
 							<button
 								className="text-sm hover:underline justify-start items-start text-start"
-								onClick={() => setIsOpen(true)}>
+								onClick={() => setIsOpen(true)}
+							>
 								Discord
 							</button>
 							{isOpen && (
@@ -65,7 +100,12 @@ export function Footer() {
 										>
 											<X className="h-6 w-6" />
 										</button>
-										<p className="mt-2 text-center font-medium">The discord link can be found in our Microsoft Teams, please wait up to 24 hours to get added to the teams once you have acquired a membership!</p>
+										<p className="mt-2 text-center font-medium">
+											The discord link can be found in our
+											Microsoft Teams, please wait up to
+											24 hours to get added to the teams
+											once you have acquired a membership!
+										</p>
 									</div>
 								</div>
 							)}

@@ -21,14 +21,14 @@ export function Header() {
 	let lastScroll = 0;
 
 	const toggleMenu = () => {
-		transformPosY = 0;
-		lastScroll = 0;
-
 		setIsMenuOpen(!isMenuOpen);
 	};
 
 	const animateOnScrollController = (self: any) => {
 		const scroll = window.scrollY;
+
+		if (scroll <= 0) return; // maybe change if no workie work
+
 		const scrollDelta = lastScroll - scroll;
 		const hiddenHeight = self.offsetHeight + 40;
 
@@ -41,7 +41,7 @@ export function Header() {
 			);
 		}
 
-		const range = transformPosY / -hiddenHeight;
+		let range = transformPosY / -hiddenHeight;
 
 		if (range >= 0.5) {
 			setIsMenuOpen(false);
