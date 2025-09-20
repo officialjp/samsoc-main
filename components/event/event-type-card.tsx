@@ -45,6 +45,7 @@ export function EventTypeCard({
 								src={image || '/placeholder.svg'}
 								alt={title}
 								fill
+								sizes='sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"'
 								className="object-cover"
 							/>
 						)}
