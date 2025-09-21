@@ -1,3 +1,4 @@
+'use client';
 import { AnimeCard } from '@/components/landing/anime-card';
 import { Carousel, CarouselContent, CarouselItem } from '../ui/carousel';
 import { isMobile } from 'react-device-detect';
@@ -7,6 +8,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Tooltip, TooltipContent } from '../ui/tooltip';
 import { TooltipTrigger } from '@radix-ui/react-tooltip';
+import { useEffect, useState } from 'react';
 
 interface GenreType {
 	genre: string,
@@ -30,21 +32,26 @@ interface AnimeCardProps {
 	error: PostgrestError | null;
 }
 
-export async function getStaticProps() {
-	const { data }: AnimeCardProps = await supabase
-		.from('regular')
-		.select('title, public_url, episode, description, id, mal');
+export function NowStreamingContent() {
+	const [animes, setAnimes] = useState<AnimeType[] | null>(null);
 
-	return {
-		props: { data },
-		revalidate: 86400,
-	};
-}
-
-export async function NowStreamingContent() {
-	const { data: animes }: AnimeCardProps = await supabase
-		.from('regular')
-		.select('title, public_url, episode, description, id, mal, total_episodes, type_of_show, studio, genre (genre)');
+	useEffect(() => {
+		async function fetchAnimeData() {
+			try {
+				const { data: animes }: AnimeCardProps = await supabase
+					.from('regular')
+					.select('title, public_url, episode, description, id, mal, total_episodes, type_of_show, studio, genre (genre)');
+	
+				if (animes) {
+					setAnimes(animes as AnimeType[]);
+				}
+			} catch (err: any) {
+				console.error(err.message);
+			}
+		}
+	
+		fetchAnimeData();
+	}, []);
 
 	if (!isMobile) {
 		return (
