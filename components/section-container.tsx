@@ -15,7 +15,7 @@ export function SectionContainer({
   return (
     <section
       id={id}
-      className={cn("w-full py-12 md:py-24 lg:py-32", className)}
+      className={cn("w-full py-6 md:py-12 lg:py-16", className)}
     >
       <div className="container w-full max-w-full px-4 md:px-6 lg:px-8">
         {children}
