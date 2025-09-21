@@ -23,7 +23,7 @@ export function AboutSection() {
 			icon: Star,
 			title: 'Convention Trips',
 			description:
-				'We organize group trips to both the November and May MCM ComiCon conventions!',
+				'We organize group trips to both October and May ComiCon conventions!',
 			color: 'bg-about3',
 		},
 	];
