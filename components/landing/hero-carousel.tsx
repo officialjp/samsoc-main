@@ -1,4 +1,4 @@
-"use client"
+'use client';
 import React from 'react';
 import { EmblaOptionsType } from 'embla-carousel';
 import {
@@ -9,6 +9,7 @@ import Instagram from '@/public/instagram.svg';
 import Facebook from '@/public/facebook.svg';
 import Discord from '@/public/discord.svg';
 import useEmblaCarousel from 'embla-carousel-react';
+import Autoplay from 'embla-carousel-autoplay';
 import Link from 'next/link';
 import { SvgIcon } from '@/components/util/svgIcon';
 import { useState } from 'react';
@@ -25,7 +26,11 @@ export default function HeroCarousel({
 	options,
 	useSocials,
 }: PropType) {
-	const [emblaRef, emblaApi] = useEmblaCarousel(options);
+	const [emblaRef, emblaApi] = useEmblaCarousel(options, [
+		Autoplay({
+			delay: 5000,
+		}),
+	]);
 	const [isOpen, setIsOpen] = useState(false);
 
 	const { selectedIndex, scrollSnaps, onDotButtonClick } =
@@ -34,7 +39,7 @@ export default function HeroCarousel({
 	return (
 		<section className="relative w-full m-auto h-fit flex flex-col items-center">
 			<div
-				className="overflow-hidden w-full max-w-[1200px] max-h-[calc(85vh-80px)] rounded-0 md:rounded-4xl aspect-[9/16] md:aspect-[16/9] lg:aspect-[16/9] xl:aspect-[16/9]"
+				className="overflow-hidden w-full max-w-[1200px]  rounded-0 md:rounded-4xl aspect-[9/16] md:aspect-[16/9] lg:aspect-[16/9] xl:aspect-[16/9]"
 				ref={emblaRef}
 			>
 				<div className="flex touch-pinch-zoom h-full touch-pan-y">
@@ -71,13 +76,15 @@ export default function HeroCarousel({
 						></SvgIcon>
 					</Link>
 					<button
-						onClick={() => setIsOpen(true)}>
+						className="cursor-pointer"
+						onClick={() => setIsOpen(true)}
+					>
 						<SvgIcon
 							src={Discord.src}
 							height={32}
 							width={32}
-							className='bg-[#7289da]'>
-						</SvgIcon>
+							className="bg-[#7289da]"
+						></SvgIcon>
 					</button>
 					{isOpen && (
 						<div
@@ -91,7 +98,12 @@ export default function HeroCarousel({
 								>
 									<X className="h-6 w-6" />
 								</button>
-								<p className="mt-2 text-center font-medium">The discord link can be found in our Microsoft Teams, please wait up to 24 hours to get added to the teams once you have acquired a membership!</p>
+								<p className="mt-2 text-center font-medium">
+									The discord link can be found in our
+									Microsoft Teams, please wait up to 24 hours
+									to get added to the teams once you have
+									acquired a membership!
+								</p>
 							</div>
 						</div>
 					)}
