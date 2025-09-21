@@ -36,7 +36,7 @@ To get a local copy up and running, follow these simple steps.
 
 ```
 
-git clone [https://github.com/officialjp/samsoc-website.git]
+git clone [https://github.com/officialjp/samsoc-main.git]
 
 ```
 
