@@ -36,16 +36,16 @@ const LibraryContent: React.FC = () => {
 					.from('manga')
 					.select(
 						`
-            id,
-            title,
-            author,
-            volume,
-            borrowedby,
-            coverimage,
-            genre (
-              genre
-            )
-          `,
+						id,
+						title,
+						author,
+						volume,
+						borrowedby,
+						coverimage,
+						genre (
+						genre
+						)
+					`,
 					)
 					.order('id', { ascending: true });
 
