@@ -5,7 +5,7 @@ import supabase from '@/utils/supabase/client';
 import { Button } from '@/components/ui/button';
 import { ChevronsUpDown, X } from 'lucide-react';
 import { Key, useEffect, useState } from 'react';
-import ScrollViewCard from './scroll-view-card';
+import ScrollViewCard from '../scroll-view-card';
 import { TypeCommitteeMemberData } from '@/lib/definitions';
 import { cn } from '@/lib/utils';
 import {
