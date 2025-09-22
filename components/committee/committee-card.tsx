@@ -5,6 +5,7 @@ interface CommitteeMemberProps {
 	name: string;
 	position: string;
 	image: string;
+	year: string;
 	className?: string;
 	current?: boolean;
 }
@@ -13,6 +14,7 @@ export function CommitteeMember({
 	name,
 	position,
 	image,
+	year,
 	className,
 	current = false,
 }: CommitteeMemberProps) {
@@ -24,6 +26,9 @@ export function CommitteeMember({
 				className,
 			)}
 		>
+			<div className="mt-1 px-3 py-1 text-sm font-bold mb-4 inline-block w-fit grow-0 whitespace-pre">
+				{year}
+			</div>
 			<div className="relative mb-4">
 				<div
 					className={cn(
@@ -45,7 +50,7 @@ export function CommitteeMember({
 				)}
 			</div>
 			<h3 className="text-xl font-bold">{name}</h3>
-			<div className="mt-1 bg-about1 px-3 py-1 text-sm font-bold border-2 border-black inline-block w-fit grow-0 whitespace-pre">
+			<div className="mt-1 bg-about1 px-3 py-1 text-sm font-bold rounded-md border-2 border-black inline-block w-fit grow-0 whitespace-pre">
 				{position}
 			</div>
 		</div>
