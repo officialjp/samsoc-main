@@ -171,33 +171,44 @@ function HallOfFameFilter({
 
 					{years.map((year, index) => {
 						if ((index % 5 === 0 || index === 1) && index !== 0) {
-							console.log(year);
+							console.log('year', year, typeof year);
+							const IntYear = parseInt(year);
+
 							return (
 								<DropdownMenuSub key={index}>
 									<DropdownMenuSubTrigger className="border-2 border-black hover:cursor-pointer bg-white hover:bg-gray-100">
 										<span>
-											{year}-{parseInt(year) + 4}
+											{year}-{IntYear + 4}
 										</span>
 									</DropdownMenuSubTrigger>
 									<DropdownMenuPortal>
 										<DropdownMenuSubContent className="bg-about1">
 											{...Array(5)
 												.fill(0)
-												.map((x, index) => 
-												(
-													<DropdownMenuItem
-														key={year + index}
-														onClick={() => onYearChange((parseInt(year)+index).toString())}
-														className={cn(
-															'border-2 border-black hover:cursor-pointer',
-															activeYear === (parseInt(year)+index).toString()
-																? 'bg-pink-500 text-white hover:bg-pink-600'
-																: 'bg-white text-black hover:bg-gray-100',
-														)}
-													>
-														{(parseInt(year)+index).toString()}
-													</DropdownMenuItem>
-												))}
+												.map((x, index) => {
+													const indexedYear = `${
+														IntYear + index
+													}`;
+													return (
+														<DropdownMenuItem
+															key={year + index}
+															onClick={() =>
+																onYearChange(
+																	indexedYear,
+																)
+															}
+															className={cn(
+																'border-2 border-black hover:cursor-pointer',
+																activeYear ===
+																	indexedYear
+																	? 'bg-pink-500 text-white hover:bg-pink-600'
+																	: 'bg-white text-black hover:bg-gray-100',
+															)}
+														>
+															{indexedYear}
+														</DropdownMenuItem>
+													);
+												})}
 										</DropdownMenuSubContent>
 									</DropdownMenuPortal>
 								</DropdownMenuSub>
