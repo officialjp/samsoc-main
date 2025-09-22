@@ -1,11 +1,9 @@
 'use client';
-import { CommitteeYear } from '@/components/committee/committee-year';
 import { CommitteeMember } from '@/components/committee/committee-card';
 import supabase from '@/utils/supabase/client';
 import { Button } from '@/components/ui/button';
-import { ChevronsUpDown, X } from 'lucide-react';
-import { Key, useEffect, useState } from 'react';
-import ScrollViewCard from '../scroll-view-card';
+import { X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { TypeCommitteeMemberData } from '@/lib/definitions';
 import { cn } from '@/lib/utils';
 import {
@@ -16,101 +14,11 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuPortal,
 	DropdownMenuSeparator,
-	DropdownMenuShortcut,
 	DropdownMenuSub,
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-
-/*
-<DropdownMenu>
-  <DropdownMenuTrigger asChild>
-    <Button example={'noShadow'}>Open</Button>
-  </DropdownMenuTrigger>
-  <DropdownMenuContent className="w-56">
-    <DropdownMenuLabel>My Account</DropdownMenuLabel>
-    <DropdownMenuSeparator />
-    <DropdownMenuGroup>
-      <DropdownMenuItem>
-        <User />
-        <span>Profile</span>
-        <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-      </DropdownMenuItem>
-      <DropdownMenuItem>
-        <CreditCard />
-        <span>Billing</span>
-        <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-      </DropdownMenuItem>
-      <DropdownMenuItem>
-        <Settings />
-        <span>Settings</span>
-        <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-      </DropdownMenuItem>
-      <DropdownMenuItem>
-        <Keyboard />
-        <span>Keyboard shortcuts</span>
-        <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
-      </DropdownMenuItem>
-    </DropdownMenuGroup>
-    <DropdownMenuSeparator />
-    <DropdownMenuGroup>
-      <DropdownMenuItem>
-        <Users />
-        <span>Team</span>
-      </DropdownMenuItem>
-      <DropdownMenuSub>
-        <DropdownMenuSubTrigger>
-          <UserPlus />
-          <span>Invite users</span>
-        </DropdownMenuSubTrigger>
-        <DropdownMenuPortal>
-          <DropdownMenuSubContent>
-            <DropdownMenuItem>
-              <Mail />
-              <span>Email</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <MessageSquare />
-              <span>Message</span>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <PlusCircle />
-              <span>More...</span>
-            </DropdownMenuItem>
-          </DropdownMenuSubContent>
-        </DropdownMenuPortal>
-      </DropdownMenuSub>
-      <DropdownMenuItem>
-        <Plus />
-        <span>New Team</span>
-        <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
-      </DropdownMenuItem>
-    </DropdownMenuGroup>
-    <DropdownMenuSeparator />
-    <DropdownMenuItem>
-      <Github />
-      <span>GitHub</span>
-    </DropdownMenuItem>
-    <DropdownMenuItem>
-      <LifeBuoy />
-      <span>Support</span>
-    </DropdownMenuItem>
-    <DropdownMenuItem disabled>
-      <Cloud />
-      <span>API</span>
-    </DropdownMenuItem>
-    <DropdownMenuSeparator />
-    <DropdownMenuItem>
-      <LogOut />
-      <span>Log out</span>
-      <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-    </DropdownMenuItem>
-  </DropdownMenuContent>
-</DropdownMenu>
-*/
-//HUGE news for the unemployed please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me
 
 interface HOFFilterProps {
 	categories: string[];
@@ -440,56 +348,4 @@ export default function HallOfFameContent() {
 			</div>
 		</>
 	);
-}
-
-function e() {
-	/*
-
-	return (
-		<div className="relative">
-			<div className="relative z-10">
-				<CommitteeYear
-					year={data?.[0].year.toString()}
-					members={currentCommitee}
-					current={true}
-				/>
-			</div>
-			<div className="relative z-10 mt-16">
-				<div className="mb-12">
-					<h2 className="inline-block bg-about1 px-4 py-2 text-2xl font-bold border-4 border-black -rotate-1">
-						PAST COMMITTEES
-					</h2>
-					<div className="mt-2 h-1 w-full bg-black"></div>
-				</div>
-
-				{pastCommittees?.map(
-					(
-						committee: TypeCommitteeMemberData[],
-						index: Key | null | undefined,
-					) => (
-						<Collapsible key={index}>
-							<div className="flex items-center mb-8 flex-row-reverse justify-end space-x-4 text-main-foreground px-4 py-2">
-								<h2 className="text-3xl font-bold ml-4">
-									{committee[0].year}
-								</h2>
-								<CollapsibleTrigger asChild>
-									<Button
-										variant="default"
-										size="sm"
-										className="w-9 text-foreground cursor-pointer p-0 bg-about1"
-									>
-										<ChevronsUpDown className="size-4" />
-										<span className="sr-only">Toggle</span>
-									</Button>
-								</CollapsibleTrigger>
-							</div>
-							<CollapsibleContent className="transition-all duration-300">
-								<CommitteeYear members={committee} />
-							</CollapsibleContent>
-						</Collapsible>
-					),
-				)}
-			</div>
-		</div>
-	); */
 }
