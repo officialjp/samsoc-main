@@ -49,10 +49,12 @@ export function Header() {
 
 		if (range >= 0.5) {
 			setIsMenuOpen(false);
+			self.style.pointerEvents = 'none';
+		} else {
+			self.style.pointerEvents = null;
 		}
 
 		self.style.opacity = (1 - range).toString();
-		self.style.filter = `blur(${range * 5}px)`;
 	};
 
 	useEffect(() => {
@@ -68,7 +70,7 @@ export function Header() {
 	return (
 		<header
 			ref={navRef}
-			className="fixed top-0 z-50 w-full border-b-2 border-black bg-white"
+			className="fixed top-0 z-50 w-full border-b-2 border-black bg-[#ffffffa0] blur-[0px] backdrop-blur-[10px]"
 		>
 			<div className="container w-full max-w-full px-4 md:px-6 lg:px-8 flex h-16 items-center justify-between">
 				<Link
@@ -183,7 +185,7 @@ export function Header() {
 
 			{/* Mobile Navigation */}
 			{isMenuOpen && (
-				<div className="md:hidden px-4 py-4 bg-white border-t border-gray-200">
+				<div className="md:hidden px-4 py-4 border-t border-black">
 					<nav className="flex flex-col space-y-4">
 						<Link
 							href="/library"

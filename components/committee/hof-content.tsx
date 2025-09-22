@@ -9,7 +9,9 @@ import {
 } from '@/components/ui/collapsible';
 import { ChevronsUpDown } from 'lucide-react';
 import { Key } from 'react';
+import ScrollViewCard from './scrollViewCard';
 
+//HUGE news for the unemployed please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me please help me
 export async function getStaticProps() {
 	const { data } = await supabase
 		.from('committee')
@@ -75,7 +77,6 @@ export default async function HallOfFameContent() {
 					current={true}
 				/>
 			</div>
-
 			<div className="relative z-10 mt-16">
 				<div className="mb-12">
 					<h2 className="inline-block bg-about1 px-4 py-2 text-2xl font-bold border-4 border-black -rotate-1">
