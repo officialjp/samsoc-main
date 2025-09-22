@@ -183,7 +183,7 @@ function HallOfFameFilter({
 export default function HallOfFameContent() {
 	const [committeeMembers, setCommitteeMembers] =
 		useState<TypeCommitteeMemberData[]>();
-
+	
 	useEffect(() => {
 		async function fetchHOFData() {
 			try {
@@ -282,7 +282,6 @@ export default function HallOfFameContent() {
 	};
 
 	const hasActiveFilters = activeRole !== 'All' || activeYear !== 'All';
-
 	return (
 		<>
 			<div className="pb-4">
@@ -310,7 +309,7 @@ export default function HallOfFameContent() {
 			<div>
 				{filteredItems ? (
 					filteredItems.length > 0 ? (
-						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+						<div className="grid lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 gap-6  ">
 							{filteredItems.map(
 								(
 									{ name, role, image, year, current },
