@@ -130,12 +130,12 @@ function HallOfFameFilter({
 	activeYear,
 }: HOFFilterProps) {
 	return (
-		<div className="space-y-6 flex justify-center">
-			<DropdownMenu>
-				<DropdownMenuTrigger asChild>
-					<Button>{activeCategory}</Button>
+		<div className="space-y-6 flex justify-center w-full gap-4">
+			<DropdownMenu> 
+				<DropdownMenuTrigger asChild className='w-full'>
+					<Button className='hover:bg-membership4 bg-membership3'>{activeCategory}</Button>
 				</DropdownMenuTrigger>
-				<DropdownMenuContent className="w-56">
+				<DropdownMenuContent className="md:w-sm lg:w-xl bg-about1">
 					<DropdownMenuLabel>Category</DropdownMenuLabel>
 					<DropdownMenuSeparator />
 					<DropdownMenuGroup>
@@ -148,7 +148,7 @@ function HallOfFameFilter({
 									activeCategory === category
 										? 'bg-pink-500 text-white hover:bg-pink-600'
 										: 'bg-white text-black hover:bg-gray-100',
-								)}
+								)}	
 							>
 								{category}
 							</DropdownMenuItem>
@@ -156,95 +156,61 @@ function HallOfFameFilter({
 					</DropdownMenuGroup>
 				</DropdownMenuContent>
 			</DropdownMenu>
-
+				<p className='justify-center items-center flex text-center'>and</p>
 			<DropdownMenu>
-				<DropdownMenuTrigger asChild>
-					<Button>{activeYear}</Button>
+				<DropdownMenuTrigger asChild className='w-full'>
+					<Button className='hover:bg-membership4 bg-membership3'>{activeYear}</Button>
 				</DropdownMenuTrigger>
-				<DropdownMenuContent className="w-56">
+				<DropdownMenuContent className="md:w-sm lg:w-xl bg-about1">
 					<DropdownMenuLabel>Year</DropdownMenuLabel>
 					<DropdownMenuSeparator />
 					<DropdownMenuGroup>
 						<DropdownMenuSub>
-							<DropdownMenuSubTrigger>
-								<span>Invite users</span>
-							</DropdownMenuSubTrigger>
-							<DropdownMenuPortal>
-								<DropdownMenuSubContent>
-									<DropdownMenuItem>
-										<span>Email</span>
-									</DropdownMenuItem>
-									<DropdownMenuItem>
-										<span>Message</span>
-									</DropdownMenuItem>
-									<DropdownMenuSeparator />
-									<DropdownMenuItem>
-										<span>More...</span>
-									</DropdownMenuItem>
-								</DropdownMenuSubContent>
-							</DropdownMenuPortal>
+							{years.map(
+								(
+									year,
+									index,
+								) => {	
+									if ((index % 5 === 0 || index === 1) && index !== 0 ) {
+										console.log(year)
+										return (
+											<div key={index}>
+												<DropdownMenuSubTrigger className='border-2 border-black hover:cursor-pointer bg-white hover:bg-gray-100'>
+													<span>{year}-{parseInt(year) + 4}</span>
+												</DropdownMenuSubTrigger>	
+												<DropdownMenuPortal>
+													<DropdownMenuSubContent className='bg-about1'>
+														{[...Array(5)].map((x,index) => (
+															<DropdownMenuItem key={index}>
+																<span>{parseInt(year)+index}</span>
+															</DropdownMenuItem>
+														))}
+													</DropdownMenuSubContent>
+												</DropdownMenuPortal>	
+											</div>	
+										);
+									} else if (index === 0) {
+										return (
+											<DropdownMenuItem
+											key={year}
+											onClick={() => onYearChange(year)}
+											className={cn(
+												'border-2 border-black hover:cursor-pointer',
+												activeYear === year
+													? 'bg-pink-500 text-white hover:bg-pink-600'
+													: 'bg-white text-black hover:bg-gray-100',
+											)}
+											>
+												{year}
+											</DropdownMenuItem>
+										)
+									}
+								},
+							)}								
 						</DropdownMenuSub>
-						{years.map((year) => (
-							<DropdownMenuItem
-								key={year}
-								onClick={() => onYearChange(year)}
-								className={cn(
-									'border-2 border-black hover:cursor-pointer',
-									activeYear === year
-										? 'bg-cyan-500 text-white hover:bg-cyan-600'
-										: 'bg-white text-black hover:bg-gray-100',
-								)}
-							>
-								{year}
-							</DropdownMenuItem>
-						))}
 					</DropdownMenuGroup>
 				</DropdownMenuContent>
 			</DropdownMenu>
-		</div>
-	);
-
-	return (
-		<div className="space-y-6">
-			<div className="space-y-3">
-				<h3 className="text-lg font-bold">Categories</h3>
-				<div className="flex flex-wrap gap-2">
-					{categories.map((category) => (
-						<Button
-							key={category}
-							onClick={() => onCategoryChange(category)}
-							className={cn(
-								'border-2 border-black hover:cursor-pointer',
-								activeCategory === category
-									? 'bg-pink-500 text-white hover:bg-pink-600'
-									: 'bg-white text-black hover:bg-gray-100',
-							)}
-						>
-							{category}
-						</Button>
-					))}
-				</div>
-			</div>
-
-			<div className="space-y-3">
-				<h3 className="text-lg font-bold">Years</h3>
-				<div className="flex flex-wrap gap-2">
-					{years.map((year) => (
-						<Button
-							key={year}
-							onClick={() => onYearChange(year)}
-							className={cn(
-								'border-2 border-black hover:cursor-pointer',
-								activeYear === year
-									? 'bg-cyan-500 text-white hover:bg-cyan-600'
-									: 'bg-white text-black hover:bg-gray-100',
-							)}
-						>
-							{year}
-						</Button>
-					))}
-				</div>
-			</div>
 		</div>
 	);
 }
@@ -354,22 +320,19 @@ export default function HallOfFameContent() {
 
 	return (
 		<>
-			<div className="lg:sticky lg:top-24 h-fit">
-				<div className="border-2 rounded-md border-black bg-white p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-					<h2 className="text-2xl font-bold mb-6">Filter HOF</h2>
-					<div className="flex justify-between items-center mb-6">
-						{hasActiveFilters && (
+				<div className='pb-4'>
+					{hasActiveFilters && (
 							<Button
 								variant="default"
 								size="sm"
 								onClick={clearFilters}
-								className="hover:cursor-pointer"
+								className="hover:cursor-pointer bg-membership1 hover:bg-pink-300"
 							>
 								<X className="h-3 w-3 mr-1" /> Clear Filters
 							</Button>
 						)}
-					</div>
-
+				</div>
+				<h1>Filters:</h1>
 					<HallOfFameFilter
 						categories={categories}
 						years={years}
@@ -379,26 +342,7 @@ export default function HallOfFameContent() {
 						activeYear={activeYear}
 					/>
 
-					<div className="mt-8 pt-6 border-t-2 border-gray-200">
-						<p className="text-sm text-gray-600 mb-2">
-							Currently showing:
-						</p>
-						<div className="flex flex-wrap gap-2">
-							<span className="bg-pink-100 px-2 py-1 text-sm border border-pink-300 rounded-md">
-								{activeRole}
-							</span>
-							<span className="bg-cyan-100 px-2 py-1 text-sm border border-cyan-300 rounded-md">
-								{activeYear}
-							</span>
-						</div>
-						<p className="mt-4 text-sm text-gray-600">
-							{filteredItems?.length ?? 0} photo
-							{(filteredItems?.length ?? 0) !== 1 ? 's' : ''}{' '}
-							found
-						</p>
-					</div>
-				</div>
-			</div>
+					
 
 			<div>
 				{filteredItems ? (
