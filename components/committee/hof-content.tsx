@@ -183,14 +183,19 @@ function HallOfFameFilter({
 										<DropdownMenuSubContent className="bg-about1">
 											{...Array(5)
 												.fill(0)
-												.map((x, index) => (
+												.map((x, index) => 
+												(
 													<DropdownMenuItem
-														key={index}
+														key={year + index}
+														onClick={() => onYearChange((parseInt(year)+index).toString())}
+														className={cn(
+															'border-2 border-black hover:cursor-pointer',
+															activeYear === (parseInt(year)+index).toString()
+																? 'bg-pink-500 text-white hover:bg-pink-600'
+																: 'bg-white text-black hover:bg-gray-100',
+														)}
 													>
-														<span>
-															{parseInt(year) +
-																index}
-														</span>
+														{(parseInt(year)+index).toString()}
 													</DropdownMenuItem>
 												))}
 										</DropdownMenuSubContent>
