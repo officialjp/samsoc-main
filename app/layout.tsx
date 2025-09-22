@@ -39,12 +39,14 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body
-				className={`${geistSans.variable} ${geistMono.variable} antialiased pt-[50px]`}
+				className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-b from-bg1 to-bg2`}
 			>
-				<Header />
-				{children}
-				<SpeedInsights />
-				<Footer />
+				<div className="pt-20">
+					<Header />
+					{children}
+					<SpeedInsights />
+					<Footer />
+				</div>
 			</body>
 		</html>
 	);

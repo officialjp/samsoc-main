@@ -85,7 +85,7 @@ export default function NotFound() {
 	if (links && links.length > 0) {
 		return (
 			<>
-				<div className="flex min-h-screen flex-col w-full bg-gradient-to-b from-bg1 to-bg2">
+				<div className="flex min-h-screen flex-col w-full">
 					<SectionContainer
 						id="404"
 						className="w-full py-12 md:py-16 overflow-hidden"
@@ -116,7 +116,7 @@ export default function NotFound() {
 
 	return (
 		<>
-			<div className="flex min-h-screen flex-col w-full bg-gradient-to-b from-bg1 to-bg2">
+			<div className="flex min-h-screen flex-col w-full">
 				<SectionContainer
 					id="404"
 					className="w-full py-12 md:py-16 overflow-hidden"

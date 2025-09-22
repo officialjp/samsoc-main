@@ -39,11 +39,11 @@ export default function GalleryContent() {
 	const categories = ['All', 'Events', 'Collaborations'];
 	const years = [
 		'All',
-		'2026',
-		'2025',
-		'2024',
-		'2023',
-		'2022',
+		...Array(new Date().getFullYear() - 2021)
+			.fill(0)
+			.map((_, index) => {
+				return (index + 2022).toString();
+			}),
 	];
 	const [activeCategory, setActiveCategory] = useState<string>('All');
 	const [activeYear, setActiveYear] = useState<string>('All');

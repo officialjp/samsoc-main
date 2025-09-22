@@ -21,7 +21,6 @@ export function CommitteeYear({
 						name={member.name}
 						position={member.role}
 						image={member.image}
-						quote={member.quote}
 						current={current}
 					/>
 				))}

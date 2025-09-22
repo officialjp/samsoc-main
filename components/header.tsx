@@ -1,8 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
-import { Button } from '@/components/ui/button';
+import {
+	MouseEventHandler,
+	ReactNode,
+	useEffect,
+	useRef,
+	useState,
+} from 'react';
+
 import { SvgIcon } from '@/components/util/svgIcon';
 import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
@@ -10,6 +16,87 @@ import Logo from '@/public/images/logo.png';
 import Instagram from '@/public/instagram.svg';
 import Facebook from '@/public/facebook.svg';
 import Discord from '@/public/discord.svg';
+import { cn } from '@/lib/utils';
+import { usePathname } from 'next/navigation';
+import path from 'path';
+
+function Button({
+	children,
+	href,
+	className,
+}: {
+	children: React.ReactElement<ReactNode> | string;
+	href: string;
+	className?: string;
+}) {
+	return (
+		<Link
+			href={href}
+			className={cn(
+				'px-4 relative h-full w-fit rounded-[100vmax] group-hover:bg-transparent group-hover:text-black hover:bg-black hover:text-white text-black transition duration-300 font-medium flex items-center',
+				className,
+			)}
+		>
+			{children}
+		</Link>
+	);
+}
+
+function Nav() {
+	const rootName = usePathname()
+		.toLowerCase()
+		.replaceAll('%20', ' ')
+		.replaceAll('_', ' ')
+		.replaceAll('-', ' ')
+		.split(/(?="\/")/g);
+
+	const pathName = rootName[rootName.length - 1];
+
+	const buttons = [
+		<Button href="/library" className="">
+			Library
+		</Button>,
+
+		<Button href="/events" className="">
+			Events
+		</Button>,
+
+		<Button href="/calendar" className="">
+			Calendar
+		</Button>,
+
+		<Button href="/gallery" className="">
+			Gallery
+		</Button>,
+
+		<Button href="/hof" className="">
+			Hall of Fame
+		</Button>,
+	];
+
+	return (
+		<nav className="hidden md:flex gap-3 h-full mx-auto group">
+			{...buttons.map((button) => {
+				if (button.props.href === pathName) {
+					return (
+						<Button
+							key={button.props.href}
+							href={button.props.href}
+							className="bg-black text-white"
+						>
+							{button.props.children}
+						</Button>
+					);
+				}
+				return (
+					<Button key={button.props.href} href={button.props.href}>
+						{button.props.children}
+					</Button>
+				);
+			})}
+		</nav>
+	);
+}
 
 export function Header() {
 	const [isOpen, setIsOpen] = useState(false);
@@ -19,6 +106,7 @@ export function Header() {
 
 	let transformPosY = 0;
 	let lastScroll = 0;
+	let scrollBuffer = 0;
 
 	const toggleMenu = () => {
 		setIsMenuOpen(!isMenuOpen);
@@ -27,25 +115,31 @@ export function Header() {
 	const animateOnScrollController = (self: any) => {
 		const scroll = window.scrollY;
 
-		if (scroll <= 0) {
-			self.style.opacity = '1';
-			self.style.filter = 'blur(0px)';
-			return;
-		}
-
 		const scrollDelta = lastScroll - scroll;
-		const hiddenHeight = self.offsetHeight + 40;
+		const hiddenHeight = -(self.offsetHeight + 40);
 
 		lastScroll = scroll;
 
-		if (transformPosY < hiddenHeight || scrollDelta > 0) {
+		scrollBuffer = Math.max(scrollBuffer - scrollDelta, 0);
+
+		if (scrollBuffer <= 300) return;
+
+		if (scroll <= 0) {
+			self.style.opacity = '1';
+			scrollBuffer = 0;
+			return;
+		}
+
+		if (transformPosY > hiddenHeight || scrollDelta > 0) {
 			transformPosY = Math.min(
-				Math.max(transformPosY + scrollDelta, -hiddenHeight),
+				Math.max(transformPosY + scrollDelta, hiddenHeight),
 				0,
 			);
 		}
 
-		let range = transformPosY / -hiddenHeight;
+		const range = transformPosY / hiddenHeight;
+
+		if (range <= 0 && scrollDelta > 0) scrollBuffer = 0;
 
 		if (range >= 0.5) {
 			setIsMenuOpen(false);
@@ -70,22 +164,22 @@ export function Header() {
 	return (
 		<header
 			ref={navRef}
-			className="fixed top-0 z-50 w-full border-b-2 border-black bg-[#ffffffa0] blur-[0px] backdrop-blur-[10px]"
+			className="fixed top-[10px] left-[50%] transform-[translateX(-50%)] z-50 w-[min(calc(100%-20px),1000px)] bg-[#ffffffa0] blur-[0px] backdrop-blur-[10px] rounded-2xl lg:rounded-[100vmax] shadow-[0px_5px_10px_#00000090]"
 		>
-			<div className="container w-full max-w-full px-4 md:px-6 lg:px-8 flex h-16 items-center justify-between">
+			<div className="container w-full max-w-full px-4 md:px-6 lg:px-[10px] flex h-[55px] py-[10px] items-center justify-between">
 				<Link
 					href="/"
 					className="flex items-center gap-2 font-bold text-xl md:mr-2"
 				>
 					<Image
 						src={Logo}
-						className="border-1 border-black rounded-[50%] shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] rotate-2"
+						className="rounded-[50%] shrink-0"
 						alt="logo"
-						height={48}
-						width={48}
+						height={40}
+						width={40}
 					/>
 				</Link>
-				<div className="flex-row flex gap-6 lg:hidden">
+				<div className="flex-row flex gap-6 lg:hidden mx-auto">
 					<Link href="https://www.instagram.com/unisamsoc/?hl=en">
 						<SvgIcon
 							src={Instagram.src}
@@ -132,46 +226,15 @@ export function Header() {
 						</div>
 					)}
 				</div>
-				<nav className="hidden md:flex gap-6 ml-auto pr-6">
-					<Link
-						href="/library"
-						className="font-medium hover:underline underline-offset-4"
-					>
-						Library
-					</Link>
-					<Link
-						href="/events"
-						className="font-medium hover:underline underline-offset-4"
-					>
-						Events
-					</Link>
-					<Link
-						href="/calendar"
-						className="font-medium hover:underline underline-offset-4"
-					>
-						Calendar
-					</Link>
-					<Link
-						href="/gallery"
-						className="font-medium hover:underline underline-offset-4"
-					>
-						Gallery
-					</Link>
-					<Link
-						href="/hof"
-						className="font-medium hover:underline underline-offset-4"
-					>
-						Hall of Fame
-					</Link>
-				</nav>
+				<Nav></Nav>
 
-				<div className="flex items-center gap-4">
-					<Link href="/#join" className="hidden sm:block">
-						<Button className="bg-pink-500 cursor-pointer hover:bg-pink-600 text-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-							Join Now
-						</Button>
-					</Link>
-
+				<div className="flex items-center relative h-full">
+					<Button
+						href="/#join"
+						className="bg-button2 hover:bg-button1 text-white hidden md:flex"
+					>
+						Join Now
+					</Button>
 					{/* Mobile Menu Button */}
 					<button
 						className="md:hidden p-2 text-black hover:cursor-pointer"
@@ -222,15 +285,13 @@ export function Header() {
 						>
 							Hall of Fame
 						</Link>
-						<Link
-							href="#join"
-							className="sm:hidden"
-							onClick={() => setIsMenuOpen(false)}
+
+						<Button
+							className="sm:hidden w-full bg-pink-500 py-2 flex justify-center cursor-pointer hover:bg-pink-600 text-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+							href="/#join"
 						>
-							<Button className="w-full bg-pink-500 cursor-pointer hover:bg-pink-600 text-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-								Join Now
-							</Button>
-						</Link>
+							Join Now
+						</Button>
 					</nav>
 				</div>
 			)}

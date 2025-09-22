@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 
 export default function HallOfFamePage() {
 	return (
-		<div className="flex min-h-screen flex-col w-full bg-gradient-to-b from-bg1 to-bg2">
+		<div className="flex min-h-screen flex-col w-full">
 			<main className="flex-1">
 				<SectionContainer>
 					<SectionHeading

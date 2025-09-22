@@ -2,14 +2,13 @@
 import { ReactNode, useState } from 'react';
 import { InView } from 'react-intersection-observer';
 
-export default function ViewContainer({
+export default function ScrollViewCard({
 	children,
 }: {
 	children: React.ReactElement<ReactNode>;
 }) {
 	const [getState, setState] = useState(false);
 
-	console.log(getState);
 	return (
 		<InView
 			triggerOnce={true}
