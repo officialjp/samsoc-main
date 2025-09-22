@@ -38,8 +38,8 @@ interface CommitteeMemberData {
 	name: string;
 	role: string;
 	image: string;
-	quote?: string;
-	year: number;
+	year: string;
+	current?: boolean;
 }
 
 interface CommitteeYearProps {

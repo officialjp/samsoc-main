@@ -25,7 +25,7 @@ export function MembershipSection() {
 	];
 
 	return (
-		<SectionContainer>
+		<SectionContainer id="join">
 			<div className="container w-full max-w-full px-4 md:px-6 lg:px-8">
 				<div className="relative mx-auto max-w-7xl border-2 md:border-2 border-black bg-white p-4 sm:p-6 md:p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-md">
 					<div className="space-y-8">

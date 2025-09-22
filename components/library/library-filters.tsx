@@ -134,20 +134,23 @@ export function LibraryFilters({
 					>
 						All Genres
 					</Button>
-					{genres.map((genre) => (
-						<Button
-							key={genre}
-							onClick={() => handleGenreChange(genre)}
-							className={cn(
-								'border-2 border-black hover:cursor-pointer',
-								selectedGenre === genre
-									? 'bg-green-300 hover:bg-green-400 text-black'
-									: 'bg-white hover:bg-gray-100 text-black',
-							)}
-						>
-							{genre}
-						</Button>
-					))}
+					{genres.map((genre) => {
+						if (genre === '??') return;
+						return (
+							<Button
+								key={genre}
+								onClick={() => handleGenreChange(genre)}
+								className={cn(
+									'border-2 border-black hover:cursor-pointer',
+									selectedGenre === genre
+										? 'bg-green-300 hover:bg-green-400 text-black'
+										: 'bg-white hover:bg-gray-100 text-black',
+								)}
+							>
+								{genre}
+							</Button>
+						);
+					})}
 				</div>
 			</div>
 		</div>

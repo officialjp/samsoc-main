@@ -25,6 +25,7 @@ export function GalleryImage({ src, alt, width, height }: GalleryImageProps) {
 					width={width}
 					height={height}
 					alt={alt}
+					sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
 					className="aspect-video object-cover"
 				/>
 			</div>
@@ -46,6 +47,7 @@ export function GalleryImage({ src, alt, width, height }: GalleryImageProps) {
 							width={1200}
 							height={800}
 							alt={alt}
+							sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
 							className="max-h-[80vh] w-auto object-contain"
 						/>
 						<p className="mt-2 text-center font-medium">{alt}</p>
