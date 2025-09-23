@@ -201,7 +201,7 @@ export function Header() {
 							src={Discord.src}
 							height={30}
 							width={30}
-							className={'bg-[#0866ff]'}
+							className={'bg-[#5865F2]'}
 						></SvgIcon>
 					</Link>
 				</div>
