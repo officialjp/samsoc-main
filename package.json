@@ -24,7 +24,7 @@
 		"embla-carousel-react": "^8.6.0",
 		"js-levenshtein": "^1.1.6",
 		"lucide-react": "^0.487.0",
-		"next": "15.3.0",
+		"next": "^15.5.3",
 		"react": "^19.0.0",
 		"react-device-detect": "^2.2.3",
 		"react-dom": "^19.0.0",
