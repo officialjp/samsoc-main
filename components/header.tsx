@@ -173,7 +173,7 @@ export function Header() {
 				>
 					<Image
 						src={Logo}
-						className="rounded-[50%] shrink-0 shadow-[0,0,10px_transparent] hover:shadow-[0_0_10px_#00000090] hover:scale-110 transition duration-300"
+						className="rounded-[50%] shrink-0 shadow-[0,0,10px_transparent] hover:shadow-[0_0_10px_#00000090] active:shadow-[0_0_10px_#00000040] hover:scale-110 active:duration-50 active:scale-105 transition duration-300"
 						alt="logo"
 						height={40}
 						width={40}
