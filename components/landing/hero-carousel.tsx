@@ -12,7 +12,6 @@ import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 import Link from 'next/link';
 import { SvgIcon } from '@/components/util/svgIcon';
-import { useState } from 'react';
 
 type PropType = {
 	slides?: any;
@@ -30,7 +29,6 @@ export default function HeroCarousel({
 			delay: 5000,
 		}),
 	]);
-	const [isOpen, setIsOpen] = useState(false);
 
 	const { selectedIndex, scrollSnaps, onDotButtonClick } =
 		useDotButton(emblaApi);
@@ -79,7 +77,7 @@ export default function HeroCarousel({
 							src={Discord.src}
 							height={32}
 							width={32}
-							className={'bg-[#0866ff]'}
+							className={'bg-[#5865F2]'}
 						></SvgIcon>
 					</Link>
 				</div>
