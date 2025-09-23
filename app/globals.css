@@ -22,6 +22,10 @@
 	--color-about1: #cbccfe;
 	--color-about2: #e8cefd;
 	--color-about3: #fdcdfd;
+	--color-gradient1: #F9F5F6;
+	--color-gradient2: #F8E8EE;
+	--color-gradient3: #FDCEDF;
+	--color-gradient4: #F2BED1;
 }
 
 @theme inline {
