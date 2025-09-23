@@ -39,7 +39,7 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body
-				className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-b from-bg1 to-bg2`}
+				className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-b from-gradient3 to-gradient1 via-gradient2`}
 			>
 				<div className="pt-20">
 					<Header />
