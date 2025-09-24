@@ -5,12 +5,28 @@ import { EmblaOptionsType } from 'embla-carousel';
 import Image from 'next/image';
 import Banner from '@/public/images/SAMSoC_banner.png';
 import MobileBanner from '@/public/images/SAMSoC_banner potrait.png';
-import IceBanner from '@/public/images/SAMSOC_ICEBREAKER_SESSION.webp';
-import IceBannerMobile from '@/public/images/SAMSOC_ICEBREAKER_SESSION_MOBILE.png';
+import ClubNightBanner from '@/public/images/samsoc_honobono_horizontal.png';
+import MobileClubNight from '@/public/images/HONOBONO.png';
 
 export function HeroSection() {
 	const OPTIONS: EmblaOptionsType = { loop: true };
 	const SLIDES = [
+		<div className="h-full w-full">
+			<div className="md:hidden h-full w-full">
+				<Image
+					src={MobileClubNight}
+					alt="samsoc-banner-iceBreaker"
+					className="object-cover object-top w-full h-full"
+				/>
+			</div>
+			<div className="hidden md:inline-flex h-full w-full">
+				<Image
+					src={ClubNightBanner}
+					alt="samsoc-banner-iceBreaker"
+					className="object-cover object-center w-full h-full"
+				/>
+			</div>
+		</div>,
 		<div className="h-full w-full">
 			<div className="md:hidden h-full w-full">
 				<Image
@@ -23,23 +39,6 @@ export function HeroSection() {
 				<Image
 					src={Banner}
 					alt="samsoc-banner"
-					className="object-cover object-center w-full h-full"
-				/>
-			</div>
-		</div>,
-
-		<div className="h-full w-full">
-			<div className="md:hidden h-full w-full">
-				<Image
-					src={IceBannerMobile}
-					alt="samsoc-banner-iceBreaker"
-					className="object-cover object-top w-full h-full"
-				/>
-			</div>
-			<div className="hidden md:inline-flex h-full w-full">
-				<Image
-					src={IceBanner}
-					alt="samsoc-banner-iceBreaker"
 					className="object-cover object-center w-full h-full"
 				/>
 			</div>
