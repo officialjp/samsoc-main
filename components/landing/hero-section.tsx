@@ -5,8 +5,8 @@ import { EmblaOptionsType } from 'embla-carousel';
 import Image from 'next/image';
 import Banner from '@/public/images/SAMSoC_banner.png';
 import MobileBanner from '@/public/images/SAMSoC_banner potrait.png';
-import ClubNightBanner from '@/public/images/samsoc_honobono_horizontal.png';
-import MobileClubNight from '@/public/images/HONOBONO.png';
+import ClubNightBanner from '@/public/images/lmfao-honobono-horizontal.png';
+import MobileClubNight from '@/public/images/vertical-honobono.png';
 
 export function HeroSection() {
 	const OPTIONS: EmblaOptionsType = { loop: true };
