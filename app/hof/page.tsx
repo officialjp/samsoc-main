@@ -52,7 +52,7 @@ export default function HallOfFamePage() {
 									'President - The face of the whole society! Ensures all runs smoothly.',
 									'Vice-President - Assists the President. Handles booking and logistics.',
 									'Treasurer - Handles finances and manages the manga library.',
-									'Social Media Secretary - Keeps our socials up to date and advertises events.',
+									'Social Media Secretary - Keeps our socials up to date.',
 									'Events Secretary - Plans, sets up, and helps run all social events.',
 								]}
 								title="Committee Positions"
