@@ -30,7 +30,7 @@ export default function DialogWithStickyFooter({
 					{buttonName}
 				</Button>
 			</DialogTrigger>
-			<DialogContent className="sm:max-w-lg">
+			<DialogContent className="sm:max-w-lg bg-about1">
 				<DialogHeader>
 					<DialogTitle>{title}</DialogTitle>
 					<DialogDescription>
@@ -41,7 +41,7 @@ export default function DialogWithStickyFooter({
 				<div className="-mx-6 max-h-[500px] overflow-y-auto px-6 text-sm">
 					{content.map((value, index) => {
 						return (
-							<p key={index} className="mb-4 leading-normal">
+							<p key={index} className="mb-2 leading-normal">
 								{value}
 								<br />
 							</p>
