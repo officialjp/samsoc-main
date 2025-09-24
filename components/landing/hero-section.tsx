@@ -5,6 +5,7 @@ import { EmblaOptionsType } from 'embla-carousel';
 import Image from 'next/image';
 import supabase from '@/utils/supabase/client';
 import { useEffect, useState } from 'react';
+import { isMobile } from 'react-device-detect';
 
 interface CarouselType {
 	id: number;
@@ -25,38 +26,27 @@ export function HeroSection() {
 				const { data } = await supabase.from('carousel').select('*');
 
 				if (data) {
-					let SLIDES: React.ReactNode[] = [];
+					const SLIDES: React.ReactNode[] = [];
 					for (const element of data) {
-						console.log(element);
-						if (element.isMobile) {
-							SLIDES.push(
-								<div key={element.id} className="h-full w-full">
-									<div className="md:hidden h-full w-full">
-										<Image
-											src={element.public_url}
-											alt={element.description}
-											height={1080}
-											width={1920}
-											className="object-cover object-top w-full h-full"
-										/>
-									</div>
-								</div>,
-							);
-						} else {
-							SLIDES.push(
-								<div key={element.id} className="h-full w-full">
-									<div className="md:hidden h-full w-full">
-										<Image
-											src={element.public_url}
-											alt={element.description}
-											height={1920}
-											width={1080}
-											className="object-cover object-top w-full h-full"
-										/>
-									</div>
-								</div>,
-							);
-						}
+						if (
+							(element.isMobile && !isMobile) ||
+							(!element.isMobile && isMobile)
+						)
+							continue;
+
+						SLIDES.push(
+							<div key={element.id} className="h-full w-full">
+								<div className="h-full w-full">
+									<Image
+										src={element.public_url}
+										alt={element.description}
+										height={isMobile ? 1080 : 1920}
+										width={isMobile ? 1080 : 1920}
+										className="object-cover object-top w-full h-full"
+									/>
+								</div>
+							</div>,
+						);
 					}
 
 					setCarouselData(SLIDES);
