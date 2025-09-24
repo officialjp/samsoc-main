@@ -164,9 +164,9 @@ export function Header() {
 	return (
 		<header
 			ref={navRef}
-			className="fixed top-[10px] left-[50%] transform-[translateX(-50%)] z-50 w-[min(calc(100%-20px),1000px)] bg-[#ffffffa0] blur-[0px] backdrop-blur-[10px] rounded-2xl lg:rounded-[100vmax] shadow-[0px_5px_10px_#00000090]"
+			className="fixed top-[10px] left-[50%] transform-[translateX(-50%)] z-50 w-[min(calc(100%-20px),1000px)] blur-[0px] backdrop-blur-[10px] rounded-2xl lg:rounded-[100vmax] shadow-[0px_5px_10px_#00000090] overflow-hidden"
 		>
-			<div className="container w-full max-w-full px-4 md:px-6 lg:px-[10px] flex h-[55px] py-[10px] items-center justify-between">
+			<div className="container w-full max-w-full px-4 md:px-6 lg:px-[10px] flex h-[55px] py-[10px] items-center justify-between bg-gradient-to-r from-[#ffb3baa0] to-[#ffffffa0]">
 				<Link
 					href="/"
 					className="flex items-center gap-2 font-bold text-xl md:mr-2"
@@ -227,7 +227,7 @@ export function Header() {
 
 			{/* Mobile Navigation */}
 			{isMenuOpen && (
-				<div className="md:hidden px-4 py-4 border-t border-black">
+				<div className="md:hidden px-4 py-4 border-t border-black bg-[#ffffffa0]">
 					<nav className="flex flex-col space-y-4">
 						<Link
 							href="/library"
