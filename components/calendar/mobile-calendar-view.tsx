@@ -176,7 +176,7 @@ export function MobileCalendarView({
 														{event.title}
 													</div>
 													<div className="text-xs text-gray-500">
-														📍 {event.location}
+														📍 {event.location + " | " + format(event.date,'EEEE, MMMM d, yyyy, p',)}
 													</div>
 												</div>
 											))}
