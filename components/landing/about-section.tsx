@@ -40,6 +40,7 @@ export function AboutSection() {
 				{features.map((feature, index) => (
 					<FeatureCard
 						key={index}
+						className={`SAManim SAMdelay-${(index + 10) * 100} SAMduration-900 SAMfade-up SAMbounce`}
 						icon={feature.icon}
 						title={feature.title}
 						description={feature.description}

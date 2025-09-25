@@ -163,6 +163,7 @@ export default function EventsPage() {
 					<div className="space-y-8">
 						{eventTypes.map((event, index) => (
 							<EventTypeCard
+								className={`SAManim SAMdelay-${(index + 5) * 100} SAMduration-900 SAMfade-up SAMbounce`}
 								key={index}
 								title={event.title}
 								description={event.description}

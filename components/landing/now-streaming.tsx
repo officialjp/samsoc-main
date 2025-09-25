@@ -56,7 +56,7 @@ export function NowStreamingContent() {
 
 	const positions = ['left-card', 'center-card', 'right-card'];
 	return (
-		<div className="relative overflow-hidden flex items-center justify-center mb-8 w-full h-[min(600px,90vw)]">
+		<div className="relative overflow-hidden flex items-center justify-center w-full h-[min(600px,90vw)] SAManim SAMfade-rotate SAMduration-800 SAMdelay-1000 SAMbounce">
 			{animes &&
 				animes.map((anime, index) => {
 					const clickHandler = (

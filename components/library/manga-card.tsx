@@ -23,7 +23,7 @@ const MangaCard: React.FC<MangaCardProps> = ({
 	borrowedBy,
 }) => {
 	return (
-		<div className="bg-white rounded-md p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-row items-center border-2 border-black">
+		<div className="bg-white rounded-2xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-row items-center border-2 border-black">
 			<div className="mr-4 h-48 w-32 relative border-2 border-black">
 				<Image
 					src={coverImage || '/placeholder.svg'}
@@ -45,7 +45,7 @@ const MangaCard: React.FC<MangaCardProps> = ({
 					{genre.map((g) => (
 						<span
 							key={g}
-							className="text-xs font-semibold bg-gray-100 text-gray-900 px-2 py-1 rounded-sm border border-gray-300"
+							className="text-xs font-semibold bg-gray-100 text-gray-900 px-2 py-1 rounded-full border border-gray-300"
 						>
 							{g}
 						</span>

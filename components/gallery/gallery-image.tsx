@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { X } from 'lucide-react';
+import InView from '@/components/scroll-view-card';
 
 interface GalleryImageProps {
 	src: string;
@@ -17,7 +18,7 @@ export function GalleryImage({ src, alt, width, height }: GalleryImageProps) {
 	return (
 		<>
 			<div
-				className="overflow-hidden border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-black cursor-pointer transition-transform hover:scale-[1.02]"
+				className="overflow-hidden border-2 rounded-2xl border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-black cursor-pointer transition-transform hover:scale-[1.02]"
 				onClick={() => setIsOpen(true)}
 			>
 				<Image
@@ -35,7 +36,7 @@ export function GalleryImage({ src, alt, width, height }: GalleryImageProps) {
 					className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 hover:cursor-pointer"
 					onClick={() => setIsOpen(false)}
 				>
-					<div className="relative max-w-5xl max-h-[90vh] bg-white rounded-md border-4 border-black p-2 hover:cursor-default">
+					<div className="relative max-w-5xl max-h-[90vh] bg-white rounded-2xl border-4 border-black p-2 hover:cursor-default">
 						<button
 							className="absolute -top-4 -right-4 bg-pink-500 text-white rounded-full p-1 border-2 border-black hover:cursor-pointer"
 							onClick={() => setIsOpen(false)}

@@ -33,7 +33,7 @@ function Button({
 		<Link
 			href={href}
 			className={cn(
-				'px-4 relative h-full w-fit rounded-[100vmax] group-hover:bg-transparent group-hover:text-black hover:bg-black hover:text-white text-black transition duration-300 font-medium flex items-center',
+				'px-4 relative h-full w-fit rounded-full group-hover:bg-transparent group-hover:text-black hover:bg-black hover:text-white text-black transition duration-300 font-medium flex items-center',
 				className,
 			)}
 		>
@@ -164,16 +164,16 @@ export function Header() {
 	return (
 		<header
 			ref={navRef}
-			className="fixed top-[10px] left-[50%] transform-[translateX(-50%)] z-50 w-[min(calc(100%-20px),1000px)] blur-[0px] backdrop-blur-[10px] rounded-2xl lg:rounded-[100vmax] shadow-[0px_5px_10px_#00000090] overflow-hidden"
+			className="fixed top-[10px] left-[50%] transform-[translateX(-50%)] z-50 w-[min(calc(100%-20px),1000px)] blur-[0px] backdrop-blur-[10px] rounded-2xl lg:rounded-full shadow-[0px_5px_10px_#00000090] overflow-hidden"
 		>
-			<div className="container w-full max-w-full px-4 md:px-6 lg:px-[10px] flex h-[55px] py-[10px] items-center justify-between bg-gradient-to-r from-[#ffb3baa0] to-[#ffffffa0]">
+			<div className="container w-full max-w-full px-4 md:px-6 lg:px-[10px] flex h-[55px] py-[10px] items-center justify-between bg-gradient-to-r from-[#ffcfd4a0] to-[#ffffffa0]">
 				<Link
 					href="/"
 					className="flex items-center gap-2 font-bold text-xl md:mr-2"
 				>
 					<Image
 						src={Logo}
-						className="rounded-[50%] shrink-0 shadow-[0,0,10px_transparent] hover:shadow-[0_0_10px_#00000090] active:shadow-[0_0_10px_#00000040] hover:scale-110 active:duration-50 active:scale-105 transition duration-300"
+						className="rounded-full shrink-0 shadow-[0,0,10px_transparent] hover:shadow-[0_0_10px_#00000090] active:shadow-[0_0_10px_#00000040] hover:scale-110 active:duration-50 active:scale-105 transition duration-300"
 						alt="logo"
 						height={40}
 						width={40}

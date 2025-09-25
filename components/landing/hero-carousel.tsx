@@ -36,7 +36,7 @@ export default function HeroCarousel({
 	return (
 		<section className="relative w-full m-auto h-fit flex flex-col items-center">
 			<div
-				className="overflow-hidden w-full max-w-[min(1200px,calc(100%-20px))] rounded-2xl md:rounded-4xl aspect-[9/16] md:aspect-[16/9] lg:aspect-[16/9] xl:aspect-[16/9]"
+				className="overflow-hidden w-full max-w-[min(1200px,calc(100%-20px))] shadow-[0px_5px_10px_#00000090] rounded-2xl md:rounded-4xl aspect-[9/16] md:aspect-[16/9] lg:aspect-[16/9] xl:aspect-[16/9] cursor-grab active:cursor-grabbing"
 				ref={emblaRef}
 			>
 				<div className="flex touch-pinch-zoom h-full touch-pan-y">
@@ -89,9 +89,9 @@ export default function HeroCarousel({
 						<DotButton
 							key={index}
 							onClick={() => onDotButtonClick(index)}
-							className={`appearance-none inline-flex mx-2 items-center justify-center whitespace-nowrap rounded-[50%] text-sm font-base ring-offset-white transition-all gap-2 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none h-6 w-6 px-2 py-2 bg-pink-300 cursor-pointer hover:bg-pink-400 text-white border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
+							className={`appearance-none inline-flex mx-2 items-center justify-center whitespace-nowrap rounded-full text-sm font-base ring-offset-white transition-all gap-2 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none h-6 w-6 px-2 py-2 bg-pink-300 cursor-pointer hover:bg-pink-400 text-white border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
 								index === selectedIndex
-									? 'bg-pink-500 hover:bg-pink-600'
+									? 'bg-pink-500 hover:bg-pink-600 w-[50px]'
 									: ''
 							}`}
 						/>

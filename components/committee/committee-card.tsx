@@ -21,7 +21,7 @@ export function CommitteeMember({
 	return (
 		<div
 			className={cn(
-				'flex flex-col items-center border-2 rounded-md border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
+				'flex flex-col items-center border-2 rounded-2xl border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
 				current ? 'bg-about2' : 'bg-about3',
 				className,
 			)}
@@ -50,7 +50,7 @@ export function CommitteeMember({
 				)}
 			</div>
 			<h3 className="text-xl font-bold">{name}</h3>
-			<div className="mt-1 bg-about1 px-3 py-1 text-sm font-bold rounded-md border-2 border-black inline-block w-fit grow-0 whitespace-pre">
+			<div className="mt-1 bg-about1 px-3 py-1 text-sm font-bold rounded-2xl border-2 border-black inline-block w-fit grow-0 whitespace-pre">
 				{position}
 			</div>
 		</div>

@@ -36,7 +36,6 @@ export default function LibraryPage() {
 						badgeColor="bg-purple-200"
 						className="mb-8"
 					/>
-
 					<LibraryContent />
 				</SectionContainer>
 			</main>

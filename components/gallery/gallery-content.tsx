@@ -5,6 +5,7 @@ import { GalleryImage } from '@/components/gallery/gallery-image';
 import supabase from '@/utils/supabase/client';
 import { Button } from '../ui/button';
 import { X } from 'lucide-react';
+import InView from '@/components/scroll-view-card';
 
 interface GalleryItem {
 	id: string;
@@ -64,8 +65,8 @@ export default function GalleryContent() {
 
 	return (
 		<div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8">
-			<div className="lg:sticky lg:top-24 h-fit">
-				<div className="border-2 rounded-md border-black bg-white p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+			<div className="lg:sticky lg:top-24 h-fit SAManim SAMfade-left SAMduration-700 SAMdelay-500 SAMbounce">
+				<div className="border-2 rounded-2xl border-black bg-white p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
 					<h2 className="text-2xl font-bold mb-6">Filter Gallery</h2>
 					<div className="flex justify-between items-center mb-6">
 						{hasActiveFilters && (
@@ -94,10 +95,10 @@ export default function GalleryContent() {
 							Currently showing:
 						</p>
 						<div className="flex flex-wrap gap-2">
-							<span className="bg-pink-100 px-2 py-1 text-sm border border-pink-300 rounded-md">
+							<span className="bg-pink-100 px-2 py-1 text-sm border border-pink-300 rounded-2xl">
 								{activeCategory}
 							</span>
-							<span className="bg-cyan-100 px-2 py-1 text-sm border border-cyan-300 rounded-md">
+							<span className="bg-cyan-100 px-2 py-1 text-sm border border-cyan-300 rounded-2xl">
 								{activeYear}
 							</span>
 						</div>
@@ -110,9 +111,9 @@ export default function GalleryContent() {
 				</div>
 			</div>
 
-			<div>
-				{filteredItems ? (
-					filteredItems.length > 0 ? (
+			<div className="SAManim SAMfade-up SAMduration-700 SAMdelay-500 SAMbounce">
+				{filteredItems &&
+					(filteredItems.length > 0 ? (
 						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
 							{filteredItems.map((item) => (
 								<GalleryImage
@@ -125,21 +126,13 @@ export default function GalleryContent() {
 							))}
 						</div>
 					) : (
-						<div className="border-2 border-black bg-yellow-100 rounded-md p-8 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+						<div className="border-2 border-black bg-yellow-100 rounded-2xl p-8 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
 							<h3 className="text-xl font-bold mb-2">
 								No photos found
 							</h3>
 							<p>Try changing your filters to see more photos.</p>
 						</div>
-					)
-				) : (
-					<div className="border-2 border-black bg-gray-100 rounded-md p-8 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-						<h3 className="text-xl font-bold mb-2">
-							Loading photos...
-						</h3>
-						<p>Please wait while we load the gallery.</p>
-					</div>
-				)}
+					))}
 			</div>
 		</div>
 	);

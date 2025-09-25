@@ -3,6 +3,7 @@ import { SectionHeading } from '@/components/section-heading';
 import DialogWithStickyFooter from '@/components/dialog';
 import HallOfFameContent from '@/components/committee/hof-content';
 import { Metadata } from 'next';
+import InView from '@/components/scroll-view-card';
 
 export const metadata: Metadata = {
 	title: 'Surrey Anime and Manga Society',
@@ -36,8 +37,8 @@ export default function HallOfFamePage() {
 
 					<HallOfFameContent />
 
-					<div className="mt-16 text-center">
-						<div className="inline-block bg-white px-4 py-3 border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-2">
+					<div className="mt-16 text-center SAManim SAMfade-up SAMduration-700 SAMdelay-200 SAMbounce">
+						<div className="inline-block bg-white px-4 py-3 border-2 rounded-2xl border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-2">
 							<h3 className="text-xl font-bold">
 								Want to join the committee?
 							</h3>
