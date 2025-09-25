@@ -83,39 +83,39 @@ function HallOfFameFilter({
 							if (IntYear === 2006) {
 								return (
 									<DropdownMenuSub key={index}>
-									<DropdownMenuSubTrigger className="border-2 border-black hover:cursor-pointer bg-white hover:bg-gray-100">
-										{year}-{IntYear + 3}
-									</DropdownMenuSubTrigger>
-									<DropdownMenuPortal>
-										<DropdownMenuSubContent className="bg-about1">
-											{...Array(4)
-												.fill(0)
-												.map((x, index) => {
-													const indexedYear = `${
-														IntYear + index
-													}`;
-													return (
-														<DropdownMenuItem
-															key={year + index}
-															onClick={() =>
-																onYearChange(
-																	indexedYear,
-																)
-															}
-															className={cn(
-																'border-2 border-black hover:cursor-pointer',
-																activeYear ===
-																	indexedYear
-																	? 'bg-pink-500 text-white hover:bg-pink-600'
-																	: 'bg-white text-black hover:bg-gray-100',
-															)}
-														>
-															{indexedYear}
-														</DropdownMenuItem>
-													);
-												})}
-										</DropdownMenuSubContent>
-									</DropdownMenuPortal>
+										<DropdownMenuSubTrigger className="border-2 border-black hover:cursor-pointer bg-white hover:bg-gray-100">
+											{year}-{IntYear + 3}
+										</DropdownMenuSubTrigger>
+										<DropdownMenuPortal>
+											<DropdownMenuSubContent className="bg-about1">
+												{...Array(4)
+													.fill(0)
+													.map((x, index) => {
+														const indexedYear = `${IntYear + index}`;
+														return (
+															<DropdownMenuItem
+																key={
+																	year + index
+																}
+																onClick={() =>
+																	onYearChange(
+																		indexedYear,
+																	)
+																}
+																className={cn(
+																	'border-2 border-black hover:cursor-pointer',
+																	activeYear ===
+																		indexedYear
+																		? 'bg-pink-500 text-white hover:bg-pink-600'
+																		: 'bg-white text-black hover:bg-gray-100',
+																)}
+															>
+																{indexedYear}
+															</DropdownMenuItem>
+														);
+													})}
+											</DropdownMenuSubContent>
+										</DropdownMenuPortal>
 									</DropdownMenuSub>
 								);
 							} else {
@@ -129,12 +129,12 @@ function HallOfFameFilter({
 												{...Array(5)
 													.fill(0)
 													.map((x, index) => {
-														const indexedYear = `${
-															IntYear + index
-														}`;
+														const indexedYear = `${IntYear + index}`;
 														return (
 															<DropdownMenuItem
-																key={year + index}
+																key={
+																	year + index
+																}
 																onClick={() =>
 																	onYearChange(
 																		indexedYear,
@@ -183,7 +183,7 @@ function HallOfFameFilter({
 export default function HallOfFameContent() {
 	const [committeeMembers, setCommitteeMembers] =
 		useState<TypeCommitteeMemberData[]>();
-	
+
 	useEffect(() => {
 		async function fetchHOFData() {
 			try {

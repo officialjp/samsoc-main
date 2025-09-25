@@ -104,16 +104,16 @@ export function LibraryFilters({
 									? statusOption === 'available'
 										? 'bg-green-300 hover:bg-green-400 text-black'
 										: statusOption === 'borrowed'
-										? 'bg-red-300 hover:bg-red-400 text-black'
-										: 'bg-about1 hover:bg-about-1 text-black'
+											? 'bg-red-300 hover:bg-red-400 text-black'
+											: 'bg-about1 hover:bg-about-1 text-black'
 									: 'bg-white hover:bg-gray-100 text-black',
 							)}
 						>
 							{statusOption === 'all'
 								? 'All'
 								: statusOption === 'available'
-								? 'Available'
-								: 'Borrowed'}
+									? 'Available'
+									: 'Borrowed'}
 						</Button>
 					))}
 				</div>

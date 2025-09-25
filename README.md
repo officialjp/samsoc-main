@@ -6,19 +6,19 @@ This repository contains the source code for our society's online home, serving 
 
 ### ✨ Features
 
-* **Landing Page:** A dynamic homepage introducing the society and its mission.
+- **Landing Page:** A dynamic homepage introducing the society and its mission.
 
-* **Event Calendar:** A calendar to keep members updated on weekly screenings, social events, and special gatherings.
+- **Event Calendar:** A calendar to keep members updated on weekly screenings, social events, and special gatherings.
 
-* **Manga Library:** A catalog of all the manga available to society members.
+- **Manga Library:** A catalog of all the manga available to society members.
 
-* **Gallery:** A showcase of photos and art from our events and members.
+- **Gallery:** A showcase of photos and art from our events and members.
 
-* **Committee Hall of Fame:** A page showcasing the current and past committee members.
+- **Committee Hall of Fame:** A page showcasing the current and past committee members.
 
-* **Blog/News Section:** A place for the latest announcements, event recaps, and member highlights.
+- **Blog/News Section:** A place for the latest announcements, event recaps, and member highlights.
 
-* **Membership & Contact:** Information on how to join the society and get in touch with the committee.
+- **Membership & Contact:** Information on how to join the society and get in touch with the committee.
 
 ### 🚀 Getting Started
 
@@ -26,9 +26,9 @@ To get a local copy up and running, follow these simple steps.
 
 #### Prerequisites
 
-* Node.js
+- Node.js
 
-* npm or yarn
+- npm or yarn
 
 #### Installation
 
@@ -78,11 +78,11 @@ The website should now be running at `http://localhost:3000`.
 
 ### 🛠️ Technologies Used
 
-* **Frontend:** Next.js with TypeScript
+- **Frontend:** Next.js with TypeScript
 
-* **Styling:** Tailwind CSS
+- **Styling:** Tailwind CSS
 
-* **Deployment:** Vercel
+- **Deployment:** Vercel
 
 ### 👋 Contributing
 

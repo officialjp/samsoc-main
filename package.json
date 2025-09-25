@@ -6,7 +6,8 @@
 		"dev": "next dev --turbopack",
 		"build": "next build",
 		"start": "next start",
-		"lint": "next lint"
+		"lint": "next lint",
+		"prepare": "husky"
 	},
 	"dependencies": {
 		"@radix-ui/react-collapsible": "^1.1.11",
@@ -37,7 +38,13 @@
 		"@types/node": "^20",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
+		"husky": "^9.1.7",
+		"lint-staged": "^16.2.0",
+		"prettier": "3.6.2",
 		"tailwindcss": "^4",
 		"typescript": "^5"
+	},
+	"lint-staged": {
+		"*/": "prettier --write --ignore-unknown"
 	}
 }
