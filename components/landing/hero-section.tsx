@@ -8,14 +8,6 @@ import { useEffect, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 import InView from '@/components/scroll-view-card';
 
-interface CarouselType {
-	id: number;
-	description: string;
-	src: string;
-	public_url: string;
-	isMobile: boolean;
-}
-
 export function HeroSection() {
 	const [carouselData, setCarouselData] = useState<
 		React.ReactNode[] | null
@@ -25,7 +17,6 @@ export function HeroSection() {
 		async function fetchCarouselData() {
 			try {
 				const { data } = await supabase.from('carousel').select('*');
-
 				if (data) {
 					const SLIDES: React.ReactNode[] = [];
 					for (const element of data) {
@@ -39,7 +30,7 @@ export function HeroSection() {
 							<div key={element.id} className="h-full w-full">
 								<div className="h-full w-full">
 									<Image
-										src={element.public_url}
+										src={element.src}
 										alt={element.description}
 										height={isMobile ? 1080 : 1920}
 										width={isMobile ? 1080 : 1920}
@@ -62,7 +53,6 @@ export function HeroSection() {
 
 	const OPTIONS: EmblaOptionsType = { loop: true };
 
-	console.log(carouselData);
 	return (
 		<InView>
 			<section className="w-full pb-3 pt-0 md:pt-3 lg:pt-[3vh] SAManim SAMfade-up SAMduration-700 SAMdelay-200 SAMbounce">
