@@ -30,7 +30,7 @@ export function CalendarHeader({
 				<Button
 					onClick={onPrevMonth}
 					variant="outline"
-					className="bg-about1 border-2 border-black rounded-md shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer"
+					className="bg-about1 border-2 border-black rounded-2xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer"
 					size={isMobile ? 'sm' : 'default'}
 				>
 					<ChevronLeft className={isMobile ? 'h-4 w-4' : 'h-5 w-5'} />
@@ -38,7 +38,7 @@ export function CalendarHeader({
 				<Button
 					onClick={onNextMonth}
 					variant="outline"
-					className="bg-about1 border-2 border-black rounded-md shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer"
+					className="bg-about1 border-2 border-black rounded-2xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer"
 					size={isMobile ? 'sm' : 'default'}
 				>
 					<ChevronRight
@@ -58,7 +58,7 @@ export function CalendarHeader({
 
 			<Button
 				onClick={onCurrentMonth}
-				className="bg-pink-300 hover:bg-pink-400 text-black border-2 rounded-md border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer"
+				className="bg-pink-300 hover:bg-pink-400 text-black border-2 rounded-2xl border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer"
 				size={isMobile ? 'sm' : 'default'}
 			>
 				Today

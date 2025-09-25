@@ -204,7 +204,7 @@ export function MobileCalendarView({
 					className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
 					onClick={() => setSelectedEvent(null)}
 				>
-					<div className="bg-white border-2 rounded-md border-black p-4 max-w-md w-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] relative">
+					<div className="bg-white border-2 rounded-2xl border-black p-4 max-w-md w-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] relative">
 						<button
 							onClick={(e) => {
 								e.stopPropagation();

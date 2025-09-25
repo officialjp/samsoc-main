@@ -21,7 +21,7 @@ export function LibrarySection() {
 			/>
 			<div className="flex items-center justify-center mx-auto max-w-7xl py-12 flex-col">
 				<div className="relative">
-					<div className="overflow-hidden border-2 rounded-md border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+					<div className="overflow-hidden border-2 rounded-2xl border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] SAManim SAMdelay-900 SAMduration-900 SAMfade-right SAMbounce">
 						{isMobile ? (
 							<Image
 								src={LibraryPhoto}
@@ -41,7 +41,7 @@ export function LibrarySection() {
 						)}
 					</div>
 					{isMobile ? (
-						<div className="absolute -left-4 -bottom-20 bg-white border-2 rounded-md border-black p-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-3">
+						<div className="absolute -left-4 -bottom-20 bg-white border-2 rounded-2xl border-black p-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-3 SAManim SAMdelay-1100 SAMduration-900 SAMfade-rotate-3 SAMbounce">
 							<h3 className="text-base md:text-xl font-bold mb-1 md:mb-2">
 								Library Stats
 							</h3>
@@ -65,7 +65,7 @@ export function LibrarySection() {
 							</ul>
 						</div>
 					) : (
-						<div className="absolute -left-10 -bottom-20 bg-white border-2 border-black p-4 rounded-md md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-3">
+						<div className="absolute -left-10 -bottom-20 bg-white border-2 border-black p-4 rounded-2xl md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-3 SAManim SAMdelay-1100 SAMduration-900 SAMfade-rotate-3 SAMbounce">
 							<h3 className="text-base md:text-xl font-bold mb-1 md:mb-2">
 								Library Stats
 							</h3>

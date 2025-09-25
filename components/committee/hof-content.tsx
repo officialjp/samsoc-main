@@ -284,31 +284,33 @@ export default function HallOfFameContent() {
 	const hasActiveFilters = activeRole !== 'All' || activeYear !== 'All';
 	return (
 		<>
-			<div className="pb-4">
-				{hasActiveFilters && (
-					<Button
-						variant="default"
-						size="sm"
-						onClick={clearFilters}
-						className="hover:cursor-pointer bg-membership1 hover:bg-pink-300"
-					>
-						<X className="h-3 w-3 mr-1" /> Clear Filters
-					</Button>
-				)}
+			<div className="SAManim SAMfade-up SAMduration-700 SAMdelay-700 SAMbounce">
+				<div className="pb-4">
+					{hasActiveFilters && (
+						<Button
+							variant="default"
+							size="sm"
+							onClick={clearFilters}
+							className="hover:cursor-pointer bg-membership1 hover:bg-pink-300"
+						>
+							<X className="h-3 w-3 mr-1" /> Clear Filters
+						</Button>
+					)}
+				</div>
+				<h1>Filters:</h1>
+				<HallOfFameFilter
+					categories={categories}
+					years={years}
+					onCategoryChange={setActiveRole}
+					onYearChange={setActiveYear}
+					activeCategory={activeRole}
+					activeYear={activeYear}
+				/>
 			</div>
-			<h1>Filters:</h1>
-			<HallOfFameFilter
-				categories={categories}
-				years={years}
-				onCategoryChange={setActiveRole}
-				onYearChange={setActiveYear}
-				activeCategory={activeRole}
-				activeYear={activeYear}
-			/>
 
-			<div>
-				{filteredItems ? (
-					filteredItems.length > 0 ? (
+			<div className="SAManim SAMfade-up SAMduration-700 SAMdelay-900 SAMbounce">
+				{filteredItems &&
+					(filteredItems.length > 0 ? (
 						<div className="grid lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 gap-6  ">
 							{filteredItems.map(
 								(
@@ -329,21 +331,13 @@ export default function HallOfFameContent() {
 							)}
 						</div>
 					) : (
-						<div className="border-2 border-black bg-yellow-100 rounded-md p-8 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+						<div className="border-2 border-black bg-yellow-100 rounded-2xl p-8 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
 							<h3 className="text-xl font-bold mb-2">
 								No committee members found
 							</h3>
 							<p>Try changing your filters.</p>
 						</div>
-					)
-				) : (
-					<div className="border-2 border-black bg-gray-100 rounded-md p-8 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-						<h3 className="text-xl font-bold mb-2">
-							Loading committee...
-						</h3>
-						<p>Please wait while we load the hall of fame.</p>
-					</div>
-				)}
+					))}
 			</div>
 		</>
 	);

@@ -6,6 +6,7 @@ import Image from 'next/image';
 import supabase from '@/utils/supabase/client';
 import { useEffect, useState } from 'react';
 import { isMobile } from 'react-device-detect';
+import InView from '@/components/scroll-view-card';
 
 interface CarouselType {
 	id: number;
@@ -63,14 +64,16 @@ export function HeroSection() {
 
 	console.log(carouselData);
 	return (
-		<section className="w-full pb-3 pt-0 md:pt-3 lg:pt-[3vh]">
-			<div className="container w-full max-w-full px-0 md:px-6 lg:px-8">
-				<HeroCarousel
-					slides={carouselData}
-					options={OPTIONS}
-					useSocials={true}
-				></HeroCarousel>
-			</div>
-		</section>
+		<InView>
+			<section className="w-full pb-3 pt-0 md:pt-3 lg:pt-[3vh] SAManim SAMfade-up SAMduration-700 SAMdelay-200 SAMbounce">
+				<div className="container w-full max-w-full px-0 md:px-6 lg:px-8">
+					<HeroCarousel
+						slides={carouselData}
+						options={OPTIONS}
+						useSocials={true}
+					></HeroCarousel>
+				</div>
+			</section>
+		</InView>
 	);
 }

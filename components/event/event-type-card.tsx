@@ -14,6 +14,7 @@ interface EventTypeCardProps {
 	color: string;
 	examples: string[];
 	collageImage?: ImageTypes[];
+	className?: string;
 }
 
 export function EventTypeCard({
@@ -24,17 +25,19 @@ export function EventTypeCard({
 	collageImage,
 	color,
 	examples,
+	className,
 }: EventTypeCardProps) {
 	return (
 		<div
 			className={cn(
-				'border-2 border-black p-6 rounded-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
+				'border-2 border-black p-6 rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
 				color,
+				className,
 			)}
 		>
 			<div className="flex flex-col md:flex-row gap-6">
 				<div className="w-full md:w-1/3">
-					<div className="relative h-48 md:h-full border-4 border-black overflow-hidden">
+					<div className="relative h-48 md:h-full border-4 border-black overflow-hidden rounded-md">
 						{collageImage && collageImage.length > 0 ? (
 							<ImageCollage
 								images={collageImage}

@@ -84,38 +84,6 @@ export default function NotFound() {
 
 	if (links && links.length > 0) {
 		return (
-			<>
-				<div className="flex min-h-screen flex-col w-full">
-					<SectionContainer
-						id="404"
-						className="w-full py-12 md:py-16 overflow-hidden"
-					>
-						<Image
-							src={Miku.src}
-							width={200}
-							height={200}
-							alt={'404 image'}
-							draggable={false}
-							className="mx-auto"
-						/>
-						<SectionHeading
-							badge="uh oh..."
-							title="404: Page Not Found"
-							description="The page you were looking for doesnt exist"
-							badgeColor="bg-purple-200"
-						/>
-						<div className="mt-8 text-center flex flex-col items-center">
-							<h1 className="mb-4">Did you mean:</h1>
-							{links}
-						</div>
-					</SectionContainer>
-				</div>
-			</>
-		);
-	}
-
-	return (
-		<>
 			<div className="flex min-h-screen flex-col w-full">
 				<SectionContainer
 					id="404"
@@ -126,16 +94,56 @@ export default function NotFound() {
 						width={200}
 						height={200}
 						alt={'404 image'}
+						draggable={false}
 						className="mx-auto"
 					/>
 					<SectionHeading
 						badge="uh oh..."
-						title="404 Page Not Found"
+						title="404: Page Not Found"
 						description="The page you were looking for doesnt exist"
 						badgeColor="bg-purple-200"
 					/>
+					<div className="mt-8 text-center flex flex-col items-center">
+						<h1 className="mb-4">Did you mean:</h1>
+						{links}
+					</div>
 				</SectionContainer>
 			</div>
-		</>
+		);
+	}
+
+	return (
+		<div className="flex min-h-screen flex-col w-full">
+			<SectionContainer
+				id="404"
+				className="w-full py-12 md:py-16 overflow-hidden"
+			>
+				<Image
+					src={Miku.src}
+					width={200}
+					height={200}
+					alt={'404 image'}
+					className="mx-auto"
+				/>
+				<SectionHeading
+					badge="uh oh..."
+					title="404 Page Not Found"
+					description="The page you were looking for doesnt exist"
+					badgeColor="bg-purple-200"
+				/>
+				<div className="mt-8 text-center flex flex-col items-center">
+					<Button
+						asChild
+						className="hover:cursor-pointer bg-button2 hover:bg-button1"
+					>
+						<Link href="/" className="mb-2">
+							<span className="mr-2">🏠</span>
+							Home
+							<ChevronRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+						</Link>
+					</Button>
+				</div>
+			</SectionContainer>
+		</div>
 	);
 }
