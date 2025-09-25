@@ -69,14 +69,17 @@ export function Calendar({ events }: CalendarProps) {
 			});
 
 			// Group by date
-			const grouped = currentMonthEvents.reduce((acc, event) => {
-				const dateKey = format(new Date(event.date), 'yyyy-MM-dd');
-				if (!acc[dateKey]) {
-					acc[dateKey] = [];
-				}
-				acc[dateKey].push(event);
-				return acc;
-			}, {} as Record<string, Event[]>);
+			const grouped = currentMonthEvents.reduce(
+				(acc, event) => {
+					const dateKey = format(new Date(event.date), 'yyyy-MM-dd');
+					if (!acc[dateKey]) {
+						acc[dateKey] = [];
+					}
+					acc[dateKey].push(event);
+					return acc;
+				},
+				{} as Record<string, Event[]>,
+			);
 
 			setGroupedEvents(grouped);
 		}

@@ -72,7 +72,7 @@ export function NowStreamingContent() {
 							const childArray = event.currentTarget.parentNode
 								? Array.from(
 										event.currentTarget.parentNode.children,
-								  )
+									)
 								: [];
 
 							childArray.forEach((child) => {
