@@ -8,6 +8,8 @@ import { Tooltip, TooltipContent } from '../ui/tooltip';
 import { TooltipTrigger } from '@radix-ui/react-tooltip';
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { Button } from '../ui/button';
+import { CalendarDays } from 'lucide-react';
 
 interface GenreType {
 	genre: string;
@@ -55,7 +57,7 @@ export function NowStreamingContent() {
 	}, []);
 
 	const positions = ['left-card', 'center-card', 'right-card'];
-	return (
+	return (<>
 		<div className="relative overflow-hidden flex items-center justify-center w-full h-[min(600px,90vw)] SAManim SAMfade-rotate SAMduration-800 SAMdelay-1000 SAMbounce">
 			{animes &&
 				animes.map((anime, index) => {
@@ -172,8 +174,29 @@ export function NowStreamingContent() {
 								</TooltipContent>
 							</Tooltip>
 						</div>
+						
 					);
 				})}
+			
+			
 		</div>
+		<div className="mb-8 -mt-8 text-center SAManim SAMfade-in SAMduration-700 SAMdelay-1200">
+												<p className="font-medium mb-4">
+													Don't worry if you've missed previous episodes - you
+													have plenty of time to catch-up!
+												</p>
+												<Button
+													asChild
+													className="bg-button2 hover:bg-button1 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+												>
+													<Link
+														href="/calendar"
+														className="flex items-center"
+													>
+														<CalendarDays className="mr-2 h-4 w-4" />
+														View Full Calendar
+													</Link>
+												</Button>
+											</div></>
 	);
 }
