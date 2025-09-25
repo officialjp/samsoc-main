@@ -90,7 +90,7 @@ export function LibrarySection() {
 						</div>
 					)}
 				</div>
-				<div className="text-center pt-32">
+				<div className="text-center pt-32 SAManim SAMdelay-1200 SAMduration-900 SAMfade-in">
 					<Button className="bg-button2 hover:bg-button1 hover:cursor-pointer text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
 						<Link href="/library" className="flex items-center">
 							<Library className="mr-2 h-4 w-4" />

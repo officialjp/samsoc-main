@@ -29,24 +29,7 @@ export default async function AnimeSocietyLanding() {
 						badgeColor="bg-purple-200"
 					/>
 					<NowStreamingContent />
-					<div className="mt-8 text-center">
-						<p className="font-medium mb-4">
-							Don't worry if you've missed previous episodes - you
-							have plenty of time to catch-up!
-						</p>
-						<Button
-							asChild
-							className="bg-button2 hover:bg-button1 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-						>
-							<Link
-								href="/calendar"
-								className="flex items-center"
-							>
-								<CalendarDays className="mr-2 h-4 w-4" />
-								View Full Calendar
-							</Link>
-						</Button>
-					</div>
+					
 				</SectionContainer>
 
 				<LibrarySection />
