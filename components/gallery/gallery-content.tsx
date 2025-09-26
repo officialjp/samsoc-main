@@ -5,7 +5,6 @@ import { GalleryImage } from '@/components/gallery/gallery-image';
 import supabase from '@/utils/supabase/client';
 import { Button } from '../ui/button';
 import { X } from 'lucide-react';
-import InView from '@/components/scroll-view-card';
 
 interface GalleryItem {
 	id: string;

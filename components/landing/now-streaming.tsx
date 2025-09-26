@@ -39,17 +39,11 @@ export function NowStreamingContent() {
 	useEffect(() => {
 		async function fetchAnimeData() {
 			try {
-				// const { data: animes }: AnimeCardProps = await supabase
-				// 	.from('regular')
-				// 	.select(
-				// 		'title, public_url, episode, description, id, mal, total_episodes, type_of_show, studio, genre (genre)',
-				// 	);
 				const { data: animes }: AnimeCardProps = await supabase
 					.from('regular')
 					.select(
 						'id, title, public_url, episode, description, mal, total_episodes, type_of_show, studio, genre (genre)',
 					);
-				console.log(animes);
 				if (animes) {
 					setAnimes(animes as AnimeType[]);
 				}
