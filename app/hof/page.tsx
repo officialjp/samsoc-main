@@ -3,7 +3,6 @@ import { SectionHeading } from '@/components/section-heading';
 import DialogWithStickyFooter from '@/components/dialog';
 import HallOfFameContent from '@/components/committee/hof-content';
 import { Metadata } from 'next';
-import InView from '@/components/scroll-view-card';
 
 export const metadata: Metadata = {
 	title: 'Surrey Anime and Manga Society',

@@ -35,24 +35,22 @@ export function EventTypeCard({
 				className,
 			)}
 		>
-			<div className="flex flex-col md:flex-row gap-6">
-				<div className="w-full md:w-1/3">
-					<div className="relative h-48 md:h-full border-4 border-black overflow-hidden rounded-md">
-						{collageImage && collageImage.length > 0 ? (
-							<ImageCollage
-								images={collageImage}
-								className="h-full w-full bg-black"
-							></ImageCollage>
-						) : (
-							<Image
-								src={image || '/placeholder.svg'}
-								alt={title}
-								fill
-								sizes='sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"'
-								className="object-cover"
-							/>
-						)}
-					</div>
+			<div className="flex flex-col md:flex-row gap-6 items-center">
+				<div className="relative w-[min(100%,400px)] aspect-video border-4 shrink-0 border-black overflow-hidden rounded-md">
+					{collageImage && collageImage.length > 0 ? (
+						<ImageCollage
+							images={collageImage}
+							className="h-full w-full bg-black"
+						></ImageCollage>
+					) : (
+						<Image
+							src={image || '/placeholder.svg'}
+							alt={title}
+							fill
+							sizes='sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"'
+							className="object-cover"
+						/>
+					)}
 				</div>
 
 				<div className="w-full md:w-2/3 space-y-4">

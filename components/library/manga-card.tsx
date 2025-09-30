@@ -2,7 +2,6 @@ import React from 'react';
 import Image from 'next/image';
 
 interface MangaCardProps {
-	id: string;
 	title: string;
 	author: string;
 	volume: number;
@@ -13,7 +12,6 @@ interface MangaCardProps {
 }
 
 const MangaCard: React.FC<MangaCardProps> = ({
-	id,
 	title,
 	author,
 	volume,

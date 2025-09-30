@@ -5,9 +5,6 @@ import { LibrarySection } from '@/components/landing/library-section';
 import { AboutSection } from '@/components/landing/about-section';
 import { SectionContainer } from '@/components/section-container';
 import { SectionHeading } from '@/components/section-heading';
-import { Button } from '@/components/ui/button';
-import { CalendarDays, ListIcon, ImageIcon } from 'lucide-react';
-import Link from 'next/link';
 
 export default async function AnimeSocietyLanding() {
 	return (
@@ -29,7 +26,6 @@ export default async function AnimeSocietyLanding() {
 						badgeColor="bg-purple-200"
 					/>
 					<NowStreamingContent />
-					
 				</SectionContainer>
 
 				<LibrarySection />

@@ -185,37 +185,39 @@ export default function HallOfFameContent() {
 		useState<TypeCommitteeMemberData[]>();
 
 	useEffect(() => {
+		type YearCountEntry = [string, number];
+
 		async function fetchHOFData() {
 			try {
-				let { data } = await supabase
+				const { data } = await supabase
 					.from('committee')
 					.select('name, role, image, year')
 					.order('year', { ascending: false })
 					.overrideTypes<Array<TypeCommitteeMemberData>>();
 
 				if (data) {
+					const committeeData: TypeCommitteeMemberData[] = data;
 					const checkUniqueKeys = () => {
-						let keysCount: any = {};
-						data ??= [];
-						data?.forEach((item) => {
-							!keysCount[item.year]
-								? (keysCount[item.year] = 1)
-								: keysCount[item.year]++;
-						});
+						const keysCount: Record<string, number> = {};
+
+						committeeData.forEach(
+							(item: TypeCommitteeMemberData) => {
+								keysCount[item.year] =
+									(keysCount[item.year] || 0) + 1;
+							},
+						);
 						return keysCount;
 					};
 
 					const yearMap = checkUniqueKeys();
-					const yearMapSortArr: any = Object.entries(yearMap)
+					const yearMapSortArr: YearCountEntry[] = Object.entries(
+						yearMap,
+					)
 						.sort()
 						.reverse();
 
-					const currentCommitee = data?.filter(
-						(_, index) => index < yearMapSortArr[0][1],
-					);
-
-					const pastCommittees: any = [];
-					let pastCounter = 0; //yearMapSortArr[0][1];
+					const pastCommittees: TypeCommitteeMemberData[][] = [];
+					let pastCounter = 0;
 
 					const currentDate = new Date().getFullYear().toString();
 
@@ -241,8 +243,12 @@ export default function HallOfFameContent() {
 
 					setCommitteeMembers(flatArr);
 				}
-			} catch (err: any) {
-				console.error(err.message);
+			} catch (e: unknown) {
+				if (typeof e === 'string') {
+					console.error('brokey');
+				} else if (e instanceof Error) {
+					console.error(e.message);
+				}
 			}
 		}
 

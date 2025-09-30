@@ -32,11 +32,11 @@ export function SectionHeading({
 					{badge}
 				</div>
 				<h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-					{title.split(' ').map((word, index) => {
+					{...title.split(' ').map((word, index) => {
 						return (
 							<span
 								key={index}
-								className={`SAManim SAMdelay-${(index + 2) * 100} SAMduration-900 SAMfade-in SAMbounce`}
+								className={`SAManim SAMdelay-${(index + 2) * 100} SAMduration-900 SAMfade-in`}
 							>
 								{word}{' '}
 							</span>
@@ -44,8 +44,17 @@ export function SectionHeading({
 					})}
 				</h2>
 				{description && (
-					<p className="max-w-[900px] text-text1 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed SAManim SAMdelay-600 SAMduration-900 SAMfade-in">
-						{description}
+					<p className="max-w-[900px] text-text1 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+						{...description.split(' ').map((word, index) => {
+							return (
+								<span
+									key={index}
+									className={`SAManim SAMdelay-${(index * 2 + 40) * 10} SAMduration-900 SAMfade-in`}
+								>
+									{word}{' '}
+								</span>
+							);
+						})}
 					</p>
 				)}
 			</div>
