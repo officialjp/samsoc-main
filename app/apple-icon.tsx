@@ -1,5 +1,10 @@
 import { ImageResponse } from 'next/og';
 
+interface Size {
+	width: number;
+	height: number;
+}
+
 export function generateImageMetadata() {
 	return [
 		{
@@ -70,7 +75,7 @@ export function generateImageMetadata() {
 	];
 }
 
-export default function Icon({ size }: any) {
+export default function Icon({ size }: { size: Size }) {
 	return new ImageResponse(
 		(
 			<div

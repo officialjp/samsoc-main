@@ -47,8 +47,12 @@ export function NowStreamingContent() {
 				if (animes) {
 					setAnimes(animes as AnimeType[]);
 				}
-			} catch (err: any) {
-				console.error(err.message);
+			} catch (e: unknown) {
+				if (typeof e === 'string') {
+					console.error('brokey');
+				} else if (e instanceof Error) {
+					console.error(e.message);
+				}
 			}
 		}
 

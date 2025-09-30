@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { X } from 'lucide-react';
-import InView from '@/components/scroll-view-card';
 
 interface GalleryImageProps {
 	src: string;

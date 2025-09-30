@@ -1,9 +1,5 @@
-import Link from 'next/link';
-import { ChevronLeft } from 'lucide-react';
-
 import { SectionContainer } from '@/components/section-container';
 import { SectionHeading } from '@/components/section-heading';
-import { Button } from '@/components/ui/button';
 import LibraryContent from '@/components/library/library-client';
 import { Metadata } from 'next';
 

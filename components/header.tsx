@@ -1,13 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import {
-	MouseEventHandler,
-	ReactNode,
-	useEffect,
-	useRef,
-	useState,
-} from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 
 import { SvgIcon } from '@/components/util/svgIcon';
 import { Menu, X } from 'lucide-react';
@@ -18,8 +12,37 @@ import Facebook from '@/public/facebook.svg';
 import Discord from '@/public/discord.svg';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
-import path from 'path';
 
+function useWindowSize() {
+	const [windowSize, setWindowSize] = useState({
+		width: 0,
+		height: 0,
+	});
+
+	useEffect(() => {
+		// Only execute on the client-side
+		if (typeof window !== 'undefined') {
+			// Handler to call on window resize
+			function handleResize() {
+				setWindowSize({
+					width: window.innerWidth,
+					height: window.innerHeight,
+				});
+			}
+
+			// Add event listener
+			window.addEventListener('resize', handleResize);
+
+			// Call handler initially to set size
+			handleResize();
+
+			// Remove event listener on cleanup
+			return () => window.removeEventListener('resize', handleResize);
+		}
+	}, []);
+
+	return windowSize;
+}
 function Button({
 	children,
 	href,
@@ -72,6 +95,10 @@ function Nav() {
 		<Button href="/hof" className="">
 			Hall of Fame
 		</Button>,
+
+		<Button href="/games" className="">
+			Games
+		</Button>,
 	];
 
 	return (
@@ -99,7 +126,6 @@ function Nav() {
 }
 
 export function Header() {
-	const [isOpen, setIsOpen] = useState(false);
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 
 	const navRef = useRef(null);
@@ -112,7 +138,7 @@ export function Header() {
 		setIsMenuOpen(!isMenuOpen);
 	};
 
-	const animateOnScrollController = (self: any) => {
+	const animateOnScrollController = (self: HTMLElement) => {
 		const scroll = window.scrollY;
 
 		const scrollDelta = lastScroll - scroll;
@@ -145,7 +171,7 @@ export function Header() {
 			setIsMenuOpen(false);
 			self.style.pointerEvents = 'none';
 		} else {
-			self.style.pointerEvents = null;
+			self.style.pointerEvents = '';
 		}
 
 		self.style.opacity = (1 - range).toString();
@@ -153,13 +179,17 @@ export function Header() {
 
 	useEffect(() => {
 		window.addEventListener('scroll', () => {
-			animateOnScrollController(navRef.current);
+			if (navRef.current) animateOnScrollController(navRef.current);
 		});
 		return () =>
 			window.removeEventListener('scroll', () => {
-				animateOnScrollController(navRef.current);
+				if (navRef.current) animateOnScrollController(navRef.current);
 			});
 	}, []);
+
+	const { width } = useWindowSize();
+
+	const useMobile = width < 1000;
 
 	return (
 		<header
@@ -179,55 +209,63 @@ export function Header() {
 						width={40}
 					/>
 				</Link>
-				<div className="flex-row flex gap-6 lg:hidden mx-auto">
-					<Link href="https://www.instagram.com/unisamsoc/?hl=en">
-						<SvgIcon
-							src={Instagram.src}
-							height={30}
-							width={30}
-							className={'bg-[#ff0069]'}
-						></SvgIcon>
-					</Link>
-					<Link href="https://www.facebook.com/UniSAMSoc">
-						<SvgIcon
-							src={Facebook.src}
-							height={30}
-							width={30}
-							className={'bg-[#0866ff]'}
-						></SvgIcon>
-					</Link>
-					<Link href="https://discord.gg/tQUrdxzUZ4">
-						<SvgIcon
-							src={Discord.src}
-							height={30}
-							width={30}
-							className={'bg-[#5865F2]'}
-						></SvgIcon>
-					</Link>
-				</div>
-				<Nav></Nav>
+
+				{!useMobile ? (
+					<Nav></Nav>
+				) : (
+					<div className="flex-row flex gap-6 mx-auto">
+						<Link href="https://www.instagram.com/unisamsoc/?hl=en">
+							<SvgIcon
+								src={Instagram.src}
+								height={30}
+								width={30}
+								className={'bg-[#ff0069]'}
+							></SvgIcon>
+						</Link>
+						<Link href="https://www.facebook.com/UniSAMSoc">
+							<SvgIcon
+								src={Facebook.src}
+								height={30}
+								width={30}
+								className={'bg-[#0866ff]'}
+							></SvgIcon>
+						</Link>
+						<Link href="https://discord.gg/tQUrdxzUZ4">
+							<SvgIcon
+								src={Discord.src}
+								height={30}
+								width={30}
+								className={'bg-[#5865F2]'}
+							></SvgIcon>
+						</Link>
+					</div>
+				)}
 
 				<div className="flex items-center relative h-full">
-					<Button
-						href="/#join"
-						className="bg-button2 hover:bg-button1 text-white hidden md:flex"
-					>
-						Join Now
-					</Button>
+					{useMobile ? (
+						<button
+							className=" p-2 text-black hover:cursor-pointer"
+							onClick={toggleMenu}
+							aria-label="Toggle menu"
+						>
+							{isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+						</button>
+					) : (
+						<Button
+							href="/#join"
+							className="bg-button2 hover:bg-button1 text-white hidden md:flex"
+						>
+							Join Now
+						</Button>
+					)}
+
 					{/* Mobile Menu Button */}
-					<button
-						className="md:hidden p-2 text-black hover:cursor-pointer"
-						onClick={toggleMenu}
-						aria-label="Toggle menu"
-					>
-						{isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-					</button>
 				</div>
 			</div>
 
 			{/* Mobile Navigation */}
 			{isMenuOpen && (
-				<div className="md:hidden px-4 py-4 border-t border-black bg-[#ffffffa0]">
+				<div className="px-4 py-4 border-t border-black bg-[#ffffffa0] lg:hidden">
 					<nav className="flex flex-col space-y-4">
 						<Link
 							href="/library"
@@ -264,9 +302,16 @@ export function Header() {
 						>
 							Hall of Fame
 						</Link>
+						<Link
+							href="/games"
+							className="font-medium py-2 hover:underline underline-offset-4"
+							onClick={() => setIsMenuOpen(false)}
+						>
+							Games
+						</Link>
 
 						<Button
-							className="sm:hidden w-full bg-pink-500 py-2 flex justify-center cursor-pointer hover:bg-pink-600 text-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+							className=" w-full bg-pink-500 py-2 flex justify-center cursor-pointer hover:bg-pink-600 text-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
 							href="/#join"
 						>
 							Join Now

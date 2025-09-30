@@ -91,8 +91,12 @@ const CalendarWithData: React.FC = () => {
 				] as CalendarEventType[];
 
 				setEvents(allEvents);
-			} catch (err: any) {
-				setError(`An unexpected error occurred: ${err.message}`);
+			} catch (e: unknown) {
+				if (typeof e === 'string') {
+					console.error('brokey');
+				} else if (e instanceof Error) {
+					console.error(e.message);
+				}
 			}
 		};
 

@@ -28,8 +28,12 @@ export default function GalleryContent() {
 				if (data) {
 					setGalleryItems(data as GalleryItem[]);
 				}
-			} catch (err: any) {
-				console.error(err.message);
+			} catch (e: unknown) {
+				if (typeof e === 'string') {
+					console.error('brokey');
+				} else if (e instanceof Error) {
+					console.error(e.message);
+				}
 			}
 		}
 

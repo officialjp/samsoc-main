@@ -83,8 +83,12 @@ const LibraryContent: React.FC = () => {
 						...Array.from(new Set(fetchedGenres)).sort(),
 					]);
 				}
-			} catch (err: any) {
-				setError(`An unexpected error occurred: ${err.message}`);
+			} catch (e: unknown) {
+				if (typeof e === 'string') {
+					setError(`An unexpected error occurred: brokey`);
+				} else if (e instanceof Error) {
+					setError(`An unexpected error occurred: ${e.message}`);
+				}
 			} finally {
 				setLoading(false);
 			}
@@ -132,14 +136,7 @@ const LibraryContent: React.FC = () => {
 
 	const handlePageChange = (page: number) => {
 		setCurrentPage(page);
-		const resultsElement = document.getElementById('manga-results');
-		resultsElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 	};
-
-	const totalManga = allManga.length;
-	const availableManga = allManga.filter(
-		(manga) => !manga.borrowedby || manga.borrowedby === 'NULL',
-	).length;
 
 	if (error) {
 		return <div>Error: {error}</div>;
@@ -185,7 +182,6 @@ const LibraryContent: React.FC = () => {
 								{paginatedManga.map((manga) => (
 									<MangaCard
 										key={manga.id}
-										id={manga.id}
 										title={manga.title}
 										author={manga.author}
 										volume={manga.volume}

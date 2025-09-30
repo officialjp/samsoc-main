@@ -14,7 +14,7 @@ import Link from 'next/link';
 import { SvgIcon } from '@/components/util/svgIcon';
 
 type PropType = {
-	slides?: any;
+	slides: React.ReactNode[] | undefined;
 	options?: EmblaOptionsType;
 	useSocials: boolean;
 };
@@ -41,16 +41,18 @@ export default function HeroCarousel({
 			>
 				<div className="flex touch-pinch-zoom h-full touch-pan-y">
 					{slides &&
-						slides.map((elements: any, index: number) => (
-							<div
-								className="transform-[translate3d(0,0,0)] flex-[0 0 70%] grow-0 shrink-0 w-full mx-[1rem] h-full"
-								key={index}
-							>
-								<div className="w-full h-full relative overflow-hidden rounded-2xl md:rounded-4xl">
-									{elements}
+						slides.map(
+							(elements: React.ReactNode, index: number) => (
+								<div
+									className="transform-[translate3d(0,0,0)] flex-[0 0 70%] grow-0 shrink-0 w-full mx-[1rem] h-full"
+									key={index}
+								>
+									<div className="w-full h-full relative overflow-hidden rounded-2xl md:rounded-4xl">
+										{elements}
+									</div>
 								</div>
-							</div>
-						))}
+							),
+						)}
 				</div>
 			</div>
 

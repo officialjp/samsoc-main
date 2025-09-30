@@ -1,6 +1,5 @@
 'use client';
 import { cn } from '@/lib/utils';
-import { ReactNode } from 'react';
 import { InView } from 'react-intersection-observer';
 
 export default function ScrollViewCard({
@@ -10,7 +9,8 @@ export default function ScrollViewCard({
 	className,
 	id,
 }: {
-	children: React.ReactElement<ReactNode>;
+	children: React.ReactNode;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	tag?: any;
 	triggerOnce?: boolean;
 	className?: string;

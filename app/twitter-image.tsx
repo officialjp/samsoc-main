@@ -7,7 +7,14 @@ export const size = {
 };
 export const contentType = 'image/png';
 
-export default function Image({ size }: any) {
+export default function Image({
+	size,
+}: {
+	size: {
+		width: number;
+		height: number;
+	};
+}) {
 	return new ImageResponse(
 		(
 			<div

@@ -34,7 +34,6 @@ interface MobileCalendarViewProps {
 export function MobileCalendarView({
 	currentMonth,
 	selectedDate,
-	events,
 	groupedEvents,
 	onDateClick,
 }: MobileCalendarViewProps) {
@@ -53,12 +52,6 @@ export function MobileCalendarView({
 		} else {
 			setExpandedDate(dateKey);
 		}
-	};
-
-	// Get events for a specific day
-	const getEventsForDay = (day: Date) => {
-		const dateKey = format(day, 'yyyy-MM-dd');
-		return groupedEvents[dateKey] || [];
 	};
 
 	// Check if a day has events

@@ -9,9 +9,7 @@ import { isMobile } from 'react-device-detect';
 import InView from '@/components/scroll-view-card';
 
 export function HeroSection() {
-	const [carouselData, setCarouselData] = useState<
-		React.ReactNode[] | null
-	>();
+	const [carouselData, setCarouselData] = useState<React.ReactNode[]>();
 
 	useEffect(() => {
 		async function fetchCarouselData() {
@@ -43,8 +41,12 @@ export function HeroSection() {
 
 					setCarouselData(SLIDES);
 				}
-			} catch (err: any) {
-				console.error(err.message);
+			} catch (e: unknown) {
+				if (typeof e === 'string') {
+					console.error('brokey');
+				} else if (e instanceof Error) {
+					console.error(e.message);
+				}
 			}
 		}
 

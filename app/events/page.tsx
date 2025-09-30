@@ -1,16 +1,11 @@
-import Link from 'next/link';
-import { ChevronLeft } from 'lucide-react';
 import { SectionContainer } from '@/components/section-container';
 import { SectionHeading } from '@/components/section-heading';
 import { EventTypeCard } from '@/components/event/event-type-card';
-import { Button } from '@/components/ui/button';
 import ClubNight from '@/public/images/clubnight.jpg';
 import ComicCon from '@/public/images/comiccon.jpg';
-import Pokemon from '@/public/images/pokemon.png';
-import Voting from '@/public/images/voting.png';
-import Filipino from '@/public/images/filipino.webp';
-import Art from '@/public/images/art.webp';
-import SVGS from '@/public/images/svgs.webp';
+import Screenings from '@/public/images/screenings.png';
+
+import Collabs from '@/public/images/collabs.png';
 
 // Import the shared types
 import { EventType } from '@/lib/definitions'; // Adjust the path as needed
@@ -50,24 +45,7 @@ export default function EventsPage() {
 			description:
 				'The heart of our society! Join us for regular screenings of both classic and current anime series and films.',
 			frequency: 'Weekly (Wednesday)',
-			collageImage: [
-				{
-					src: Pokemon,
-					alt: 'pokemon',
-					dimentions: {
-						x: 300,
-						y: 300,
-					},
-				},
-				{
-					src: Voting,
-					alt: 'voting',
-					dimentions: {
-						x: 300,
-						y: 300,
-					},
-				},
-			],
+			image: Screenings,
 			color: 'bg-about1',
 			examples: [
 				'Regular Screenings',
@@ -94,32 +72,7 @@ export default function EventsPage() {
 			description:
 				'We regularly team up with other societies for special cross-over events! From art workshops with the Art Society to themed game nights with the Gaming Society, these collaborations offer unique experiences that combine different interests and bring communities together.',
 			frequency: 'Bi-monthly',
-			collageImage: [
-				{
-					src: Art,
-					alt: 'art',
-					dimentions: {
-						x: 300,
-						y: 300,
-					},
-				},
-				{
-					src: SVGS,
-					alt: 'svgs',
-					dimentions: {
-						x: 300,
-						y: 300,
-					},
-				},
-				{
-					src: Filipino,
-					alt: 'filipino',
-					dimentions: {
-						x: 300,
-						y: 400,
-					},
-				},
-			],
+			image: Collabs,
 			color: 'bg-purple-200',
 			examples: ['Games Night', 'Art Night', 'Club Night'],
 		},

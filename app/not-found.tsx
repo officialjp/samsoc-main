@@ -1,6 +1,6 @@
 'use client';
 
-const levenshtein = require('js-levenshtein');
+import levenshtein from 'js-levenshtein';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -12,7 +12,7 @@ import { SectionHeading } from '@/components/section-heading';
 import { ChevronRight } from 'lucide-react';
 
 export default function NotFound() {
-	const [links, setLinks] = useState<any | undefined>();
+	const [links, setLinks] = useState<React.ReactNode[] | null>(null);
 
 	const pathName = usePathname()
 		.toLowerCase()
@@ -46,13 +46,17 @@ export default function NotFound() {
 			route: '/hof',
 			icon: '🏆',
 		},
+		games: {
+			route: '/games',
+			icon: '🎮',
+		},
 	};
 
 	useEffect(() => {
 		setLinks(
 			Object.entries(pageIndex)
 				.filter(
-					([name, data]) =>
+					([name]) =>
 						levenshtein(name, pathName) < 3 ||
 						name.includes(pathName),
 				)
