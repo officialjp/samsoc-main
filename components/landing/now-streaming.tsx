@@ -100,8 +100,6 @@ export function NowStreamingContent() {
 									right: false,
 								};
 
-								console.log(flags);
-
 								for (let i = 0; i < childArray.length; i++) {
 									if (
 										childArray[i].classList.contains(

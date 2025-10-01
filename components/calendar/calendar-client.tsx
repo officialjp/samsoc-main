@@ -45,7 +45,7 @@ const CalendarWithData: React.FC = () => {
 
 					fetchedRegSession?.forEach((session) => {
 						let currentDate: Date = parseISO(session.date);
-						for (let i = 0; i < 12; i++) {
+						for (let i = 0; i < session.session_count; i++) {
 							if (i > 0) {
 								sessions.push({
 									id: session.id,
