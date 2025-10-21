@@ -255,9 +255,8 @@ prep for animations
 */
 
 .SAManim {
-	animation-iteration-count: 1;
 	animation-play-state: paused;
-	animation-fill-mode: both;
+	animation-fill-mode: backwards;
 	opacity: 0;
 }
 
