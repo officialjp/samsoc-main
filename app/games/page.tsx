@@ -1,43 +1,63 @@
-import { SectionContainer } from '@/components/section-container';
-import { SectionHeading } from '@/components/section-heading';
+'use client';
+import { useEffect, useState } from 'react';
+import AnimeWordleCard from '@/components/games/anime-wordle-card';
+import Form from 'next/form';
 
-import { Metadata } from 'next';
+interface DataType {
+	title: string;
+	year: number;
+	genres: string[];
+	themes: string[];
+	studios: string[];
+	source: string;
+	score: number;
+}
 
-export const metadata: Metadata = {
-	title: 'Surrey Anime and Manga Society',
-	description:
-		'Browse our upcoming events and regular anime screenings. Click on any event for more details!',
-	openGraph: {
-		title: 'Surrey Anime and Manga Society',
-		description:
-			'Browse our upcoming events and regular anime screenings. Click on any event for more details!',
-	},
-	twitter: {
-		card: 'summary',
-		title: 'Surrey Anime and Manga Society',
-		description:
-			'Browse our upcoming events and regular anime screenings. Click on any event for more details!',
-	},
-};
+export default function Page() {
+	const [loadingInputs, setLoadingInputs] = useState(true);
+	const [loadingAnswer, setLoadingAnswer] = useState(true);
+	const [answerData, setAnswerData] = useState<DataType>();
+	const [inputs, setInputs] = useState<DataType[]>([]);
 
-export default function CalendarPage() {
+	useEffect(() => {
+		fetch('https://api.jikan.moe/v4/anime/52991/full').then((response) =>
+			response.json().then((data) => {
+				setInputs([...inputs, data.data]);
+				setLoadingInputs(false);
+			}),
+		);
+		fetch('https://api.jikan.moe/v4/anime/52992/full').then((response) =>
+			response.json().then((data) => {
+				setAnswerData(data.data);
+				setLoadingAnswer(false);
+			}),
+		);
+	}, []);
+
+	if (loadingInputs || loadingAnswer) {
+		console.log('hello');
+		return (
+			<div>
+				<p>its loading</p>
+			</div>
+		);
+	}
 	return (
-		<div className="flex min-h-screen flex-col w-full">
-			<main className="flex-1">
-				<SectionContainer>
-					<SectionHeading
-						badge="GAMES"
-						title="SAMsoc Games"
-						description="We host a variety of online games and quizzes at our regular session to give you something to do during breaks. Feel free to join in and potentially win some prizes!"
-						badgeColor="bg-purple-200"
-						className="mb-12"
-					/>
-					<h1>
-						THIS DOESNT WORK YET!!! BUT TUNE IN COZ IT MIGHT MAYBE
-						PERCHANCE WILL
-					</h1>
-				</SectionContainer>
-			</main>
+		<div>
+			{inputs.map((item, index) => {
+				return (
+					<div key={index}>
+						<AnimeWordleCard
+							inputData={item}
+							answerData={answerData}
+						/>
+					</div>
+				);
+			})}
+			<Form action="/games">
+				<input name="query" />
+				<button type="submit">Deez nuts</button>
+			</Form>
 		</div>
 	);
 }
