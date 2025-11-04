@@ -7,6 +7,8 @@ import supabase from '@/utils/supabase/client';
 import { useEffect, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 import InView from '@/components/scroll-view-card';
+import Marquee from '../marquee';
+import SAMSOC from '@/public/images/logo.png';
 
 export function HeroSection() {
 	const [carouselData, setCarouselData] = useState<React.ReactNode[]>();
@@ -65,6 +67,17 @@ export function HeroSection() {
 						useSocials={true}
 					></HeroCarousel>
 				</div>
+				<Marquee className="mt-4">
+					<div className="relative w-[50px] h-fit block">
+						<Image
+							src={SAMSOC.src}
+							height={30}
+							width={30}
+							alt="samsoc logo"
+						></Image>
+					</div>
+					<p>aaaay</p>
+				</Marquee>
 			</section>
 		</InView>
 	);
