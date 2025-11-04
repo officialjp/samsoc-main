@@ -1,31 +1,14 @@
-interface AnimeCardProps {
-	inputData: DataType;
-	answerData: DataType;
-}
+import { ArrowDown, ArrowUp } from 'lucide-react';
 
-interface DataType {
-	title: string;
-	year: number;
-	genres: string[];
-	themes: string[];
-	studios: string[];
-	source: string;
-	score: number;
-}
-
-export default function AnimeWordleCard({
-	inputData,
-	answerData,
-}: AnimeCardProps) {
-	function checkForMatch(item: string, item2: string[]) {
-		item2.forEach((item) => {
-			if (item === item) {
+export default function AnimeWordleCard({ inputData, answerData }) {
+	const checkForMatch = (item, item2) => {
+		item2.forEach((itemInstance) => {
+			if (itemInstance.name === item.name) {
 				return true;
 			}
 		});
-
 		return false;
-	}
+	};
 
 	return (
 		<div className="flex flex-cols-2">
@@ -39,16 +22,27 @@ export default function AnimeWordleCard({
 				{inputData.year === answerData.year ? (
 					<h1 className="text-green-500">{inputData.year}</h1>
 				) : (
-					<h1 className="text-red-500">{inputData.year}</h1>
+					<h1 className="text-red-500">
+						{inputData.year}
+						{inputData.year < answerData.year ? (
+							<ArrowUp></ArrowUp>
+						) : (
+							<ArrowDown></ArrowDown>
+						)}
+					</h1>
 				)}
 				<div>
 					{inputData.themes.map((item, index) => {
 						return (
 							<div key={index}>
 								{checkForMatch(item, answerData.themes) ? (
-									<h1 className="text-green-500">{item}</h1>
+									<h1 className="text-green-500">
+										{item.name}
+									</h1>
 								) : (
-									<h1 className="text-red-500">{item}</h1>
+									<h1 className="text-red-500">
+										{item.name}
+									</h1>
 								)}
 							</div>
 						);
@@ -59,9 +53,13 @@ export default function AnimeWordleCard({
 						return (
 							<div key={index}>
 								{checkForMatch(item, answerData.themes) ? (
-									<h1 className="text-green-500">{item}</h1>
+									<h1 className="text-green-500">
+										{item.name}
+									</h1>
 								) : (
-									<h1 className="text-red-500">{item}</h1>
+									<h1 className="text-red-500">
+										{item.name}
+									</h1>
 								)}
 							</div>
 						);
@@ -72,9 +70,13 @@ export default function AnimeWordleCard({
 						return (
 							<div key={index}>
 								{checkForMatch(item, answerData.themes) ? (
-									<h1 className="text-green-500">{item}</h1>
+									<h1 className="text-green-500">
+										{item.name}
+									</h1>
 								) : (
-									<h1 className="text-red-500">{item}</h1>
+									<h1 className="text-red-500">
+										{item.name}
+									</h1>
 								)}
 							</div>
 						);
@@ -88,7 +90,14 @@ export default function AnimeWordleCard({
 				{inputData.score === answerData.score ? (
 					<h1 className="text-green-500">{inputData.score}</h1>
 				) : (
-					<h1 className="text-red-500">{inputData.score}</h1>
+					<h1 className="text-red-500">
+						{inputData.score}
+						{inputData.score < answerData.score ? (
+							<ArrowUp></ArrowUp>
+						) : (
+							<ArrowDown></ArrowDown>
+						)}
+					</h1>
 				)}
 			</div>
 		</div>
