@@ -11,18 +11,24 @@ export default function AnimeWordleCard({ inputData, answerData }) {
 	};
 
 	return (
-		<div className="flex flex-cols-2">
-			<div className="flex flex-row gap-4">
+		<div className="flex">
+			<div className="grid grid-cols-7 w-6xl gap-4 items-center justify-center text-sm border h-20">
 				{inputData.title === answerData.title ? (
-					<h1 className="text-green-500">{inputData.title}</h1>
+					<h1 className="text-green-500 flex justify-center items-center">
+						{inputData.title}
+					</h1>
 				) : (
-					<h1 className="text-red-500">{inputData.title}</h1>
+					<h1 className="text-red-500 flex justify-center items-center">
+						{inputData.title}
+					</h1>
 				)}
 
 				{inputData.year === answerData.year ? (
-					<h1 className="text-green-500">{inputData.year}</h1>
+					<h1 className="text-green-500 flex justify-center items-center">
+						{inputData.year}
+					</h1>
 				) : (
-					<h1 className="text-red-500">
+					<h1 className="text-red-500 flex justify-center items-center">
 						{inputData.year}
 						{inputData.year < answerData.year ? (
 							<ArrowUp></ArrowUp>
@@ -36,11 +42,11 @@ export default function AnimeWordleCard({ inputData, answerData }) {
 						return (
 							<div key={index}>
 								{checkForMatch(item, answerData.themes) ? (
-									<h1 className="text-green-500">
+									<h1 className="text-green-500 flex justify-center items-center">
 										{item.name}
 									</h1>
 								) : (
-									<h1 className="text-red-500">
+									<h1 className="text-red-500 flex justify-center items-center">
 										{item.name}
 									</h1>
 								)}
@@ -53,11 +59,11 @@ export default function AnimeWordleCard({ inputData, answerData }) {
 						return (
 							<div key={index}>
 								{checkForMatch(item, answerData.themes) ? (
-									<h1 className="text-green-500">
+									<h1 className="text-green-500 flex justify-center items-center">
 										{item.name}
 									</h1>
 								) : (
-									<h1 className="text-red-500">
+									<h1 className="text-red-500 flex justify-center items-center">
 										{item.name}
 									</h1>
 								)}
@@ -70,11 +76,11 @@ export default function AnimeWordleCard({ inputData, answerData }) {
 						return (
 							<div key={index}>
 								{checkForMatch(item, answerData.themes) ? (
-									<h1 className="text-green-500">
+									<h1 className="text-green-500 flex justify-center items-center">
 										{item.name}
 									</h1>
 								) : (
-									<h1 className="text-red-500">
+									<h1 className="text-red-500 flex justify-center items-center">
 										{item.name}
 									</h1>
 								)}
@@ -83,14 +89,20 @@ export default function AnimeWordleCard({ inputData, answerData }) {
 					})}
 				</div>
 				{inputData.source === answerData.source ? (
-					<h1 className="text-green-500">{inputData.source}</h1>
+					<h1 className="text-green-500 flex justify-center items-center">
+						{inputData.source}
+					</h1>
 				) : (
-					<h1 className="text-red-500">{inputData.source}</h1>
+					<h1 className="text-red-500 flex justify-center items-center">
+						{inputData.source}
+					</h1>
 				)}
 				{inputData.score === answerData.score ? (
-					<h1 className="text-green-500">{inputData.score}</h1>
+					<h1 className="text-green-500 flex justify-center items-center">
+						{inputData.score}
+					</h1>
 				) : (
-					<h1 className="text-red-500">
+					<h1 className="text-red-500 flex justify-center items-center">
 						{inputData.score}
 						{inputData.score < answerData.score ? (
 							<ArrowUp></ArrowUp>
