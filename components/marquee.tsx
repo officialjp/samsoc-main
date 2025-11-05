@@ -60,7 +60,7 @@ export default function Marquee({
 					{new Array(scrollCount).fill(0).map((_, index) => {
 						return (
 							<div
-								className="h-[30px] px-3 flex relative items-center shrink-0 whitespace-nowrap"
+								className="h-fit flex relative items-center shrink-0 whitespace-nowrap"
 								key={index + 'marquee'}
 							>
 								{children}
