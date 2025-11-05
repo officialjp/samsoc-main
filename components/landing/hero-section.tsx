@@ -7,6 +7,10 @@ import supabase from '@/utils/supabase/client';
 import { useEffect, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 import InView from '@/components/scroll-view-card';
+import Marquee from '../marquee';
+import SAMSOC from '@/public/images/logo.png';
+import { SvgIcon } from '../util/svgIcon';
+import SurreyLogo from '@/public/surrey.svg';
 
 export function HeroSection() {
 	const [carouselData, setCarouselData] = useState<React.ReactNode[]>();
@@ -65,6 +69,43 @@ export function HeroSection() {
 						useSocials={true}
 					></HeroCarousel>
 				</div>
+				<Marquee className="mt-20 mask-[linear-gradient(90deg,hsla(0,0%,0%,0)_0%,hsla(0,0%,0%,1)_10%,hsla(0,0%,0%,1)_90%,hsla(0,0%,0%,0)_100%)]">
+					<div className="flex gap-10 items-center mr-10">
+						<span className="flex items-center gap-2">
+							<p>Developed by:</p>
+							<p>
+								{['J.P', 'Michael', 'Maiham', 'David'].join(
+									', ',
+								)}
+							</p>
+						</span>
+						<span>●</span>
+						<span className="flex items-center gap-2">
+							<p>A community for students at</p>
+							<div className="relative w-fit h-fit block px-2">
+								<SvgIcon
+									className="bg-black"
+									height={50}
+									width={130}
+									src={SurreyLogo.src}
+								></SvgIcon>
+							</div>
+						</span>
+						<span>●</span>
+						<span className="flex items-center gap-2 ">
+							<p>Made with love for</p>
+							<div className="relative w-[50px] h-fit block mx-2">
+								<Image
+									src={SAMSOC.src}
+									height={50}
+									width={50}
+									alt="samsoc logo"
+								></Image>
+							</div>
+						</span>
+						<span>●</span>
+					</div>
+				</Marquee>
 			</section>
 		</InView>
 	);

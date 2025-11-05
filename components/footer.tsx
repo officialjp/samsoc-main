@@ -39,7 +39,7 @@ export function Footer() {
 									width={15}
 									height={15}
 									src={
-										'https://natski.vercel.app/apis/encore/icon-system/dependencies/svg/NATSKI.svg'
+										'https://natski.vercel.app/apis/encore/dependencies/icon-system/svg/NATSKI.svg'
 									}
 								></SvgIcon>
 								Michael
