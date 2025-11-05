@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
+import { cn } from '@/lib/utils';
 
 const index = {
 	'1': 'Cowboy Bebop',
@@ -65,14 +66,12 @@ const index = {
 	'98': 'Mai-HiME',
 };
 
-export default function SearchAnimeData({ inputState }) {
+export default function SearchAnimeData({ inputState, className }) {
 	const [auto, setAuto] = useState(<div hidden></div>);
 	const [cooldown, setCooldown] = useState(false);
 	const [input, setInput] = useState('');
 
 	const inputBar = useRef(null);
-
-	useEffect(() => {}, []);
 
 	const cooldownFn = () => {
 		return new Promise((res) => {
@@ -90,15 +89,20 @@ export default function SearchAnimeData({ inputState }) {
 		console.log(event);
 	};
 
+	const blur = () => {};
+
+	const focus = () => {};
+
 	const autoCompleteClickHandler = async (event, key) => {
 		if (cooldown || input === key) return;
 		inputState(key);
 		setCooldown(true);
+
 		await cooldownFn();
 		setCooldown(false);
 	};
 
-	function AutoComplete() {
+	function AutoComplete({ className }) {
 		const buttonArr = Object.entries(index)
 			.filter(([_, value]) =>
 				value.toLowerCase().includes(input.toLowerCase()),
@@ -111,6 +115,7 @@ export default function SearchAnimeData({ inputState }) {
 
 				return (
 					<Button
+						className="bg-red"
 						key={index + 'autoComp'}
 						onClick={(event) =>
 							autoCompleteClickHandler(event, key)
@@ -136,9 +141,15 @@ export default function SearchAnimeData({ inputState }) {
 			});
 
 		return (
-			<section className="">
-				{buttonArr.slice(0, Math.min(buttonArr.length, 6))}
-			</section>
+			input.length > 1 && (
+				<section className={cn('absolute flex flex-col', className)}>
+					{buttonArr
+						.slice(0, Math.min(buttonArr.length, 3))
+						.map((button) => {
+							return <div>{button}</div>;
+						})}
+				</section>
+			)
 		);
 	}
 
@@ -146,12 +157,17 @@ export default function SearchAnimeData({ inputState }) {
 		<>
 			<Input
 				id="AnimeSearchInput"
+				className={cn('rounded-2xl', className)}
 				ref={inputBar}
 				type="text"
 				placeholder="Anime name"
 				onChange={searchAnimeIndex}
+				onFocus={focus}
+				spellCheck="false"
+				autoComplete="off"
+				onBlur={blur}
 			/>
-			<AutoComplete></AutoComplete>
+			<AutoComplete className="z-10"></AutoComplete>
 		</>
 	);
 }

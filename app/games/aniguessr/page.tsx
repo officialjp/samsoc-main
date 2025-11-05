@@ -1,6 +1,5 @@
 'use client';
 import { useEffect, useState } from 'react';
-import AnimeWordleCard from '@/components/games/anime-wordle-card';
 import SearchAnimeData from '@/components/games/search-anime-data';
 import { ArrowDown, ArrowUp } from 'lucide-react';
 
@@ -61,144 +60,163 @@ export default function Page() {
 
 	return (
 		<div className="flex items-center justify-center flex-col">
-			<table className="border-collapse border border-gray-400 border-spacing-0 min-w-[650px] w-[100%] table">
-				<caption className="caption-top">Make sure to guess!</caption>
-				<thead>
-					<tr>
-						<th>Title</th>
-						<th>Year</th>
-						<th>Genres</th>
-						<th>Studios</th>
-						<th>Themes</th>
-						<th>Source</th>
-						<th>Score</th>
-					</tr>
-				</thead>
-				<tbody>
-					{inputs.map((item, index) => {
-						return (
-							<tr key={index}>
-								<td>
-									{item.title === answerData.title ? (
-										<h1 className="text-green-500 flex justify-center items-center">
-											{item.title}
-										</h1>
-									) : (
-										<h1 className="text-red-500 flex justify-center items-center">
-											{item.title}
-										</h1>
-									)}
-								</td>
-								<td>
-									{item.year === answerData.year ? (
-										<h1 className="text-green-500 flex justify-center items-center">
-											{item.year}
-										</h1>
-									) : (
-										<h1 className="text-red-500 flex justify-center items-center">
-											{item.year}
-											{item.year < answerData.year ? (
-												<ArrowUp></ArrowUp>
-											) : (
-												<ArrowDown></ArrowDown>
-											)}
-										</h1>
-									)}
-								</td>
-								<td>
-									{item.genres.map((item, index) => {
-										return (
-											<div key={index}>
-												{checkForMatch(
-													item,
-													answerData.themes,
-												) ? (
-													<h1 className="text-green-500 flex justify-center items-center">
-														{item.name}
-													</h1>
-												) : (
-													<h1 className="text-red-500 flex justify-center items-center">
-														{item.name}
-													</h1>
-												)}
-											</div>
-										);
-									})}
-								</td>
-								<td>
-									{item.themes.map((item, index) => {
-										return (
-											<div key={index}>
-												{checkForMatch(
-													item,
-													answerData.themes,
-												) ? (
-													<h1 className="text-green-500 flex justify-center items-center">
-														{item.name}
-													</h1>
-												) : (
-													<h1 className="text-red-500 flex justify-center items-center">
-														{item.name}
-													</h1>
-												)}
-											</div>
-										);
-									})}
-								</td>
-								<td>
-									{item.studios.map((item, index) => {
-										return (
-											<div key={index}>
-												{checkForMatch(
-													item,
-													answerData.themes,
-												) ? (
-													<h1 className="text-green-500 flex justify-center items-center">
-														{item.name}
-													</h1>
-												) : (
-													<h1 className="text-red-500 flex justify-center items-center">
-														{item.name}
-													</h1>
-												)}
-											</div>
-										);
-									})}
-								</td>
-								<td>
-									{item.source === item.source ? (
-										<h1 className="text-green-500 flex justify-center items-center">
-											{item.source}
-										</h1>
-									) : (
-										<h1 className="text-red-500 flex justify-center items-center">
-											{item.source}
-										</h1>
-									)}
-								</td>
-								<td>
-									{item.score === answerData.score ? (
-										<h1 className="text-green-500 flex justify-center items-center">
-											{item.score}
-										</h1>
-									) : (
-										<h1 className="text-red-500 flex justify-center items-center">
-											{item.score}
-											{item.score < answerData.score ? (
-												<ArrowUp></ArrowUp>
-											) : (
-												<ArrowDown></ArrowDown>
-											)}
-										</h1>
-									)}
-								</td>
-							</tr>
-						);
-					})}
-				</tbody>
-			</table>
-			<div className="w-[50%] bg-black">
+			<h1>ANIGUESSR</h1>
+
+			<div className="w-[50%]">
 				<SearchAnimeData inputState={setInputVal} />
+			</div>
+
+			<div className="relative w-[min(1200px,80%)] block mx-auto border-2 border-black rounded-2xl px-6 pb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:cursor-default">
+				<table className="realtive border-collapse border-spacing-0 w-full">
+					<thead className="relative h-12">
+						<tr className="">
+							{[
+								'Title',
+								'Year',
+								'Genres',
+								'Studios',
+								'Themes',
+								'Source',
+								'Score',
+							].map((item, index) => {
+								return (
+									<th className="" key={index + 'th'}>
+										<span className="">{item}</span>
+									</th>
+								);
+							})}
+						</tr>
+					</thead>
+					<tbody className="relative">
+						{inputs.map((item, index) => {
+							return (
+								<tr
+									key={index}
+									className="py-6 min-h-30 h-fit border-2 border-black rounded-2xl"
+								>
+									<td>
+										{item.title === answerData.title ? (
+											<h1 className="text-green-500 flex justify-center items-center">
+												{item.title}
+											</h1>
+										) : (
+											<h1 className="text-red-500 flex justify-center items-center">
+												{item.title}
+											</h1>
+										)}
+									</td>
+									<td>
+										<div className="relative flex items-center justify-center h-full">
+											{item.year === answerData.year ? (
+												<h1 className="text-green-500 flex justify-center items-center">
+													{item.year}
+												</h1>
+											) : (
+												<h1 className="text-red-500 flex justify-center items-center">
+													{item.year}
+													{item.year <
+													answerData.year ? (
+														<ArrowUp className="absolute w-17 h-17 opacity-30"></ArrowUp>
+													) : (
+														<ArrowDown></ArrowDown>
+													)}
+												</h1>
+											)}
+										</div>
+									</td>
+									<td>
+										{item.genres.map((item, index) => {
+											return (
+												<div key={index}>
+													{checkForMatch(
+														item,
+														answerData.themes,
+													) ? (
+														<h1 className="text-green-500 flex justify-center items-center">
+															{item.name}
+														</h1>
+													) : (
+														<h1 className="text-red-500 flex justify-center items-center">
+															{item.name}
+														</h1>
+													)}
+												</div>
+											);
+										})}
+									</td>
+									<td>
+										{item.themes.map((item, index) => {
+											return (
+												<div key={index}>
+													{checkForMatch(
+														item,
+														answerData.themes,
+													) ? (
+														<h1 className="text-green-500 flex justify-center items-center">
+															{item.name}
+														</h1>
+													) : (
+														<h1 className="text-red-500 flex justify-center items-center">
+															{item.name}
+														</h1>
+													)}
+												</div>
+											);
+										})}
+									</td>
+									<td>
+										{item.studios.map((item, index) => {
+											return (
+												<div key={index}>
+													{checkForMatch(
+														item,
+														answerData.themes,
+													) ? (
+														<h1 className="text-green-500 flex justify-center items-center">
+															{item.name}
+														</h1>
+													) : (
+														<h1 className="text-red-500 flex justify-center items-center">
+															{item.name}
+														</h1>
+													)}
+												</div>
+											);
+										})}
+									</td>
+									<td>
+										{item.source === item.source ? (
+											<h1 className="text-green-500 flex justify-center items-center">
+												{item.source}
+											</h1>
+										) : (
+											<h1 className="text-red-500 flex justify-center items-center">
+												{item.source}
+											</h1>
+										)}
+									</td>
+									<td>
+										{item.score === answerData.score ? (
+											<h1 className="text-green-500 flex justify-center items-center">
+												{item.score}
+											</h1>
+										) : (
+											<h1 className="text-red-500 flex justify-center items-center">
+												{item.score}
+												{item.score <
+												answerData.score ? (
+													<ArrowUp></ArrowUp>
+												) : (
+													<ArrowDown></ArrowDown>
+												)}
+											</h1>
+										)}
+									</td>
+								</tr>
+							);
+						})}
+					</tbody>
+				</table>
 			</div>
 		</div>
 	);
