@@ -203,6 +203,7 @@ export function Header() {
 				>
 					<Image
 						src={Logo}
+						loading="lazy"
 						className="rounded-full shrink-0 shadow-[0,0,10px_transparent] hover:shadow-[0_0_10px_#00000090] active:shadow-[0_0_10px_#00000040] hover:scale-110 active:duration-50 active:scale-105 transition duration-300"
 						alt="logo"
 						height={40}
