@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import MangaCard from '~/app/_components/library/manga-card';
 import { LibraryFilters } from '~/app/_components/library/library-filters';
 import { Pagination } from '~/app/_components/pagination';
+import { BookOpen } from 'lucide-react';
 
 interface MangaData {
 	id: number;
@@ -74,12 +75,25 @@ export function LibrarySearch({
 	};
 
 	return (
-		<>
-			<LibraryFilters
-				genres={allGenres}
-				onFilterChange={setFilters}
-				initialFilters={filters}
-			/>
+		<div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8">
+			<div className="lg:sticky lg:top-24 h-fit">
+				<LibraryFilters
+					genres={allGenres}
+					onFilterChange={setFilters}
+					initialFilters={filters}
+				/>
+				<div className="mt-6 bg-white border-2 border-black p-4 rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+					<h3 className="text-lg font-bold mb-2 flex items-center">
+						<BookOpen className="h-5 w-5 mr-2" /> Library Rules
+					</h3>
+					<ul className="text-sm space-y-2">
+						<li>• Paid members only</li>
+						<li>• Only one manga borrowed per person at a time</li>
+						<li>• Academic year borrowing period</li>
+						<li>• No late fees</li>
+					</ul>
+				</div>
+			</div>
 
 			<div id="manga-results" className="lg:col-span-1">
 				{filteredManga.length > 0 ? (
@@ -124,6 +138,6 @@ export function LibrarySearch({
 					</div>
 				)}
 			</div>
-		</>
+		</div>
 	);
 }

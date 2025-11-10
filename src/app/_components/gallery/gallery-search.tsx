@@ -87,25 +87,28 @@ export function GallerySearch({ initialItems }: GalleryClientProps) {
 					</div>
 				</div>
 			</div>
-
-			{filteredItems.length > 0 ? (
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-					{filteredItems.map((item) => (
-						<GalleryImage
-							key={item.id}
-							src={item.source}
-							alt={item.alt}
-							width={600}
-							height={400}
-						/>
-					))}
-				</div>
-			) : (
-				<div className="border-2 border-black bg-yellow-100 rounded-2xl p-8 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-					<h3 className="text-xl font-bold mb-2">No photos found</h3>
-					<p>Try changing your filters to see more photos.</p>
-				</div>
-			)}
+			<div>
+				{filteredItems.length > 0 ? (
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+						{filteredItems.map((item) => (
+							<GalleryImage
+								key={item.id}
+								src={item.source}
+								alt={item.alt}
+								width={600}
+								height={400}
+							/>
+						))}
+					</div>
+				) : (
+					<div className="border-2 border-black bg-yellow-100 rounded-2xl p-8 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+						<h3 className="text-xl font-bold mb-2">
+							No photos found
+						</h3>
+						<p>Try changing your filters to see more photos.</p>
+					</div>
+				)}
+			</div>
 		</div>
 	);
 }

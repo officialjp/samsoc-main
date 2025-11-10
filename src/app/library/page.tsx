@@ -1,6 +1,5 @@
 import { SectionContainer } from '~/app/_components/section-container';
 import { SectionHeading } from '~/app/_components/section-heading';
-import { BookOpen } from 'lucide-react';
 import { api, HydrateClient } from '~/trpc/server';
 import { LibrarySearch } from '~/app/_components/library/library-search';
 import type { Metadata } from 'next';
@@ -90,33 +89,11 @@ export default async function LibraryPage() {
 							badgeColor="bg-purple-200"
 							className="mb-8"
 						/>
-						<div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8">
-							<div className="grid">
-								<div>
-									<LibrarySearch
-										initialMangaData={initialMangaData}
-										allGenres={ALL_GENRES}
-									/>
-								</div>
-
-								<div className="mt-6 bg-white border-2 border-black p-4 rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-									<h3 className="text-lg font-bold mb-2 flex items-center">
-										<BookOpen className="h-5 w-5 mr-2" />{' '}
-										Library Rules
-									</h3>
-									<ul className="text-sm space-y-2">
-										<li>• Paid members only</li>
-										<li>
-											• Only one manga borrowed per person
-											at a time
-										</li>
-										<li>
-											• Academic year borrowing period
-										</li>
-										<li>• No late fees</li>
-									</ul>
-								</div>
-							</div>
+						<div>
+							<LibrarySearch
+								initialMangaData={initialMangaData}
+								allGenres={ALL_GENRES}
+							/>
 						</div>
 					</SectionContainer>
 				</main>
