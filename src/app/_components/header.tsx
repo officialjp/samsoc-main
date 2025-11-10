@@ -6,9 +6,6 @@ import { SvgIcon } from './util/svg-icon';
 import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
 import Logo from '../../../public/images/logo.png';
-import Instagram from '../../../public/instagram.svg';
-import Facebook from '../../../public/facebook.svg';
-import Discord from '../../../public/discord.svg';
 import { cn } from '~/lib/utils';
 import { usePathname } from 'next/navigation';
 
@@ -184,7 +181,7 @@ export function Header() {
 			window.removeEventListener('scroll', () => {
 				if (navRef.current) animateOnScrollController(navRef.current);
 			});
-	}, []);
+	});
 
 	const { width } = useWindowSize();
 
@@ -193,9 +190,9 @@ export function Header() {
 	return (
 		<header
 			ref={navRef}
-			className="fixed top-[10px] left-[50%] transform-[translateX(-50%)] z-50 w-[min(calc(100%-20px),1000px)] blur-[0px] backdrop-blur-[10px] rounded-2xl lg:rounded-full shadow-[0px_5px_10px_#00000090] overflow-hidden"
+			className="fixed top-2.5 left-[50%] transform-[translateX(-50%)] z-50 w-[min(calc(100%-20px),1000px)] blur-[0px] backdrop-blur-[10px] rounded-2xl lg:rounded-full shadow-[0px_5px_10px_#00000090] overflow-hidden"
 		>
-			<div className="container w-full max-w-full px-4 md:px-6 lg:px-[10px] flex h-[55px] py-[10px] items-center justify-between bg-gradient-to-r from-[#ffcfd4a0] to-[#ffffffa0]">
+			<div className="container w-full max-w-full px-4 md:px-6 lg:px-2.5 flex h-[55px] py-2.5 items-center justify-between bg-linear-to-r from-[#ffcfd4a0] to-[#ffffffa0]">
 				<Link
 					href="/"
 					className="flex items-center gap-2 font-bold text-xl md:mr-2"
@@ -216,7 +213,7 @@ export function Header() {
 					<div className="flex-row flex gap-6 mx-auto">
 						<Link href="https://www.instagram.com/unisamsoc/?hl=en">
 							<SvgIcon
-								src={Instagram.src}
+								src={'../../../public/instagram.svg'}
 								height={30}
 								width={30}
 								className={'bg-[#ff0069]'}
@@ -224,7 +221,7 @@ export function Header() {
 						</Link>
 						<Link href="https://www.facebook.com/UniSAMSoc">
 							<SvgIcon
-								src={Facebook.src}
+								src={'../../../public/facebook.svg'}
 								height={30}
 								width={30}
 								className={'bg-[#0866ff]'}
@@ -232,7 +229,7 @@ export function Header() {
 						</Link>
 						<Link href="https://discord.gg/tQUrdxzUZ4">
 							<SvgIcon
-								src={Discord.src}
+								src={'../../../public/discord.svg'}
 								height={30}
 								width={30}
 								className={'bg-[#5865F2]'}
@@ -258,12 +255,9 @@ export function Header() {
 							Join Now
 						</Button>
 					)}
-
-					{/* Mobile Menu Button */}
 				</div>
 			</div>
 
-			{/* Mobile Navigation */}
 			{isMenuOpen && (
 				<div className="px-4 py-4 border-t border-black bg-[#ffffffa0] lg:hidden">
 					<nav className="flex flex-col space-y-4">

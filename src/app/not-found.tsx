@@ -21,45 +21,47 @@ export default function NotFound() {
 		.replaceAll('-', ' ')
 		.split('/')[usePathname().split('/').length - 1];
 
-	const pageIndex = {
-		library: {
-			route: '/library',
-			icon: '📚',
-		},
-		events: {
-			route: '/events',
-			icon: '🥳',
-		},
-		calendar: {
-			route: '/calendar',
-			icon: '🗓️',
-		},
-		gallery: {
-			route: '/gallery',
-			icon: '🖼️',
-		},
-		'hall of fame': {
-			route: '/hof',
-			icon: '🏆',
-		},
-		hof: {
-			route: '/hof',
-			icon: '🏆',
-		},
-		games: {
-			route: '/games',
-			icon: '🎮',
-		},
-	};
-
 	useEffect(() => {
+		const pageIndex = {
+			library: {
+				route: '/library',
+				icon: '📚',
+			},
+			events: {
+				route: '/events',
+				icon: '🥳',
+			},
+			calendar: {
+				route: '/calendar',
+				icon: '🗓️',
+			},
+			gallery: {
+				route: '/gallery',
+				icon: '🖼️',
+			},
+			'hall of fame': {
+				route: '/hof',
+				icon: '🏆',
+			},
+			hof: {
+				route: '/hof',
+				icon: '🏆',
+			},
+			games: {
+				route: '/games',
+				icon: '🎮',
+			},
+		};
 		setLinks(
 			Object.entries(pageIndex)
-				.filter(
-					([name]) =>
-						levenshtein(name, pathName) < 3 ||
-						name.includes(pathName),
-				)
+				.filter(([name]) => {
+					if (pathName) {
+						return (
+							levenshtein(name, pathName) < 3 ||
+							name.includes(pathName)
+						);
+					}
+				})
 				.map(([name, data], index) => {
 					return (
 						<Button
@@ -84,7 +86,7 @@ export default function NotFound() {
 					);
 				}),
 		);
-	}, []);
+	}, [pathName]);
 
 	if (links && links.length > 0) {
 		return (
