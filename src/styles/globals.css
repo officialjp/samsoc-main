@@ -1,6 +1,1222 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+	--color-bg1: #ede3ff;
+	--color-bg2: #fff1f8;
+	--color-thebutton: #ed145b;
+	--color-thebutton2: #bf114b;
+	--color-button1: #e63946;
+	--color-button2: #ff6b6b;
+	--color-button3: #fdcb82;
+	--color-text1: #2e2e2e;
+	--color-accent1: #56ccf2;
+	--color-accent2: #c3edc8;
+	--color-accent3: #f1e4c6;
+	--color-membership1: #f9bbc9;
+	--color-membership2: #eacceb;
+	--color-membership3: #f3a7c5;
+	--color-membership4: #ed7ca0;
+	--color-about1: #cbccfe;
+	--color-about2: #e8cefd;
+	--color-about3: #fdcdfd;
+	--color-gradient1: #f9f5f6;
+	--color-gradient2: #f8e8ee;
+	--color-gradient3: #fdcedf;
+	--color-gradient4: #f2bed1;
+}
+
+@theme inline {
+	--color-main: var(--main);
+	--color-background: var(--background);
+	--color-secondary-background: var(--secondary-background);
+	--color-foreground: var(--foreground);
+	--color-main-foreground: var(--main-foreground);
+	--color-border: var(--border);
+	--color-overlay: var(--overlay);
+	--color-ring: var(--ring);
+	--color-chart-1: var(--chart-1);
+	--color-chart-2: var(--chart-2);
+	--color-chart-3: var(--chart-3);
+	--color-chart-4: var(--chart-4);
+	--color-chart-5: var(--chart-5);
+
+	--spacing-boxShadowX: 4px;
+	--spacing-boxShadowY: 4px;
+	--spacing-reverseBoxShadowX: -4px;
+	--spacing-reverseBoxShadowY: -4px;
+	--radius-base: 5px;
+	--shadow-shadow: var(--shadow);
+	--font-weight-base: 500;
+	--font-weight-heading: 700;
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--font-sans: var(--font-geist-sans);
+	--font-mono: var(--font-geist-mono);
+	--color-sidebar-ring: var(--sidebar-ring);
+	--color-sidebar-border: var(--sidebar-border);
+	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+	--color-sidebar-accent: var(--sidebar-accent);
+	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+	--color-sidebar-primary: var(--sidebar-primary);
+	--color-sidebar-foreground: var(--sidebar-foreground);
+	--color-sidebar: var(--sidebar);
+	--color-chart-5: var(--chart-5);
+	--color-chart-4: var(--chart-4);
+	--color-chart-3: var(--chart-3);
+	--color-chart-2: var(--chart-2);
+	--color-chart-1: var(--chart-1);
+	--color-ring: var(--ring);
+	--color-input: var(--input);
+	--color-border: var(--border);
+	--color-destructive: var(--destructive);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-accent: var(--accent);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-muted: var(--muted);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-secondary: var(--secondary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-primary: var(--primary);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-popover: var(--popover);
+	--color-card-foreground: var(--card-foreground);
+	--color-card: var(--card);
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+	--radius: 0.625rem;
+	--card: oklch(1 0 0);
+	--card-foreground: oklch(0.145 0 0);
+	--popover: oklch(1 0 0);
+	--popover-foreground: oklch(0.145 0 0);
+	--primary: oklch(0.205 0 0);
+	--primary-foreground: oklch(0.985 0 0);
+	--secondary: oklch(0.97 0 0);
+	--secondary-foreground: oklch(0.205 0 0);
+	--muted: oklch(0.97 0 0);
+	--muted-foreground: oklch(0.556 0 0);
+	--accent: oklch(0.97 0 0);
+	--accent-foreground: oklch(0.205 0 0);
+	--destructive: oklch(0.577 0.245 27.325);
+	--border: oklch(0.922 0 0);
+	--input: oklch(0.922 0 0);
+	--ring: oklch(0.708 0 0);
+	--chart-1: oklch(0.646 0.222 41.116);
+	--chart-2: oklch(0.6 0.118 184.704);
+	--chart-3: oklch(0.398 0.07 227.392);
+	--chart-4: oklch(0.828 0.189 84.429);
+	--chart-5: oklch(0.769 0.188 70.08);
+	--sidebar: oklch(0.985 0 0);
+	--sidebar-foreground: oklch(0.145 0 0);
+	--sidebar-primary: oklch(0.205 0 0);
+	--sidebar-primary-foreground: oklch(0.985 0 0);
+	--sidebar-accent: oklch(0.97 0 0);
+	--sidebar-accent-foreground: oklch(0.205 0 0);
+	--sidebar-border: oklch(0.922 0 0);
+	--sidebar-ring: oklch(0.708 0 0);
+	--secondary-background: oklch(100% 0 0);
+	--main-foreground: oklch(0% 0 0);
+	--main: oklch(67.47% 0.1726 259.49);
+	--border: oklch(0% 0 0);
+	--ring: oklch(0% 0 0);
+	--overlay: oklch(0% 0 0 / 0.8);
+	--shadow: 4px 4px 0px 0px var(--border);
+	--chart-1: #5294ff;
+	--chart-2: #ff4d50;
+	--chart-3: #facc00;
+	--chart-4: #05e17a;
+	--chart-5: #7a83ff;
+	--chart-active-dot: #000;
+	--background: oklch(1 0 0);
+	--foreground: oklch(0.145 0 0);
+}
+
+.dark {
+	--foreground: oklch(0.985 0 0);
+	--card: oklch(0.205 0 0);
+	--card-foreground: oklch(0.985 0 0);
+	--popover: oklch(0.205 0 0);
+	--popover-foreground: oklch(0.985 0 0);
+	--primary: oklch(0.922 0 0);
+	--primary-foreground: oklch(0.205 0 0);
+	--secondary: oklch(0.269 0 0);
+	--secondary-foreground: oklch(0.985 0 0);
+	--muted: oklch(0.269 0 0);
+	--muted-foreground: oklch(0.708 0 0);
+	--accent: oklch(0.269 0 0);
+	--accent-foreground: oklch(0.985 0 0);
+	--destructive: oklch(0.704 0.191 22.216);
+	--border: oklch(1 0 0 / 10%);
+	--input: oklch(1 0 0 / 15%);
+	--ring: oklch(0.556 0 0);
+	--chart-1: oklch(0.488 0.243 264.376);
+	--chart-2: oklch(0.696 0.17 162.48);
+	--chart-3: oklch(0.769 0.188 70.08);
+	--chart-4: oklch(0.627 0.265 303.9);
+	--chart-5: oklch(0.645 0.246 16.439);
+	--sidebar: oklch(0.205 0 0);
+	--sidebar-foreground: oklch(0.985 0 0);
+	--sidebar-primary: oklch(0.488 0.243 264.376);
+	--sidebar-primary-foreground: oklch(0.985 0 0);
+	--sidebar-accent: oklch(0.269 0 0);
+	--sidebar-accent-foreground: oklch(0.985 0 0);
+	--sidebar-border: oklch(1 0 0 / 10%);
+	--sidebar-ring: oklch(0.556 0 0);
+
+	--background: oklch(0.145 0 0);
+	--secondary-background: oklch(23.93% 0 0);
+	--foreground: oklch(92.49% 0 0);
+	--main-foreground: oklch(0% 0 0);
+	--main: oklch(67.47% 0.1726 259.49);
+	--border: oklch(0% 0 0);
+	--ring: oklch(100% 0 0);
+	--shadow: 4px 4px 0px 0px var(--border);
+	--chart-1: #5294ff;
+	--chart-2: #ff6669;
+	--chart-3: #e0b700;
+	--chart-4: #04c86d;
+	--chart-5: #7a83ff;
+	--chart-active-dot: #fff;
+}
+
+@layer base {
+	* {
+		@apply border-border outline-ring/50;
+	}
+
+	body {
+		@apply text-foreground font-base bg-background;
+	}
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		@apply font-heading;
+	}
+}
+
+.card-bottom {
+	z-index: 0;
+	user-select: none;
+	cursor: pointer;
+	transition:
+		transform 0.3s cubic-bezier(0.07, 0.49, 0.23, 1.28),
+		filter 0.3s;
+}
+.card-bottom.left-card,
+.card-bottom.right-card {
+	filter: contrast(0.8);
+}
+
+.card-bottom.left-card {
+	transform: translate(50%, 0) scale(0.8) rotate(20deg);
+}
+.card-bottom.left-card:hover {
+	transform: scale(0.83) rotate(25deg) translate(calc(58%), -20%);
+}
+.card-bottom.right-card {
+	transform: translate(-50%, 0) scale(0.8) rotate(-20deg);
+}
+.card-bottom.right-card:hover {
+	transform: scale(0.83) rotate(-25deg) translate(calc(-58%), -20%);
+}
+.card-bottom.center-card {
+	z-index: 4;
+	filter: contrast(1);
+	transform: translate(0, 0) scale(1) rotate(0deg);
+}
+.card-bottom.center-card:hover {
+	transform: translate(0, 0) scale(1.03) rotate(0deg);
+}
+
+.card-bottom button {
+	pointer-events: none;
+}
+.card-bottom.center-card button {
+	pointer-events: unset;
+}
+
+/*
+
+prep for animations
+
+*/
+
+.SAManim {
+	animation-play-state: paused;
+	animation-fill-mode: backwards;
+	opacity: 0;
+}
+
+.SAManimController.SAMactive .SAManim {
+	animation-play-state: running;
+	opacity: 1;
+}
+
+.SAManimController.SAMactive .SAMbounce {
+	animation-timing-function: cubic-bezier(0.42, 1.56, 0.47, 0.9);
+}
+
+.SAManimController.SAMactive .SAMfade-up {
+	animation-name: fadeInUp;
+}
+
+.SAManimController.SAMactive .SAMfade-right {
+	animation-name: fadeInRight;
+}
+
+.SAManimController.SAMactive .SAMfade-in {
+	animation-name: fadeIn;
+}
+
+.SAManimController.SAMactive .SAMfade-left {
+	animation-name: fadeInLeft;
+}
+
+.SAManimController.SAMactive .SAMfade-rotate {
+	animation-name: fadeInRotate;
+}
+.SAManimController.SAMactive .SAMfade-rotate-3 {
+	animation-name: fadeInRotate3;
+}
+.SAManimController.SAMactive .SAMfade-scale {
+	animation-name: fadeInScale;
+}
+
+.SAManimController .SAManim.SAMdelay-100 {
+	animation-delay: 0.1s;
+}
+
+.SAManimController .SAManim.SAMdelay-110 {
+	animation-delay: 0.11s;
+}
+
+.SAManimController .SAManim.SAMdelay-120 {
+	animation-delay: 0.12s;
+}
+
+.SAManimController .SAManim.SAMdelay-130 {
+	animation-delay: 0.13s;
+}
+
+.SAManimController .SAManim.SAMdelay-140 {
+	animation-delay: 0.14s;
+}
+
+.SAManimController .SAManim.SAMdelay-150 {
+	animation-delay: 0.15s;
+}
+
+.SAManimController .SAManim.SAMdelay-160 {
+	animation-delay: 0.16s;
+}
+
+.SAManimController .SAManim.SAMdelay-170 {
+	animation-delay: 0.17s;
+}
+
+.SAManimController .SAManim.SAMdelay-180 {
+	animation-delay: 0.18s;
+}
+
+.SAManimController .SAManim.SAMdelay-190 {
+	animation-delay: 0.19s;
+}
+
+.SAManimController .SAManim.SAMdelay-200 {
+	animation-delay: 0.2s;
+}
+
+.SAManimController .SAManim.SAMdelay-210 {
+	animation-delay: 0.21s;
+}
+
+.SAManimController .SAManim.SAMdelay-220 {
+	animation-delay: 0.22s;
+}
+
+.SAManimController .SAManim.SAMdelay-230 {
+	animation-delay: 0.23s;
+}
+
+.SAManimController .SAManim.SAMdelay-240 {
+	animation-delay: 0.24s;
+}
+
+.SAManimController .SAManim.SAMdelay-250 {
+	animation-delay: 0.25s;
+}
+
+.SAManimController .SAManim.SAMdelay-260 {
+	animation-delay: 0.26s;
+}
+
+.SAManimController .SAManim.SAMdelay-270 {
+	animation-delay: 0.27s;
+}
+
+.SAManimController .SAManim.SAMdelay-280 {
+	animation-delay: 0.28s;
+}
+
+.SAManimController .SAManim.SAMdelay-290 {
+	animation-delay: 0.29s;
+}
+
+.SAManimController .SAManim.SAMdelay-300 {
+	animation-delay: 0.3s;
+}
+
+.SAManimController .SAManim.SAMdelay-310 {
+	animation-delay: 0.31s;
+}
+
+.SAManimController .SAManim.SAMdelay-320 {
+	animation-delay: 0.32s;
+}
+
+.SAManimController .SAManim.SAMdelay-330 {
+	animation-delay: 0.33s;
+}
+
+.SAManimController .SAManim.SAMdelay-340 {
+	animation-delay: 0.34s;
+}
+
+.SAManimController .SAManim.SAMdelay-350 {
+	animation-delay: 0.35s;
+}
+
+.SAManimController .SAManim.SAMdelay-360 {
+	animation-delay: 0.36s;
+}
+
+.SAManimController .SAManim.SAMdelay-370 {
+	animation-delay: 0.37s;
+}
+
+.SAManimController .SAManim.SAMdelay-380 {
+	animation-delay: 0.38s;
+}
+
+.SAManimController .SAManim.SAMdelay-390 {
+	animation-delay: 0.39s;
+}
+
+.SAManimController .SAManim.SAMdelay-400 {
+	animation-delay: 0.4s;
+}
+
+.SAManimController .SAManim.SAMdelay-410 {
+	animation-delay: 0.41s;
+}
+
+.SAManimController .SAManim.SAMdelay-420 {
+	animation-delay: 0.42s;
+}
+
+.SAManimController .SAManim.SAMdelay-430 {
+	animation-delay: 0.43s;
+}
+
+.SAManimController .SAManim.SAMdelay-440 {
+	animation-delay: 0.44s;
+}
+
+.SAManimController .SAManim.SAMdelay-450 {
+	animation-delay: 0.45s;
+}
+
+.SAManimController .SAManim.SAMdelay-460 {
+	animation-delay: 0.46s;
+}
+
+.SAManimController .SAManim.SAMdelay-470 {
+	animation-delay: 0.47s;
+}
+
+.SAManimController .SAManim.SAMdelay-480 {
+	animation-delay: 0.48s;
+}
+
+.SAManimController .SAManim.SAMdelay-490 {
+	animation-delay: 0.49s;
+}
+
+.SAManimController .SAManim.SAMdelay-500 {
+	animation-delay: 0.5s;
+}
+
+.SAManimController .SAManim.SAMdelay-510 {
+	animation-delay: 0.51s;
+}
+
+.SAManimController .SAManim.SAMdelay-520 {
+	animation-delay: 0.52s;
+}
+
+.SAManimController .SAManim.SAMdelay-530 {
+	animation-delay: 0.53s;
+}
+
+.SAManimController .SAManim.SAMdelay-540 {
+	animation-delay: 0.54s;
+}
+
+.SAManimController .SAManim.SAMdelay-550 {
+	animation-delay: 0.55s;
+}
+
+.SAManimController .SAManim.SAMdelay-560 {
+	animation-delay: 0.56s;
+}
+
+.SAManimController .SAManim.SAMdelay-570 {
+	animation-delay: 0.57s;
+}
+
+.SAManimController .SAManim.SAMdelay-580 {
+	animation-delay: 0.58s;
+}
+
+.SAManimController .SAManim.SAMdelay-590 {
+	animation-delay: 0.59s;
+}
+
+.SAManimController .SAManim.SAMdelay-600 {
+	animation-delay: 0.6s;
+}
+
+.SAManimController .SAManim.SAMdelay-610 {
+	animation-delay: 0.61s;
+}
+
+.SAManimController .SAManim.SAMdelay-620 {
+	animation-delay: 0.62s;
+}
+
+.SAManimController .SAManim.SAMdelay-630 {
+	animation-delay: 0.63s;
+}
+
+.SAManimController .SAManim.SAMdelay-640 {
+	animation-delay: 0.64s;
+}
+
+.SAManimController .SAManim.SAMdelay-650 {
+	animation-delay: 0.65s;
+}
+
+.SAManimController .SAManim.SAMdelay-660 {
+	animation-delay: 0.66s;
+}
+
+.SAManimController .SAManim.SAMdelay-670 {
+	animation-delay: 0.67s;
+}
+
+.SAManimController .SAManim.SAMdelay-680 {
+	animation-delay: 0.68s;
+}
+
+.SAManimController .SAManim.SAMdelay-690 {
+	animation-delay: 0.69s;
+}
+
+.SAManimController .SAManim.SAMdelay-700 {
+	animation-delay: 0.7s;
+}
+
+.SAManimController .SAManim.SAMdelay-710 {
+	animation-delay: 0.71s;
+}
+
+.SAManimController .SAManim.SAMdelay-720 {
+	animation-delay: 0.72s;
+}
+
+.SAManimController .SAManim.SAMdelay-730 {
+	animation-delay: 0.73s;
+}
+
+.SAManimController .SAManim.SAMdelay-740 {
+	animation-delay: 0.74s;
+}
+
+.SAManimController .SAManim.SAMdelay-750 {
+	animation-delay: 0.75s;
+}
+
+.SAManimController .SAManim.SAMdelay-760 {
+	animation-delay: 0.76s;
+}
+
+.SAManimController .SAManim.SAMdelay-770 {
+	animation-delay: 0.77s;
+}
+
+.SAManimController .SAManim.SAMdelay-780 {
+	animation-delay: 0.78s;
+}
+
+.SAManimController .SAManim.SAMdelay-790 {
+	animation-delay: 0.79s;
+}
+
+.SAManimController .SAManim.SAMdelay-800 {
+	animation-delay: 0.8s;
+}
+
+.SAManimController .SAManim.SAMdelay-810 {
+	animation-delay: 0.81s;
+}
+
+.SAManimController .SAManim.SAMdelay-820 {
+	animation-delay: 0.82s;
+}
+
+.SAManimController .SAManim.SAMdelay-830 {
+	animation-delay: 0.83s;
+}
+
+.SAManimController .SAManim.SAMdelay-840 {
+	animation-delay: 0.84s;
+}
+
+.SAManimController .SAManim.SAMdelay-850 {
+	animation-delay: 0.85s;
+}
+
+.SAManimController .SAManim.SAMdelay-860 {
+	animation-delay: 0.86s;
+}
+
+.SAManimController .SAManim.SAMdelay-870 {
+	animation-delay: 0.87s;
+}
+
+.SAManimController .SAManim.SAMdelay-880 {
+	animation-delay: 0.88s;
+}
+
+.SAManimController .SAManim.SAMdelay-890 {
+	animation-delay: 0.89s;
+}
+
+.SAManimController .SAManim.SAMdelay-900 {
+	animation-delay: 0.9s;
+}
+
+.SAManimController .SAManim.SAMdelay-910 {
+	animation-delay: 0.91s;
+}
+
+.SAManimController .SAManim.SAMdelay-920 {
+	animation-delay: 0.92s;
+}
+
+.SAManimController .SAManim.SAMdelay-930 {
+	animation-delay: 0.93s;
+}
+
+.SAManimController .SAManim.SAMdelay-940 {
+	animation-delay: 0.94s;
+}
+
+.SAManimController .SAManim.SAMdelay-950 {
+	animation-delay: 0.95s;
+}
+
+.SAManimController .SAManim.SAMdelay-960 {
+	animation-delay: 0.96s;
+}
+
+.SAManimController .SAManim.SAMdelay-970 {
+	animation-delay: 0.97s;
+}
+
+.SAManimController .SAManim.SAMdelay-980 {
+	animation-delay: 0.98s;
+}
+
+.SAManimController .SAManim.SAMdelay-990 {
+	animation-delay: 0.99s;
+}
+
+.SAManimController .SAManim.SAMdelay-1000 {
+	animation-delay: 1s;
+}
+
+.SAManimController .SAManim.SAMdelay-1010 {
+	animation-delay: 1.01s;
+}
+
+.SAManimController .SAManim.SAMdelay-1020 {
+	animation-delay: 1.02s;
+}
+
+.SAManimController .SAManim.SAMdelay-1030 {
+	animation-delay: 1.03s;
+}
+
+.SAManimController .SAManim.SAMdelay-1040 {
+	animation-delay: 1.04s;
+}
+
+.SAManimController .SAManim.SAMdelay-1050 {
+	animation-delay: 1.05s;
+}
+
+.SAManimController .SAManim.SAMdelay-1060 {
+	animation-delay: 1.06s;
+}
+
+.SAManimController .SAManim.SAMdelay-1070 {
+	animation-delay: 1.07s;
+}
+
+.SAManimController .SAManim.SAMdelay-1080 {
+	animation-delay: 1.08s;
+}
+
+.SAManimController .SAManim.SAMdelay-1090 {
+	animation-delay: 1.09s;
+}
+
+.SAManimController .SAManim.SAMdelay-1100 {
+	animation-delay: 1.1s;
+}
+
+.SAManimController .SAManim.SAMdelay-1110 {
+	animation-delay: 1.11s;
+}
+
+.SAManimController .SAManim.SAMdelay-1120 {
+	animation-delay: 1.12s;
+}
+
+.SAManimController .SAManim.SAMdelay-1130 {
+	animation-delay: 1.13s;
+}
+
+.SAManimController .SAManim.SAMdelay-1140 {
+	animation-delay: 1.14s;
+}
+
+.SAManimController .SAManim.SAMdelay-1150 {
+	animation-delay: 1.15s;
+}
+
+.SAManimController .SAManim.SAMdelay-1160 {
+	animation-delay: 1.16s;
+}
+
+.SAManimController .SAManim.SAMdelay-1170 {
+	animation-delay: 1.17s;
+}
+
+.SAManimController .SAManim.SAMdelay-1180 {
+	animation-delay: 1.18s;
+}
+
+.SAManimController .SAManim.SAMdelay-1190 {
+	animation-delay: 1.19s;
+}
+
+.SAManimController .SAManim.SAMdelay-1200 {
+	animation-delay: 1.2s;
+}
+
+.SAManimController .SAManim.SAMdelay-1210 {
+	animation-delay: 1.21s;
+}
+
+.SAManimController .SAManim.SAMdelay-1220 {
+	animation-delay: 1.22s;
+}
+
+.SAManimController .SAManim.SAMdelay-1230 {
+	animation-delay: 1.23s;
+}
+
+.SAManimController .SAManim.SAMdelay-1240 {
+	animation-delay: 1.24s;
+}
+
+.SAManimController .SAManim.SAMdelay-1250 {
+	animation-delay: 1.25s;
+}
+
+.SAManimController .SAManim.SAMdelay-1260 {
+	animation-delay: 1.26s;
+}
+
+.SAManimController .SAManim.SAMdelay-1270 {
+	animation-delay: 1.27s;
+}
+
+.SAManimController .SAManim.SAMdelay-1280 {
+	animation-delay: 1.28s;
+}
+
+.SAManimController .SAManim.SAMdelay-1290 {
+	animation-delay: 1.29s;
+}
+
+.SAManimController .SAManim.SAMdelay-1300 {
+	animation-delay: 1.3s;
+}
+
+.SAManimController .SAManim.SAMdelay-1310 {
+	animation-delay: 1.31s;
+}
+
+.SAManimController .SAManim.SAMdelay-1320 {
+	animation-delay: 1.32s;
+}
+
+.SAManimController .SAManim.SAMdelay-1330 {
+	animation-delay: 1.33s;
+}
+
+.SAManimController .SAManim.SAMdelay-1340 {
+	animation-delay: 1.34s;
+}
+
+.SAManimController .SAManim.SAMdelay-1350 {
+	animation-delay: 1.35s;
+}
+
+.SAManimController .SAManim.SAMdelay-1360 {
+	animation-delay: 1.36s;
+}
+
+.SAManimController .SAManim.SAMdelay-1370 {
+	animation-delay: 1.37s;
+}
+
+.SAManimController .SAManim.SAMdelay-1380 {
+	animation-delay: 1.38s;
+}
+
+.SAManimController .SAManim.SAMdelay-1390 {
+	animation-delay: 1.39s;
+}
+
+.SAManimController .SAManim.SAMdelay-1400 {
+	animation-delay: 1.4s;
+}
+
+.SAManimController .SAManim.SAMdelay-1410 {
+	animation-delay: 1.41s;
+}
+
+.SAManimController .SAManim.SAMdelay-1420 {
+	animation-delay: 1.42s;
+}
+
+.SAManimController .SAManim.SAMdelay-1430 {
+	animation-delay: 1.43s;
+}
+
+.SAManimController .SAManim.SAMdelay-1440 {
+	animation-delay: 1.44s;
+}
+
+.SAManimController .SAManim.SAMdelay-1450 {
+	animation-delay: 1.45s;
+}
+
+.SAManimController .SAManim.SAMdelay-1460 {
+	animation-delay: 1.46s;
+}
+
+.SAManimController .SAManim.SAMdelay-1470 {
+	animation-delay: 1.47s;
+}
+
+.SAManimController .SAManim.SAMdelay-1480 {
+	animation-delay: 1.48s;
+}
+
+.SAManimController .SAManim.SAMdelay-1490 {
+	animation-delay: 1.49s;
+}
+
+.SAManimController .SAManim.SAMdelay-1500 {
+	animation-delay: 1.5s;
+}
+
+.SAManimController .SAManim.SAMdelay-1510 {
+	animation-delay: 1.51s;
+}
+
+.SAManimController .SAManim.SAMdelay-1520 {
+	animation-delay: 1.52s;
+}
+
+.SAManimController .SAManim.SAMdelay-1530 {
+	animation-delay: 1.53s;
+}
+
+.SAManimController .SAManim.SAMdelay-1540 {
+	animation-delay: 1.54s;
+}
+
+.SAManimController .SAManim.SAMdelay-1550 {
+	animation-delay: 1.55s;
+}
+
+.SAManimController .SAManim.SAMdelay-1560 {
+	animation-delay: 1.56s;
+}
+
+.SAManimController .SAManim.SAMdelay-1570 {
+	animation-delay: 1.57s;
+}
+
+.SAManimController .SAManim.SAMdelay-1580 {
+	animation-delay: 1.58s;
+}
+
+.SAManimController .SAManim.SAMdelay-1590 {
+	animation-delay: 1.59s;
+}
+
+.SAManimController .SAManim.SAMdelay-1600 {
+	animation-delay: 1.6s;
+}
+
+.SAManimController .SAManim.SAMdelay-1610 {
+	animation-delay: 1.61s;
+}
+
+.SAManimController .SAManim.SAMdelay-1620 {
+	animation-delay: 1.62s;
+}
+
+.SAManimController .SAManim.SAMdelay-1630 {
+	animation-delay: 1.63s;
+}
+
+.SAManimController .SAManim.SAMdelay-1640 {
+	animation-delay: 1.64s;
+}
+
+.SAManimController .SAManim.SAMdelay-1650 {
+	animation-delay: 1.65s;
+}
+
+.SAManimController .SAManim.SAMdelay-1660 {
+	animation-delay: 1.66s;
+}
+
+.SAManimController .SAManim.SAMdelay-1670 {
+	animation-delay: 1.67s;
+}
+
+.SAManimController .SAManim.SAMdelay-1680 {
+	animation-delay: 1.68s;
+}
+
+.SAManimController .SAManim.SAMdelay-1690 {
+	animation-delay: 1.69s;
+}
+
+.SAManimController .SAManim.SAMdelay-1700 {
+	animation-delay: 1.7s;
+}
+
+.SAManimController .SAManim.SAMdelay-1710 {
+	animation-delay: 1.71s;
+}
+
+.SAManimController .SAManim.SAMdelay-1720 {
+	animation-delay: 1.72s;
+}
+
+.SAManimController .SAManim.SAMdelay-1730 {
+	animation-delay: 1.73s;
+}
+
+.SAManimController .SAManim.SAMdelay-1740 {
+	animation-delay: 1.74s;
+}
+
+.SAManimController .SAManim.SAMdelay-1750 {
+	animation-delay: 1.75s;
+}
+
+.SAManimController .SAManim.SAMdelay-1760 {
+	animation-delay: 1.76s;
+}
+
+.SAManimController .SAManim.SAMdelay-1770 {
+	animation-delay: 1.77s;
+}
+
+.SAManimController .SAManim.SAMdelay-1780 {
+	animation-delay: 1.78s;
+}
+
+.SAManimController .SAManim.SAMdelay-1790 {
+	animation-delay: 1.79s;
+}
+
+.SAManimController .SAManim.SAMdelay-1800 {
+	animation-delay: 1.8s;
+}
+
+.SAManimController .SAManim.SAMdelay-1810 {
+	animation-delay: 1.81s;
+}
+
+.SAManimController .SAManim.SAMdelay-1820 {
+	animation-delay: 1.82s;
+}
+
+.SAManimController .SAManim.SAMdelay-1830 {
+	animation-delay: 1.83s;
+}
+
+.SAManimController .SAManim.SAMdelay-1840 {
+	animation-delay: 1.84s;
+}
+
+.SAManimController .SAManim.SAMdelay-1850 {
+	animation-delay: 1.85s;
+}
+
+.SAManimController .SAManim.SAMdelay-1860 {
+	animation-delay: 1.86s;
+}
+
+.SAManimController .SAManim.SAMdelay-1870 {
+	animation-delay: 1.87s;
+}
+
+.SAManimController .SAManim.SAMdelay-1880 {
+	animation-delay: 1.88s;
+}
+
+.SAManimController .SAManim.SAMdelay-1890 {
+	animation-delay: 1.89s;
+}
+
+.SAManimController .SAManim.SAMdelay-1900 {
+	animation-delay: 1.9s;
+}
+
+.SAManimController .SAManim.SAMdelay-1910 {
+	animation-delay: 1.91s;
+}
+
+.SAManimController .SAManim.SAMdelay-1920 {
+	animation-delay: 1.92s;
+}
+
+.SAManimController .SAManim.SAMdelay-1930 {
+	animation-delay: 1.93s;
+}
+
+.SAManimController .SAManim.SAMdelay-1940 {
+	animation-delay: 1.94s;
+}
+
+.SAManimController .SAManim.SAMdelay-1950 {
+	animation-delay: 1.95s;
+}
+
+.SAManimController .SAManim.SAMdelay-1960 {
+	animation-delay: 1.96s;
+}
+
+.SAManimController .SAManim.SAMdelay-1970 {
+	animation-delay: 1.97s;
+}
+
+.SAManimController .SAManim.SAMdelay-1980 {
+	animation-delay: 1.98s;
+}
+
+.SAManimController .SAManim.SAMdelay-1990 {
+	animation-delay: 1.99s;
+}
+
+.SAManimController .SAManim.SAMdelay-2000 {
+	animation-delay: 2s;
+}
+
+.SAManimController .SAManim.SAMdelay-2010 {
+	animation-delay: 2.01s;
+}
+
+.SAManimController .SAManim.SAMdelay-2020 {
+	animation-delay: 2.02s;
+}
+
+.SAManimController .SAManim.SAMdelay-2030 {
+	animation-delay: 2.03s;
+}
+
+.SAManimController .SAManim.SAMdelay-2040 {
+	animation-delay: 2.04s;
+}
+
+.SAManimController .SAManim.SAMdelay-2050 {
+	animation-delay: 2.05s;
+}
+
+.SAManimController .SAManim.SAMdelay-2060 {
+	animation-delay: 2.06s;
+}
+
+.SAManimController .SAManim.SAMdelay-2070 {
+	animation-delay: 2.07s;
+}
+
+.SAManimController .SAManim.SAMdelay-2080 {
+	animation-delay: 2.08s;
+}
+
+.SAManimController .SAManim.SAMdelay-2090 {
+	animation-delay: 2.09s;
+}
+
+.SAManimController .SAManim.SAMduration-100 {
+	animation-duration: 0.1s;
+}
+.SAManimController .SAManim.SAMduration-200 {
+	animation-duration: 0.2s;
+}
+.SAManimController .SAManim.SAMduration-300 {
+	animation-duration: 0.3s;
+}
+.SAManimController .SAManim.SAMduration-400 {
+	animation-duration: 0.4s;
+}
+.SAManimController .SAManim.SAMduration-500 {
+	animation-duration: 0.5s;
+}
+.SAManimController .SAManim.SAMduration-600 {
+	animation-duration: 0.6s;
+}
+.SAManimController .SAManim.SAMduration-700 {
+	animation-duration: 0.7s;
+}
+.SAManimController .SAManim.SAMduration-800 {
+	animation-duration: 0.8s;
+}
+.SAManimController .SAManim.SAMduration-900 {
+	animation-duration: 0.9s;
+}
+.SAManimController .SAManim.SAMduration-1000 {
+	animation-duration: 1s;
+}
+.SAManimController .SAManim.SAMduration-1200 {
+	animation-duration: 1.2s;
+}
+.SAManimController .SAManim.SAMduration-1500 {
+	animation-duration: 1.5s;
+}
+.SAManimController .SAManim.SAMduration-2000 {
+	animation-duration: 2s;
+}
+
+@keyframes fadeInUp {
+	0% {
+		opacity: 0;
+		transform: translateY(60px);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes fadeIn {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+@keyframes fadeInRight {
+	0% {
+		opacity: 0;
+		transform: translateX(60px);
+	}
+	100% {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+@keyframes fadeInLeft {
+	0% {
+		opacity: 0;
+		transform: translateX(-60px);
+	}
+	100% {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes fadeInRotate {
+	0% {
+		opacity: 0;
+		transform: translateY(60px) rotate(-10deg);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0) rotate(0deg);
+	}
+}
+
+@keyframes fadeInRotate3 {
+	0% {
+		opacity: 0;
+		transform: translateY(60px) rotate(-10deg);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0) rotate(3deg);
+	}
+}
+
+@keyframes fadeInScale {
+	0% {
+		opacity: 0;
+		transform: scale(0.6);
+	}
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+/*
+
+---break---
+
+*/
+
+@layer base {
+	* {
+		@apply border-border outline-ring/50;
+	}
+	body {
+		@apply bg-background text-foreground;
+	}
 }

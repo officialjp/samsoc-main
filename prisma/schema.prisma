@@ -47,6 +47,42 @@ model Account {
     @@unique([provider, providerAccountId])
 }
 
+model Carousel {
+    id              Int @id @default(autoincrement())
+    isMobile        Boolean
+    source          String
+    alt             String
+}
+
+model Manga {
+    id Int @id @default(autoincrement())
+    title String
+    author String
+    volume Int
+    borrowed_by String?
+    source String
+    genres Genre[]
+}
+
+model Genre {
+    id Int @id @default(autoincrement())
+    name String @unique
+    cards AnimeCard[]
+    mangas Manga[]
+}
+
+model AnimeCard {
+    id Int @id @default(autoincrement())
+    title String
+    episode String
+    source String
+    mal_link String
+    total_episodes Int
+    show_type String
+    studio String
+    genres Genre[]
+}
+
 model Session {
     id           String   @id @default(cuid())
     sessionToken String   @unique

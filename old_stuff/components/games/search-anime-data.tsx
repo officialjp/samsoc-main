@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { Input } from '../ui/input';
-import { Button } from '../ui/button';
+import { Input } from '../../../src/app/_components/ui/input';
+import { Button } from '../../../src/app/_components/ui/button';
 import { cn } from '@/lib/utils';
 import index from '@/public/indexes.json';
 

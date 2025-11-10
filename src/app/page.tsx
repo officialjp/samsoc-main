@@ -1,69 +1,237 @@
-import Link from "next/link";
-
-import { LatestPost } from "~/app/_components/post";
-import { auth } from "~/server/auth";
-import { api, HydrateClient } from "~/trpc/server";
+import { api, HydrateClient } from '~/trpc/server';
+import HeroCarousel from './_components/landing/hero-carousel';
+import { type EmblaOptionsType } from 'embla-carousel';
+import { SectionContainer } from './_components/section-container';
+import { SectionHeading } from './_components/section-heading';
+import { FeatureCard } from './_components/landing/feature-card';
+import {
+	ArrowRight,
+	Calendar,
+	CalendarDays,
+	Check,
+	Library,
+	Star,
+	Users,
+} from 'lucide-react';
+import { AnimeCard } from './_components/landing/anime-card';
+import { Button } from './_components/ui/button';
+import Image from 'next/image';
+import Link from 'next/link';
+import LibraryPhoto from '../../public/images/library-placeholder.webp';
+import { MembershipCard } from './_components/landing/membership-card';
 
 export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
-  const session = await auth();
+	const cardResult = await api.post.getAnimeCardData();
+	const cardData = cardResult.data;
+	const carouselResult = await api.post.getCarouselData();
+	const carouselData = carouselResult.data;
+	const options: EmblaOptionsType = { loop: true };
+	const features = [
+		{
+			icon: Calendar,
+			title: 'Weekly Screenings',
+			description:
+				'Join us every Wednesday for anime screenings. From classics to the latest releases!',
+			color: 'bg-about1',
+		},
+		{
+			icon: Users,
+			title: 'Community Events',
+			description:
+				'Come and hang out with us at one of the multitude of events we run!',
+			color: 'bg-about2',
+		},
+		{
+			icon: Star,
+			title: 'Convention Trips',
+			description:
+				'We organize group trips to both October and May ComiCon conventions!',
+			color: 'bg-about3',
+		},
+	];
 
-  if (session?.user) {
-    void api.post.getLatest.prefetch();
-  }
+	const freeFeatures = [
+		{ included: true, text: 'Access to weekly screenings' },
+		{ included: true, text: 'Participate in society events' },
+		{ included: true, text: 'Join our Discord community' },
+		{ included: true, text: 'Voting rights for anime selections' },
+		{ included: false, text: 'Access to manga library' },
+	];
 
-  return (
-    <HydrateClient>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-          <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-            Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
-          </h1>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/first-steps"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">First Steps →</h3>
-              <div className="text-lg">
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
-              </div>
-            </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/introduction"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">Documentation →</h3>
-              <div className="text-lg">
-                Learn more about Create T3 App, the libraries it uses, and how
-                to deploy it.
-              </div>
-            </Link>
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl text-white">
-              {hello ? hello.greeting : "Loading tRPC query..."}
-            </p>
+	const paidFeatures = [
+		{ included: true, text: 'Access to weekly screenings :)' },
+		{ included: true, text: 'Participate in society events' },
+		{ included: true, text: 'Join our Discord community' },
+		{ included: true, text: 'Voting rights for anime selections' },
+		{
+			included: true,
+			text: 'Access to our extensive manga library',
+			highlight: true,
+		},
+	];
 
-            <div className="flex flex-col items-center justify-center gap-4">
-              <p className="text-center text-2xl text-white">
-                {session && <span>Logged in as {session.user?.name}</span>}
-              </p>
-              <Link
-                href={session ? "/api/auth/signout" : "/api/auth/signin"}
-                className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
-              >
-                {session ? "Sign out" : "Sign in"}
-              </Link>
-            </div>
-          </div>
+	return (
+		<HydrateClient>
+			<main className="flex min-h-screen flex-col w-full">
+				<section className="w-full pb-3 pt-0 md:pt-3 lg:pt-[3vh]">
+					<div className="container w-full max-w-full px-0 md:px-6 lg:px-8">
+						<HeroCarousel
+							slides={carouselData}
+							options={options}
+							useSocials={true}
+						></HeroCarousel>
+					</div>
+				</section>
+				<SectionContainer id="about">
+					<SectionHeading
+						badge="ABOUT US"
+						title="What We're All About"
+						description="We're a society for all people that love or are interested in the medium of anime. Everyone is welcome!"
+						badgeColor="bg-purple-200"
+					/>
+					<div className="mx-auto max-w-7xl items-center gap-6 py-12 grid lg:grid-cols-3 lg:gap-12">
+						{features.map((feature, index) => (
+							<FeatureCard
+								key={index}
+								className={``}
+								icon={feature.icon}
+								title={feature.title}
+								description={feature.description}
+								color={feature.color}
+							/>
+						))}
+					</div>
+				</SectionContainer>
+				<SectionContainer
+					id="now-streaming"
+					className="w-full py-12 md:py-16 overflow-hidden"
+				>
+					<SectionHeading
+						badge="NOW STREAMING"
+						title="This Week's Anime"
+						description="Join us every Wednesday at 6PM in Lecture Theatre G for our weekly
+								  anime screenings!"
+						badgeColor="bg-purple-200"
+					/>
+					<AnimeCard animes={cardData} />
+					<div className="mb-8 -mt-8 text-center">
+						<p className="font-medium mb-4">
+							Dont worry if youve missed previous episodes - you
+							have plenty of time to catch-up!
+						</p>
+						<Button
+							asChild
+							className="bg-button2 hover:bg-button1 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+						>
+							<Link
+								href="/calendar"
+								className="flex items-center"
+							>
+								<CalendarDays className="mr-2 h-4 w-4" />
+								View Full Calendar
+							</Link>
+						</Button>
+					</div>
+				</SectionContainer>
+				<SectionContainer id="library">
+					<SectionHeading
+						badge="MANGA LIBRARY"
+						title="Dive Into Our Manga Collection"
+						description="Our extensive manga library is one of the exclusive benefits for
+              paid members. With hundreds of volumes across various genres,
+              there's something for every anime fan!"
+						badgeColor="bg-purple-200"
+					/>
+					<div className="flex items-center justify-center mx-auto max-w-7xl py-12 flex-col">
+						<div className="relative">
+							<div className="overflow-hidden lg:w-[640px] lg:h-[360px] w-[360px] h-[200px] border-2 rounded-2xl border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+								<Image
+									src={LibraryPhoto}
+									height={360}
+									width={640}
+									alt={`Gallery image`}
+									className="aspect-video object-cover"
+								/>
+							</div>
+							<div className="absolute lg:-left-10 -bottom-20 -left-4 bg-white border-2 border-black lg:p-4 p-2 rounded-2xl md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-3">
+								<h3 className="text-base md:text-xl font-bold mb-1 md:mb-2">
+									Library Stats
+								</h3>
+								<ul className="space-y-0.5 md:space-y-1">
+									<li className="flex items-center text-xs sm:text-sm">
+										<Check className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2 text-green-500" />{' '}
+										250+ manga volumes
+									</li>
+									<li className="flex items-center text-xs sm:text-sm">
+										<Check className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2 text-green-500" />{' '}
+										25+ different series
+									</li>
+									<li className="flex items-center text-xs sm:text-sm">
+										<Check className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2 text-green-500" />{' '}
+										New volumes added monthly
+									</li>
+									<li className="flex items-center text-xs sm:text-sm">
+										<Check className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2 text-green-500" />{' '}
+										Member requests welcomed
+									</li>
+								</ul>
+							</div>
+						</div>
+						<div className="text-center pt-32">
+							<Button className="bg-button2 hover:bg-button1 hover:cursor-pointer text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+								<Link
+									href="/library"
+									className="flex items-center"
+								>
+									<Library className="mr-2 h-4 w-4" />
+									View Full Library
+								</Link>
+							</Button>
+						</div>
+					</div>
+				</SectionContainer>
+				<SectionContainer id="join">
+					<div className="container w-full max-w-full px-4 md:px-6 lg:px-8">
+						<div className="relative mx-auto max-w-7xl border-2 md:border-2 border-black bg-white p-4 sm:p-6 md:p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-2xl">
+							<div className="space-y-8">
+								<h2 className="text-2xl md:text-3xl font-bold text-center">
+									Choose Your Membership
+								</h2>
 
-          {session?.user && <LatestPost />}
-        </div>
-      </main>
-    </HydrateClient>
-  );
+								<div className="grid gap-8 md:grid-cols-2">
+									<MembershipCard
+										title="FREE MEMBERSHIP"
+										color="bg-membership2"
+										price="£0"
+										period="Forever free"
+										features={freeFeatures}
+									/>
+									<MembershipCard
+										title="PAID MEMBERSHIP"
+										color="bg-membership1"
+										price="£2 per year"
+										period="Satiate your manga reading hunger"
+										features={paidFeatures}
+										recommended={true}
+									/>
+								</div>
+								<div className="md:col-span-2">
+									<Button className="w-full hover:cursor-pointer bg-membership1 hover:bg-pink-300 text-text1 text-base md:text-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+										<a
+											href="https://surreyunion.org/your-activity/clubs-and-societies-a-z/anime-manga-society"
+											target="_target"
+											className="flex items-center w-full justify-center"
+										>
+											Sign Up Now{' '}
+											<ArrowRight className="ml-2 h-4 w-4" />
+										</a>
+									</Button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</SectionContainer>
+			</main>
+		</HydrateClient>
+	);
 }
