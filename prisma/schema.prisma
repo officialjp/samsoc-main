@@ -54,6 +54,25 @@ model Carousel {
     alt             String
 }
 
+model Image {
+    id Int @id @default(autoincrement())
+    alt String
+    category String
+    year Int
+    source String
+}
+
+model Event {
+    id Int @id @default(autoincrement())
+    title String
+    description String
+    location String
+    date DateTime
+    color String
+    is_regular_session Boolean
+    session_count Int?
+}
+
 model Manga {
     id Int @id @default(autoincrement())
     title String

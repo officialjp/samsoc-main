@@ -11,17 +11,8 @@ import {
 	eachDayOfInterval,
 } from 'date-fns';
 import { ChevronDown, ChevronUp, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
-
-interface Event {
-	id: string;
-	title: string;
-	description: string;
-	location: string;
-	date: Date;
-	color: string;
-	isRegularSession?: boolean;
-}
+import { cn } from '~/lib/utils';
+import type { Event } from 'generated/prisma';
 
 interface MobileCalendarViewProps {
 	currentMonth: Date;
@@ -136,8 +127,8 @@ export function MobileCalendarView({
 												{format(day, 'EEEE, MMMM d')}
 											</span>
 											<span className="ml-2 text-sm text-gray-500">
-												({dayEvents.length} event
-												{dayEvents.length !== 1
+												({dayEvents?.length} event
+												{dayEvents?.length !== 1
 													? 's'
 													: ''}
 												)
@@ -152,13 +143,13 @@ export function MobileCalendarView({
 
 									{isExpanded && (
 										<div className="p-3 border-t border-gray-200 space-y-2">
-											{dayEvents.map((event) => (
+											{dayEvents?.map((event) => (
 												<div
 													key={event.id}
 													className={cn(
 														'p-2 border border-gray-200 cursor-pointer',
 														event.color,
-														event.isRegularSession &&
+														event.is_regular_session &&
 															'border-l-4 border-l-purple-500',
 													)}
 													onClick={() =>
@@ -217,7 +208,7 @@ export function MobileCalendarView({
 
 						<h3 className="text-xl font-bold mb-2">
 							{selectedEvent.title}
-							{selectedEvent.isRegularSession && (
+							{selectedEvent.is_regular_session && (
 								<span className="ml-2 bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full border border-purple-300">
 									Weekly Session
 								</span>

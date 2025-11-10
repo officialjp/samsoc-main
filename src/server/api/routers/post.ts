@@ -38,6 +38,25 @@ export const postRouter = createTRPCRouter({
 		return { data: allManga };
 	}),
 
+	getImageData: publicProcedure.query(async ({ ctx }) => {
+		const allImages = await ctx.db.image.findMany({});
+		return { data: allImages };
+	}),
+
+	getSpecialEvents: publicProcedure.query(async ({ ctx }) => {
+		const allEvents = await ctx.db.event.findMany({
+			where: { is_regular_session: false },
+		});
+		return { data: allEvents };
+	}),
+
+	getRegularSessions: publicProcedure.query(async ({ ctx }) => {
+		const allRegularSessions = await ctx.db.event.findMany({
+			where: { is_regular_session: true },
+		});
+		return { data: allRegularSessions };
+	}),
+
 	create: protectedProcedure
 		.input(z.object({ name: z.string().min(1) }))
 		.mutation(async ({ ctx, input }) => {

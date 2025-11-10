@@ -35,7 +35,10 @@ export function GalleryImage({ src, alt, width, height }: GalleryImageProps) {
 					className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 hover:cursor-pointer"
 					onClick={() => setIsOpen(false)}
 				>
-					<div className="relative max-w-5xl max-h-[90vh] bg-white rounded-2xl border-4 border-black p-2 hover:cursor-default">
+					<div
+						className="relative max-w-5xl max-h-[90vh] bg-white rounded-2xl border-4 border-black p-2 hover:cursor-default"
+						onClick={(e) => e.stopPropagation()}
+					>
 						<button
 							className="absolute -top-4 -right-4 bg-pink-500 text-white rounded-full p-1 border-2 border-black hover:cursor-pointer"
 							onClick={() => setIsOpen(false)}

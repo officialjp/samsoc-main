@@ -7,16 +7,7 @@ import { CalendarHeader } from './calendar-header';
 import { CalendarDays } from './calendar-days';
 import { CalendarCells } from './calendar-cells';
 import { MobileCalendarView } from './mobile-calendar-view';
-
-interface Event {
-	id: string;
-	title: string;
-	description: string;
-	location: string;
-	date: Date;
-	color: string;
-	isRegularSession?: boolean;
-}
+import type { Event } from 'generated/prisma';
 
 interface CalendarProps {
 	events: Event[];
@@ -72,9 +63,7 @@ export function Calendar({ events }: CalendarProps) {
 			const grouped = currentMonthEvents.reduce(
 				(acc, event) => {
 					const dateKey = format(new Date(event.date), 'yyyy-MM-dd');
-					if (!acc[dateKey]) {
-						acc[dateKey] = [];
-					}
+					acc[dateKey] ??= [];
 					acc[dateKey].push(event);
 					return acc;
 				},
@@ -83,9 +72,9 @@ export function Calendar({ events }: CalendarProps) {
 
 			setGroupedEvents(grouped);
 		}
-	}, [events, currentMonth, isMobile]);
+	}, [events, currentMonth]);
 	return (
-		<div className="bg-white overflow-hidden border-2 rounded-2xl border-black p-4 md:p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] SAManim SAMfade-up SAMduration-700 SAMdelay-500 SAMbounce">
+		<div className="bg-white overflow-hidden border-2 rounded-2xl border-black p-4 md:p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
 			<CalendarHeader
 				currentMonth={currentMonth}
 				onPrevMonth={prevMonth}
