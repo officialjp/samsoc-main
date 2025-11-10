@@ -172,7 +172,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/joaopedrodasilva/Projects/samsoc-main/generated/prisma",
+      "value": "C:\\Users\\natsp\\Documents\\GitHub\\samsoc-main\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -181,12 +181,12 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "rhel-openssl-3.0.x",
+        "value": "windows",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/joaopedrodasilva/Projects/samsoc-main/prisma/schema.prisma",
+    "sourceFilePath": "C:\\Users\\natsp\\Documents\\GitHub\\samsoc-main\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
