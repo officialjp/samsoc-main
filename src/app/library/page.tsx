@@ -3,6 +3,24 @@ import { SectionHeading } from '~/app/_components/section-heading';
 import { BookOpen } from 'lucide-react';
 import { api } from '~/trpc/server';
 import { LibrarySearch } from '~/app/_components/library/library-search';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+	title: 'Surrey Anime and Manga Society',
+	description:
+		'Browse our collection of manga available to borrow. Paid members can check out up to 3 volumes at a time for up to 2 weeks.',
+	openGraph: {
+		title: 'Surrey Anime and Manga Society',
+		description:
+			'Browse our collection of manga available to borrow. Paid members can check out up to 3 volumes at a time for up to 2 weeks.',
+	},
+	twitter: {
+		card: 'summary',
+		title: 'Surrey Anime and Manga Society',
+		description:
+			'Browse our collection of manga available to borrow. Paid members can check out up to 3 volumes at a time for up to 2 weeks.',
+	},
+};
 
 interface Manga {
 	id: number;
