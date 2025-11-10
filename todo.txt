@@ -21,3 +21,5 @@ create login components
 make aniguessor
 
 make sam-chan integration
+
+make logo have colour highlights to make it look cool for specific holidays and events
