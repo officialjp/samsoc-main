@@ -17,7 +17,7 @@ interface MangaData {
 
 const ITEMS_PER_PAGE = 12;
 
-interface LibraryClientProps {
+interface LibrarySearchProps {
 	initialMangaData: MangaData[];
 	allGenres: string[];
 }
@@ -25,7 +25,7 @@ interface LibraryClientProps {
 export function LibrarySearch({
 	initialMangaData,
 	allGenres,
-}: LibraryClientProps) {
+}: LibrarySearchProps) {
 	const [filters, setFilters] = useState({
 		status: 'all',
 		genre: 'all',

@@ -1,15 +1,13 @@
-import { SectionContainer } from '@/components/section-container';
-import { SectionHeading } from '@/components/section-heading';
-import { EventTypeCard } from '@/components/event/event-type-card';
-import ClubNight from '@/public/images/clubnight.jpg';
-import ComicCon from '@/public/images/comiccon.jpg';
-import Screenings from '@/public/images/screenings.png';
+import { SectionContainer } from '~/app/_components/section-container';
+import { SectionHeading } from '~/app/_components/section-heading';
+import { EventTypeCard } from '~/app/_components/events/event-type-card';
+import ClubNight from '../../../public/images/clubnight.jpg';
+import ComicCon from '../../../public/images/comiccon.jpg';
+import Screenings from '../../../public/images/screenings.png';
+import Collabs from '../../../public/images/collabs.png';
 
-import Collabs from '@/public/images/collabs.png';
-
-// Import the shared types
-import { EventType } from '@/lib/definitions'; // Adjust the path as needed
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
+import type { StaticImageData } from 'next/image';
 
 export const metadata: Metadata = {
 	title: 'Surrey Anime and Manga Society',
@@ -28,15 +26,23 @@ export const metadata: Metadata = {
 	},
 };
 
+interface EventType {
+	title: string;
+	description: string;
+	frequency: string;
+	image: StaticImageData;
+	color: string;
+	examples: string[];
+}
+
 export default function EventsPage() {
-	// Event types data
 	const eventTypes: EventType[] = [
 		{
 			title: 'Social Nights',
 			description:
 				'Let loose and have fun! Our social nights range from karaoke sessions, to club nights and even bar crawls around Guildford. These events are perfect for making new friends in a fun atmosphere.',
 			frequency: 'Monthly',
-			image: ClubNight, // No need for explicit casting with the shared type
+			image: ClubNight,
 			color: 'bg-pink-200',
 			examples: ['Anime Karaoke Night', 'Club Night', 'Bar Crawl'],
 		},
@@ -53,20 +59,6 @@ export default function EventsPage() {
 				'Final Session Showcase',
 			],
 		},
-		// {
-		//   title: "Cosplay Workshops & Contests",
-		//   description:
-		//     "Showcase your creativity or learn how to bring your favorite characters to life! Our cosplay events include beginner-friendly workshops where you can learn techniques from experienced cosplayers, as well as contests where you can show off your amazing creations.",
-		//   frequency: "Once per semester",
-		//   image: "/placeholder.svg?height=400&width=300&text=Cosplay+Events",
-		//   color: "bg-yellow-200",
-		//   examples: [
-		//     "Spring Cosplay Contest",
-		//     "Makeup Workshop",
-		//     "Prop Making 101",
-		//     "Costume Repair Station",
-		//   ],
-		// },
 		{
 			title: 'Creative Collaborations',
 			description:
@@ -81,24 +73,10 @@ export default function EventsPage() {
 			description:
 				'Experience the excitement of anime conventions with fellow fans! We organize group trips to major conventions, offering discounted tickets, and shared transportation. These trips are highlights of our year and provide unforgettable memories.',
 			frequency: '2-3 times per year',
-			image: ComicCon, // No need for explicit casting
+			image: ComicCon,
 			color: 'bg-green-200',
 			examples: ['MCM ComiCon'],
 		},
-		// {
-		//   title: "Guest Speakers & Panels",
-		//   description:
-		//     "Learn from industry professionals and experts! We invite guest speakers including voice actors, animators, directors, and cultural experts to share their knowledge and experiences. These events provide valuable insights into the anime industry and Japanese culture.",
-		//   frequency: "Once per semester",
-		//   image: "/placeholder.svg?height=400&width=300&text=Guest+Speakers",
-		//   color: "bg-orange-200",
-		//   examples: [
-		//     "Voice Actor Q&A",
-		//     "Animation Workshop",
-		//     "Industry Panel",
-		//     "Cultural Lecture",
-		//   ],
-		// },
 	];
 
 	return (
@@ -116,13 +94,12 @@ export default function EventsPage() {
 					<div className="space-y-8">
 						{eventTypes.map((event, index) => (
 							<EventTypeCard
-								className={`SAManim SAMdelay-${(index + 5) * 100} SAMduration-900 SAMfade-up SAMbounce`}
+								className={``}
 								key={index}
 								title={event.title}
 								description={event.description}
 								frequency={event.frequency}
-								image={event.image}
-								collageImage={event.collageImage}
+								image={event.image.src}
 								color={event.color}
 								examples={event.examples}
 							/>

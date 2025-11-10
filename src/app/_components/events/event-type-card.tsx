@@ -1,20 +1,26 @@
-import Image from 'next/image'; // No need to import StaticImageData here
+import Image from 'next/image';
 import { Calendar } from 'lucide-react';
-import { cn } from '@/lib/utils';
-
-// Import the shared type
-import { EventImageType, ImageTypes } from '@/lib/definitions'; // Adjust the path as needed
-import ImageCollage from '@/components/util/imageCollage';
+import { cn } from '~/lib/utils';
 
 interface EventTypeCardProps {
 	title: string;
 	description: string;
 	frequency: string;
-	image?: EventImageType; // Use the shared type
+	image?: string;
 	color: string;
 	examples: string[];
-	collageImage?: ImageTypes[];
 	className?: string;
+}
+
+interface Image {
+	alt: string;
+	src: string;
+	dimentions: Dimensions;
+}
+
+interface Dimensions {
+	x: number;
+	y: number;
 }
 
 export function EventTypeCard({
@@ -22,7 +28,6 @@ export function EventTypeCard({
 	description,
 	frequency,
 	image,
-	collageImage,
 	color,
 	examples,
 	className,
@@ -37,20 +42,13 @@ export function EventTypeCard({
 		>
 			<div className="flex flex-col md:flex-row gap-6 items-center">
 				<div className="relative w-[min(100%,400px)] aspect-video border-4 shrink-0 border-black overflow-hidden rounded-md">
-					{collageImage && collageImage.length > 0 ? (
-						<ImageCollage
-							images={collageImage}
-							className="h-full w-full bg-black"
-						></ImageCollage>
-					) : (
-						<Image
-							src={image || '/placeholder.svg'}
-							alt={title}
-							fill
-							sizes='sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"'
-							className="object-cover"
-						/>
-					)}
+					<Image
+						src={image ?? '/placeholder.svg'}
+						alt={title}
+						fill
+						sizes='sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"'
+						className="object-cover"
+					/>
 				</div>
 
 				<div className="w-full md:w-2/3 space-y-4">
