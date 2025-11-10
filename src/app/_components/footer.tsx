@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { SvgIcon } from './util/svg-icon';
 
 export function Footer() {
 	return (
@@ -20,7 +19,7 @@ export function Footer() {
 						<span>
 							<Link
 								href="https://github.com/officialjp"
-								className="flex items-center"
+								className="flex items-center hover:underline"
 							>
 								J.P
 							</Link>
@@ -28,28 +27,23 @@ export function Footer() {
 						<span>
 							<Link
 								href="https://natski.dev"
-								className="flex items-center"
+								className="flex items-center hover:underline"
 							>
-								<SvgIcon
-									className={'bg-gray-500 mr-1'}
-									width={15}
-									height={15}
-									src={
-										'https://natski.vercel.app/apis/encore/icon-system/dependencies/svg/NATSKI.svg'
-									}
-								></SvgIcon>
 								Michael
 							</Link>
 						</span>
 						<span>
-							<Link href="" className="flex items-center">
+							<Link
+								href=""
+								className="flex items-center hover:underline"
+							>
 								Maiham
 							</Link>
 						</span>
 						<span>
 							<Link
 								href="https://github.com/BLT19"
-								className="flex items-center"
+								className="flex items-center hover:underline"
 							>
 								David
 							</Link>
