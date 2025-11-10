@@ -88,11 +88,7 @@ function Nav() {
 			Gallery
 		</Button>,
 
-		<Button key={5} href="/hof" className="">
-			Hall of Fame
-		</Button>,
-
-		<Button key={6} href="/games" className="">
+		<Button key={5} href="/games" className="">
 			Games
 		</Button>,
 	];
@@ -288,13 +284,6 @@ export function Header() {
 							onClick={() => setIsMenuOpen(false)}
 						>
 							Gallery
-						</Link>
-						<Link
-							href="/hof"
-							className="font-medium py-2 hover:underline underline-offset-4"
-							onClick={() => setIsMenuOpen(false)}
-						>
-							Hall of Fame
 						</Link>
 						<Link
 							href="/games"
