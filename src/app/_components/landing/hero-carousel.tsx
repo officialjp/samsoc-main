@@ -147,7 +147,7 @@ export default function HeroCarousel(props: CarouselType) {
 
 	if (!hasMounted || isClientMobile === null) {
 		return (
-			<div className="w-full max-w-[min(1200px,calc(100%-20px))] shadow-[0px_5px_10px_#00000090] rounded-2xl md:rounded-4xl aspect-[9/16] md:aspect-[16/9] bg-gray-200 animate-pulse"></div>
+			<div className="w-full max-w-[min(1200px,calc(100%-20px))] shadow-[0px_5px_10px_#00000090] rounded-2xl md:rounded-4xl aspect-9/16 md:aspect-video bg-gray-200 animate-pulse"></div>
 		);
 	}
 
