@@ -25,6 +25,7 @@ export function GalleryImage({ src, alt, width, height }: GalleryImageProps) {
 					width={width}
 					height={height}
 					alt={alt}
+					loading="lazy"
 					sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
 					className="aspect-video object-cover"
 				/>
@@ -49,6 +50,7 @@ export function GalleryImage({ src, alt, width, height }: GalleryImageProps) {
 							src={src || '/placeholder.svg'}
 							width={1200}
 							height={800}
+							loading="lazy"
 							alt={alt}
 							sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
 							className="max-h-[80vh] w-auto object-contain"
