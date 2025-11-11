@@ -5,7 +5,6 @@ import { SectionContainer } from './_components/section-container';
 import { SectionHeading } from './_components/section-heading';
 import { FeatureCard } from './_components/landing/feature-card';
 import {
-	ArrowRight,
 	Calendar,
 	CalendarDays,
 	Check,
