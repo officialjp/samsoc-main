@@ -54,6 +54,13 @@ model Carousel {
     alt             String
 }
 
+model Committee {
+    id Int @id @default(autoincrement())
+    role String
+    source String?
+    name String
+}
+
 model Image {
     id Int @id @default(autoincrement())
     alt String

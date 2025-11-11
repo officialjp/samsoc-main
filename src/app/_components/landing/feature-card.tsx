@@ -23,10 +23,12 @@ export function FeatureCard({
 				className,
 			)}
 		>
-			<div className="bg-white p-4 rounded-full border-2 border-black">
-				<Icon className="h-10 w-10" />
+			<div className="flex lg:flex-col flex-row items-center justify-center gap-2">
+				<div className="bg-white p-2 lg:p-4 rounded-full border-2 border-black">
+					<Icon className="h-5 w-5 lg:h-10 lg:w-10" />
+				</div>
+				<h3 className="text-xl font-bold">{title}</h3>
 			</div>
-			<h3 className="text-xl font-bold">{title}</h3>
 			<p className="text-center text-text1">{description}</p>
 		</div>
 	);

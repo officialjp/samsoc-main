@@ -10,7 +10,7 @@ interface MembershipCardProps {
 	title: string;
 	color: string;
 	price: string;
-	period: string;
+	flavorText: string;
 	features: MembershipFeature[];
 	recommended?: boolean;
 }
@@ -19,7 +19,7 @@ export function MembershipCard({
 	title,
 	color,
 	price,
-	period,
+	flavorText,
 	features,
 	recommended = false,
 }: MembershipCardProps) {
@@ -32,13 +32,13 @@ export function MembershipCard({
 					RECOMMENDED
 				</div>
 			)}
-			<div className="bg-white px-4 rounded-xl py-2 text-xl font-bold border-2 border-black inline-block mt-0 mb-4">
+			<div className="px-4 rounded-xl py-2 text-4xl font-bold inline-block mt-0 mb-4">
 				{title}
+				<p className="text-center text-sm text-text1 pt-2 font-base">
+					{flavorText}
+				</p>
 			</div>
 			<div className="space-y-4">
-				<p className="text-text1">
-					Join our community with basic access:
-				</p>
 				<ul className="space-y-2">
 					{features.map((feature, index) => (
 						<li key={index} className="flex items-center">
@@ -59,8 +59,12 @@ export function MembershipCard({
 						</li>
 					))}
 				</ul>
-				<p className="font-bold text-center text-2xl mt-6">{price}</p>
-				<p className="text-center text-sm text-text1">{period}</p>
+				<div className="flex items-center justify-center flex-row gap-1">
+					<p className="font-bold text-center text-4xl">{price}</p>
+					<p className="text-center text-2xl mt-1 text-gray-800">
+						/year
+					</p>
+				</div>
 			</div>
 		</div>
 	);

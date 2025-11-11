@@ -209,7 +209,7 @@ export function Header() {
 					<div className="flex-row flex gap-6 mx-auto">
 						<Link href="https://www.instagram.com/unisamsoc/?hl=en">
 							<SvgIcon
-								src={'../../../public/instagram.svg'}
+								src={'/instagram.svg'}
 								height={30}
 								width={30}
 								className={'bg-[#ff0069]'}
@@ -217,7 +217,7 @@ export function Header() {
 						</Link>
 						<Link href="https://www.facebook.com/UniSAMSoc">
 							<SvgIcon
-								src={'../../../public/facebook.svg'}
+								src={'/facebook.svg'}
 								height={30}
 								width={30}
 								className={'bg-[#0866ff]'}
@@ -225,7 +225,7 @@ export function Header() {
 						</Link>
 						<Link href="https://discord.gg/tQUrdxzUZ4">
 							<SvgIcon
-								src={'../../../public/discord.svg'}
+								src={'/discord.svg'}
 								height={30}
 								width={30}
 								className={'bg-[#5865F2]'}

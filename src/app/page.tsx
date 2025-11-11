@@ -22,12 +22,15 @@ import Logo from '../../public/images/logo.png';
 import { MembershipCard } from './_components/landing/membership-card';
 import Marquee from './_components/marquee';
 import { SvgIcon } from './_components/util/svg-icon';
+import { CommitteeCard } from './_components/landing/committee-card';
 
 export default async function Home() {
 	const cardResult = await api.post.getAnimeCardData();
 	const cardData = cardResult.data;
 	const carouselResult = await api.post.getCarouselData();
 	const carouselData = carouselResult.data;
+	const committeResult = await api.post.getCommitteeMembers();
+	const committee = committeResult.data;
 	const options: EmblaOptionsType = { loop: true };
 	const features = [
 		{
@@ -41,14 +44,14 @@ export default async function Home() {
 			icon: Users,
 			title: 'Community Events',
 			description:
-				'Come and hang out with us at one of the multitude of events we run!',
+				'Come and hang out with us at one of the multitude of events ran by our amazing community!',
 			color: 'bg-about2',
 		},
 		{
 			icon: Star,
 			title: 'Convention Trips',
 			description:
-				'We organize group trips to both October and May ComiCon conventions!',
+				'Come join our bi-annual group trips to conventions around the UK such as MCM ComicCon and Mega Con!',
 			color: 'bg-about3',
 		},
 	];
@@ -62,13 +65,13 @@ export default async function Home() {
 	];
 
 	const paidFeatures = [
-		{ included: true, text: 'Access to weekly screenings :)' },
+		{ included: true, text: 'Access to weekly screenings' },
 		{ included: true, text: 'Participate in society events' },
 		{ included: true, text: 'Join our Discord community' },
 		{ included: true, text: 'Voting rights for anime selections' },
 		{
 			included: true,
-			text: 'Access to our extensive manga library',
+			text: 'Access to our manga library',
 			highlight: true,
 		},
 	];
@@ -76,7 +79,7 @@ export default async function Home() {
 	return (
 		<HydrateClient>
 			<main className="flex min-h-screen flex-col w-full">
-				<section className="w-full pb-3 pt-0 md:pt-3 lg:pt-[3vh]">
+				<section className="w-full pb-3 pt-0 md:pt-3 lg:pt-[3vh] flex items-center justify-center flex-col">
 					<div className="container w-full max-w-full px-0 md:px-6 lg:px-8">
 						<HeroCarousel
 							slides={carouselData}
@@ -102,7 +105,7 @@ export default async function Home() {
 										className="bg-black"
 										height={50}
 										width={130}
-										src={'../../public/surrey.svg'}
+										src={'/surrey.svg'}
 									></SvgIcon>
 								</div>
 							</span>
@@ -126,7 +129,7 @@ export default async function Home() {
 					<SectionHeading
 						badge="ABOUT US"
 						title="What We're All About"
-						description="We're a society for all people that love or are interested in the medium of anime. Everyone is welcome!"
+						description="We're a society for all people that love or are interested in anime and manga."
 						badgeColor="bg-purple-200"
 					/>
 					<div className="mx-auto max-w-7xl items-center gap-6 py-12 grid lg:grid-cols-3 lg:gap-12">
@@ -177,8 +180,7 @@ export default async function Home() {
 					<SectionHeading
 						badge="MANGA LIBRARY"
 						title="Dive Into Our Manga Collection"
-						description="Our extensive manga library is one of the exclusive benefits for
-              paid members. With hundreds of volumes across various genres,
+						description="With hundreds of volumes across various genres,
               there's something for every anime fan!"
 						badgeColor="bg-purple-200"
 					/>
@@ -230,45 +232,67 @@ export default async function Home() {
 						</div>
 					</div>
 				</SectionContainer>
+				<SectionContainer id="committee">
+					<SectionHeading
+						badge="COMMITTEE"
+						title="Meet Our Committee"
+						badgeColor="bg-purple-200"
+						description="The masterminds behind our beautifully constructed events, session and much more!"
+					/>
+					<div className="grid grid-cols-2 lg:grid-cols-5 items-center justify-center py-6 auto-rows-fr">
+						{committee.map((member, index) => (
+							<CommitteeCard
+								key={index}
+								id={member.id}
+								name={member.name}
+								role={member.role}
+								source={member.source}
+								className={
+									index === 0
+										? 'lg:col-span-1 col-span-2'
+										: ''
+								}
+							/>
+						))}
+					</div>
+				</SectionContainer>
 				<SectionContainer id="join">
-					<div className="container w-full max-w-full px-4 md:px-6 lg:px-8">
-						<div className="relative mx-auto max-w-7xl border-2 md:border-2 border-black bg-white p-4 sm:p-6 md:p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-2xl">
-							<div className="space-y-8">
-								<h2 className="text-2xl md:text-3xl font-bold text-center">
-									Choose Your Membership
-								</h2>
-
-								<div className="grid gap-8 md:grid-cols-2">
-									<MembershipCard
-										title="FREE MEMBERSHIP"
-										color="bg-membership2"
-										price="£0"
-										period="Forever free"
-										features={freeFeatures}
-									/>
-									<MembershipCard
-										title="PAID MEMBERSHIP"
-										color="bg-membership1"
-										price="£2 per year"
-										period="Satiate your manga reading hunger"
-										features={paidFeatures}
-										recommended={true}
-									/>
-								</div>
-								<div className="md:col-span-2">
-									<Button className="w-full hover:cursor-pointer bg-membership1 hover:bg-pink-300 text-text1 text-base md:text-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-										<a
-											href="https://surreyunion.org/your-activity/clubs-and-societies-a-z/anime-manga-society"
-											target="_target"
-											className="flex items-center w-full justify-center"
-										>
-											Sign Up Now{' '}
-											<ArrowRight className="ml-2 h-4 w-4" />
-										</a>
-									</Button>
-								</div>
-							</div>
+					<SectionHeading
+						badge="MEMBERSHIP"
+						title="Get Your Membership Here"
+						badgeColor="bg-purple-200"
+						description="Here you can look at all the benefits you can get from one of our memberships!"
+					/>
+					<div className="flex items-center justify-center py-4">
+						<div className="grid gap-8 md:grid-cols-2 w-full lg:w-4xl">
+							<MembershipCard
+								title="Free"
+								color="bg-membership2"
+								price="£0"
+								flavorText="Your gateway into the SAMSoC community"
+								features={freeFeatures}
+							/>
+							<MembershipCard
+								title="Premium"
+								color="bg-membership1"
+								price="£2"
+								flavorText="Satiate your manga reading hunger"
+								features={paidFeatures}
+								recommended={true}
+							/>
 						</div>
+					</div>
+					<div className="md:col-span-2 flex items-center justify-center">
+						<Button className="hover:cursor-pointer bg-button2 hover:bg-button1 text-text1 text-base md:text-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+							<a
+								href="https://surreyunion.org/your-activity/clubs-and-societies-a-z/anime-manga-society"
+								target="_target"
+								className="flex items-center w-full justify-center"
+							>
+								Sign Up Now{' '}
+								<ArrowRight className="ml-2 h-4 w-4" />
+							</a>
+						</Button>
 					</div>
 				</SectionContainer>
 			</main>

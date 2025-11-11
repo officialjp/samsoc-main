@@ -57,6 +57,11 @@ export const postRouter = createTRPCRouter({
 		return { data: allRegularSessions };
 	}),
 
+	getCommitteeMembers: publicProcedure.query(async ({ ctx }) => {
+		const allMembers = await ctx.db.committee.findMany({});
+		return { data: allMembers };
+	}),
+
 	create: protectedProcedure
 		.input(z.object({ name: z.string().min(1) }))
 		.mutation(async ({ ctx, input }) => {

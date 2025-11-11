@@ -2,9 +2,6 @@
 import React from 'react';
 import type { EmblaOptionsType } from 'embla-carousel';
 import { DotButton, useDotButton } from './hero-carousel-button';
-import Instagram from '../../../../public/instagram.svg';
-import Facebook from '../../../../public/facebook.svg';
-import Discord from '../../../../public/discord.svg';
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 import Link from 'next/link';
@@ -41,6 +38,7 @@ export default function HeroCarousel({
 					<Image
 						src={element.source}
 						alt={element.alt}
+						loading="lazy"
 						height={isMobile ? 1080 : 1920}
 						width={isMobile ? 1080 : 1920}
 						className="object-cover object-top w-full h-full"
@@ -77,7 +75,7 @@ export default function HeroCarousel({
 				<div className=" flex-row gap-4 flex-nowrap w-full max-w-[1200px] absolute -bottom-1 hidden lg:flex">
 					<Link href="https://www.instagram.com/unisamsoc/?hl=en">
 						<SvgIcon
-							src={Instagram.src}
+							src={'/instagram.svg'}
 							height={32}
 							width={32}
 							className={'bg-[#ff0069]'}
@@ -85,7 +83,7 @@ export default function HeroCarousel({
 					</Link>
 					<Link href="https://www.facebook.com/UniSAMSoc">
 						<SvgIcon
-							src={Facebook.src}
+							src={'/facebook.svg'}
 							height={32}
 							width={32}
 							className={'bg-[#0866ff]'}
@@ -93,7 +91,7 @@ export default function HeroCarousel({
 					</Link>
 					<Link href="https://discord.gg/tQUrdxzUZ4">
 						<SvgIcon
-							src={Discord.src}
+							src={'/discord.svg'}
 							height={32}
 							width={32}
 							className={'bg-[#5865F2]'}
