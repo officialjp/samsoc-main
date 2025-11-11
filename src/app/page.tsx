@@ -20,7 +20,7 @@ import Link from 'next/link';
 import LibraryPhoto from '../../public/images/sam-library-image.png';
 import Logo from '../../public/images/logo.png';
 import { MembershipCard } from './_components/landing/membership-card';
-import Marquee from './_components/marquee';
+import Marquee from 'react-fast-marquee';
 import { SvgIcon } from './_components/util/svg-icon';
 import { CommitteeCard } from './_components/landing/committee-card';
 
@@ -87,7 +87,10 @@ export default async function Home() {
 							useSocials={true}
 						></HeroCarousel>
 					</div>
-					<Marquee className="mt-20 mask-[linear-gradient(90deg,hsla(0,0%,0%,0)_0%,hsla(0,0%,0%,1)_10%,hsla(0,0%,0%,1)_90%,hsla(0,0%,0%,0)_100%)]">
+					<Marquee
+						autoFill
+						className="mt-20 mask-[linear-gradient(90deg,hsla(0,0%,0%,0)_0%,hsla(0,0%,0%,1)_10%,hsla(0,0%,0%,1)_90%,hsla(0,0%,0%,0)_100%)]"
+					>
 						<div className="flex gap-10 items-center mr-10">
 							<span className="flex items-center gap-2">
 								<p>Developed by:</p>
