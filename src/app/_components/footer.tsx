@@ -21,7 +21,7 @@ export function Footer() {
 								href="https://github.com/officialjp"
 								className="flex items-center hover:underline"
 							>
-								J.P
+								J.P da Silva
 							</Link>
 						</span>
 						<span>
