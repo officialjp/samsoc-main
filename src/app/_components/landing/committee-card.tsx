@@ -24,11 +24,12 @@ export function CommitteeCard({
 			)}
 		>
 			<Image
+				draggable={false}
 				src={source ?? '/placeholder.svg'}
 				alt={id.toString()}
 				width={200}
-				loading="lazy"
 				height={200}
+				loading="lazy"
 			/>
 			<p>{name}</p>
 			<p>{role}</p>

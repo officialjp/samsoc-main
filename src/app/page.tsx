@@ -11,6 +11,7 @@ import {
 	Check,
 	Library,
 	Star,
+	UserPlus,
 	Users,
 } from 'lucide-react';
 import { AnimeCard } from './_components/landing/anime-card';
@@ -61,7 +62,7 @@ export default async function Home() {
 		{ included: true, text: 'Participate in society events' },
 		{ included: true, text: 'Join our Discord community' },
 		{ included: true, text: 'Voting rights for anime selections' },
-		{ included: false, text: 'Access to manga library' },
+		{ included: false, text: 'Access to our manga library' },
 	];
 
 	const paidFeatures = [
@@ -191,6 +192,7 @@ export default async function Home() {
 									src={LibraryPhoto}
 									height={360}
 									width={640}
+									draggable={false}
 									alt={`Gallery image`}
 									className="aspect-video object-cover"
 								/>
@@ -263,7 +265,7 @@ export default async function Home() {
 						badgeColor="bg-purple-200"
 						description="Here you can look at all the benefits you can get from one of our memberships!"
 					/>
-					<div className="flex items-center justify-center py-4">
+					<div className="flex items-center justify-center py-8">
 						<div className="grid gap-8 md:grid-cols-2 w-full lg:w-4xl">
 							<MembershipCard
 								title="Free"
@@ -282,16 +284,15 @@ export default async function Home() {
 							/>
 						</div>
 					</div>
-					<div className="md:col-span-2 flex items-center justify-center">
-						<Button className="hover:cursor-pointer bg-button2 hover:bg-button1 text-text1 text-base md:text-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-							<a
+					<div className="text-center">
+						<Button className="bg-button2 hover:bg-button1 hover:cursor-pointer text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+							<Link
 								href="https://surreyunion.org/your-activity/clubs-and-societies-a-z/anime-manga-society"
-								target="_target"
-								className="flex items-center w-full justify-center"
+								className="flex items-center"
 							>
-								Sign Up Now{' '}
-								<ArrowRight className="ml-2 h-4 w-4" />
-							</a>
+								<UserPlus className="mr-2 h-4 w-4" />
+								View Sign-Up Page
+							</Link>
 						</Button>
 					</div>
 				</SectionContainer>
