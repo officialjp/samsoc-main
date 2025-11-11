@@ -1,14 +1,14 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import type { EmblaOptionsType } from 'embla-carousel';
 import { DotButton, useDotButton } from './hero-carousel-button';
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
-import Link from 'next/link';
 import { SvgIcon } from '../util/svg-icon';
 import type { Carousel } from 'generated/prisma';
-import { isMobile } from 'react-device-detect';
 import Image from 'next/image';
+import Link from 'next/link';
+import { isMobile } from 'react-device-detect';
 
 type CarouselType = {
 	slides: Carousel[];
@@ -16,55 +16,78 @@ type CarouselType = {
 	useSocials: boolean;
 };
 
-export default function HeroCarousel({
+const useClientLayout = () => {
+	const [isClientMobile, setIsClientMobile] = useState<boolean | null>(null);
+	const [hasMounted, setHasMounted] = useState(false);
+
+	useEffect(() => {
+		setHasMounted(true);
+		setIsClientMobile(isMobile);
+	}, []);
+
+	return { isClientMobile, hasMounted };
+};
+
+interface ClientContentProps extends CarouselType {
+	isClientMobile: boolean;
+}
+
+const ClientCarouselContent: React.FC<ClientContentProps> = ({
 	slides,
 	options,
 	useSocials,
-}: CarouselType) {
+	isClientMobile,
+}) => {
 	const [emblaRef, emblaApi] = useEmblaCarousel(options, [
 		Autoplay({
 			delay: 5000,
 		}),
 	]);
 
-	const images: React.ReactNode[] = [];
-	for (const element of slides) {
-		if ((element.isMobile && !isMobile) || (!element.isMobile && isMobile))
-			continue;
-
-		images.push(
-			<div key={element.id} className="h-full w-full">
-				<div className="h-full w-full">
-					<Image
-						src={element.source}
-						alt={element.alt}
-						loading="lazy"
-						height={isMobile ? 1080 : 1920}
-						width={isMobile ? 1080 : 1920}
-						className="object-cover object-top w-full h-full"
-					/>
-				</div>
-			</div>,
-		);
-	}
+	const filteredSlides = slides.filter(
+		(element) => element.isMobile === isClientMobile,
+	);
 
 	const { selectedIndex, scrollSnaps, onDotButtonClick } =
 		useDotButton(emblaApi);
 
+	if (filteredSlides.length === 0) {
+		return (
+			<div className="w-full max-w-[min(1200px,calc(100%-20px))] p-8 text-center text-gray-500 rounded-2xl border border-dashed border-gray-300">
+				No carousel slides available for this device view.
+			</div>
+		);
+	}
+
 	return (
 		<section className="relative w-full m-auto h-fit flex flex-col items-center">
 			<div
-				className="overflow-hidden w-full max-w-[min(1200px,calc(100%-20px))] shadow-[0px_5px_10px_#00000090] rounded-2xl md:rounded-4xl aspect-[9/16] md:aspect-[16/9] lg:aspect-[16/9] xl:aspect-[16/9] cursor-grab active:cursor-grabbing"
+				className="overflow-hidden w-full max-w-[min(1200px,calc(100%-20px))] shadow-[0px_5px_10px_#00000090] rounded-2xl md:rounded-4xl aspect-9/16 md:aspect-video lg:aspect-video xl:aspect-video cursor-grab active:cursor-grabbing"
 				ref={emblaRef}
 			>
 				<div className="flex touch-pinch-zoom h-full touch-pan-y">
-					{images?.map((elements: React.ReactNode, index: number) => (
+					{filteredSlides.map((element: Carousel) => (
 						<div
 							className="transform-[translate3d(0,0,0)] flex-[0 0 70%] grow-0 shrink-0 w-full mx-4 h-full"
-							key={index}
+							key={element.id}
 						>
 							<div className="w-full h-full relative overflow-hidden rounded-2xl md:rounded-4xl">
-								{elements}
+								<div key={element.id} className="h-full w-full">
+									<div className="h-full w-full">
+										<Image
+											src={element.source}
+											alt={element.alt}
+											loading="eager"
+											fetchPriority="high"
+											priority={true}
+											height={
+												isClientMobile ? 1920 : 1080
+											}
+											width={isClientMobile ? 1080 : 1920}
+											className="object-cover object-top w-full h-full"
+										/>
+									</div>
+								</div>
 							</div>
 						</div>
 					))}
@@ -79,7 +102,7 @@ export default function HeroCarousel({
 							height={32}
 							width={32}
 							className={'bg-[#ff0069]'}
-						></SvgIcon>
+						/>
 					</Link>
 					<Link href="https://www.facebook.com/UniSAMSoc">
 						<SvgIcon
@@ -87,7 +110,7 @@ export default function HeroCarousel({
 							height={32}
 							width={32}
 							className={'bg-[#0866ff]'}
-						></SvgIcon>
+						/>
 					</Link>
 					<Link href="https://discord.gg/tQUrdxzUZ4">
 						<SvgIcon
@@ -95,7 +118,7 @@ export default function HeroCarousel({
 							height={32}
 							width={32}
 							className={'bg-[#5865F2]'}
-						></SvgIcon>
+						/>
 					</Link>
 				</div>
 			)}
@@ -117,4 +140,16 @@ export default function HeroCarousel({
 			</div>
 		</section>
 	);
+};
+
+export default function HeroCarousel(props: CarouselType) {
+	const { isClientMobile, hasMounted } = useClientLayout();
+
+	if (!hasMounted || isClientMobile === null) {
+		return (
+			<div className="w-full max-w-[min(1200px,calc(100%-20px))] shadow-[0px_5px_10px_#00000090] rounded-2xl md:rounded-4xl aspect-9/16 md:aspect-video bg-gray-200 animate-pulse"></div>
+		);
+	}
+
+	return <ClientCarouselContent {...props} isClientMobile={isClientMobile} />;
 }
