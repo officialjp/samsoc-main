@@ -80,10 +80,8 @@ const ClientCarouselContent: React.FC<ClientContentProps> = ({
 											loading="eager"
 											fetchPriority="high"
 											priority={true}
-											height={
-												isClientMobile ? 1920 : 1080
-											}
-											width={isClientMobile ? 1080 : 1920}
+											height={isClientMobile ? 700 : 675}
+											width={isClientMobile ? 400 : 1200}
 											className="object-cover object-top w-full h-full"
 										/>
 									</div>

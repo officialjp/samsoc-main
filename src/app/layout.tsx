@@ -4,7 +4,6 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import { Footer } from './_components/footer';
 import { Header } from './_components/header';
 import { TRPCReactProvider } from '~/trpc/react';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata: Metadata = {
 	title: 'Surrey Anime and Manga Society',
@@ -45,7 +44,6 @@ export default function RootLayout({
 				<div className="pt-20">
 					<Header />
 					<TRPCReactProvider>{children}</TRPCReactProvider>
-					<SpeedInsights />
 					<Footer />
 				</div>
 			</body>
