@@ -15,7 +15,7 @@ export default function Marquee({
 	const requestRef = useRef(0);
 
 	const updateSize = (self: HTMLElement, window: Window) => {
-		if (self && self.offsetWidth) {
+		if (self?.offsetWidth) {
 			if (window.innerWidth > self.offsetWidth) {
 				setScrollCount(
 					Math.floor((window.innerWidth / self.offsetWidth) * 2) + 2,

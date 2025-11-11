@@ -20,6 +20,7 @@ export default function ScrollViewCard({
 		<InView
 			triggerOnce={triggerOnce}
 			threshold={0.2}
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 			as={tag}
 			id={id}
 			className={cn('SAManimController', className)}
