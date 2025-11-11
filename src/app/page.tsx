@@ -18,7 +18,7 @@ import { AnimeCard } from './_components/landing/anime-card';
 import { Button } from './_components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
-import LibraryPhoto from '../../public/images/library-placeholder.webp';
+import LibraryPhoto from '../../public/images/sam-library-image.png';
 import Logo from '../../public/images/logo.png';
 import { MembershipCard } from './_components/landing/membership-card';
 import Marquee from './_components/marquee';
@@ -187,11 +187,11 @@ export default async function Home() {
 					/>
 					<div className="flex items-center justify-center mx-auto max-w-7xl py-12 flex-col">
 						<div className="relative">
-							<div className="overflow-hidden lg:w-[640px] lg:h-[360px] w-[360px] h-[200px] border-2 rounded-2xl border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+							<div className="overflow-hidden lg:w-[800px] lg:h-[450px] md:w-[540px] md:h-[300px] w-[360px] h-[200px] border-2 rounded-2xl border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
 								<Image
 									src={LibraryPhoto}
-									height={360}
-									width={640}
+									height={1080}
+									width={1920}
 									draggable={false}
 									alt={`Gallery image`}
 									className="aspect-video object-cover"
