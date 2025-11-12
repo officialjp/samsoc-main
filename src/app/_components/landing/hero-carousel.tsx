@@ -66,26 +66,22 @@ const ClientCarouselContent: React.FC<ClientContentProps> = ({
 				ref={emblaRef}
 			>
 				<div className="flex touch-pinch-zoom h-full touch-pan-y">
-					{filteredSlides.map((element: Carousel) => (
+					{filteredSlides.map((element: Carousel, index: number) => (
 						<div
 							className="transform-[translate3d(0,0,0)] flex-[0 0 70%] grow-0 shrink-0 w-full mx-4 h-full"
 							key={element.id}
 						>
 							<div className="w-full h-full relative overflow-hidden rounded-2xl md:rounded-4xl">
-								<div key={element.id} className="h-full w-full">
-									<div className="h-full w-full">
-										<Image
-											src={element.source}
-											alt={element.alt}
-											loading="eager"
-											fetchPriority="high"
-											priority={true}
-											height={isClientMobile ? 700 : 675}
-											width={isClientMobile ? 400 : 1200}
-											className="object-cover object-top w-full h-full"
-										/>
-									</div>
-								</div>
+								<Image
+									src={element.source}
+									alt={element.alt}
+									fill
+									sizes="(max-width: 640px) calc(100vw - 40px), (max-width: 768px) calc(100vw - 40px), (max-width: 1024px) 750px, 1200px"
+									quality={85}
+									priority={index === 0}
+									loading={index === 0 ? 'eager' : 'lazy'}
+									className="object-cover object-top"
+								/>
 							</div>
 						</div>
 					))}
