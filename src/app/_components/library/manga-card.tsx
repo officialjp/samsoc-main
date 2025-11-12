@@ -1,68 +1,72 @@
-import React from 'react';
+import { memo } from 'react';
 import Image from 'next/image';
 
-interface MangaCardProps {
+interface MangaData {
+	id: number;
 	title: string;
+	source: string;
 	author: string;
+	borrowed_by: string | null;
 	volume: number;
-	coverImage: string;
-	genre: string[];
-	isAvailable: boolean;
-	borrowedBy?: string;
+	genres: string[];
 }
 
-const MangaCard: React.FC<MangaCardProps> = ({
-	title,
-	author,
-	volume,
-	coverImage,
-	genre,
-	isAvailable,
-	borrowedBy,
-}) => {
+interface MangaCardProps {
+	manga: MangaData;
+}
+
+export const MangaCard = memo(function MangaCard({ manga }: MangaCardProps) {
+	const isAvailable = !manga.borrowed_by || manga.borrowed_by === 'NULL';
+	const hasBorrower = manga.borrowed_by && manga.borrowed_by !== 'NULL';
+
 	return (
-		<div className="bg-white rounded-2xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-row items-center border-2 border-black">
-			<div className="mr-4 h-48 w-32 relative border-2 border-black">
+		<article className="flex flex-row items-center rounded-2xl border-2 border-black bg-white p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+			<div className="relative mr-4 h-48 w-32 shrink-0 border-2 border-black">
 				<Image
-					src={coverImage || '/placeholder.svg'}
-					alt={`${title} Volume ${volume} cover`}
+					src={manga.source}
+					alt={`${manga.title} Volume ${manga.volume} cover`}
 					fill
 					className="object-cover"
-					sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+					sizes="128px"
+					loading="lazy"
 				/>
 			</div>
+
 			<div className="flex-1">
-				<h2 className="text-xl font-bold tracking-tight text-gray-900 mb-1">
-					{title}
+				<h2 className="mb-1 text-xl font-bold tracking-tight text-gray-900">
+					{manga.title}
 				</h2>
-				<p className="text-sm text-gray-700 mb-2">
-					Vol. {volume} by {author}
+				<p className="mb-2 text-sm text-gray-700">
+					Vol. {manga.volume} by {manga.author}
 				</p>
 
-				<div className="flex flex-wrap gap-2 mb-3">
-					{genre.map((g) => (
-						<span
-							key={g}
-							className="text-xs font-semibold bg-gray-100 text-gray-900 px-2 py-1 rounded-full border border-gray-300"
-						>
-							{g}
-						</span>
-					))}
-				</div>
-				{borrowedBy !== 'NULL' && borrowedBy && (
+				{manga.genres.length > 0 && (
+					<div className="mb-3 flex flex-wrap gap-2">
+						{manga.genres.map((genre) => (
+							<span
+								key={genre}
+								className="rounded-full border border-gray-300 bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-900"
+							>
+								{genre}
+							</span>
+						))}
+					</div>
+				)}
+
+				{hasBorrower ? (
 					<p className="text-sm text-gray-500">
-						Borrowed by: {borrowedBy}
+						Borrowed by: {manga.borrowed_by}
+					</p>
+				) : isAvailable ? (
+					<p className="text-sm font-medium text-green-600">
+						Available
+					</p>
+				) : (
+					<p className="text-sm font-medium text-red-600">
+						Unavailable
 					</p>
 				)}
-				{!isAvailable && !borrowedBy && (
-					<p className="text-sm text-red-500">Unavailable</p>
-				)}
-				{isAvailable && (
-					<p className="text-sm text-green-500">Available</p>
-				)}
 			</div>
-		</div>
+		</article>
 	);
-};
-
-export default MangaCard;
+});
