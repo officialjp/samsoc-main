@@ -1,10 +1,31 @@
 import { z } from 'zod';
+import { unstable_cache } from 'next/cache'; // 🛑 NEW IMPORT
 
 import {
 	createTRPCRouter,
 	protectedProcedure,
 	publicProcedure,
+	// 🛑 IMPORTANT: Assuming your TRPC file exports the context type as 'Context
 } from '~/server/api/trpc';
+
+// 🛑 TYPE DEFINITION: Extract the type of ctx.db (your Prisma/Drizzle client)
+const ctxTypeHelper = publicProcedure.query(async ({ ctx }) => ctx);
+type ContextType = Awaited<ReturnType<typeof ctxTypeHelper>>;
+type DBType = ContextType['db'];
+const CAROUSEL_CACHE_KEY = ['carousel-images'];
+const REVALIDATE_TIME = 60 * 60 * 24;
+const fetchCarouselData = async (db: DBType) => {
+	const allImages = await db.carousel.findMany({});
+	return { data: allImages };
+};
+
+const getCachedCarouselData = unstable_cache(
+	async (db: DBType) => fetchCarouselData(db),
+	CAROUSEL_CACHE_KEY,
+	{
+		revalidate: REVALIDATE_TIME,
+	},
+);
 
 export const postRouter = createTRPCRouter({
 	hello: publicProcedure
@@ -16,8 +37,7 @@ export const postRouter = createTRPCRouter({
 		}),
 
 	getCarouselData: publicProcedure.query(async ({ ctx }) => {
-		const allImages = await ctx.db.carousel.findMany({});
-		return { data: allImages };
+		return await getCachedCarouselData(ctx.db);
 	}),
 
 	getAnimeCardData: publicProcedure.query(async ({ ctx }) => {
