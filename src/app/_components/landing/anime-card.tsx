@@ -36,7 +36,7 @@ export function AnimeCard({ animes }: AnimeCardProps) {
 	const positions = useMemo(() => CARD_POSITIONS, []);
 
 	const handleCardClick = useCallback(
-		(event: React.MouseEvent<HTMLDivElement>, animeId: number) => {
+		(event: React.SyntheticEvent<HTMLDivElement>, animeId: number) => {
 			const target = event.currentTarget;
 
 			if (target.classList.contains('center-card')) {
@@ -102,7 +102,10 @@ interface AnimeCardItemProps {
 	anime: AnimeCardData;
 	position: (typeof CARD_POSITIONS)[number];
 	isSelected: boolean;
-	onClick: (event: React.MouseEvent<HTMLDivElement>, animeId: number) => void;
+	onClick: (
+		event: React.SyntheticEvent<HTMLDivElement>,
+		animeId: number,
+	) => void;
 }
 
 function AnimeCardItem({
@@ -119,7 +122,7 @@ function AnimeCardItem({
 			tabIndex={0}
 			onKeyDown={(e) => {
 				if (e.key === 'Enter' || e.key === ' ') {
-					onClick(e as any, anime.id);
+					onClick(e, anime.id);
 				}
 			}}
 		>
