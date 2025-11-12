@@ -4,7 +4,7 @@ import levenshtein from 'js-levenshtein';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import Miku from '../../public/miku.png';
+import Miku from '../../public/miku.avif';
 import { useEffect, useState } from 'react';
 import { SectionContainer } from '~/app/_components/section-container';
 import { Button } from '~/app/_components/ui/button';

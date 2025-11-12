@@ -7,7 +7,7 @@ import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { SvgIcon } from './util/svg-icon';
 import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
-import Logo from '../../../public/images/logo.png';
+import Logo from '../../../public/images/logo.avif';
 import { cn } from '~/lib/utils';
 import { usePathname } from 'next/navigation';
 
