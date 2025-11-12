@@ -23,15 +23,52 @@ import { MembershipCard } from './_components/landing/membership-card';
 import Marquee from 'react-fast-marquee';
 import { SvgIcon } from './_components/util/svg-icon';
 import { CommitteeCard } from './_components/landing/committee-card';
+import type { Committee, Carousel } from 'generated/prisma';
 
-export default async function Home() {
+interface AnimeCardData {
+	id: number;
+	title: string;
+	episode: string;
+	source: string;
+	mal_link: string;
+	total_episodes: number;
+	show_type: string;
+	studio: string;
+	genres: { id: number; name: string }[];
+}
+
+interface PropType {
+	props: DataType;
+}
+
+interface DataType {
+	cards: AnimeCardData[];
+	carousel: Carousel[];
+	committee: Committee[];
+}
+
+export async function getStaticProps() {
 	const cardResult = await api.post.getAnimeCardData();
 	const cardData = cardResult.data;
 	const carouselResult = await api.post.getCarouselData();
 	const carouselData = carouselResult.data;
 	const committeResult = await api.post.getCommitteeMembers();
 	const committee = committeResult.data;
+
+	return {
+		props: {
+			cards: cardData,
+			carousel: carouselData,
+			committee: committee,
+		},
+	};
+}
+
+export default async function Home({ props }: PropType) {
 	const options: EmblaOptionsType = { loop: true };
+	const cards = props.cards;
+	const carousel = props.carousel;
+	const committee = props.committee;
 	const features = [
 		{
 			icon: Calendar,
@@ -82,7 +119,7 @@ export default async function Home() {
 				<section className="w-full pb-3 pt-0 md:pt-3 lg:pt-[3vh] flex items-center justify-center flex-col">
 					<div className="container w-full max-w-full px-0 md:px-6 lg:px-8">
 						<HeroCarousel
-							slides={carouselData}
+							slides={carousel}
 							options={options}
 							useSocials={true}
 						></HeroCarousel>
@@ -159,7 +196,7 @@ export default async function Home() {
 								  anime screenings!"
 						badgeColor="bg-purple-200"
 					/>
-					<AnimeCard animes={cardData} />
+					<AnimeCard animes={cards} />
 					<div className="mb-8 -mt-8 text-center">
 						<p className="font-medium mb-4">
 							Dont worry if youve missed previous episodes - you
