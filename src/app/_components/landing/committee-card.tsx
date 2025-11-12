@@ -23,16 +23,20 @@ export function CommitteeCard({
 				className,
 			)}
 		>
-			<Image
-				draggable={false}
-				src={source ?? '/placeholder.svg'}
-				alt={id.toString()}
-				width={200}
-				height={200}
-				loading="lazy"
-			/>
-			<p>{name}</p>
-			<p>{role}</p>
+			<div className="relative w-[200px] h-[200px]">
+				<Image
+					draggable={false}
+					src={source ?? '/placeholder.svg'}
+					alt={`${name} - ${role}`}
+					fill
+					sizes="(max-width: 640px) 150px, (max-width: 1024px) 180px, 200px"
+					quality={80}
+					loading="lazy"
+					className="object-cover rounded-full"
+				/>
+			</div>
+			<p className="mt-2 font-semibold">{name}</p>
+			<p className="text-gray-600">{role}</p>
 		</div>
 	);
 }

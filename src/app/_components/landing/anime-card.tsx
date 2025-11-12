@@ -86,15 +86,21 @@ export function AnimeCard(animes: AnimeListProps) {
 					>
 						<Tooltip>
 							<TooltipTrigger>
-								<Link href={anime.mal_link}>
-									<Image
-										draggable={false}
-										alt={anime.title}
-										src={anime.source}
-										width={320}
-										height={452}
-										className="border-2 md:border-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-black aspect-7/10 w-[min(40vw,320px)] bg-black rounded-2xl"
-									></Image>
+								<Link
+									href={anime.mal_link}
+									className="block w-[min(40vw,320px)]"
+								>
+									<div className="relative w-full aspect-10/14">
+										<Image
+											draggable={false}
+											alt={anime.title}
+											src={anime.source}
+											fill
+											sizes="(max-width: 400px) 40vw, (max-width: 768px) 35vw, (max-width: 1024px) 25vw, 320px"
+											quality={75}
+											className="border-2 md:border-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-black object-cover bg-black rounded-2xl"
+										/>
+									</div>
 								</Link>
 								<Link href={anime.mal_link}>
 									<p className="hover:text-button2 py-4 text-sm md:text-xl font-bold">
