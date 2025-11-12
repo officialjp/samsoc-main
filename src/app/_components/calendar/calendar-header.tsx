@@ -1,10 +1,7 @@
 'use client';
 
-import { cn } from '~/lib/utils';
-
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '../ui/button';
-import { isMobile } from 'react-device-detect';
 
 interface CalendarHeaderProps {
 	currentMonth: Date;
@@ -19,8 +16,15 @@ export function CalendarHeader({
 	onNextMonth,
 	onCurrentMonth,
 }: CalendarHeaderProps) {
-	const dateFormat = new Intl.DateTimeFormat('en-US', {
-		month: isMobile ? 'short' : 'long',
+	// Format for desktop (long month)
+	const desktopDateFormat = new Intl.DateTimeFormat('en-US', {
+		month: 'long',
+		year: 'numeric',
+	});
+
+	// Format for mobile (short month)
+	const mobileDateFormat = new Intl.DateTimeFormat('en-US', {
+		month: 'short',
 		year: 'numeric',
 	});
 
@@ -30,36 +34,33 @@ export function CalendarHeader({
 				<Button
 					onClick={onPrevMonth}
 					variant="outline"
-					className="bg-about1 border-2 border-black rounded-2xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer"
-					size={isMobile ? 'sm' : 'default'}
+					className="bg-about1 border-2 border-black rounded-2xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer h-9 w-9 p-0 md:h-10 md:w-10 md:px-4 md:py-2"
+					aria-label="Previous month"
 				>
-					<ChevronLeft className={isMobile ? 'h-4 w-4' : 'h-5 w-5'} />
+					<ChevronLeft className="h-4 w-4 md:h-5 md:w-5" />
 				</Button>
 				<Button
 					onClick={onNextMonth}
 					variant="outline"
-					className="bg-about1 border-2 border-black rounded-2xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer"
-					size={isMobile ? 'sm' : 'default'}
+					className="bg-about1 border-2 border-black rounded-2xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer h-9 w-9 p-0 md:h-10 md:w-10 md:px-4 md:py-2"
+					aria-label="Next month"
 				>
-					<ChevronRight
-						className={isMobile ? 'h-4 w-4' : 'h-5 w-5'}
-					/>
+					<ChevronRight className="h-4 w-4 md:h-5 md:w-5" />
 				</Button>
 			</div>
 
-			<h2
-				className={cn(
-					'font-bold px-4 py-2',
-					isMobile ? 'text-lg' : 'text-2xl',
-				)}
-			>
-				{dateFormat.format(currentMonth)}
+			<h2 className="font-bold px-4 py-2 text-lg md:text-2xl">
+				<span className="md:hidden">
+					{mobileDateFormat.format(currentMonth)}
+				</span>
+				<span className="hidden md:inline">
+					{desktopDateFormat.format(currentMonth)}
+				</span>
 			</h2>
 
 			<Button
 				onClick={onCurrentMonth}
-				className="bg-pink-300 hover:bg-pink-400 text-black border-2 rounded-2xl border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer"
-				size={isMobile ? 'sm' : 'default'}
+				className="bg-pink-300 hover:bg-pink-400 text-black border-2 rounded-2xl border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer h-9 px-3 text-sm md:h-10 md:px-4 md:py-2 md:text-base"
 			>
 				Today
 			</Button>
