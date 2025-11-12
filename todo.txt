@@ -1,20 +1,10 @@
 remake all components 
 - header -> "Nav"
 - inView -> rework
-- marquee -> optimise
 - remove all "inView" components and fix
 
 remake some global styling and layout components to account for account integration and game layout
  +++ rename most components as our naming conventions were doo doo
-
-
-rebuild all pages with new db calls
-- rebuild the pages with server data fetching and client components in mind
-- build all page.tsx with hydrate client
-
-create api calls in trpc
-
-make models and actually plan typing using the definitions.ts file so it isn't spaghetti :)
 
 create login components
 

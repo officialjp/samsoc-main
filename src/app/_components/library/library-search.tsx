@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import MangaCard from '~/app/_components/library/manga-card';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { MangaCard } from '~/app/_components/library/manga-card';
 import { LibraryFilters } from '~/app/_components/library/library-filters';
 import { Pagination } from '~/app/_components/pagination';
 import { BookOpen } from 'lucide-react';
@@ -16,18 +16,24 @@ interface MangaData {
 	genres: string[];
 }
 
-const ITEMS_PER_PAGE = 12;
+interface FilterState {
+	status: string;
+	genre: string;
+	search: string;
+}
 
 interface LibrarySearchProps {
 	initialMangaData: MangaData[];
-	allGenres: string[];
+	allGenres: readonly string[];
 }
+
+const ITEMS_PER_PAGE = 12;
 
 export function LibrarySearch({
 	initialMangaData,
 	allGenres,
 }: LibrarySearchProps) {
-	const [filters, setFilters] = useState({
+	const [filters, setFilters] = useState<FilterState>({
 		status: 'all',
 		genre: 'all',
 		search: '',
@@ -36,88 +42,87 @@ export function LibrarySearch({
 
 	const filteredManga = useMemo(() => {
 		return initialMangaData.filter((manga) => {
-			const isBorrowed =
-				!!manga.borrowed_by && manga.borrowed_by !== 'NULL';
-
-			if (filters.status === 'available' && isBorrowed) return false;
-			if (filters.status === 'borrowed' && !isBorrowed) return false;
+			if (filters.status !== 'all') {
+				const isBorrowed =
+					!!manga.borrowed_by && manga.borrowed_by !== 'NULL';
+				if (filters.status === 'available' && isBorrowed) return false;
+				if (filters.status === 'borrowed' && !isBorrowed) return false;
+			}
 
 			if (
 				filters.genre !== 'all' &&
 				!manga.genres.includes(filters.genre)
-			)
+			) {
 				return false;
+			}
 
 			if (filters.search) {
-				const searchTerm = filters.search.toLowerCase();
+				const searchLower = filters.search.toLowerCase();
 				return (
-					manga.title.toLowerCase().includes(searchTerm) ||
-					manga.author.toLowerCase().includes(searchTerm)
+					manga.title.toLowerCase().includes(searchLower) ||
+					manga.author.toLowerCase().includes(searchLower)
 				);
 			}
+
 			return true;
 		});
 	}, [filters, initialMangaData]);
 
-	const totalPages = Math.ceil(filteredManga.length / ITEMS_PER_PAGE);
-	const paginatedManga = useMemo(() => {
+	const { totalPages, paginatedManga } = useMemo(() => {
+		const total = Math.ceil(filteredManga.length / ITEMS_PER_PAGE);
 		const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-		const endIndex = startIndex + ITEMS_PER_PAGE;
-		return filteredManga.slice(startIndex, endIndex);
+		const paginated = filteredManga.slice(
+			startIndex,
+			startIndex + ITEMS_PER_PAGE,
+		);
+
+		return { totalPages: total, paginatedManga: paginated };
 	}, [filteredManga, currentPage]);
 
 	useEffect(() => {
 		setCurrentPage(1);
 	}, [filters]);
 
-	const handlePageChange = (page: number) => {
+	const handlePageChange = useCallback((page: number) => {
 		setCurrentPage(page);
-	};
+		document.getElementById('manga-results')?.scrollIntoView({
+			behavior: 'smooth',
+			block: 'start',
+		});
+	}, []);
 
 	return (
-		<div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8">
-			<div className="lg:sticky lg:top-24 h-fit">
+		<div className="grid grid-cols-1 gap-8 lg:grid-cols-[300px_1fr]">
+			<aside className="h-fit lg:sticky lg:top-24">
 				<LibraryFilters
 					genres={allGenres}
 					onFilterChange={setFilters}
-					initialFilters={filters}
+					filters={filters}
 				/>
-				<div className="mt-6 bg-white border-2 border-black p-4 rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-					<h3 className="text-lg font-bold mb-2 flex items-center">
-						<BookOpen className="h-5 w-5 mr-2" /> Library Rules
+				<div className="mt-6 rounded-2xl border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+					<h3 className="mb-2 flex items-center text-lg font-bold">
+						<BookOpen className="mr-2 h-5 w-5" /> Library Rules
 					</h3>
-					<ul className="text-sm space-y-2">
+					<ul className="space-y-2 text-sm">
 						<li>• Paid members only</li>
 						<li>• Only one manga borrowed per person at a time</li>
 						<li>• Academic year borrowing period</li>
 						<li>• No late fees</li>
 					</ul>
 				</div>
-			</div>
+			</aside>
 
-			<div id="manga-results" className="lg:col-span-1">
+			<section id="manga-results">
 				{filteredManga.length > 0 ? (
 					<>
-						<div className="mb-4 text-sm text-gray-500">
+						<p className="mb-4 text-sm text-gray-500">
 							Showing {paginatedManga.length} of{' '}
 							{filteredManga.length} results
-						</div>
+						</p>
 
-						<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+						<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
 							{paginatedManga.map((manga) => (
-								<MangaCard
-									key={manga.id}
-									title={manga.title}
-									author={manga.author}
-									volume={manga.volume}
-									coverImage={manga.source}
-									genre={manga.genres}
-									isAvailable={
-										!manga.borrowed_by ||
-										manga.borrowed_by === 'NULL'
-									}
-									borrowedBy={manga.borrowed_by ?? undefined}
-								/>
+								<MangaCard key={manga.id} manga={manga} />
 							))}
 						</div>
 
@@ -130,14 +135,16 @@ export function LibrarySearch({
 						)}
 					</>
 				) : (
-					<div className="bg-white border-2 border-black p-8 rounded-2xl text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-						<h3 className="text-xl font-bold mb-2">
+					<div className="rounded-2xl border-2 border-black bg-white p-8 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+						<h3 className="mb-2 text-xl font-bold">
 							No manga found
 						</h3>
-						<p>Try adjusting your filters to see more results.</p>
+						<p className="text-gray-600">
+							Try adjusting your filters to see more results.
+						</p>
 					</div>
 				)}
-			</div>
+			</section>
 		</div>
 	);
 }

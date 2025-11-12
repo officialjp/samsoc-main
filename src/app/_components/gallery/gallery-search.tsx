@@ -1,31 +1,38 @@
 'use client';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { GalleryFilter } from '~/app/_components/gallery/gallery-filter';
 import { GalleryImage } from '~/app/_components/gallery/gallery-image';
 import { Button } from '~/app/_components/ui/button';
 import { X } from 'lucide-react';
 import type { Image } from 'generated/prisma';
 
-interface GalleryClientProps {
+interface GallerySearchProps {
 	initialItems: Image[];
 }
 
-export function GallerySearch({ initialItems }: GalleryClientProps) {
+const CATEGORIES = ['All', 'Events', 'Collaborations'] as const;
+const CURRENT_YEAR = new Date().getFullYear();
+const START_YEAR = 2022;
+
+const generateYears = (): string[] => {
+	const yearsCount = CURRENT_YEAR - START_YEAR + 1;
+	return [
+		'All',
+		...Array.from({ length: yearsCount }, (_, i) => String(START_YEAR + i)),
+	];
+};
+
+export function GallerySearch({ initialItems }: GallerySearchProps) {
 	const [activeCategory, setActiveCategory] = useState<string>('All');
 	const [activeYear, setActiveYear] = useState<string>('All');
 
-	const categories = ['All', 'Events', 'Collaborations'];
-	const years = useMemo(
-		() => [
-			'All',
-			...Array(new Date().getFullYear() - 2021)
-				.fill(0)
-				.map((_, index) => (index + 2022).toString()),
-		],
-		[],
-	);
+	const years = useMemo(() => generateYears(), []);
 
 	const filteredItems = useMemo(() => {
+		if (activeCategory === 'All' && activeYear === 'All') {
+			return initialItems;
+		}
+
 		return initialItems.filter((item) => {
 			const categoryMatch =
 				activeCategory === 'All' || item.category === activeCategory;
@@ -37,78 +44,79 @@ export function GallerySearch({ initialItems }: GalleryClientProps) {
 
 	const hasActiveFilters = activeCategory !== 'All' || activeYear !== 'All';
 
-	const clearFilters = () => {
+	const clearFilters = useCallback(() => {
 		setActiveCategory('All');
 		setActiveYear('All');
-	};
+	}, []);
 
 	return (
-		<div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8">
-			<div className="lg:sticky lg:top-24 h-fit">
-				<div className="border-2 rounded-2xl border-black bg-white p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-					<div className="flex justify-end items-center mb-6">
+		<div className="grid grid-cols-1 gap-8 lg:grid-cols-[300px_1fr]">
+			<aside className="h-fit lg:sticky lg:top-24">
+				<div className="rounded-2xl border-2 border-black bg-white p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+					<div className="mb-6 flex items-center justify-between">
+						<h2 className="text-2xl font-bold">Filter Gallery</h2>
 						{hasActiveFilters && (
 							<Button
 								variant="default"
 								size="sm"
 								onClick={clearFilters}
 								className="hover:cursor-pointer"
+								aria-label="Clear all filters"
 							>
-								<X className="h-3 w-3 mr-1" /> Clear Filters
+								<X className="mr-1 h-3 w-3" /> Clear
 							</Button>
 						)}
 					</div>
+
 					<GalleryFilter
-						categories={categories}
+						categories={CATEGORIES}
 						years={years}
 						onCategoryChange={setActiveCategory}
 						onYearChange={setActiveYear}
 						activeCategory={activeCategory}
 						activeYear={activeYear}
-						filteredItemsCount={filteredItems.length}
 					/>
-
-					<div className="mt-8 pt-6 border-t-2 border-gray-200">
-						<p className="text-sm text-gray-600 mb-2">
+					<div className="mt-8 border-t-2 border-gray-200 pt-6">
+						<p className="mb-2 text-sm text-gray-600">
 							Currently showing:
 						</p>
 						<div className="flex flex-wrap gap-2">
-							<span className="bg-pink-100 px-2 py-1 text-sm border border-pink-300 rounded-2xl">
+							<span className="rounded-2xl border border-pink-300 bg-pink-100 px-2 py-1 text-sm">
 								{activeCategory}
 							</span>
-							<span className="bg-cyan-100 px-2 py-1 text-sm border border-cyan-300 rounded-2xl">
+							<span className="rounded-2xl border border-cyan-300 bg-cyan-100 px-2 py-1 text-sm">
 								{activeYear}
 							</span>
 						</div>
-						<p className="mt-4 text-sm text-gray-600">
+						<p className="mt-4 text-sm font-medium text-gray-900">
 							{filteredItems.length} photo
 							{filteredItems.length !== 1 ? 's' : ''} found
 						</p>
 					</div>
 				</div>
-			</div>
-			<div>
+			</aside>
+			<section>
 				{filteredItems.length > 0 ? (
-					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+					<div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
 						{filteredItems.map((item) => (
 							<GalleryImage
 								key={item.id}
 								src={item.source}
 								alt={item.alt}
-								width={600}
-								height={400}
 							/>
 						))}
 					</div>
 				) : (
-					<div className="border-2 border-black bg-yellow-100 rounded-2xl p-8 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-						<h3 className="text-xl font-bold mb-2">
+					<div className="rounded-2xl border-2 border-black bg-yellow-100 p-8 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+						<h3 className="mb-2 text-xl font-bold">
 							No photos found
 						</h3>
-						<p>Try changing your filters to see more photos.</p>
+						<p className="text-gray-700">
+							Try changing your filters to see more photos.
+						</p>
 					</div>
 				)}
-			</div>
+			</section>
 		</div>
 	);
 }

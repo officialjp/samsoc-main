@@ -1,64 +1,107 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback, useEffect, memo } from 'react';
 import Image from 'next/image';
 import { X } from 'lucide-react';
 
 interface GalleryImageProps {
 	src: string;
 	alt: string;
-	width: number;
-	height: number;
 }
 
-export function GalleryImage({ src, alt, width, height }: GalleryImageProps) {
+export const GalleryImage = memo(function GalleryImage({
+	src,
+	alt,
+}: GalleryImageProps) {
 	const [isOpen, setIsOpen] = useState(false);
+
+	const openModal = useCallback(() => {
+		setIsOpen(true);
+	}, []);
+
+	const closeModal = useCallback(() => {
+		setIsOpen(false);
+	}, []);
+
+	useEffect(() => {
+		if (!isOpen) return;
+
+		const handleEscape = (e: KeyboardEvent) => {
+			if (e.key === 'Escape') {
+				closeModal();
+			}
+		};
+
+		document.addEventListener('keydown', handleEscape);
+		document.body.style.overflow = 'hidden';
+
+		return () => {
+			document.removeEventListener('keydown', handleEscape);
+			document.body.style.overflow = 'unset';
+		};
+	}, [isOpen, closeModal]);
 
 	return (
 		<>
-			<div
-				className="overflow-hidden border-2 rounded-2xl border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-black cursor-pointer transition-transform hover:scale-[1.02]"
-				onClick={() => setIsOpen(true)}
+			<button
+				className="overflow-hidden rounded-2xl border-2 border-black bg-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+				onClick={openModal}
+				aria-label={`View full size image: ${alt}`}
+				type="button"
 			>
 				<Image
-					src={src || '/placeholder.svg'}
-					width={width}
-					height={height}
+					src={src}
+					width={600}
+					height={400}
 					alt={alt}
 					loading="lazy"
-					sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+					sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
 					className="aspect-video object-cover"
 				/>
-			</div>
+			</button>
 
 			{isOpen && (
 				<div
-					className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 hover:cursor-pointer"
-					onClick={() => setIsOpen(false)}
+					className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+					onClick={closeModal}
+					role="dialog"
+					aria-modal="true"
+					aria-labelledby="modal-title"
 				>
 					<div
-						className="relative max-w-5xl max-h-[90vh] bg-white rounded-2xl border-4 border-black p-2 hover:cursor-default"
+						className="relative max-h-[90vh] max-w-5xl rounded-2xl border-4 border-black bg-white p-2"
 						onClick={(e) => e.stopPropagation()}
 					>
 						<button
-							className="absolute -top-4 -right-4 bg-pink-500 text-white rounded-full p-1 border-2 border-black hover:cursor-pointer"
-							onClick={() => setIsOpen(false)}
+							className="absolute -right-4 -top-4 rounded-full border-2 border-black bg-pink-500 p-1 text-white transition-colors hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+							onClick={closeModal}
+							aria-label="Close modal"
+							type="button"
 						>
 							<X className="h-6 w-6" />
 						</button>
-						<Image
-							src={src || '/placeholder.svg'}
-							width={1200}
-							height={800}
-							loading="lazy"
-							alt={alt}
-							sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-							className="max-h-[80vh] w-auto object-contain"
-						/>
-						<p className="mt-2 text-center font-medium">{alt}</p>
+
+						<div className="relative">
+							<Image
+								src={src}
+								width={1200}
+								height={800}
+								alt={alt}
+								className="max-h-[80vh] w-auto object-contain"
+								priority
+								sizes="90vw"
+							/>
+						</div>
+
+						<p
+							id="modal-title"
+							className="mt-2 text-center font-medium text-gray-900"
+						>
+							{alt}
+						</p>
 					</div>
 				</div>
 			)}
 		</>
 	);
-}
+});

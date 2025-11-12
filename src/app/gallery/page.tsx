@@ -5,17 +5,17 @@ import { api, HydrateClient } from '~/trpc/server';
 import { GallerySearch } from '../_components/gallery/gallery-search';
 
 export const metadata: Metadata = {
-	title: 'Surrey Anime and Manga Society',
+	title: 'Surrey Anime and Manga Society - Gallery',
 	description:
 		'Browse through our collection of photos from events, weekly sessions, and collaborations over the years.',
 	openGraph: {
-		title: 'Surrey Anime and Manga Society',
+		title: 'Surrey Anime and Manga Society - Gallery',
 		description:
 			'Browse through our collection of photos from events, weekly sessions, and collaborations over the years.',
 	},
 	twitter: {
 		card: 'summary',
-		title: 'Surrey Anime and Manga Society',
+		title: 'Surrey Anime and Manga Society - Gallery',
 		description:
 			'Browse through our collection of photos from events, weekly sessions, and collaborations over the years.',
 	},
@@ -23,25 +23,22 @@ export const metadata: Metadata = {
 
 export default async function GalleryPage() {
 	const imageResponse = await api.post.getImageData();
-	const imageData = imageResponse.data;
+	const imageData = imageResponse?.data || [];
 
 	return (
 		<HydrateClient>
-			<div className="flex min-h-screen flex-col w-full">
-				<main className="flex-1">
-					<SectionContainer>
-						<SectionHeading
-							badge="MEMORIES"
-							title="Photo Gallery"
-							description="Browse through our collection of photos from events, weekly sessions, and collaborations over the years."
-							badgeColor="bg-purple-200"
-							className="mb-12"
-						/>
-
-						<GallerySearch initialItems={imageData} />
-					</SectionContainer>
-				</main>
-			</div>
+			<main className="min-h-screen w-full">
+				<SectionContainer>
+					<SectionHeading
+						badge="MEMORIES"
+						title="Photo Gallery"
+						description="Browse through our collection of photos from events, weekly sessions, and collaborations over the years."
+						badgeColor="bg-purple-200"
+						className="mb-12"
+					/>
+					<GallerySearch initialItems={imageData} />
+				</SectionContainer>
+			</main>
 		</HydrateClient>
 	);
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import type React from 'react';
+import { memo, useCallback } from 'react';
 import { Search, X } from 'lucide-react';
 import { Button } from '~/app/_components/ui/button';
 import { Input } from '~/app/_components/ui/input';
@@ -13,53 +13,64 @@ interface FilterState {
 }
 
 interface LibraryFiltersProps {
-	genres: string[];
+	genres: readonly string[];
 	onFilterChange: (filters: FilterState) => void;
-	initialFilters: FilterState;
+	filters: FilterState;
 }
 
-export function LibraryFilters({
+const STATUS_OPTIONS = [
+	{ value: 'all', label: 'All', colorClass: 'bg-about1 hover:bg-about1' },
+	{
+		value: 'available',
+		label: 'Available',
+		colorClass: 'bg-green-300 hover:bg-green-400',
+	},
+	{
+		value: 'borrowed',
+		label: 'Borrowed',
+		colorClass: 'bg-red-300 hover:bg-red-400',
+	},
+] as const;
+
+export const LibraryFilters = memo(function LibraryFilters({
 	genres,
 	onFilterChange,
-	initialFilters,
+	filters,
 }: LibraryFiltersProps) {
-	const handleStatusChange = (newStatus: string) => {
-		onFilterChange({
-			status: newStatus,
-			genre: initialFilters.genre,
-			search: initialFilters.search,
-		});
-	};
+	const handleStatusChange = useCallback(
+		(newStatus: string) => {
+			onFilterChange({ ...filters, status: newStatus });
+		},
+		[filters, onFilterChange],
+	);
 
-	const handleGenreChange = (newGenre: string) => {
-		onFilterChange({
-			status: initialFilters.status,
-			genre: newGenre,
-			search: initialFilters.search,
-		});
-	};
+	const handleGenreChange = useCallback(
+		(newGenre: string) => {
+			onFilterChange({ ...filters, genre: newGenre });
+		},
+		[filters, onFilterChange],
+	);
 
-	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		onFilterChange({
-			status: initialFilters.status,
-			genre: initialFilters.genre,
-			search: e.target.value,
-		});
-	};
+	const handleSearchChange = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			onFilterChange({ ...filters, search: e.target.value });
+		},
+		[filters, onFilterChange],
+	);
 
-	const clearFilters = () => {
+	const clearFilters = useCallback(() => {
 		onFilterChange({ status: 'all', genre: 'all', search: '' });
-	};
+	}, [onFilterChange]);
 
 	const hasActiveFilters =
-		initialFilters.status !== 'all' ||
-		initialFilters.genre !== 'all' ||
-		initialFilters.search !== '';
+		filters.status !== 'all' ||
+		filters.genre !== 'all' ||
+		filters.search !== '';
 
 	return (
-		<div className="bg-white border-2 border-black rounded-2xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-			<h2 className="text-2xl font-bold mb-6">Filter Manga</h2>
-			<div className="flex justify-between items-center mb-6">
+		<div className="rounded-2xl border-2 border-black bg-white p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+			<div className="mb-6 flex items-center justify-between">
+				<h2 className="text-2xl font-bold">Filter Manga</h2>
 				{hasActiveFilters && (
 					<Button
 						variant="default"
@@ -67,7 +78,7 @@ export function LibraryFilters({
 						onClick={clearFilters}
 						className="hover:cursor-pointer"
 					>
-						<X className="h-3 w-3 mr-1" /> Clear Filters
+						<X className="mr-1 h-3 w-3" /> Clear
 					</Button>
 				)}
 			</div>
@@ -75,75 +86,68 @@ export function LibraryFilters({
 			<div className="mb-6">
 				<label
 					htmlFor="search"
-					className="block text-sm font-medium mb-2"
+					className="mb-2 block text-sm font-medium"
 				>
 					Search
 				</label>
 				<div className="relative">
-					<Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+					<Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
 					<Input
 						id="search"
+						type="search"
 						placeholder="Search by title or author..."
-						value={initialFilters.search}
+						value={filters.search}
 						onChange={handleSearchChange}
-						className="pl-8 border-2 border-black"
+						className="border-2 border-black pl-8"
 					/>
 				</div>
 			</div>
 
 			<div className="mb-6">
-				<h3 className="text-sm font-medium mb-2">Availability</h3>
+				<h3 className="mb-2 text-sm font-medium">Availability</h3>
 				<div className="flex flex-wrap gap-2">
-					{['all', 'available', 'borrowed'].map((statusOption) => (
+					{STATUS_OPTIONS.map(({ value, label, colorClass }) => (
 						<Button
-							key={statusOption}
-							onClick={() => handleStatusChange(statusOption)}
+							key={value}
+							onClick={() => handleStatusChange(value)}
 							className={cn(
 								'border-2 border-black hover:cursor-pointer',
-								initialFilters.status === statusOption
-									? statusOption === 'available'
-										? 'bg-green-300 hover:bg-green-400 text-black'
-										: statusOption === 'borrowed'
-											? 'bg-red-300 hover:bg-red-400 text-black'
-											: 'bg-about1 hover:bg-about-1 text-black'
-									: 'bg-white hover:bg-gray-100 text-black',
+								filters.status === value
+									? `${colorClass} text-black`
+									: 'bg-white text-black hover:bg-gray-100',
 							)}
 						>
-							{statusOption === 'all'
-								? 'All'
-								: statusOption === 'available'
-									? 'Available'
-									: 'Borrowed'}
+							{label}
 						</Button>
 					))}
 				</div>
 			</div>
 
 			<div>
-				<h3 className="text-sm font-medium mb-2">Genre</h3>
+				<h3 className="mb-2 text-sm font-medium">Genre</h3>
 				<div className="flex flex-wrap gap-2">
 					<Button
 						onClick={() => handleGenreChange('all')}
 						className={cn(
 							'border-2 border-black hover:cursor-pointer',
-							initialFilters.genre === 'all'
-								? 'bg-about1 hover:bg-about1 text-black'
-								: 'bg-white hover:bg-gray-100 text-black',
+							filters.genre === 'all'
+								? 'bg-about1 text-black hover:bg-about1'
+								: 'bg-white text-black hover:bg-gray-100',
 						)}
 					>
 						All Genres
 					</Button>
 					{genres.map((genre) => {
-						if (genre === '??') return;
+						if (genre === '??') return null;
 						return (
 							<Button
 								key={genre}
 								onClick={() => handleGenreChange(genre)}
 								className={cn(
 									'border-2 border-black hover:cursor-pointer',
-									initialFilters.genre === genre
-										? 'bg-green-300 hover:bg-green-400 text-black'
-										: 'bg-white hover:bg-gray-100 text-black',
+									filters.genre === genre
+										? 'bg-green-300 text-black hover:bg-green-400'
+										: 'bg-white text-black hover:bg-gray-100',
 								)}
 							>
 								{genre}
@@ -154,4 +158,4 @@ export function LibraryFilters({
 			</div>
 		</div>
 	);
-}
+});

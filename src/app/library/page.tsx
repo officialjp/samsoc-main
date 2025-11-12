@@ -5,33 +5,24 @@ import { LibrarySearch } from '~/app/_components/library/library-search';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-	title: 'Surrey Anime and Manga Society',
+	title: 'Surrey Anime and Manga Society - Library',
 	description:
 		'Browse our collection of manga available to borrow. Paid members can check out up to 3 volumes at a time for up to 2 weeks.',
 	openGraph: {
-		title: 'Surrey Anime and Manga Society',
+		title: 'Surrey Anime and Manga Society - Library',
 		description:
 			'Browse our collection of manga available to borrow. Paid members can check out up to 3 volumes at a time for up to 2 weeks.',
 	},
 	twitter: {
 		card: 'summary',
-		title: 'Surrey Anime and Manga Society',
+		title: 'Surrey Anime and Manga Society - Library',
 		description:
 			'Browse our collection of manga available to borrow. Paid members can check out up to 3 volumes at a time for up to 2 weeks.',
 	},
 };
 
-interface Manga {
-	id: number;
-	title: string;
-	source: string;
-	author: string;
-	borrowed_by: string | null;
-	volume: number;
-	genres: { name: string }[];
-}
-
-interface FormattedMangaData {
+// Shared type - extract to types file in real app
+interface MangaData {
 	id: number;
 	title: string;
 	source: string;
@@ -61,13 +52,14 @@ const ALL_GENRES = [
 	'Seinen',
 	'Shounen',
 	'Shoujo',
-];
+] as const;
 
 export default async function LibraryPage() {
 	const mangaResponse = await api.post.getMangaData();
-	const mangaData: Manga[] = mangaResponse?.data || [];
+	const rawMangaData = mangaResponse?.data || [];
 
-	const initialMangaData: FormattedMangaData[] = mangaData.map((manga) => ({
+	// Transform data on server
+	const mangaData: MangaData[] = rawMangaData.map((manga) => ({
 		id: manga.id,
 		title: manga.title,
 		author: manga.author,
@@ -79,25 +71,21 @@ export default async function LibraryPage() {
 
 	return (
 		<HydrateClient>
-			<div className="flex min-h-screen flex-col w-full">
-				<main className="flex-1">
-					<SectionContainer>
-						<SectionHeading
-							badge="MANGA"
-							title="Our Library"
-							description="Browse our collection of manga available to borrow. Paid members can check out up to 3 volumes at a time for up to 2 weeks."
-							badgeColor="bg-purple-200"
-							className="mb-8"
-						/>
-						<div>
-							<LibrarySearch
-								initialMangaData={initialMangaData}
-								allGenres={ALL_GENRES}
-							/>
-						</div>
-					</SectionContainer>
-				</main>
-			</div>
+			<main className="min-h-screen w-full">
+				<SectionContainer>
+					<SectionHeading
+						badge="MANGA"
+						title="Our Library"
+						description="Browse our collection of manga available to borrow. Paid members can check out up to 3 volumes at a time for up to 2 weeks."
+						badgeColor="bg-purple-200"
+						className="mb-8"
+					/>
+					<LibrarySearch
+						initialMangaData={mangaData}
+						allGenres={ALL_GENRES}
+					/>
+				</SectionContainer>
+			</main>
 		</HydrateClient>
 	);
 }
