@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import type { EmblaOptionsType } from 'embla-carousel';
 import { DotButton, useDotButton } from './hero-carousel-button';
 import useEmblaCarousel from 'embla-carousel-react';
@@ -8,7 +8,6 @@ import { SvgIcon } from '../util/svg-icon';
 import type { Carousel } from 'generated/prisma';
 import Image from 'next/image';
 import Link from 'next/link';
-import { isMobile } from 'react-device-detect';
 
 type CarouselType = {
 	slides: Carousel[];
@@ -16,45 +15,24 @@ type CarouselType = {
 	useSocials: boolean;
 };
 
-const useClientLayout = () => {
-	const [isClientMobile, setIsClientMobile] = useState<boolean | null>(null);
-	const [hasMounted, setHasMounted] = useState(false);
-
-	useEffect(() => {
-		setHasMounted(true);
-		setIsClientMobile(isMobile);
-	}, []);
-
-	return { isClientMobile, hasMounted };
-};
-
-interface ClientContentProps extends CarouselType {
-	isClientMobile: boolean;
-}
-
-const ClientCarouselContent: React.FC<ClientContentProps> = ({
+export default function HeroCarousel({
 	slides,
 	options,
 	useSocials,
-	isClientMobile,
-}) => {
+}: CarouselType) {
 	const [emblaRef, emblaApi] = useEmblaCarousel(options, [
 		Autoplay({
 			delay: 5000,
 		}),
 	]);
 
-	const filteredSlides = slides.filter(
-		(element) => element.isMobile === isClientMobile,
-	);
-
 	const { selectedIndex, scrollSnaps, onDotButtonClick } =
 		useDotButton(emblaApi);
 
-	if (filteredSlides.length === 0) {
+	if (slides.length === 0) {
 		return (
 			<div className="w-full max-w-[min(1200px,calc(100%-20px))] p-8 text-center text-gray-500 rounded-2xl border border-dashed border-gray-300">
-				No carousel slides available for this device view.
+				No carousel slides available.
 			</div>
 		);
 	}
@@ -62,34 +40,43 @@ const ClientCarouselContent: React.FC<ClientContentProps> = ({
 	return (
 		<section className="relative w-full m-auto h-fit flex flex-col items-center">
 			<div
-				className="overflow-hidden w-full max-w-[min(1200px,calc(100%-20px))] shadow-[0px_5px_10px_#00000090] rounded-2xl md:rounded-4xl aspect-9/16 md:aspect-video lg:aspect-video xl:aspect-video cursor-grab active:cursor-grabbing"
+				className="overflow-hidden w-full max-w-[min(1200px,calc(100%-20px))] shadow-[0px_5px_10px_#00000090] rounded-2xl md:rounded-4xl cursor-grab active:cursor-grabbing"
 				ref={emblaRef}
 			>
-				<div className="flex touch-pinch-zoom h-full touch-pan-y">
-					{filteredSlides.map((element: Carousel, index: number) => (
+				<div className="flex touch-pinch-zoom touch-pan-y">
+					{slides.map((element: Carousel, index: number) => (
 						<div
-							className="transform-[translate3d(0,0,0)] flex-[0 0 70%] grow-0 shrink-0 w-full mx-4 h-full"
+							className="relative flex-[0_0_100%] min-w-0 aspect-9/16 md:aspect-video"
 							key={element.id}
 						>
-							<div className="w-full h-full relative overflow-hidden rounded-2xl md:rounded-4xl">
-								<Image
-									src={element.source}
-									alt={element.alt}
-									fill
-									sizes="(max-width: 640px) calc(100vw - 40px), (max-width: 768px) calc(100vw - 40px), (max-width: 1024px) 750px, 1200px"
-									quality={85}
-									priority={index === 0}
-									loading={index === 0 ? 'eager' : 'lazy'}
-									className="object-cover object-top"
-								/>
-							</div>
+							<Image
+								src={element.mobileSource}
+								alt={element.alt}
+								fill
+								sizes="100vw"
+								quality={85}
+								priority={index === 0}
+								loading={index === 0 ? 'eager' : 'lazy'}
+								className="object-cover md:hidden"
+							/>
+
+							<Image
+								src={element.desktopSource}
+								alt={element.alt}
+								fill
+								sizes="(max-width: 1200px) 100vw, 1200px"
+								quality={85}
+								priority={index === 0}
+								loading={index === 0 ? 'eager' : 'lazy'}
+								className="object-cover hidden md:block"
+							/>
 						</div>
 					))}
 				</div>
 			</div>
 
 			{useSocials && (
-				<div className=" flex-row gap-4 flex-nowrap w-full max-w-[1200px] absolute -bottom-1 hidden lg:flex">
+				<div className="flex-row gap-4 flex-nowrap w-full max-w-[1200px] absolute -bottom-1 hidden lg:flex">
 					<Link href="https://www.instagram.com/unisamsoc/?hl=en">
 						<SvgIcon
 							src={'/instagram.svg'}
@@ -117,33 +104,19 @@ const ClientCarouselContent: React.FC<ClientContentProps> = ({
 				</div>
 			)}
 
-			<div className="relative grid grid-cols-[auto 1fr] content-between gap-[1.2rem] mt-[1.8rem]">
-				<div className="flex flex-wrap content-end items-center mr-[calc((2.6rem - 1.4rem) / 2 * -1)]">
-					{scrollSnaps.map((_, index) => (
-						<DotButton
-							key={index}
-							onClick={() => onDotButtonClick(index)}
-							className={`appearance-none inline-flex mx-2 items-center justify-center whitespace-nowrap rounded-full text-sm font-base ring-offset-white transition-all gap-2 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none h-6 w-6 px-2 py-2 bg-pink-300 cursor-pointer hover:bg-pink-400 text-white border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
-								index === selectedIndex
-									? 'bg-pink-500 hover:bg-pink-600 w-[50px]'
-									: ''
-							}`}
-						/>
-					))}
-				</div>
+			<div className="relative flex items-center justify-center gap-2 mt-7">
+				{scrollSnaps.map((_, index) => (
+					<DotButton
+						key={index}
+						onClick={() => onDotButtonClick(index)}
+						className={`appearance-none rounded-full transition-all h-6 w-6 bg-pink-300 cursor-pointer hover:bg-pink-400 border border-black ${
+							index === selectedIndex
+								? 'bg-pink-500 hover:bg-pink-600 w-8'
+								: ''
+						}`}
+					/>
+				))}
 			</div>
 		</section>
 	);
-};
-
-export default function HeroCarousel(props: CarouselType) {
-	const { isClientMobile, hasMounted } = useClientLayout();
-
-	if (!hasMounted || isClientMobile === null) {
-		return (
-			<div className="w-full max-w-[min(1200px,calc(100%-20px))] shadow-[0px_5px_10px_#00000090] rounded-2xl md:rounded-4xl aspect-9/16 md:aspect-video bg-gray-200 animate-pulse"></div>
-		);
-	}
-
-	return <ClientCarouselContent {...props} isClientMobile={isClientMobile} />;
 }

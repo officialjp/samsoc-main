@@ -58,7 +58,9 @@ export const postRouter = createTRPCRouter({
 	}),
 
 	getCommitteeMembers: publicProcedure.query(async ({ ctx }) => {
-		const allMembers = await ctx.db.committee.findMany({});
+		const allMembers = await ctx.db.committee.findMany({
+			orderBy: [{ id: 'asc' }],
+		});
 		return { data: allMembers };
 	}),
 

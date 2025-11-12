@@ -48,10 +48,11 @@ model Account {
 }
 
 model Carousel {
-    id              Int @id @default(autoincrement())
-    isMobile        Boolean
-    source          String
-    alt             String
+  id            Int      @id @default(autoincrement())
+  alt           String
+  mobileSource  String   // Portrait image for mobile
+  desktopSource String   // Landscape image for desktop
+  order         Int      @default(0)
 }
 
 model Committee {
