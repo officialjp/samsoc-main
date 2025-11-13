@@ -132,11 +132,9 @@ export function Header() {
 		}
 
 		headerElement.style.opacity = (1 - range).toString();
-		headerElement.style.transform = `translate3d(-50%, ${state.transformPosY}px, 0)`;
 
 		if (scroll <= 0) {
 			headerElement.style.opacity = '1';
-			headerElement.style.transform = 'translate3d(-50%, 0, 0)';
 			state.scrollBuffer = 0;
 			state.transformPosY = 0;
 		}
@@ -169,19 +167,19 @@ export function Header() {
 	return (
 		<header
 			ref={navRef}
-			className="fixed top-2.5 left-[50%] z-50 w-[min(calc(100%-20px),1000px)] blur-[0px] backdrop-blur-[10px] rounded-2xl lg:rounded-full shadow-[0px_5px_10px_#00000090] overflow-hidden transition-opacity"
-			style={{ transform: 'translate3d(-50%, 0, 0)' }}
+			className="fixed top-2.5 left-[50%] z-50 w-[min(calc(100%-20px),1000px)] blur-[0px] backdrop-blur-[10px] rounded-2xl lg:rounded-full shadow-[0px_5px_10px_#00000090] overflow-hidden transition-opacity transform-[translateX(-50%)]"
 		>
 			<div className="container w-full max-w-full px-4 md:px-6 lg:px-2.5 flex h-[55px] py-2.5 items-center justify-between bg-linear-to-r from-[#ffcfd4a0] to-[#ffffffa0]">
 				<Link
 					href="/"
-					className="flex items-center gap-2 font-bold text-xl md:mr-2"
+					className="relative w-10 h-10 flex items-center justify-center font-bold md:mr-2 rounded-full overflow-hidden shrink-0 shadow-[0,0,0px_#000000ff] hover:shadow-[0_0_10px_#00000040] active:shadow-[0_0_4px_#000000a0] hover:scale-110 active:duration-50 active:scale-105 transition duration-300"
 				>
 					<Image
 						src={Logo}
 						loading="lazy"
-						className="rounded-full shrink-0 shadow-[0,0,10px_transparent] hover:shadow-[0_0_10px_#00000090] active:shadow-[0_0_10px_#00000040] hover:scale-110 active:duration-50 active:scale-105 transition duration-300"
+						className="absolute shrink-0 w-full h-full"
 						alt="logo"
+						draggable="false"
 						height={40}
 						width={40}
 					/>
@@ -233,9 +231,19 @@ export function Header() {
 				</div>
 			</div>
 
-			{isMenuOpen && (
-				<div className="px-4 py-4 border-t border-black bg-[#ffffffa0] md:hidden">
-					<nav className="flex flex-col space-y-4">
+			<div
+				className="bg-[#ffffffa0] md:hidden grid grid-rows-[0fr] transition-[grid-template-rows] duration-400 ease-in-out"
+				style={{
+					gridTemplateRows: isMenuOpen ? '1fr' : '0fr',
+				}}
+			>
+				<nav
+					className="overflow-hidden transition-opacity duration-400"
+					style={{
+						opacity: isMenuOpen ? '1' : '0',
+					}}
+				>
+					<div className="p-4 flex flex-col space-y-4 border-black border-t">
 						{navLinks.map((link: NavLink) => (
 							<Link
 								key={link.href}
@@ -253,9 +261,9 @@ export function Header() {
 						>
 							Join Now
 						</Button>
-					</nav>
-				</div>
-			)}
+					</div>
+				</nav>
+			</div>
 		</header>
 	);
 }

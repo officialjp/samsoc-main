@@ -82,7 +82,7 @@ export function Footer() {
 					</div>
 				</div>
 			</div>
-			<div className="border-t border-gray-200 py-6 text-center">
+			<div className="border-t border-gray-200 py-6 text-center px-2">
 				<p className="text-sm text-gray-700">
 					© {new Date().getFullYear()} University of Surrey Anime and
 					Manga Society. All rights reserved.

@@ -174,7 +174,7 @@ export default async function Home() {
 					/>
 					<div className="flex items-center justify-center mx-auto max-w-7xl py-12 flex-col">
 						<div className="relative">
-							<div className="overflow-hidden lg:w-[800px] lg:h-[450px] md:w-[540px] md:h-[300px] w-[360px] h-[200px] border-2 rounded-2xl border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+							<div className="overflow-hidden lg:w-[800px] lg:h-[450px] md:w-[540px] md:h-[300px] w-[320px] h-[180px] border-2 rounded-2xl border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
 								<Image
 									src={LibraryPhoto}
 									height={450}
@@ -209,19 +209,14 @@ export default async function Home() {
 						badgeColor="bg-purple-200"
 						description="The masterminds behind our beautifully constructed events, sessions and much more!"
 					/>
-					<div className="grid grid-cols-2 lg:grid-cols-5 items-center justify-center py-6 auto-rows-fr">
-						{committee.map((member, index) => (
+					<div className="flex flex-col lg:flex-row gap-4 items-center justify-center py-6 auto-rows-fr">
+						{committee.map((member) => (
 							<CommitteeCard
 								key={member.id}
 								id={member.id}
 								name={member.name}
 								role={member.role}
 								source={member.source}
-								className={
-									index === 0
-										? 'lg:col-span-1 col-span-2'
-										: ''
-								}
 							/>
 						))}
 					</div>

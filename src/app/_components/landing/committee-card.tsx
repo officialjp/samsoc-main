@@ -18,11 +18,11 @@ export function CommitteeCard({
 	return (
 		<div
 			className={cn(
-				'flex items-center justify-center flex-col text-sm',
+				'flex items-center justify-center flex-row text-sm lg:flex-col w-full lg:w-fit',
 				className,
 			)}
 		>
-			<div className="relative w-[200px] h-[200px]">
+			<div className="relative lg:w-40 lg:h-40 w-14 h-14 lg:mb-2 mb-0 shrink-0 border-2 border-black rounded-full overflow-hidden bg-about1 box-content bg-[linear-gradient(to_top,#fff,#0a0a0a)]">
 				<Image
 					draggable={false}
 					src={source ?? '/placeholder.svg'}
@@ -31,11 +31,17 @@ export function CommitteeCard({
 					sizes="(max-width: 640px) 150px, (max-width: 1024px) 180px, 200px"
 					quality={85}
 					loading="lazy"
-					className="object-cover rounded-full"
+					className="absolute object-cover transform-[scale(1.01)] block w-full h-full"
 				/>
 			</div>
-			<p className="mt-2 font-semibold">{name}</p>
-			<p className="text-gray-600">{role}</p>
+
+			<span className="flex gap-2 lg:gap-0 justify-center items-center lg:flex-col flex-row lg:ml-0 ml-3 rounded-full bg-about2 lg:p-0 p-4 border-black border-2 lg:border-0 lg:bg-transparent">
+				<p className="font-semibold">{name}</p>
+				<span className="lg:hidden block text-gray-600 opacity-60">
+					●
+				</span>
+				<p className="text-gray-600">{role}</p>
+			</span>
 		</div>
 	);
 }
