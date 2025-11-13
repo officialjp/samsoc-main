@@ -1,5 +1,3 @@
-'use client';
-import { useCallback } from 'react';
 import { Button } from '~/app/_components/ui/button';
 import { cn } from '~/lib/utils';
 
@@ -20,19 +18,13 @@ export default function GalleryFilter({
 	activeCategory,
 	activeYear,
 }: GalleryFilterProps) {
-	const handleCategoryClick = useCallback(
-		(category: string) => {
-			onCategoryChange(category);
-		},
-		[onCategoryChange],
-	);
+	const handleCategoryClick = (category: string) => {
+		onCategoryChange(category);
+	};
 
-	const handleYearClick = useCallback(
-		(year: string) => {
-			onYearChange(year);
-		},
-		[onYearChange],
-	);
+	const handleYearClick = (year: string) => {
+		onYearChange(year);
+	};
 
 	return (
 		<div className="space-y-6">

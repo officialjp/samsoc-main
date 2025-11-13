@@ -1,6 +1,5 @@
 'use client';
 
-import { useCallback } from 'react';
 import { Search, X } from 'lucide-react';
 import { Button } from '~/app/_components/ui/button';
 import { Input } from '~/app/_components/ui/input';
@@ -37,30 +36,21 @@ export default function LibraryFilters({
 	onFilterChange,
 	filters,
 }: LibraryFiltersProps) {
-	const handleStatusChange = useCallback(
-		(newStatus: string) => {
-			onFilterChange({ ...filters, status: newStatus });
-		},
-		[filters, onFilterChange],
-	);
+	const handleStatusChange = (newStatus: string) => {
+		onFilterChange({ ...filters, status: newStatus });
+	};
 
-	const handleGenreChange = useCallback(
-		(newGenre: string) => {
-			onFilterChange({ ...filters, genre: newGenre });
-		},
-		[filters, onFilterChange],
-	);
+	const handleGenreChange = (newGenre: string) => {
+		onFilterChange({ ...filters, genre: newGenre });
+	};
 
-	const handleSearchChange = useCallback(
-		(e: React.ChangeEvent<HTMLInputElement>) => {
-			onFilterChange({ ...filters, search: e.target.value });
-		},
-		[filters, onFilterChange],
-	);
+	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		onFilterChange({ ...filters, search: e.target.value });
+	};
 
-	const clearFilters = useCallback(() => {
+	const clearFilters = () => {
 		onFilterChange({ status: 'all', genre: 'all', search: '' });
-	}, [onFilterChange]);
+	};
 
 	const hasActiveFilters =
 		filters.status !== 'all' ||

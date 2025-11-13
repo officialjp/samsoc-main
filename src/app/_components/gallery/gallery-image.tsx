@@ -16,9 +16,9 @@ export default function GalleryImage({
 }: GalleryImageProps) {
 	const [isOpen, setIsOpen] = useState(false);
 
-	const openModal = useCallback(() => {
+	const openModal = () => {
 		setIsOpen(true);
-	}, []);
+	};
 
 	const closeModal = useCallback(() => {
 		setIsOpen(false);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import MangaCard from '~/app/_components/library/manga-card';
 import LibraryFilters from '~/app/_components/library/library-filters';
 import { Pagination } from '~/app/_components/pagination';
@@ -83,13 +83,13 @@ export function LibrarySearch({
 		setCurrentPage(1);
 	}, [filters]);
 
-	const handlePageChange = useCallback((page: number) => {
+	const handlePageChange = (page: number) => {
 		setCurrentPage(page);
 		document.getElementById('manga-results')?.scrollIntoView({
 			behavior: 'smooth',
 			block: 'start',
 		});
-	}, []);
+	};
 
 	return (
 		<div className="grid grid-cols-1 gap-8 lg:grid-cols-[300px_1fr]">

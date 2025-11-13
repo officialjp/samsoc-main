@@ -1,5 +1,5 @@
 'use client';
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState } from 'react';
 import GalleryFilter from '~/app/_components/gallery/gallery-filter';
 import GalleryImage from '~/app/_components/gallery/gallery-image';
 import { Button } from '~/app/_components/ui/button';
@@ -63,26 +63,26 @@ export function GallerySearch({ initialItems }: GallerySearchProps) {
 
 	const hasActiveFilters = activeCategory !== 'All' || activeYear !== 'All';
 
-	const clearFilters = useCallback(() => {
+	const clearFilters = () => {
 		setActiveCategory('All');
 		setActiveYear('All');
 		setCurrentPage(1);
-	}, []);
+	};
 
-	const handleCategoryChange = useCallback((category: string) => {
+	const handleCategoryChange = (category: string) => {
 		setActiveCategory(category);
 		setCurrentPage(1);
-	}, []);
+	};
 
-	const handleYearChange = useCallback((year: string) => {
+	const handleYearChange = (year: string) => {
 		setActiveYear(year);
 		setCurrentPage(1);
-	}, []);
+	};
 
-	const handlePageChange = useCallback((newPage: number) => {
+	const handlePageChange = (newPage: number) => {
 		setCurrentPage(newPage);
 		window.scrollTo({ top: 0, behavior: 'smooth' });
-	}, []);
+	};
 
 	return (
 		<div className="space-y-8">

@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { cn } from '~/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 
@@ -36,50 +36,46 @@ export function AnimeCard({ animes }: AnimeCardProps) {
 
 	const positions = useMemo(() => CARD_POSITIONS, []);
 
-	const handleCardClick = useCallback(
-		(event: React.SyntheticEvent<HTMLDivElement>, animeId: number) => {
-			const target = event.currentTarget;
+	const handleCardClick = (
+		event: React.SyntheticEvent<HTMLDivElement>,
+		animeId: number,
+	) => {
+		const target = event.currentTarget;
 
-			if (target.classList.contains('center-card')) {
-				return;
+		if (target.classList.contains('center-card')) {
+			return;
+		}
+
+		event.preventDefault();
+		setSelectedId(animeId);
+
+		const parent = target.parentNode;
+		if (!parent) return;
+
+		const siblings = Array.from(parent.children) as HTMLElement[];
+
+		for (const sibling of siblings) {
+			sibling.classList.remove('right-card', 'left-card', 'center-card');
+		}
+
+		target.classList.add('center-card');
+
+		let leftAssigned = false;
+		let rightAssigned = false;
+
+		for (const sibling of siblings) {
+			if (sibling === target) continue;
+
+			if (!leftAssigned) {
+				sibling.classList.add('left-card');
+				leftAssigned = true;
+			} else if (!rightAssigned) {
+				sibling.classList.add('right-card');
+				rightAssigned = true;
+				break;
 			}
-
-			event.preventDefault();
-			setSelectedId(animeId);
-
-			const parent = target.parentNode;
-			if (!parent) return;
-
-			const siblings = Array.from(parent.children) as HTMLElement[];
-
-			for (const sibling of siblings) {
-				sibling.classList.remove(
-					'right-card',
-					'left-card',
-					'center-card',
-				);
-			}
-
-			target.classList.add('center-card');
-
-			let leftAssigned = false;
-			let rightAssigned = false;
-
-			for (const sibling of siblings) {
-				if (sibling === target) continue;
-
-				if (!leftAssigned) {
-					sibling.classList.add('left-card');
-					leftAssigned = true;
-				} else if (!rightAssigned) {
-					sibling.classList.add('right-card');
-					rightAssigned = true;
-					break;
-				}
-			}
-		},
-		[],
-	);
+		}
+	};
 
 	if (!animes?.length) {
 		return null;
