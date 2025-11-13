@@ -209,7 +209,7 @@ export default async function Home() {
 						badgeColor="bg-purple-200"
 						description="The masterminds behind our beautifully constructed events, sessions and much more!"
 					/>
-					<div className="flex flex-col lg:flex-row gap-4 items-center justify-center py-6 auto-rows-fr">
+					<div className="flex flex-col lg:flex-row gap-8 items-center justify-center py-6 auto-rows-fr">
 						{committee.map((member) => (
 							<CommitteeCard
 								key={member.id}

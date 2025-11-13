@@ -136,7 +136,7 @@ export function AnimeCard({ animes }: AnimeCardProps) {
 									)}
 								</div>
 							</TooltipTrigger>
-							<TooltipContent>
+							<TooltipContent className="lg:block hidden">
 								<div className="pr-5">
 									<p className="text-2xl">
 										Episode: {anime.episode}

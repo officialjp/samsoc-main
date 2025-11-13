@@ -22,7 +22,6 @@ export const metadata: Metadata = {
 	},
 };
 
-// Color legend component extracted to avoid re-renders
 function EventColorGuide() {
 	const legendItems = [
 		{ color: 'bg-purple-200', label: 'Weekly Anime Screenings' },
@@ -49,7 +48,6 @@ function EventColorGuide() {
 	);
 }
 
-// Optimized: Move heavy computation to server-side
 function generateWeeklySessions(regularSessions: Event[]): Event[] {
 	const sessions: Event[] = [];
 
