@@ -17,17 +17,83 @@ import { SvgIcon } from './_components/util/svg-icon';
 import { CommitteeCard } from './_components/landing/committee-card';
 import { FREE_FEATURES, PAID_FEATURES, FEATURES } from '~/lib/constants';
 
+const DEVELOPERS = ['J.P', 'Michael', 'Maiham', 'David'];
+const LIBRARY_STATS = [
+	'250+ manga volumes',
+	'25+ different series',
+	'New volumes added monthly',
+	'Member requests welcomed',
+] as const;
+
+function LibraryStats() {
+	return (
+		<div className="absolute lg:-left-10 -bottom-20 -left-4 bg-white border-2 border-black lg:p-4 p-2 rounded-2xl md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-3">
+			<h3 className="text-base md:text-xl font-bold mb-1 md:mb-2">
+				Library Stats
+			</h3>
+			<ul className="space-y-0.5 md:space-y-1">
+				{LIBRARY_STATS.map((stat) => (
+					<li
+						key={stat}
+						className="flex items-center text-xs sm:text-sm"
+					>
+						<Check className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2 text-green-500" />{' '}
+						{stat}
+					</li>
+				))}
+			</ul>
+		</div>
+	);
+}
+
+function MarqueeContent() {
+	return (
+		<div className="flex gap-10 items-center mr-10">
+			<span className="flex items-center gap-2">
+				<p>Developed by:</p>
+				<p>{DEVELOPERS.join(', ')}</p>
+			</span>
+			<span>●</span>
+			<span className="flex items-center gap-2">
+				<p>A community for students at</p>
+				<div className="relative w-fit h-fit block px-2">
+					<SvgIcon
+						className="bg-black"
+						height={50}
+						width={130}
+						src="/surrey.svg"
+					/>
+				</div>
+			</span>
+			<span>●</span>
+			<span className="flex items-center gap-2">
+				<p>Made with love for</p>
+				<div className="relative w-[50px] h-fit block mx-2">
+					<Image
+						src={Logo}
+						height={50}
+						width={50}
+						alt="samsoc logo"
+					/>
+				</div>
+			</span>
+			<span>●</span>
+		</div>
+	);
+}
+
 export default async function Home() {
 	const options: EmblaOptionsType = { loop: true };
+
 	const [cardResult, carouselResult, committeResult] = await Promise.all([
 		api.post.getAnimeCardData(),
 		api.post.getCarouselData(),
 		api.post.getCommitteeMembers(),
 	]);
 
-	const cardData = cardResult.data;
-	const carouselData = carouselResult.data;
-	const committee = committeResult.data;
+	const cardData = cardResult.data ?? [];
+	const carouselData = carouselResult.data ?? [];
+	const committee = committeResult.data ?? [];
 
 	return (
 		<HydrateClient>
@@ -38,49 +104,16 @@ export default async function Home() {
 							slides={carouselData}
 							options={options}
 							useSocials={true}
-						></HeroCarousel>
+						/>
 					</div>
 					<Marquee
 						autoFill
 						className="mt-20 mask-[linear-gradient(90deg,hsla(0,0%,0%,0)_0%,hsla(0,0%,0%,1)_10%,hsla(0,0%,0%,1)_90%,hsla(0,0%,0%,0)_100%)]"
 					>
-						<div className="flex gap-10 items-center mr-10">
-							<span className="flex items-center gap-2">
-								<p>Developed by:</p>
-								<p>
-									{['J.P', 'Michael', 'Maiham', 'David'].join(
-										', ',
-									)}
-								</p>
-							</span>
-							<span>●</span>
-							<span className="flex items-center gap-2">
-								<p>A community for students at</p>
-								<div className="relative w-fit h-fit block px-2">
-									<SvgIcon
-										className="bg-black"
-										height={50}
-										width={130}
-										src={'/surrey.svg'}
-									></SvgIcon>
-								</div>
-							</span>
-							<span>●</span>
-							<span className="flex items-center gap-2 ">
-								<p>Made with love for</p>
-								<div className="relative w-[50px] h-fit block mx-2">
-									<Image
-										src={Logo.src}
-										height={50}
-										width={50}
-										alt="samsoc logo"
-									></Image>
-								</div>
-							</span>
-							<span>●</span>
-						</div>
+						<MarqueeContent />
 					</Marquee>
 				</section>
+
 				<SectionContainer id="about">
 					<SectionHeading
 						badge="ABOUT US"
@@ -89,10 +122,9 @@ export default async function Home() {
 						badgeColor="bg-purple-200"
 					/>
 					<div className="mx-auto max-w-7xl items-center gap-6 py-12 grid lg:grid-cols-3 lg:gap-12">
-						{FEATURES.map((feature, index) => (
+						{FEATURES.map((feature) => (
 							<FeatureCard
-								key={index}
-								className={``}
+								key={feature.title}
 								icon={feature.icon}
 								title={feature.title}
 								description={feature.description}
@@ -101,6 +133,7 @@ export default async function Home() {
 						))}
 					</div>
 				</SectionContainer>
+
 				<SectionContainer
 					id="now-streaming"
 					className="w-full py-12 md:py-16 overflow-hidden"
@@ -108,15 +141,14 @@ export default async function Home() {
 					<SectionHeading
 						badge="NOW STREAMING"
 						title="This Week's Anime"
-						description="Join us every Wednesday at 6PM in Lecture Theatre G for our weekly
-								  anime screenings!"
+						description="Join us every Wednesday at 6PM in Lecture Theatre G for our weekly anime screenings!"
 						badgeColor="bg-purple-200"
 					/>
 					<AnimeCard animes={cardData} />
 					<div className="mb-8 -mt-8 text-center">
 						<p className="font-medium mb-4">
-							Dont worry if youve missed previous episodes - you
-							have plenty of time to catch-up!
+							Don&apos;t worry if you&apos;ve missed previous
+							episodes - you have plenty of time to catch-up!
 						</p>
 						<Button
 							asChild
@@ -132,12 +164,12 @@ export default async function Home() {
 						</Button>
 					</div>
 				</SectionContainer>
+
 				<SectionContainer id="library">
 					<SectionHeading
 						badge="MANGA LIBRARY"
 						title="Dive Into Our Manga Collection"
-						description="With hundreds of volumes across various genres,
-              there's something for every anime fan!"
+						description="With hundreds of volumes across various genres, there's something for every anime fan!"
 						badgeColor="bg-purple-200"
 					/>
 					<div className="flex items-center justify-center mx-auto max-w-7xl py-12 flex-col">
@@ -148,33 +180,13 @@ export default async function Home() {
 									height={450}
 									width={800}
 									draggable={false}
-									alt={`Gallery image`}
+									alt="SAMSoc manga library collection"
 									className="aspect-video object-cover"
+									priority={false}
+									placeholder="blur"
 								/>
 							</div>
-							<div className="absolute lg:-left-10 -bottom-20 -left-4 bg-white border-2 border-black lg:p-4 p-2 rounded-2xl md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-3">
-								<h3 className="text-base md:text-xl font-bold mb-1 md:mb-2">
-									Library Stats
-								</h3>
-								<ul className="space-y-0.5 md:space-y-1">
-									<li className="flex items-center text-xs sm:text-sm">
-										<Check className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2 text-green-500" />{' '}
-										250+ manga volumes
-									</li>
-									<li className="flex items-center text-xs sm:text-sm">
-										<Check className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2 text-green-500" />{' '}
-										25+ different series
-									</li>
-									<li className="flex items-center text-xs sm:text-sm">
-										<Check className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2 text-green-500" />{' '}
-										New volumes added monthly
-									</li>
-									<li className="flex items-center text-xs sm:text-sm">
-										<Check className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2 text-green-500" />{' '}
-										Member requests welcomed
-									</li>
-								</ul>
-							</div>
+							<LibraryStats />
 						</div>
 						<div className="text-center pt-32">
 							<Button className="bg-button2 hover:bg-button1 hover:cursor-pointer text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
@@ -189,17 +201,18 @@ export default async function Home() {
 						</div>
 					</div>
 				</SectionContainer>
+
 				<SectionContainer id="committee">
 					<SectionHeading
 						badge="COMMITTEE"
 						title="Meet Our Committee"
 						badgeColor="bg-purple-200"
-						description="The masterminds behind our beautifully constructed events, session and much more!"
+						description="The masterminds behind our beautifully constructed events, sessions and much more!"
 					/>
 					<div className="grid grid-cols-2 lg:grid-cols-5 items-center justify-center py-6 auto-rows-fr">
 						{committee.map((member, index) => (
 							<CommitteeCard
-								key={index}
+								key={member.id}
 								id={member.id}
 								name={member.name}
 								role={member.role}
@@ -213,6 +226,7 @@ export default async function Home() {
 						))}
 					</div>
 				</SectionContainer>
+
 				<SectionContainer id="join">
 					<SectionHeading
 						badge="MEMBERSHIP"

@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import Image from 'next/image';
 import { cn } from '~/lib/utils';
 
@@ -6,10 +7,10 @@ interface CommitteeProps {
 	name: string;
 	role: string;
 	source: string | null;
-	className: string;
+	className?: string;
 }
 
-export function CommitteeCard({
+export const CommitteeCard = memo(function CommitteeCard({
 	name,
 	role,
 	source,
@@ -38,4 +39,4 @@ export function CommitteeCard({
 			<p className="text-gray-600">{role}</p>
 		</div>
 	);
-}
+});

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo, memo, lazy, Suspense } from 'react';
 import {
 	format,
 	startOfMonth,
@@ -10,17 +10,132 @@ import {
 	isSameDay,
 	eachDayOfInterval,
 } from 'date-fns';
-import { ChevronDown, ChevronUp, X } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from '~/lib/utils';
 import type { Event } from 'generated/prisma';
+
+const EventModal = lazy(() =>
+	import('./event-modal').then((mod) => ({ default: mod.EventModal })),
+);
 
 interface MobileCalendarViewProps {
 	currentMonth: Date;
 	selectedDate: Date;
-	events: Event[];
 	groupedEvents: Record<string, Event[]>;
 	onDateClick: (day: Date) => void;
 }
+
+const DayCell = memo(
+	({
+		day,
+		currentMonth,
+		selectedDate,
+		hasEvents,
+		onClick,
+	}: {
+		day: Date;
+		currentMonth: Date;
+		selectedDate: Date;
+		hasEvents: boolean;
+		onClick: () => void;
+	}) => {
+		const formattedDate = format(day, 'd');
+		const isToday = isSameDay(day, new Date());
+		const isSelected = isSameDay(day, selectedDate);
+		const isCurrentMonthDay = isSameMonth(day, currentMonth);
+
+		return (
+			<div
+				className={cn(
+					'h-8 w-8 flex items-center justify-center text-sm rounded-full cursor-pointer mx-auto',
+					isCurrentMonthDay ? 'text-gray-700' : 'text-gray-300',
+					isToday ? 'bg-pink-500 text-white' : '',
+					isSelected && !isToday ? 'bg-yellow-300' : '',
+					hasEvents && !isToday && !isSelected
+						? 'border-2 border-cyan-500'
+						: '',
+				)}
+				onClick={onClick}
+			>
+				{formattedDate}
+			</div>
+		);
+	},
+);
+
+DayCell.displayName = 'DayCell';
+
+const EventRow = memo(
+	({
+		dateKey,
+		day,
+		events,
+		isExpanded,
+		onToggle,
+		onEventClick,
+	}: {
+		dateKey: string;
+		day: Date;
+		events: Event[];
+		isExpanded: boolean;
+		onToggle: () => void;
+		onEventClick: (event: Event) => void;
+	}) => {
+		const isToday = isSameDay(day, new Date());
+
+		return (
+			<div className="border-2 border-black bg-white">
+				<div
+					className={cn(
+						'flex items-center justify-between p-3 cursor-pointer',
+						isToday ? 'bg-pink-100' : '',
+					)}
+					onClick={onToggle}
+				>
+					<div>
+						<span className="font-bold">
+							{format(day, 'EEEE, MMMM d')}
+						</span>
+						<span className="ml-2 text-sm text-gray-500">
+							({events.length} event
+							{events.length !== 1 ? 's' : ''})
+						</span>
+					</div>
+					{isExpanded ? (
+						<ChevronUp className="h-5 w-5" />
+					) : (
+						<ChevronDown className="h-5 w-5" />
+					)}
+				</div>
+
+				{isExpanded && (
+					<div className="p-3 border-t border-gray-200 space-y-2">
+						{events.map((event) => (
+							<div
+								key={event.id}
+								className={cn(
+									'p-2 border border-gray-200 cursor-pointer',
+									event.color,
+									event.is_regular_session &&
+										'border-l-4 border-l-purple-500',
+								)}
+								onClick={() => onEventClick(event)}
+							>
+								<div className="font-medium">{event.title}</div>
+								<div className="text-xs text-gray-500">
+									📍 {event.location} |{' '}
+									{format(event.date, 'p')}
+								</div>
+							</div>
+						))}
+					</div>
+				)}
+			</div>
+		);
+	},
+);
+
+EventRow.displayName = 'EventRow';
 
 export function MobileCalendarView({
 	currentMonth,
@@ -31,207 +146,89 @@ export function MobileCalendarView({
 	const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 	const [expandedDate, setExpandedDate] = useState<string | null>(null);
 
-	const monthStart = startOfWeek(startOfMonth(currentMonth));
-	const monthEnd = endOfMonth(startOfMonth(currentMonth));
+	const daysInMonth = useMemo(() => {
+		const monthStart = startOfWeek(startOfMonth(currentMonth));
+		const monthEnd = endOfMonth(startOfMonth(currentMonth));
+		return eachDayOfInterval({ start: monthStart, end: monthEnd });
+	}, [currentMonth]);
 
-	const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd });
+	const sortedEventKeys = useMemo(
+		() => Object.keys(groupedEvents).sort(),
+		[groupedEvents],
+	);
 
-	// Toggle expanded state for a date
-	const toggleDateExpansion = (dateKey: string) => {
-		if (expandedDate === dateKey) {
-			setExpandedDate(null);
-		} else {
-			setExpandedDate(dateKey);
+	const hasEventsMap = useMemo(() => {
+		const map = new Map<string, boolean>();
+		for (const key in groupedEvents) {
+			const events = groupedEvents[key];
+			map.set(key, events !== undefined && events.length > 0);
 		}
-	};
+		return map;
+	}, [groupedEvents]);
 
-	// Check if a day has events
-	const hasEvents = (day: Date) => {
-		const dateKey = format(day, 'yyyy-MM-dd');
-		return groupedEvents[dateKey] && groupedEvents[dateKey].length > 0;
+	const toggleDateExpansion = (dateKey: string) => {
+		setExpandedDate((prev) => (prev === dateKey ? null : dateKey));
 	};
 
 	return (
 		<div className="mt-4">
-			{/* Mini month view */}
 			<div className="grid grid-cols-7 gap-1 mb-6">
 				{['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
-					<div
-						key={`header-${i}`}
-						className="text-center text-xs font-bold"
-					>
+					<div key={i} className="text-center text-xs font-bold">
 						{day}
 					</div>
 				))}
 
-				{daysInMonth.map((day, i) => {
-					const formattedDate = format(day, 'd');
-					const isToday = isSameDay(day, new Date());
-					const isSelected = isSameDay(day, selectedDate);
-					const dayHasEvents = hasEvents(day);
-
+				{daysInMonth.map((day) => {
+					const dateKey = format(day, 'yyyy-MM-dd');
 					return (
-						<div
-							key={`day-${i}`}
-							className={cn(
-								'h-8 w-8 flex items-center justify-center text-sm rounded-full cursor-pointer mx-auto',
-								isSameMonth(day, currentMonth)
-									? 'text-gray-700'
-									: 'text-gray-300',
-								isToday ? 'bg-pink-500 text-white' : '',
-								isSelected && !isToday ? 'bg-yellow-300' : '',
-								dayHasEvents && !isToday && !isSelected
-									? 'border-2 border-cyan-500'
-									: '',
-							)}
+						<DayCell
+							key={dateKey}
+							day={day}
+							currentMonth={currentMonth}
+							selectedDate={selectedDate}
+							hasEvents={hasEventsMap.get(dateKey) ?? false}
 							onClick={() => onDateClick(day)}
-						>
-							{formattedDate}
-						</div>
+						/>
 					);
 				})}
 			</div>
-
-			{/* Events list view */}
 			<div className="space-y-2">
 				<h3 className="font-bold text-lg mb-3 border-b-2 border-black pb-1">
 					Events This Month
 				</h3>
 
-				{Object.keys(groupedEvents).length > 0 ? (
-					Object.keys(groupedEvents)
-						.sort()
-						.map((dateKey) => {
-							const day = new Date(dateKey);
-							const dayEvents = groupedEvents[dateKey];
-							const isExpanded = expandedDate === dateKey;
+				{sortedEventKeys.length > 0 ? (
+					sortedEventKeys.map((dateKey) => {
+						const day = new Date(dateKey);
+						const events = groupedEvents[dateKey] ?? [];
+						const isExpanded = expandedDate === dateKey;
 
-							return (
-								<div
-									key={dateKey}
-									className="border-2 border-black bg-white"
-								>
-									<div
-										className={cn(
-											'flex items-center justify-between p-3 cursor-pointer',
-											isSameDay(day, new Date())
-												? 'bg-pink-100'
-												: '',
-										)}
-										onClick={() =>
-											toggleDateExpansion(dateKey)
-										}
-									>
-										<div>
-											<span className="font-bold">
-												{format(day, 'EEEE, MMMM d')}
-											</span>
-											<span className="ml-2 text-sm text-gray-500">
-												({dayEvents?.length} event
-												{dayEvents?.length !== 1
-													? 's'
-													: ''}
-												)
-											</span>
-										</div>
-										{isExpanded ? (
-											<ChevronUp className="h-5 w-5" />
-										) : (
-											<ChevronDown className="h-5 w-5" />
-										)}
-									</div>
-
-									{isExpanded && (
-										<div className="p-3 border-t border-gray-200 space-y-2">
-											{dayEvents?.map((event) => (
-												<div
-													key={event.id}
-													className={cn(
-														'p-2 border border-gray-200 cursor-pointer',
-														event.color,
-														event.is_regular_session &&
-															'border-l-4 border-l-purple-500',
-													)}
-													onClick={() =>
-														setSelectedEvent(event)
-													}
-												>
-													<div className="font-medium">
-														{event.title}
-													</div>
-													<div className="text-xs text-gray-500">
-														📍{' '}
-														{event.location +
-															' | ' +
-															format(
-																event.date,
-																'EEEE, MMMM d, yyyy, p',
-															)}
-													</div>
-												</div>
-											))}
-										</div>
-									)}
-								</div>
-							);
-						})
+						return (
+							<EventRow
+								key={dateKey}
+								dateKey={dateKey}
+								day={day}
+								events={events}
+								isExpanded={isExpanded}
+								onToggle={() => toggleDateExpansion(dateKey)}
+								onEventClick={setSelectedEvent}
+							/>
+						);
+					})
 				) : (
 					<div className="text-center p-4 bg-gray-100 border-2 border-black">
 						No events scheduled this month
 					</div>
 				)}
 			</div>
-
-			{/* Event Details Modal */}
 			{selectedEvent && (
-				<div
-					className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
-					onClick={() => setSelectedEvent(null)}
-				>
-					<div className="bg-white border-2 rounded-2xl border-black p-4 max-w-md w-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] relative">
-						<button
-							onClick={(e) => {
-								e.stopPropagation();
-								setSelectedEvent(null);
-							}}
-							className="absolute -top-4 -right-4 bg-pink-500 text-white rounded-full p-1 border-2 border-black"
-						>
-							<X className="h-6 w-6" />
-						</button>
-
-						<div
-							className={cn(
-								'h-2 w-full mb-4',
-								selectedEvent.color,
-							)}
-						></div>
-
-						<h3 className="text-xl font-bold mb-2">
-							{selectedEvent.title}
-							{selectedEvent.is_regular_session && (
-								<span className="ml-2 bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full border border-purple-300">
-									Weekly Session
-								</span>
-							)}
-						</h3>
-
-						<div className="mb-4">
-							<div className="text-sm text-gray-500 mb-1">
-								{format(
-									selectedEvent.date,
-									'EEEE, MMMM d, yyyy, p',
-								)}
-							</div>
-							<div className="text-sm font-medium">
-								📍 {selectedEvent.location}
-							</div>
-						</div>
-
-						<p className="text-gray-700">
-							{selectedEvent.description}
-						</p>
-					</div>
-				</div>
+				<Suspense fallback={null}>
+					<EventModal
+						event={selectedEvent}
+						onClose={() => setSelectedEvent(null)}
+					/>
+				</Suspense>
 			)}
 		</div>
 	);
