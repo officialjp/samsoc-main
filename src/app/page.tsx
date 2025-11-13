@@ -4,15 +4,7 @@ import { type EmblaOptionsType } from 'embla-carousel';
 import { SectionContainer } from './_components/section-container';
 import { SectionHeading } from './_components/section-heading';
 import { FeatureCard } from './_components/landing/feature-card';
-import {
-	Calendar,
-	CalendarDays,
-	Check,
-	Library,
-	Star,
-	UserPlus,
-	Users,
-} from 'lucide-react';
+import { CalendarDays, Check, Library, UserPlus } from 'lucide-react';
 import { AnimeCard } from './_components/landing/anime-card';
 import { Button } from './_components/ui/button';
 import Image from 'next/image';
@@ -23,58 +15,19 @@ import { MembershipCard } from './_components/landing/membership-card';
 import Marquee from 'react-fast-marquee';
 import { SvgIcon } from './_components/util/svg-icon';
 import { CommitteeCard } from './_components/landing/committee-card';
+import { FREE_FEATURES, PAID_FEATURES, FEATURES } from '~/lib/constants';
 
 export default async function Home() {
 	const options: EmblaOptionsType = { loop: true };
-	const cardResult = await api.post.getAnimeCardData();
+	const [cardResult, carouselResult, committeResult] = await Promise.all([
+		api.post.getAnimeCardData(),
+		api.post.getCarouselData(),
+		api.post.getCommitteeMembers(),
+	]);
+
 	const cardData = cardResult.data;
-	const carouselResult = await api.post.getCarouselData();
 	const carouselData = carouselResult.data;
-	const committeResult = await api.post.getCommitteeMembers();
 	const committee = committeResult.data;
-	const features = [
-		{
-			icon: Calendar,
-			title: 'Weekly Screenings',
-			description:
-				'Join us every Wednesday for anime screenings. From classics to the latest releases!',
-			color: 'bg-about1',
-		},
-		{
-			icon: Users,
-			title: 'Community Events',
-			description:
-				'Come and hang out with us at one of the multitude of events ran by our amazing community!',
-			color: 'bg-about2',
-		},
-		{
-			icon: Star,
-			title: 'Convention Trips',
-			description:
-				'Come join our bi-annual group trips to conventions around the UK such as MCM ComicCon and Mega Con!',
-			color: 'bg-about3',
-		},
-	];
-
-	const freeFeatures = [
-		{ included: true, text: 'Access to weekly screenings' },
-		{ included: true, text: 'Participate in society events' },
-		{ included: true, text: 'Join our Discord community' },
-		{ included: true, text: 'Voting rights for anime selections' },
-		{ included: false, text: 'Access to our manga library' },
-	];
-
-	const paidFeatures = [
-		{ included: true, text: 'Access to weekly screenings' },
-		{ included: true, text: 'Participate in society events' },
-		{ included: true, text: 'Join our Discord community' },
-		{ included: true, text: 'Voting rights for anime selections' },
-		{
-			included: true,
-			text: 'Access to our manga library',
-			highlight: true,
-		},
-	];
 
 	return (
 		<HydrateClient>
@@ -136,7 +89,7 @@ export default async function Home() {
 						badgeColor="bg-purple-200"
 					/>
 					<div className="mx-auto max-w-7xl items-center gap-6 py-12 grid lg:grid-cols-3 lg:gap-12">
-						{features.map((feature, index) => (
+						{FEATURES.map((feature, index) => (
 							<FeatureCard
 								key={index}
 								className={``}
@@ -274,14 +227,14 @@ export default async function Home() {
 								color="bg-membership2"
 								price="£0"
 								flavorText="Your gateway into the SAMSoC community"
-								features={freeFeatures}
+								features={FREE_FEATURES}
 							/>
 							<MembershipCard
 								title="Premium"
 								color="bg-membership1"
 								price="£2"
 								flavorText="Satiate your manga reading hunger"
-								features={paidFeatures}
+								features={PAID_FEATURES}
 								recommended={true}
 							/>
 						</div>
