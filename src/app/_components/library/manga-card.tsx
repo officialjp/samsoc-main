@@ -29,6 +29,7 @@ export const MangaCard = memo(function MangaCard({ manga }: MangaCardProps) {
 					className="object-cover"
 					sizes="128px"
 					loading="lazy"
+					unoptimized={true}
 				/>
 			</div>
 
