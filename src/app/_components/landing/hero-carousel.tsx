@@ -53,21 +53,24 @@ export default function HeroCarousel({
 								src={element.mobileSource}
 								alt={element.alt}
 								fill
-								sizes="100vw"
-								quality={85}
+								sizes="(max-width: 768px) 100vw, 0px"
+								quality={index === 0 ? 85 : 75}
 								priority={index === 0}
 								loading={index === 0 ? 'eager' : 'lazy'}
+								fetchPriority={index === 0 ? 'high' : 'auto'}
 								className="object-cover md:hidden"
 							/>
 
+							{/* DESKTOP IMAGE */}
 							<Image
 								src={element.desktopSource}
 								alt={element.alt}
 								fill
-								sizes="(max-width: 1200px) 100vw, 1200px"
-								quality={85}
+								sizes="(max-width: 768px) 0px, (max-width: 1200px) 100vw, 1200px"
+								quality={index === 0 ? 85 : 75}
 								priority={index === 0}
 								loading={index === 0 ? 'eager' : 'lazy'}
+								fetchPriority={index === 0 ? 'high' : 'auto'}
 								className="object-cover hidden md:block"
 							/>
 						</div>
@@ -77,7 +80,10 @@ export default function HeroCarousel({
 
 			{useSocials && (
 				<div className="flex-row gap-4 flex-nowrap w-full max-w-[1200px] absolute -bottom-1 hidden lg:flex">
-					<Link href="https://www.instagram.com/unisamsoc/?hl=en">
+					<Link
+						href="https://www.instagram.com/unisamsoc/?hl=en"
+						aria-label="Visit our Instagram"
+					>
 						<SvgIcon
 							src={'/instagram.svg'}
 							height={32}
@@ -85,7 +91,10 @@ export default function HeroCarousel({
 							className={'bg-[#ff0069]'}
 						/>
 					</Link>
-					<Link href="https://www.facebook.com/UniSAMSoc">
+					<Link
+						href="https://www.facebook.com/UniSAMSoc"
+						aria-label="Visit our Facebook"
+					>
 						<SvgIcon
 							src={'/facebook.svg'}
 							height={32}
@@ -93,7 +102,10 @@ export default function HeroCarousel({
 							className={'bg-[#0866ff]'}
 						/>
 					</Link>
-					<Link href="https://discord.gg/tQUrdxzUZ4">
+					<Link
+						href="https://discord.gg/tQUrdxzUZ4"
+						aria-label="Join our Discord"
+					>
 						<SvgIcon
 							src={'/discord.svg'}
 							height={32}
@@ -109,6 +121,7 @@ export default function HeroCarousel({
 					<DotButton
 						key={index}
 						onClick={() => onDotButtonClick(index)}
+						aria-label={`Go to slide ${index + 1}`}
 						className={`appearance-none rounded-full transition-all h-6 w-6 bg-pink-300 cursor-pointer hover:bg-pink-400 border border-black ${
 							index === selectedIndex
 								? 'bg-pink-500 hover:bg-pink-600 w-8'
