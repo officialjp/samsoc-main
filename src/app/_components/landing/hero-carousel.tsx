@@ -126,9 +126,9 @@ export default function HeroCarousel({
 						key={index}
 						onClick={() => onDotButtonClick(index)}
 						aria-label={`Go to slide ${index + 1}`}
-						className={`appearance-none rounded-full transition-all h-6 w-6 bg-pink-300 cursor-pointer hover:bg-pink-400 border border-black ${
+						className={`appearance-none rounded-full transition-all h-6 w-6 bg-pink-300 cursor-pointer hover:bg-pink-400 border-2 border-black ${
 							index === selectedIndex
-								? 'bg-pink-500 hover:bg-pink-600 w-8'
+								? 'bg-pink-500 hover:bg-pink-600 w-12'
 								: ''
 						}`}
 					/>

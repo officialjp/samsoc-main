@@ -25,7 +25,8 @@ export function MembershipCard({
 }: MembershipCardProps) {
 	return (
 		<div
-			className={`border-2 border-black p-6 ${color} rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] relative`}
+			className={`border-2 border-black p-6 ${color} rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] relative scroll-mt-60`}
+			id="join"
 		>
 			{recommended && (
 				<div className="absolute -top-4 -right-4 bg-membership2 px-3 py-1 rounded-full text-sm font-bold border-2 border-black rotate-6">
@@ -34,7 +35,7 @@ export function MembershipCard({
 			)}
 			<div className="px-4 rounded-xl py-2 text-4xl font-bold inline-block mt-0 mb-4">
 				{title}
-				<p className="text-center text-sm text-text1 pt-2 font-base">
+				<p className="text-left text-sm text-text1 pt-2 font-base">
 					{flavorText}
 				</p>
 			</div>
