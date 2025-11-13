@@ -1,7 +1,7 @@
 'use client';
 import { useMemo, useState, useCallback } from 'react';
-import { GalleryFilter } from '~/app/_components/gallery/gallery-filter';
-import { GalleryImage } from '~/app/_components/gallery/gallery-image';
+import GalleryFilter from '~/app/_components/gallery/gallery-filter';
+import GalleryImage from '~/app/_components/gallery/gallery-image';
 import { Button } from '~/app/_components/ui/button';
 import { Pagination } from '~/app/_components/pagination';
 import { X } from 'lucide-react';

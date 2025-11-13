@@ -1,4 +1,3 @@
-import { memo } from 'react';
 import Image from 'next/image';
 
 interface MangaData {
@@ -15,7 +14,7 @@ interface MangaCardProps {
 	manga: MangaData;
 }
 
-export const MangaCard = memo(function MangaCard({ manga }: MangaCardProps) {
+export default function MangaCard({ manga }: MangaCardProps) {
 	const isAvailable = !manga.borrowed_by || manga.borrowed_by === 'NULL';
 	const hasBorrower = manga.borrowed_by && manga.borrowed_by !== 'NULL';
 
@@ -70,4 +69,4 @@ export const MangaCard = memo(function MangaCard({ manga }: MangaCardProps) {
 			</div>
 		</article>
 	);
-});
+}

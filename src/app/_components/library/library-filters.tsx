@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useCallback } from 'react';
+import { useCallback } from 'react';
 import { Search, X } from 'lucide-react';
 import { Button } from '~/app/_components/ui/button';
 import { Input } from '~/app/_components/ui/input';
@@ -32,7 +32,7 @@ const STATUS_OPTIONS = [
 	},
 ] as const;
 
-export const LibraryFilters = memo(function LibraryFilters({
+export default function LibraryFilters({
 	genres,
 	onFilterChange,
 	filters,
@@ -158,4 +158,4 @@ export const LibraryFilters = memo(function LibraryFilters({
 			</div>
 		</div>
 	);
-});
+}

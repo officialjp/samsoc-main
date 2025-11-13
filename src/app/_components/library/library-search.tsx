@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { MangaCard } from '~/app/_components/library/manga-card';
-import { LibraryFilters } from '~/app/_components/library/library-filters';
+import MangaCard from '~/app/_components/library/manga-card';
+import LibraryFilters from '~/app/_components/library/library-filters';
 import { Pagination } from '~/app/_components/pagination';
 import { BookOpen } from 'lucide-react';
 

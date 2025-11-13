@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, memo } from 'react';
+import React from 'react';
 import type { EmblaOptionsType } from 'embla-carousel';
 import { DotButton, useDotButton } from './hero-carousel-button';
 import useEmblaCarousel from 'embla-carousel-react';
@@ -16,109 +16,17 @@ type CarouselType = {
 	useSocials: boolean;
 };
 
-const SOCIAL_LINKS = [
-	{
-		href: 'https://www.instagram.com/unisamsoc/?hl=en',
-		label: 'Visit our Instagram',
-		icon: '/instagram.svg',
-		color: 'bg-[#ff0069]',
-	},
-	{
-		href: 'https://www.facebook.com/UniSAMSoc',
-		label: 'Visit our Facebook',
-		icon: '/facebook.svg',
-		color: 'bg-[#0866ff]',
-	},
-	{
-		href: 'https://discord.gg/tQUrdxzUZ4',
-		label: 'Join our Discord',
-		icon: '/discord.svg',
-		color: 'bg-[#5865F2]',
-	},
-] as const;
-
-const SocialLinks = memo(function SocialLinks() {
-	return (
-		<div className="flex-row gap-4 flex-nowrap w-full max-w-[1200px] absolute -bottom-1 hidden lg:flex">
-			{SOCIAL_LINKS.map((social) => (
-				<Link
-					key={social.href}
-					href={social.href}
-					aria-label={social.label}
-					prefetch={false}
-				>
-					<SvgIcon
-						src={social.icon}
-						height={32}
-						width={32}
-						className={social.color}
-					/>
-				</Link>
-			))}
-		</div>
-	);
-});
-
-const CarouselSlide = memo(function CarouselSlide({
-	element,
-	index,
-}: {
-	element: Carousel;
-	index: number;
-}) {
-	const isFirst = index === 0;
-	const quality = isFirst ? 85 : 75;
-	const priority = isFirst;
-	const loading = isFirst ? 'eager' : 'lazy';
-	const fetchPriority = isFirst ? 'high' : 'auto';
-
-	return (
-		<div
-			className="relative flex-[0_0_100%] min-w-0 aspect-9/16 md:aspect-video"
-			key={element.id}
-		>
-			<Image
-				src={element.mobileSource}
-				alt={element.alt}
-				fill
-				sizes="(max-width: 768px) 100vw, 0px"
-				quality={quality}
-				priority={priority}
-				loading={loading}
-				fetchPriority={fetchPriority}
-				className="object-cover md:hidden"
-			/>
-			<Image
-				src={element.desktopSource}
-				alt={element.alt}
-				fill
-				sizes="(max-width: 768px) 0px, (max-width: 1200px) 100vw, 1200px"
-				quality={quality}
-				priority={priority}
-				loading={loading}
-				fetchPriority={fetchPriority}
-				className="object-cover hidden md:block"
-			/>
-		</div>
-	);
-});
-
 export default function HeroCarousel({
 	slides,
 	options,
 	useSocials,
 }: CarouselType) {
-	const autoplayPlugin = useMemo(
-		() => [
-			Autoplay({
-				delay: 5000,
-				stopOnInteraction: true,
-			}),
-		],
-		[],
-	);
-
-	const [emblaRef, emblaApi] = useEmblaCarousel(options, autoplayPlugin);
+	const [emblaRef, emblaApi] = useEmblaCarousel(options, [
+		Autoplay({
+			delay: 5000,
+			stopOnInteraction: true,
+		}),
+	]);
 
 	const { selectedIndex, scrollSnaps, onDotButtonClick } =
 		useDotButton(emblaApi);
@@ -139,16 +47,78 @@ export default function HeroCarousel({
 			>
 				<div className="flex touch-pinch-zoom touch-pan-y">
 					{slides.map((element, index) => (
-						<CarouselSlide
+						<div
+							className="relative flex-[0_0_100%] min-w-0 aspect-9/16 md:aspect-video"
 							key={element.id}
-							element={element}
-							index={index}
-						/>
+						>
+							<Image
+								src={element.mobileSource}
+								alt={element.alt}
+								fill
+								sizes="(max-width: 768px) 100vw, 0px"
+								quality={index === 0 ? 85 : 75}
+								priority={index === 0}
+								loading={index === 0 ? 'eager' : 'lazy'}
+								fetchPriority={index === 0 ? 'high' : 'auto'}
+								className="object-cover md:hidden"
+							/>
+
+							<Image
+								src={element.desktopSource}
+								alt={element.alt}
+								fill
+								sizes="(max-width: 768px) 0px, (max-width: 1200px) 100vw, 1200px"
+								quality={index === 0 ? 85 : 75}
+								priority={index === 0}
+								loading={index === 0 ? 'eager' : 'lazy'}
+								fetchPriority={index === 0 ? 'high' : 'auto'}
+								className="object-cover hidden md:block"
+							/>
+						</div>
 					))}
 				</div>
 			</div>
 
-			{useSocials && <SocialLinks />}
+			{useSocials && (
+				<div className="flex-row gap-4 flex-nowrap w-full max-w-[1200px] absolute -bottom-1 hidden lg:flex">
+					<Link
+						href="https://www.instagram.com/unisamsoc/?hl=en"
+						aria-label="Visit our Instagram"
+						prefetch={false}
+					>
+						<SvgIcon
+							src="/instagram.svg"
+							height={32}
+							width={32}
+							className="bg-[#ff0069]"
+						/>
+					</Link>
+					<Link
+						href="https://www.facebook.com/UniSAMSoc"
+						aria-label="Visit our Facebook"
+						prefetch={false}
+					>
+						<SvgIcon
+							src="/facebook.svg"
+							height={32}
+							width={32}
+							className="bg-[#0866ff]"
+						/>
+					</Link>
+					<Link
+						href="https://discord.gg/tQUrdxzUZ4"
+						aria-label="Join our Discord"
+						prefetch={false}
+					>
+						<SvgIcon
+							src="/discord.svg"
+							height={32}
+							width={32}
+							className="bg-[#5865F2]"
+						/>
+					</Link>
+				</div>
+			)}
 
 			<div className="relative flex items-center justify-center gap-2 mt-7">
 				{scrollSnaps.map((_, index) => (
