@@ -21,8 +21,6 @@ export const metadata: Metadata = {
 	},
 };
 
-export const revalidate = 3600 * 24; // Revalidate every hour
-
 export default async function GalleryPage({
 	searchParams,
 }: {
