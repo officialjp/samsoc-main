@@ -57,7 +57,6 @@ export default async function LibraryPage() {
 	const mangaResponse = await api.post.getMangaData();
 	const rawMangaData = mangaResponse?.data || [];
 
-	// Transform data on server
 	const mangaData: MangaData[] = rawMangaData.map((manga) => ({
 		id: manga.id,
 		title: manga.title,
