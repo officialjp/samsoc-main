@@ -94,7 +94,7 @@ export default function GalleryImage({
 								height={800}
 								alt={alt}
 								className="max-h-[80vh] w-auto object-contain"
-								quality={85}
+								quality={75}
 								sizes="90vw"
 							/>
 						</div>
