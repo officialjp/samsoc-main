@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo, memo, lazy, Suspense } from 'react';
 import {
 	format,
 	startOfMonth,
@@ -11,163 +11,157 @@ import {
 	isSameMonth,
 	isSameDay,
 } from 'date-fns';
-import { X } from 'lucide-react';
 import { cn } from '~/lib/utils';
 import type { Event } from 'generated/prisma';
+
+const EventModal = lazy(() =>
+	import('./event-modal').then((mod) => ({ default: mod.EventModal })),
+);
 
 interface CalendarCellsProps {
 	currentMonth: Date;
 	selectedDate: Date;
-	events: Event[];
+	eventsMap: Map<string, Event[]>;
 	onDateClick: (day: Date) => void;
 }
+
+const CalendarCell = memo(
+	({
+		day,
+		currentMonth,
+		selectedDate,
+		dayEvents,
+		onClick,
+		onEventClick,
+	}: {
+		day: Date;
+		currentMonth: Date;
+		selectedDate: Date;
+		dayEvents: Event[];
+		onClick: () => void;
+		onEventClick: (event: Event) => void;
+	}) => {
+		const formattedDate = format(day, 'd');
+		const isCurrentMonth = isSameMonth(day, currentMonth);
+		const isSelected = isSameDay(day, selectedDate);
+		const isToday = isSameDay(day, new Date());
+
+		return (
+			<div
+				className={cn(
+					'min-h-[120px] border-2 border-black m-1 p-1 relative cursor-pointer',
+					!isCurrentMonth ? 'bg-gray-100' : 'bg-white',
+					isSelected ? 'bg-yellow-100' : '',
+				)}
+				onClick={onClick}
+			>
+				<div className="flex justify-between">
+					<span
+						className={cn(
+							'font-bold text-lg',
+							!isCurrentMonth ? 'text-gray-400' : '',
+							isToday
+								? 'bg-pink-500 text-white h-8 w-8 rounded-full flex items-center justify-center'
+								: '',
+						)}
+					>
+						{formattedDate}
+					</span>
+					{isCurrentMonth && (
+						<span className="text-xs text-gray-500">
+							{format(day, 'EEE')}
+						</span>
+					)}
+				</div>
+
+				<div className="mt-1 space-y-1 overflow-y-auto max-h-20">
+					{dayEvents.map((event) => (
+						<div
+							key={event.id}
+							className={cn(
+								'text-xs p-1 border border-black cursor-pointer truncate',
+								event.color,
+								event.is_regular_session &&
+									'border-l-4 border-l-purple-500',
+							)}
+							onClick={(e) => {
+								e.stopPropagation();
+								onEventClick(event);
+							}}
+						>
+							{event.title}
+						</div>
+					))}
+				</div>
+			</div>
+		);
+	},
+);
+
+CalendarCell.displayName = 'CalendarCell';
 
 export function CalendarCells({
 	currentMonth,
 	selectedDate,
-	events,
+	eventsMap,
 	onDateClick,
 }: CalendarCellsProps) {
 	const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
-	const monthStart = startOfMonth(currentMonth);
-	const monthEnd = endOfMonth(monthStart);
-	const startDate = startOfWeek(monthStart);
-	const endDate = endOfWeek(monthEnd);
+	const calendarDays = useMemo(() => {
+		const monthStart = startOfMonth(currentMonth);
+		const monthEnd = endOfMonth(monthStart);
+		const startDate = startOfWeek(monthStart);
+		const endDate = endOfWeek(monthEnd);
 
-	const rows = [];
-	let days = [];
-	let day = startDate;
-	let formattedDate = '';
+		const days: Date[] = [];
+		let day = startDate;
 
-	while (day <= endDate) {
-		for (let i = 0; i < 7; i++) {
-			formattedDate = format(day, 'd');
-			const cloneDay = day;
-			const dayEvents = events.filter((event) =>
-				isSameDay(event.date, day),
-			);
-
-			days.push(
-				<div
-					key={day.toString()}
-					className={cn(
-						'min-h-[120px] border-2 border-black m-1 p-1 relative',
-						!isSameMonth(day, monthStart)
-							? 'bg-gray-100'
-							: 'bg-white',
-						isSameDay(day, selectedDate) ? 'bg-yellow-100' : '',
-					)}
-					onClick={() => onDateClick(cloneDay)}
-				>
-					<div className="flex justify-between">
-						<span
-							className={cn(
-								'font-bold text-lg',
-								!isSameMonth(day, monthStart)
-									? 'text-gray-400'
-									: '',
-								isSameDay(day, new Date())
-									? 'bg-pink-500 text-white h-8 w-8 rounded-full flex items-center justify-center'
-									: '',
-							)}
-						>
-							{formattedDate}
-						</span>
-						{/* Show day of week for current month */}
-						{isSameMonth(day, monthStart) && (
-							<span className="text-xs text-gray-500">
-								{format(day, 'EEE')}
-							</span>
-						)}
-					</div>
-
-					<div className="mt-1 space-y-1 overflow-y-auto max-h-20">
-						{dayEvents.map((event) => (
-							<div
-								key={event.id}
-								className={cn(
-									'text-xs p-1 border border-black cursor-pointer truncate',
-									event.color,
-									event.is_regular_session &&
-										'border-l-4 border-l-purple-500',
-								)}
-								onClick={(e) => {
-									e.stopPropagation();
-									setSelectedEvent(event);
-								}}
-							>
-								{event.title}
-							</div>
-						))}
-					</div>
-				</div>,
-			);
+		while (day <= endDate) {
+			days.push(day);
 			day = addDays(day, 1);
 		}
 
-		rows.push(
-			<div key={day.toString()} className="grid grid-cols-7">
-				{days}
-			</div>,
-		);
-		days = [];
-	}
+		return days;
+	}, [currentMonth]);
+
+	const weeks = useMemo(() => {
+		const weeksArray: Date[][] = [];
+		for (let i = 0; i < calendarDays.length; i += 7) {
+			weeksArray.push(calendarDays.slice(i, i + 7));
+		}
+		return weeksArray;
+	}, [calendarDays]);
 
 	return (
 		<div>
-			{rows}
+			{weeks.map((week, weekIndex) => (
+				<div key={weekIndex} className="grid grid-cols-7">
+					{week.map((day) => {
+						const dateKey = format(day, 'yyyy-MM-dd');
+						const dayEvents = eventsMap.get(dateKey) ?? [];
 
-			{/* Event Details Modal */}
-			{selectedEvent && (
-				<div
-					className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 hover:cursor-pointer"
-					onClick={() => setSelectedEvent(null)}
-				>
-					<div className="bg-white border-4 border-black p-6 max-w-md w-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-2xl relative hover:cursor-default">
-						<button
-							onClick={(e) => {
-								e.stopPropagation();
-								setSelectedEvent(null);
-							}}
-							className="absolute -top-4 -right-4 bg-pink-500 text-white rounded-full p-1 border-2 border-black hover:cursor-pointer"
-						>
-							<X className="h-6 w-6" />
-						</button>
-
-						<div
-							className={cn(
-								'h-2 w-full mb-4',
-								selectedEvent.color,
-							)}
-						></div>
-
-						<h3 className="text-xl font-bold mb-2">
-							{selectedEvent.title}
-							{selectedEvent.is_regular_session && (
-								<span className="ml-2 bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full border border-purple-300">
-									Weekly Session
-								</span>
-							)}
-						</h3>
-
-						<div className="mb-4">
-							<div className="text-sm text-gray-500 mb-1">
-								{format(
-									selectedEvent.date,
-									'EEEE, MMMM d, yyyy, p',
-								)}
-							</div>
-							<div className="text-sm font-medium">
-								📍 {selectedEvent.location}
-							</div>
-						</div>
-
-						<p className="text-gray-700">
-							{selectedEvent.description}
-						</p>
-					</div>
+						return (
+							<CalendarCell
+								key={day.toString()}
+								day={day}
+								currentMonth={currentMonth}
+								selectedDate={selectedDate}
+								dayEvents={dayEvents}
+								onClick={() => onDateClick(day)}
+								onEventClick={setSelectedEvent}
+							/>
+						);
+					})}
 				</div>
+			))}
+			{selectedEvent && (
+				<Suspense fallback={null}>
+					<EventModal
+						event={selectedEvent}
+						onClose={() => setSelectedEvent(null)}
+					/>
+				</Suspense>
 			)}
 		</div>
 	);

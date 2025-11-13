@@ -1,5 +1,6 @@
 'use client';
 
+import { memo, useMemo } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '../ui/button';
 
@@ -10,23 +11,27 @@ interface CalendarHeaderProps {
 	onCurrentMonth: () => void;
 }
 
-export function CalendarHeader({
+export const CalendarHeader = memo(function CalendarHeader({
 	currentMonth,
 	onPrevMonth,
 	onNextMonth,
 	onCurrentMonth,
 }: CalendarHeaderProps) {
-	// Format for desktop (long month)
-	const desktopDateFormat = new Intl.DateTimeFormat('en-US', {
-		month: 'long',
-		year: 'numeric',
-	});
+	const { desktopDate, mobileDate } = useMemo(() => {
+		const desktopFormat = new Intl.DateTimeFormat('en-US', {
+			month: 'long',
+			year: 'numeric',
+		});
+		const mobileFormat = new Intl.DateTimeFormat('en-US', {
+			month: 'short',
+			year: 'numeric',
+		});
 
-	// Format for mobile (short month)
-	const mobileDateFormat = new Intl.DateTimeFormat('en-US', {
-		month: 'short',
-		year: 'numeric',
-	});
+		return {
+			desktopDate: desktopFormat.format(currentMonth),
+			mobileDate: mobileFormat.format(currentMonth),
+		};
+	}, [currentMonth]);
 
 	return (
 		<div className="flex items-center justify-between mb-6">
@@ -50,12 +55,8 @@ export function CalendarHeader({
 			</div>
 
 			<h2 className="font-bold px-4 py-2 text-lg md:text-2xl">
-				<span className="md:hidden">
-					{mobileDateFormat.format(currentMonth)}
-				</span>
-				<span className="hidden md:inline">
-					{desktopDateFormat.format(currentMonth)}
-				</span>
+				<span className="md:hidden">{mobileDate}</span>
+				<span className="hidden md:inline">{desktopDate}</span>
 			</h2>
 
 			<Button
@@ -66,4 +67,4 @@ export function CalendarHeader({
 			</Button>
 		</div>
 	);
-}
+});

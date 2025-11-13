@@ -1,8 +1,9 @@
-import React, {
+import {
 	type ComponentPropsWithRef,
 	useCallback,
 	useEffect,
 	useState,
+	memo,
 } from 'react';
 import type { EmblaCarouselType } from 'embla-carousel';
 
@@ -39,10 +40,18 @@ export const useDotButton = (
 
 		onInit(emblaApi);
 		onSelect(emblaApi);
+
 		emblaApi
 			.on('reInit', onInit)
 			.on('reInit', onSelect)
 			.on('select', onSelect);
+
+		return () => {
+			emblaApi
+				.off('reInit', onInit)
+				.off('reInit', onSelect)
+				.off('select', onSelect);
+		};
 	}, [emblaApi, onInit, onSelect]);
 
 	return {
@@ -54,7 +63,7 @@ export const useDotButton = (
 
 type PropType = ComponentPropsWithRef<'button'>;
 
-export const DotButton: React.FC<PropType> = (props) => {
+export const DotButton = memo<PropType>(function DotButton(props) {
 	const { children, ...restProps } = props;
 
 	return (
@@ -62,4 +71,4 @@ export const DotButton: React.FC<PropType> = (props) => {
 			{children}
 		</button>
 	);
-};
+});

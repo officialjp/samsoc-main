@@ -1,7 +1,8 @@
 'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, memo } from 'react';
 import { cn } from '~/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 
@@ -44,7 +45,6 @@ export function AnimeCard({ animes }: AnimeCardProps) {
 			}
 
 			event.preventDefault();
-
 			setSelectedId(animeId);
 
 			const parent = target.parentNode;
@@ -52,13 +52,13 @@ export function AnimeCard({ animes }: AnimeCardProps) {
 
 			const siblings = Array.from(parent.children) as HTMLElement[];
 
-			siblings.forEach((sibling) => {
+			for (const sibling of siblings) {
 				sibling.classList.remove(
 					'right-card',
 					'left-card',
 					'center-card',
 				);
-			});
+			}
 
 			target.classList.add('center-card');
 
@@ -74,6 +74,7 @@ export function AnimeCard({ animes }: AnimeCardProps) {
 				} else if (!rightAssigned) {
 					sibling.classList.add('right-card');
 					rightAssigned = true;
+					break;
 				}
 			}
 		},
@@ -98,6 +99,7 @@ export function AnimeCard({ animes }: AnimeCardProps) {
 		</div>
 	);
 }
+
 interface AnimeCardItemProps {
 	anime: AnimeCardData;
 	position: (typeof CARD_POSITIONS)[number];
@@ -108,23 +110,49 @@ interface AnimeCardItemProps {
 	) => void;
 }
 
-function AnimeCardItem({
+const AnimeCardItem = memo(function AnimeCardItem({
 	anime,
 	position,
 	isSelected,
 	onClick,
 }: AnimeCardItemProps) {
+	const genresList = useMemo(
+		() =>
+			anime.genres.map((genre) => (
+				<span
+					key={genre.id}
+					className="rounded-xl bg-about1 p-1 pl-2 pr-2 text-center text-black"
+				>
+					{genre.name.toLowerCase()}
+				</span>
+			)),
+		[anime.genres],
+	);
+
+	const handleClick = useCallback(
+		(e: React.SyntheticEvent<HTMLDivElement>) => {
+			onClick(e, anime.id);
+		},
+		[onClick, anime.id],
+	);
+
+	const handleKeyDown = useCallback(
+		(e: React.KeyboardEvent<HTMLDivElement>) => {
+			if (e.key === 'Enter' || e.key === ' ') {
+				onClick(e, anime.id);
+			}
+		},
+		[onClick, anime.id],
+	);
+
 	return (
 		<div
-			onClick={(e) => onClick(e, anime.id)}
+			onClick={handleClick}
 			className={cn('card-bottom absolute w-fit', position)}
 			role="button"
 			tabIndex={0}
-			onKeyDown={(e) => {
-				if (e.key === 'Enter' || e.key === ' ') {
-					onClick(e, anime.id);
-				}
-			}}
+			onKeyDown={handleKeyDown}
+			aria-label={`Select ${anime.title}`}
 		>
 			<Tooltip>
 				<TooltipTrigger asChild>
@@ -133,6 +161,7 @@ function AnimeCardItem({
 							href={anime.mal_link}
 							className="block w-[min(40vw,320px)]"
 							aria-label={`View ${anime.title} on MyAnimeList`}
+							prefetch={false}
 						>
 							<div className="relative aspect-10/14 w-full">
 								<Image
@@ -148,7 +177,11 @@ function AnimeCardItem({
 							</div>
 						</Link>
 						{isSelected && (
-							<Link href={anime.mal_link} className="block">
+							<Link
+								href={anime.mal_link}
+								prefetch={false}
+								className="block"
+							>
 								<p className="py-4 text-center text-sm font-bold hover:text-button2 md:text-xl">
 									{anime.title}
 								</p>
@@ -169,18 +202,13 @@ function AnimeCardItem({
 							</p>
 						</div>
 						<div className="flex flex-row flex-wrap gap-2 pb-2 pt-1">
-							{anime.genres.map((genre) => (
-								<span
-									key={genre.id}
-									className="rounded-xl bg-about1 p-1 pl-2 pr-2 text-center text-black"
-								>
-									{genre.name.toLowerCase()}
-								</span>
-							))}
+							{genresList}
 						</div>
 					</div>
 				</TooltipContent>
 			</Tooltip>
 		</div>
 	);
-}
+});
+
+AnimeCardItem.displayName = 'AnimeCardItem';
