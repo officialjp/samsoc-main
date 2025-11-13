@@ -1,5 +1,5 @@
 'use client';
-import { memo, useCallback } from 'react';
+import { useCallback } from 'react';
 import { Button } from '~/app/_components/ui/button';
 import { cn } from '~/lib/utils';
 
@@ -12,7 +12,7 @@ interface GalleryFilterProps {
 	activeYear: string;
 }
 
-export const GalleryFilter = memo(function GalleryFilter({
+export default function GalleryFilter({
 	categories,
 	years,
 	onCategoryChange,
@@ -87,4 +87,4 @@ export const GalleryFilter = memo(function GalleryFilter({
 			</div>
 		</div>
 	);
-});
+}

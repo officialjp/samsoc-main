@@ -1,7 +1,5 @@
 'use client';
 
-import { memo } from 'react';
-
 const DAYS = [
 	'Sunday',
 	'Monday',
@@ -12,7 +10,7 @@ const DAYS = [
 	'Saturday',
 ] as const;
 
-export const CalendarDays = memo(function CalendarDays() {
+export function CalendarDays() {
 	return (
 		<div className="grid grid-cols-7 mb-2">
 			{DAYS.map((day) => (
@@ -26,4 +24,4 @@ export const CalendarDays = memo(function CalendarDays() {
 			))}
 		</div>
 	);
-});
+}

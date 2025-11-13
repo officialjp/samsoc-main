@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useEffect } from 'react';
+import { useEffect } from 'react';
 import { format } from 'date-fns';
 import { X } from 'lucide-react';
 import { cn } from '~/lib/utils';
@@ -11,9 +11,7 @@ interface EventModalProps {
 	onClose: () => void;
 }
 
-// Extracted modal component for lazy loading
-export const EventModal = memo(({ event, onClose }: EventModalProps) => {
-	// Handle ESC key to close modal
+export function EventModal({ event, onClose }: EventModalProps) {
 	useEffect(() => {
 		const handleEscape = (e: KeyboardEvent) => {
 			if (e.key === 'Escape') onClose();
@@ -22,7 +20,6 @@ export const EventModal = memo(({ event, onClose }: EventModalProps) => {
 		return () => document.removeEventListener('keydown', handleEscape);
 	}, [onClose]);
 
-	// Prevent body scroll when modal is open
 	useEffect(() => {
 		document.body.style.overflow = 'hidden';
 		return () => {
@@ -71,6 +68,4 @@ export const EventModal = memo(({ event, onClose }: EventModalProps) => {
 			</div>
 		</div>
 	);
-});
-
-EventModal.displayName = 'EventModal';
+}

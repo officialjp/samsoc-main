@@ -3,7 +3,6 @@ import {
 	useCallback,
 	useEffect,
 	useState,
-	memo,
 } from 'react';
 import type { EmblaCarouselType } from 'embla-carousel';
 
@@ -63,7 +62,7 @@ export const useDotButton = (
 
 type PropType = ComponentPropsWithRef<'button'>;
 
-export const DotButton = memo<PropType>(function DotButton(props) {
+export function DotButton(props: PropType) {
 	const { children, ...restProps } = props;
 
 	return (
@@ -71,4 +70,4 @@ export const DotButton = memo<PropType>(function DotButton(props) {
 			{children}
 		</button>
 	);
-});
+}

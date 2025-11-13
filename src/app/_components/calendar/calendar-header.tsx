@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useMemo } from 'react';
+import { useMemo } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '../ui/button';
 
@@ -11,7 +11,7 @@ interface CalendarHeaderProps {
 	onCurrentMonth: () => void;
 }
 
-export const CalendarHeader = memo(function CalendarHeader({
+export function CalendarHeader({
 	currentMonth,
 	onPrevMonth,
 	onNextMonth,
@@ -67,4 +67,4 @@ export const CalendarHeader = memo(function CalendarHeader({
 			</Button>
 		</div>
 	);
-});
+}

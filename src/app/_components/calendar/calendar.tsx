@@ -1,17 +1,12 @@
 'use client';
 
-import { useState, useMemo, useCallback, lazy, Suspense } from 'react';
+import { useState, useMemo, useCallback, Suspense } from 'react';
 import { addMonths, subMonths, format } from 'date-fns';
 import { CalendarHeader } from './calendar-header';
 import { CalendarDays } from './calendar-days';
 import { CalendarCells } from './calendar-cells';
 import type { Event } from 'generated/prisma';
-
-const MobileCalendarView = lazy(() =>
-	import('./mobile-calendar-view').then((mod) => ({
-		default: mod.MobileCalendarView,
-	})),
-);
+import { MobileCalendarView } from './mobile-calendar-view';
 
 interface CalendarProps {
 	events: Event[];

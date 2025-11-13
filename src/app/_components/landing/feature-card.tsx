@@ -1,4 +1,3 @@
-import { memo } from 'react';
 import { cn } from '~/lib/utils';
 import type { LucideIcon } from 'lucide-react';
 
@@ -10,7 +9,7 @@ interface FeatureCardProps {
 	className?: string;
 }
 
-export const FeatureCard = memo(function FeatureCard({
+export function FeatureCard({
 	icon: Icon,
 	title,
 	description,
@@ -34,4 +33,4 @@ export const FeatureCard = memo(function FeatureCard({
 			<p className="text-center text-text1">{description}</p>
 		</div>
 	);
-});
+}
