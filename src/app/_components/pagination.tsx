@@ -15,33 +15,26 @@ export function Pagination({
 	totalPages,
 	onPageChange,
 }: PaginationProps) {
-	// Generate page numbers to display
 	const getPageNumbers = () => {
 		const pages = [];
 
-		// Always show first pag
 		pages.push(1);
 
-		// Calculate range around current page
 		const start = Math.max(2, currentPage - 1);
 		const end = Math.min(totalPages - 1, currentPage + 1);
 
-		// Add ellipsi after first page if needed
 		if (start > 2) {
 			pages.push('ellipsis-start');
 		}
 
-		// Add pages around current page
 		for (let i = start; i <= end; i++) {
 			pages.push(i);
 		}
 
-		// Add ellipsis before last page if needed
 		if (end < totalPages - 1) {
 			pages.push('ellipsis-end');
 		}
 
-		// Always show last page if there's more than one page
 		if (totalPages > 1) {
 			pages.push(totalPages);
 		}
