@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useCallback, Suspense } from 'react';
+import { useState, useMemo, Suspense } from 'react';
 import { addMonths, subMonths, format } from 'date-fns';
 import { CalendarHeader } from './calendar-header';
 import { CalendarDays } from './calendar-days';
@@ -15,23 +15,23 @@ interface CalendarProps {
 export function Calendar({ events }: CalendarProps) {
 	const [currentMonth, setCurrentMonth] = useState(new Date());
 	const [selectedDate, setSelectedDate] = useState(new Date());
-	const prevMonth = useCallback(() => {
+	const prevMonth = () => {
 		setCurrentMonth((prev) => subMonths(prev, 1));
-	}, []);
+	};
 
-	const nextMonth = useCallback(() => {
+	const nextMonth = () => {
 		setCurrentMonth((prev) => addMonths(prev, 1));
-	}, []);
+	};
 
-	const onDateClick = useCallback((day: Date) => {
+	const onDateClick = (day: Date) => {
 		setSelectedDate(day);
-	}, []);
+	};
 
-	const onCurrentMonth = useCallback(() => {
+	const onCurrentMonth = () => {
 		const now = new Date();
 		setCurrentMonth(now);
 		setSelectedDate(now);
-	}, []);
+	};
 
 	const groupedEvents = useMemo(() => {
 		const monthStart = new Date(

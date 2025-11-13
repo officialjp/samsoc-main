@@ -88,9 +88,9 @@ export function Header() {
 		rAFId: null,
 	});
 
-	const toggleMenu = useCallback(() => {
+	const toggleMenu = () => {
 		setIsMenuOpen((prev) => !prev);
-	}, []);
+	};
 
 	const animateHeader = useCallback(() => {
 		const headerElement = navRef.current;
