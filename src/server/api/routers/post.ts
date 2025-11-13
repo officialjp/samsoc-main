@@ -4,8 +4,6 @@ import {
 	publicProcedure,
 } from '~/server/api/trpc';
 
-import { z } from 'zod';
-
 export const postRouter = createTRPCRouter({
 	getCarouselData: publicProcedure.query(async ({ ctx }) => {
 		const allImages = await ctx.db.carousel.findMany({});
@@ -30,43 +28,25 @@ export const postRouter = createTRPCRouter({
 		return { data: allManga };
 	}),
 
-	getImageData: publicProcedure
-		.input(
-			z
-				.object({
-					page: z.number().default(1),
-					pageSize: z.number().default(30),
-				})
-				.optional(),
-		)
-		.query(async ({ ctx, input }) => {
-			const page = input?.page ?? 1;
-			const pageSize = input?.pageSize ?? 30;
-			const skip = (page - 1) * pageSize;
+	getImageData: publicProcedure.query(async ({ ctx }) => {
+		const images = await ctx.db.image.findMany({
+			select: {
+				id: true,
+				source: true,
+				thumbnailSource: true,
+				alt: true,
+				category: true,
+				year: true,
+				createdAt: true,
+			},
+			orderBy: { createdAt: 'desc' },
+		});
 
-			const [images, total] = await Promise.all([
-				ctx.db.image.findMany({
-					select: {
-						id: true,
-						source: true,
-						thumbnailSource: true,
-						alt: true,
-						category: true,
-						year: true,
-						createdAt: true,
-					},
-					skip,
-					take: pageSize,
-					orderBy: { createdAt: 'desc' },
-				}),
-				ctx.db.image.count(),
-			]);
-
-			return {
-				data: images,
-				total,
-			};
-		}),
+		return {
+			data: images,
+			total: images.length,
+		};
+	}),
 
 	getSpecialEvents: publicProcedure.query(async ({ ctx }) => {
 		const allEvents = await ctx.db.event.findMany({

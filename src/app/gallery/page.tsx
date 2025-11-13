@@ -21,23 +21,9 @@ export const metadata: Metadata = {
 	},
 };
 
-export default async function GalleryPage({
-	searchParams,
-}: {
-	searchParams: Promise<{ page?: string }>;
-}) {
-	const params = await searchParams;
-	const page = parseInt(params.page ?? '1', 10);
-	const pageSize = 15;
-
-	const imageResponse = await api.post.getImageData({
-		page,
-		pageSize,
-	});
-
+export default async function GalleryPage() {
+	const imageResponse = await api.post.getImageData();
 	const imageData = imageResponse?.data ?? [];
-	const totalImages = imageResponse?.total ?? 0;
-	const totalPages = Math.ceil(totalImages / pageSize);
 
 	return (
 		<HydrateClient>
@@ -50,12 +36,7 @@ export default async function GalleryPage({
 						badgeColor="bg-purple-200"
 						className="mb-12"
 					/>
-					<GallerySearch
-						initialItems={imageData}
-						currentPage={page}
-						totalPages={totalPages}
-						totalImages={totalImages}
-					/>
+					<GallerySearch initialItems={imageData} />
 				</SectionContainer>
 			</main>
 		</HydrateClient>

@@ -1,6 +1,5 @@
 'use client';
-import { useMemo, useState, useCallback, useTransition } from 'react';
-import { useRouter } from 'next/navigation';
+import { useMemo, useState, useCallback } from 'react';
 import { GalleryFilter } from '~/app/_components/gallery/gallery-filter';
 import { GalleryImage } from '~/app/_components/gallery/gallery-image';
 import { Button } from '~/app/_components/ui/button';
@@ -18,14 +17,12 @@ interface GalleryImageData {
 
 interface GallerySearchProps {
 	initialItems: GalleryImageData[];
-	currentPage: number;
-	totalPages: number;
-	totalImages: number;
 }
 
 const CATEGORIES = ['All', 'Events', 'Collaborations'] as const;
 const CURRENT_YEAR = new Date().getFullYear();
 const START_YEAR = 2022;
+const ITEMS_PER_PAGE = 15;
 
 const generateYears = (): string[] => {
 	const yearsCount = CURRENT_YEAR - START_YEAR + 1;
@@ -35,16 +32,10 @@ const generateYears = (): string[] => {
 	];
 };
 
-export function GallerySearch({
-	initialItems,
-	currentPage,
-	totalPages,
-	totalImages,
-}: GallerySearchProps) {
-	const router = useRouter();
-	const [isPending, startTransition] = useTransition();
+export function GallerySearch({ initialItems }: GallerySearchProps) {
 	const [activeCategory, setActiveCategory] = useState<string>('All');
 	const [activeYear, setActiveYear] = useState<string>('All');
+	const [currentPage, setCurrentPage] = useState(1);
 
 	const years = useMemo(() => generateYears(), []);
 
@@ -62,21 +53,36 @@ export function GallerySearch({
 		});
 	}, [initialItems, activeCategory, activeYear]);
 
+	const paginatedItems = useMemo(() => {
+		const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+		const endIndex = startIndex + ITEMS_PER_PAGE;
+		return filteredItems.slice(startIndex, endIndex);
+	}, [filteredItems, currentPage]);
+
+	const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
+
 	const hasActiveFilters = activeCategory !== 'All' || activeYear !== 'All';
 
 	const clearFilters = useCallback(() => {
 		setActiveCategory('All');
 		setActiveYear('All');
+		setCurrentPage(1);
 	}, []);
 
-	const handlePageChange = useCallback(
-		(newPage: number) => {
-			startTransition(() => {
-				router.push(`/gallery?page=${newPage}`, { scroll: false });
-			});
-		},
-		[router],
-	);
+	const handleCategoryChange = useCallback((category: string) => {
+		setActiveCategory(category);
+		setCurrentPage(1);
+	}, []);
+
+	const handleYearChange = useCallback((year: string) => {
+		setActiveYear(year);
+		setCurrentPage(1);
+	}, []);
+
+	const handlePageChange = useCallback((newPage: number) => {
+		setCurrentPage(newPage);
+		window.scrollTo({ top: 0, behavior: 'smooth' });
+	}, []);
 
 	return (
 		<div className="space-y-8">
@@ -103,8 +109,8 @@ export function GallerySearch({
 						<GalleryFilter
 							categories={CATEGORIES}
 							years={years}
-							onCategoryChange={setActiveCategory}
-							onYearChange={setActiveYear}
+							onCategoryChange={handleCategoryChange}
+							onYearChange={handleYearChange}
 							activeCategory={activeCategory}
 							activeYear={activeYear}
 						/>
@@ -123,26 +129,19 @@ export function GallerySearch({
 							</div>
 							<p className="mt-4 text-sm font-medium text-gray-900">
 								{filteredItems.length} photo
-								{filteredItems.length !== 1 ? 's' : ''} on this
-								page
+								{filteredItems.length !== 1 ? 's' : ''} found
 							</p>
 							<p className="text-sm text-gray-600">
-								{totalImages} total photos
+								Page {currentPage} of {totalPages}
 							</p>
 						</div>
 					</div>
 				</aside>
 
 				<section>
-					{isPending && (
-						<div className="absolute inset-0 bg-white/50 flex items-center justify-center z-10">
-							<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500" />
-						</div>
-					)}
-
-					{filteredItems.length > 0 ? (
+					{paginatedItems.length > 0 ? (
 						<div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
-							{filteredItems.map((item) => (
+							{paginatedItems.map((item) => (
 								<GalleryImage
 									key={item.id}
 									src={item.source}
