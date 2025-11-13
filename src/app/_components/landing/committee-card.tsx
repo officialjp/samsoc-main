@@ -10,7 +10,6 @@ interface CommitteeProps {
 }
 
 export function CommitteeCard({
-	id,
 	name,
 	role,
 	source,
@@ -30,7 +29,7 @@ export function CommitteeCard({
 					alt={`${name} - ${role}`}
 					fill
 					sizes="(max-width: 640px) 150px, (max-width: 1024px) 180px, 200px"
-					quality={80}
+					quality={85}
 					loading="lazy"
 					className="object-cover rounded-full"
 				/>

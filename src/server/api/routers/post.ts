@@ -29,8 +29,23 @@ export const postRouter = createTRPCRouter({
 	}),
 
 	getImageData: publicProcedure.query(async ({ ctx }) => {
-		const allImages = await ctx.db.image.findMany({});
-		return { data: allImages };
+		const images = await ctx.db.image.findMany({
+			select: {
+				id: true,
+				source: true,
+				thumbnailSource: true,
+				alt: true,
+				category: true,
+				year: true,
+				createdAt: true,
+			},
+			orderBy: { createdAt: 'desc' },
+		});
+
+		return {
+			data: images,
+			total: images.length,
+		};
 	}),
 
 	getSpecialEvents: publicProcedure.query(async ({ ctx }) => {

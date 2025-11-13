@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 
 export default async function GalleryPage() {
 	const imageResponse = await api.post.getImageData();
-	const imageData = imageResponse?.data || [];
+	const imageData = imageResponse?.data ?? [];
 
 	return (
 		<HydrateClient>
