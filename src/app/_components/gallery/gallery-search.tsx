@@ -1,15 +1,23 @@
 'use client';
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { GalleryFilter } from '~/app/_components/gallery/gallery-filter';
 import { GalleryImage } from '~/app/_components/gallery/gallery-image';
 import { Button } from '~/app/_components/ui/button';
 import { Pagination } from '~/app/_components/pagination';
 import { X } from 'lucide-react';
-import type { Image } from 'generated/prisma';
+
+interface GalleryImageData {
+	id: number;
+	source: string;
+	thumbnailSource: string | null;
+	alt: string;
+	category: string;
+	year: number;
+}
 
 interface GallerySearchProps {
-	initialItems: Image[];
+	initialItems: GalleryImageData[];
 	currentPage: number;
 	totalPages: number;
 	totalImages: number;
@@ -34,6 +42,7 @@ export function GallerySearch({
 	totalImages,
 }: GallerySearchProps) {
 	const router = useRouter();
+	const [isPending, startTransition] = useTransition();
 	const [activeCategory, setActiveCategory] = useState<string>('All');
 	const [activeYear, setActiveYear] = useState<string>('All');
 
@@ -62,8 +71,9 @@ export function GallerySearch({
 
 	const handlePageChange = useCallback(
 		(newPage: number) => {
-			router.push(`?page=${newPage}`);
-			window.scrollTo({ top: 0, behavior: 'smooth' });
+			startTransition(() => {
+				router.push(`/gallery?page=${newPage}`, { scroll: false });
+			});
 		},
 		[router],
 	);
@@ -124,6 +134,12 @@ export function GallerySearch({
 				</aside>
 
 				<section>
+					{isPending && (
+						<div className="absolute inset-0 bg-white/50 flex items-center justify-center z-10">
+							<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500" />
+						</div>
+					)}
+
 					{filteredItems.length > 0 ? (
 						<div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
 							{filteredItems.map((item) => (
@@ -131,10 +147,7 @@ export function GallerySearch({
 									key={item.id}
 									src={item.source}
 									alt={item.alt}
-									thumbnailSrc={
-										item.thumbnailSource ??
-										'/placeholder.svg'
-									}
+									thumbnailSrc={item.thumbnailSource}
 								/>
 							))}
 						</div>

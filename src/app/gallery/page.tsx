@@ -21,15 +21,16 @@ export const metadata: Metadata = {
 	},
 };
 
-export const revalidate = 3600;
+export const revalidate = 3600 * 24; // Revalidate every hour
 
 export default async function GalleryPage({
 	searchParams,
 }: {
-	searchParams: { page?: string };
+	searchParams: Promise<{ page?: string }>;
 }) {
-	const page = parseInt(searchParams.page ?? '1', 10);
-	const pageSize = 30;
+	const params = await searchParams;
+	const page = parseInt(params.page ?? '1', 10);
+	const pageSize = 15;
 
 	const imageResponse = await api.post.getImageData({
 		page,

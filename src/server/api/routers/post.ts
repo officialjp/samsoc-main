@@ -32,13 +32,17 @@ export const postRouter = createTRPCRouter({
 
 	getImageData: publicProcedure
 		.input(
-			z.object({
-				page: z.number().default(1),
-				pageSize: z.number().default(30),
-			}),
+			z
+				.object({
+					page: z.number().default(1),
+					pageSize: z.number().default(30),
+				})
+				.optional(),
 		)
 		.query(async ({ ctx, input }) => {
-			const skip = (input.page - 1) * input.pageSize;
+			const page = input?.page ?? 1;
+			const pageSize = input?.pageSize ?? 30;
+			const skip = (page - 1) * pageSize;
 
 			const [images, total] = await Promise.all([
 				ctx.db.image.findMany({
@@ -49,9 +53,10 @@ export const postRouter = createTRPCRouter({
 						alt: true,
 						category: true,
 						year: true,
+						createdAt: true,
 					},
 					skip,
-					take: input.pageSize,
+					take: pageSize,
 					orderBy: { createdAt: 'desc' },
 				}),
 				ctx.db.image.count(),
