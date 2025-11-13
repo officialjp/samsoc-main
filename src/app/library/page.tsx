@@ -21,7 +21,6 @@ export const metadata: Metadata = {
 	},
 };
 
-// Shared type - extract to types file in real app
 interface MangaData {
 	id: number;
 	title: string;

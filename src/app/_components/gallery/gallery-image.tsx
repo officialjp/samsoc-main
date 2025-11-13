@@ -1,5 +1,4 @@
 'use client';
-
 import { useState, useCallback, useEffect, memo } from 'react';
 import Image from 'next/image';
 import { X } from 'lucide-react';
@@ -7,11 +6,13 @@ import { X } from 'lucide-react';
 interface GalleryImageProps {
 	src: string;
 	alt: string;
+	thumbnailSrc?: string;
 }
 
 export const GalleryImage = memo(function GalleryImage({
 	src,
 	alt,
+	thumbnailSrc,
 }: GalleryImageProps) {
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -41,6 +42,8 @@ export const GalleryImage = memo(function GalleryImage({
 		};
 	}, [isOpen, closeModal]);
 
+	const displaySrc = thumbnailSrc ?? src;
+
 	return (
 		<>
 			<button
@@ -50,11 +53,12 @@ export const GalleryImage = memo(function GalleryImage({
 				type="button"
 			>
 				<Image
-					src={src}
+					src={displaySrc}
 					width={600}
 					height={400}
 					alt={alt}
 					loading="lazy"
+					unoptimized={!!thumbnailSrc}
 					sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
 					className="aspect-video object-cover"
 				/>
@@ -88,11 +92,10 @@ export const GalleryImage = memo(function GalleryImage({
 								height={800}
 								alt={alt}
 								className="max-h-[80vh] w-auto object-contain"
-								priority
+								quality={85}
 								sizes="90vw"
 							/>
 						</div>
-
 						<p
 							id="modal-title"
 							className="mt-2 text-center font-medium text-gray-900"

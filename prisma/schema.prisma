@@ -50,11 +50,13 @@ model Committee {
 }
 
 model Image {
-    id Int @id @default(autoincrement())
-    alt String
-    category String
-    year Int
-    source String
+  id              Int      @id @default(autoincrement())
+  source          String 
+  thumbnailSource String? 
+  alt             String
+  category        String
+  year            Int
+  createdAt       DateTime @default(now())
 }
 
 model Event {

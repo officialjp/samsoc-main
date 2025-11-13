@@ -61,7 +61,6 @@ export default function HeroCarousel({
 								className="object-cover md:hidden"
 							/>
 
-							{/* DESKTOP IMAGE */}
 							<Image
 								src={element.desktopSource}
 								alt={element.alt}
