@@ -59,6 +59,7 @@ export default function HeroCarousel({
 								priority={index === 0}
 								loading={index === 0 ? 'eager' : 'lazy'}
 								fetchPriority={index === 0 ? 'high' : 'auto'}
+								quality={75}
 								className="object-cover md:hidden"
 							/>
 
@@ -69,6 +70,7 @@ export default function HeroCarousel({
 								sizes="(max-width: 768px) 0px, (max-width: 1200px) 100vw, 1200px"
 								priority={index === 0}
 								loading={index === 0 ? 'eager' : 'lazy'}
+								quality={75}
 								fetchPriority={index === 0 ? 'high' : 'auto'}
 								className="object-cover hidden md:block"
 							/>
