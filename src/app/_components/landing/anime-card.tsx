@@ -117,7 +117,6 @@ export function AnimeCard({ animes }: AnimeCardProps) {
 												src={anime.source}
 												fill
 												sizes="(max-width: 400px) 40vw, (max-width: 768px) 35vw, (max-width: 1024px) 25vw, 320px"
-												quality={75}
 												loading="lazy"
 												className="rounded-2xl border-2 border-black bg-black object-cover shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:border-2"
 											/>
