@@ -36,6 +36,7 @@
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"date-fns": "^4.1.0",
+		"embla-carousel": "^8.6.0",
 		"embla-carousel-autoplay": "^8.6.0",
 		"embla-carousel-react": "^8.6.0",
 		"js-levenshtein": "^1.1.6",
@@ -72,6 +73,5 @@
 	},
 	"ct3aMetadata": {
 		"initVersion": "7.40.0"
-	},
-	"packageManager": "npm@11.6.1"
+	}
 }
