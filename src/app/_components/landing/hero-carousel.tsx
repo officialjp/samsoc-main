@@ -56,7 +56,6 @@ export default function HeroCarousel({
 								alt={element.alt}
 								fill
 								sizes="(max-width: 768px) 100vw, 0px"
-								quality={75}
 								priority={index === 0}
 								loading={index === 0 ? 'eager' : 'lazy'}
 								fetchPriority={index === 0 ? 'high' : 'auto'}
@@ -68,7 +67,6 @@ export default function HeroCarousel({
 								alt={element.alt}
 								fill
 								sizes="(max-width: 768px) 0px, (max-width: 1200px) 100vw, 1200px"
-								quality={75}
 								priority={index === 0}
 								loading={index === 0 ? 'eager' : 'lazy'}
 								fetchPriority={index === 0 ? 'high' : 'auto'}

@@ -29,7 +29,6 @@ export function CommitteeCard({
 					alt={`${name} - ${role}`}
 					fill
 					sizes="(max-width: 640px) 150px, (max-width: 1024px) 180px, 200px"
-					quality={75}
 					loading="lazy"
 					className="absolute object-cover transform-[scale(1.01)] block w-full h-full"
 				/>

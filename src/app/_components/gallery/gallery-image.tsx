@@ -62,7 +62,6 @@ export default function GalleryImage({
 					unoptimized={hasOptimizedThumbnail}
 					sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
 					className="aspect-video object-cover"
-					quality={75}
 				/>
 			</button>
 
@@ -94,7 +93,6 @@ export default function GalleryImage({
 								height={800}
 								alt={alt}
 								className="max-h-[80vh] w-auto object-contain"
-								quality={75}
 								sizes="90vw"
 							/>
 						</div>
