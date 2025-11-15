@@ -18,7 +18,7 @@ export function CommitteeCard({
 	return (
 		<div
 			className={cn(
-				'flex items-center sm:justify-start md:justify-center flex-row text-sm lg:flex-col w-full lg:w-fit',
+				'flex items-center justify-center flex-row text-sm lg:flex-col w-full lg:w-fit',
 				className,
 			)}
 		>
@@ -34,7 +34,7 @@ export function CommitteeCard({
 				/>
 			</div>
 
-			<span className="flex gap-2 lg:gap-0 text-sm justify-center items-center lg:flex-col flex-row lg:ml-0 ml-3 rounded-full bg-about2 lg:p-0 p-1 border-black border-2 lg:border-0 lg:bg-transparent">
+			<span className="flex gap-2 lg:gap-0 text-sm justify-center items-center lg:flex-col flex-row lg:ml-0 ml-3 rounded-full lg:p-0 p-1">
 				<p className="font-semibold">{name}</p>
 				<span className="lg:hidden block text-gray-600 opacity-60">
 					●
