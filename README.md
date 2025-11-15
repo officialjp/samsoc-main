@@ -132,8 +132,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Website:** [https://samsoc.co.uk](https://samsoc.co.uk)
 - **Email:** [society email]
-- **Discord:** [Join our Discord server]
-- **Instagram:** [@samsoc_surrey](https://instagram.com/samsoc_surrey)
+- **Discord:** [Join our Discord server](https://discord.gg/tQUrdxzUZ4)
+- **Instagram:** [@unisamsoc](https://instagram.com/unisamsoc)
 
 ## 🙏 Acknowledgments
 
