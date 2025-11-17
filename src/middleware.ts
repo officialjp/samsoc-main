@@ -3,11 +3,9 @@ import { NextResponse } from 'next/server';
 
 export default auth((req) => {
 	const isAuthenticated = !!req.auth;
-	const isAdminOnlyRoute =
-		req.nextUrl.pathname.startsWith('/admin') ||
-		req.nextUrl.pathname.startsWith('/dashboard');
+	const isDashboard = req.nextUrl.pathname.startsWith('/dashboard');
 
-	if (isAdminOnlyRoute) {
+	if (isDashboard) {
 		if (!isAuthenticated) {
 			return NextResponse.redirect(new URL('/api/auth/signin', req.url));
 		}
