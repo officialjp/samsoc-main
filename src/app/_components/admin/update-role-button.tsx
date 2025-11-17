@@ -19,11 +19,11 @@ export function UpdateRoleButton({
 
 	const updateRole = api.admin.updateUserRole.useMutation({
 		onSuccess: () => {
-			router.refresh(); // Refresh server component
+			router.refresh();
 		},
 		onError: (error) => {
 			alert(error.message);
-			setRole(currentRole); // Reset on error
+			setRole(currentRole);
 		},
 	});
 
