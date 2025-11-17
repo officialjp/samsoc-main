@@ -7,7 +7,6 @@ export default auth((req) => {
 		req.nextUrl.pathname.startsWith('/admin') ||
 		req.nextUrl.pathname.startsWith('/dashboard');
 
-	console.log(req.auth?.user.role);
 	if (isAdminOnlyRoute) {
 		if (!isAuthenticated) {
 			return NextResponse.redirect(new URL('/api/auth/signin', req.url));
