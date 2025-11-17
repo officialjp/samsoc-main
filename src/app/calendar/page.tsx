@@ -3,7 +3,7 @@ import { SectionHeading } from '../_components/section-heading';
 import type { Metadata } from 'next';
 import { api, HydrateClient } from '~/trpc/server';
 import { Calendar } from '../_components/calendar/calendar';
-import type { Event } from 'generated/prisma';
+import type { Event } from '@prisma/client';
 
 export const metadata: Metadata = {
 	title: 'Surrey Anime and Manga Society',

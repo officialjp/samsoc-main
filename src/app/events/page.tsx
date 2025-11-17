@@ -1,10 +1,10 @@
 import { SectionContainer } from '~/app/_components/section-container';
 import { SectionHeading } from '~/app/_components/section-heading';
 import { EventTypeCard } from '~/app/_components/events/event-type-card';
-import ClubNight from '../../../public/images/clubnight.avif';
-import ComicCon from '../../../public/images/comiccon.avif';
-import Screenings from '../../../public/images/screenings.avif';
-import Collabs from '../../../public/images/collabs.avif';
+import ClubNight from '../../../public/images/clubnight.webp';
+import ComicCon from '../../../public/images/comiccon.webp';
+import Screenings from '../../../public/images/screenings.webp';
+import Collabs from '../../../public/images/collabs.webp';
 
 import type { Metadata } from 'next';
 import type { StaticImageData } from 'next/image';

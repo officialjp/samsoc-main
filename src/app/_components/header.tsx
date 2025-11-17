@@ -11,9 +11,11 @@ import {
 import { SvgIcon } from './util/svg-icon';
 import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
-import Logo from '../../../public/images/logo.avif';
+import Logo from '../../../public/images/logo.webp';
 import { cn } from '~/lib/utils';
 import { usePathname } from 'next/navigation';
+import AccountButton from './login-btn';
+import { SessionProvider } from 'next-auth/react';
 
 const navLinks = [
 	{ href: '/library', label: 'Library' },
@@ -222,12 +224,11 @@ export function Header() {
 					>
 						{isMenuOpen ? <X size={24} /> : <Menu size={24} />}
 					</button>
-					<Button
-						href="/#join"
-						className="bg-button2 hover:bg-button1 text-white hidden md:flex"
-					>
-						Join Now
-					</Button>
+					<SessionProvider>
+						<div className="hidden md:flex">
+							<AccountButton />
+						</div>
+					</SessionProvider>
 				</div>
 			</div>
 
@@ -259,7 +260,7 @@ export function Header() {
 							className=" w-full bg-pink-500 py-2 flex justify-center cursor-pointer hover:bg-pink-600 text-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
 							href="/#join"
 						>
-							Join Now
+							Login
 						</Button>
 					</div>
 				</nav>

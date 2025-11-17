@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { format } from 'date-fns';
 import { X } from 'lucide-react';
 import { cn } from '~/lib/utils';
-import type { Event } from 'generated/prisma';
+import type { Event } from '@prisma/client';
 
 interface EventModalProps {
 	event: Event;

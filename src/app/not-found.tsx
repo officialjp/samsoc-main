@@ -3,7 +3,7 @@
 import levenshtein from 'js-levenshtein';
 import Link from 'next/link';
 import Image from 'next/image';
-import Miku from '../../public/miku.avif';
+import Miku from '../../public/miku.webp';
 import { useEffect, useState, useMemo } from 'react';
 import { SectionContainer } from '~/app/_components/section-container';
 import { Button } from '~/app/_components/ui/button';

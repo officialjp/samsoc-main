@@ -12,7 +12,7 @@ import {
 	isSameDay,
 } from 'date-fns';
 import { cn } from '~/lib/utils';
-import type { Event } from 'generated/prisma';
+import type { Event } from '@prisma/client';
 import { EventModal } from './event-modal';
 
 interface CalendarCellsProps {
