@@ -6,7 +6,7 @@ import {
 import { TRPCError } from '@trpc/server';
 import * as z from 'zod';
 import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
-import { Prisma } from '@prisma/client';
+import { type Prisma } from '@prisma/client';
 import { r2Client, R2_BUCKET, R2_PUBLIC_URL } from '~/server/r2-client';
 const fileUploadSchema = z.object({
 	base64: z.string().startsWith('data:'),
@@ -142,11 +142,7 @@ export const animeCardsRouter = createTRPCRouter({
 				data: updateData,
 			});
 
-			if (
-				newImage &&
-				oldSourceUrl &&
-				oldSourceUrl.startsWith(R2_PUBLIC_URL!)
-			) {
+			if (newImage && oldSourceUrl?.startsWith(R2_PUBLIC_URL)) {
 				await deleteFromR2(oldSourceUrl);
 			}
 

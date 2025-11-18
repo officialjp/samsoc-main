@@ -59,7 +59,7 @@ async function uploadToR2(
 }
 
 const getKeyFromUrl = (url: string): string | null => {
-	if (!url || !url.startsWith(R2_PUBLIC_URL)) {
+	if (!url?.startsWith(R2_PUBLIC_URL)) {
 		return null;
 	}
 	return url.substring(R2_PUBLIC_URL.length + 1);
@@ -103,7 +103,7 @@ export const carouselRouter = createTRPCRouter({
 			const desktopKey = getKeyFromUrl(itemToDelete.desktopSource);
 
 			try {
-				const deletePromises: Promise<any>[] = [];
+				const deletePromises: Promise<unknown>[] = [];
 
 				if (mobileKey) {
 					deletePromises.push(

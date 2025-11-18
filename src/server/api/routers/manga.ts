@@ -7,7 +7,7 @@ import { TRPCError } from '@trpc/server';
 import * as z from 'zod';
 import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { R2_BUCKET, R2_PUBLIC_URL, r2Client } from '~/server/r2-client';
-import { Prisma } from '@prisma/client';
+import { type Prisma } from '@prisma/client';
 
 const fileUploadSchema = z.object({
 	base64: z.string().startsWith('data:'),
@@ -86,7 +86,7 @@ async function uploadToR2(
 }
 
 const getKeyFromUrl = (url: string): string | null => {
-	if (!url || !url.startsWith(R2_PUBLIC_URL)) {
+	if (!url?.startsWith(R2_PUBLIC_URL)) {
 		return null;
 	}
 	return url.substring(R2_PUBLIC_URL.length + 1);
@@ -126,7 +126,7 @@ export const mangaRouter = createTRPCRouter({
 			const sourceKey = getKeyFromUrl(itemToDelete.source);
 
 			try {
-				const deletePromises: Promise<any>[] = [];
+				const deletePromises: Promise<unknown>[] = [];
 
 				if (sourceKey) {
 					deletePromises.push(
@@ -225,8 +225,7 @@ export const mangaRouter = createTRPCRouter({
 			if (volume !== undefined) updateData.volume = volume;
 
 			if (borrowed_by !== undefined) {
-				updateData.borrowed_by =
-					borrowed_by === null ? null : borrowed_by;
+				updateData.borrowed_by = borrowed_by ?? null;
 			} else if (borrowed_by === null) {
 				updateData.borrowed_by = null;
 			}

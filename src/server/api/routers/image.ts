@@ -60,7 +60,7 @@ async function uploadToR2(
 }
 
 const getKeyFromUrl = (url: string): string | null => {
-	if (!url || !url.startsWith(R2_PUBLIC_URL)) {
+	if (!url?.startsWith(R2_PUBLIC_URL)) {
 		return null;
 	}
 	return url.substring(R2_PUBLIC_URL.length + 1);
@@ -97,7 +97,7 @@ export const imageRouter = createTRPCRouter({
 			const thumbnailKey = getKeyFromUrl(itemToDelete.thumbnailSource);
 
 			try {
-				const deletePromises: Promise<any>[] = [];
+				const deletePromises: Promise<unknown>[] = [];
 
 				if (sourceKey) {
 					deletePromises.push(
