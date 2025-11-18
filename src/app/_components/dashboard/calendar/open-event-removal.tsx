@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import CarouselForm from './carousel-form';
 import { Button } from '../../ui/button';
 import { cn } from '~/lib/utils';
+import EventRemove from './event-removal';
 
-export default function OpenFormButton() {
+export default function OpenRemovalButton() {
 	const [isOpen, setIsOpen] = useState(false);
 
 	const toggleForm = () => {
@@ -22,9 +22,9 @@ export default function OpenFormButton() {
 				onClick={toggleForm}
 				className="bg-button2 hover:bg-button1 hover:cursor-pointer"
 			>
-				{isOpen ? 'Close' : 'Add Carousel Item'}
+				{isOpen ? 'Close' : 'Remove Event Item'}
 			</Button>
-			{isOpen && <CarouselForm />}
+			{isOpen && <EventRemove />}
 		</div>
 	);
 }

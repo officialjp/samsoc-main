@@ -15,16 +15,17 @@ import Logo from '../../../public/images/logo.webp';
 import { cn } from '~/lib/utils';
 import { usePathname } from 'next/navigation';
 import AccountButton from './login-btn';
-import { SessionProvider } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 
-const navLinks = [
+const staticNavLinks = [
 	{ href: '/library', label: 'Library' },
 	{ href: '/events', label: 'Events' },
 	{ href: '/calendar', label: 'Calendar' },
 	{ href: '/gallery', label: 'Gallery' },
 	{ href: '/games', label: 'Games' },
 ];
-type NavLink = (typeof navLinks)[number];
+const adminLink = { href: '/dashboard', label: 'Dashboard' };
+type NavLink = (typeof staticNavLinks)[number];
 
 function Button({
 	children,
@@ -53,12 +54,12 @@ function Button({
 	);
 }
 
-function Nav() {
+function Nav({ links }: { links: NavLink[] }) {
 	const pathname = usePathname();
 
 	return (
 		<nav className="hidden md:flex gap-3 h-full mx-auto group">
-			{navLinks.map((link: NavLink) => (
+			{links.map((link: NavLink) => (
 				<Button
 					key={link.href}
 					href={link.href}
@@ -77,6 +78,11 @@ function Nav() {
 export function Header() {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const navRef = useRef<HTMLElement>(null);
+	const { data: session } = useSession();
+
+	const isAdmin = session?.user.role === 'admin';
+
+	const finalNavLinks = [...staticNavLinks, ...(isAdmin ? [adminLink] : [])];
 
 	const stateRef = useRef<{
 		transformPosY: number;
@@ -187,7 +193,7 @@ export function Header() {
 					/>
 				</Link>
 
-				<Nav />
+				<Nav links={finalNavLinks} />
 
 				<div className="flex-row flex gap-6 mx-auto md:hidden">
 					<Link href="https://www.instagram.com/unisamsoc/?hl=en">
@@ -224,11 +230,9 @@ export function Header() {
 					>
 						{isMenuOpen ? <X size={24} /> : <Menu size={24} />}
 					</button>
-					<SessionProvider>
-						<div className="hidden md:flex">
-							<AccountButton />
-						</div>
-					</SessionProvider>
+					<div className="hidden md:flex">
+						<AccountButton />
+					</div>
 				</div>
 			</div>
 
@@ -245,7 +249,7 @@ export function Header() {
 					}}
 				>
 					<div className="p-4 flex flex-col space-y-4 border-black border-t">
-						{navLinks.map((link: NavLink) => (
+						{finalNavLinks.map((link: NavLink) => (
 							<Link
 								key={link.href}
 								href={link.href}

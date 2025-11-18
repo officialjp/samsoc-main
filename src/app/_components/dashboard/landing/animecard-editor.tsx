@@ -295,7 +295,7 @@ const MemberEditorRow: React.FC<CardEditorRowProps> = ({ card, onSuccess }) => {
 							name="mal_link"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Mal Link</FormLabel>
+									<FormLabel>MAL Link</FormLabel>
 									<FormControl>
 										<Input
 											placeholder="Enter the mal image link for the anime"
@@ -350,6 +350,23 @@ const MemberEditorRow: React.FC<CardEditorRowProps> = ({ card, onSuccess }) => {
 									<FormControl>
 										<Input
 											placeholder="Enter the anime studio"
+											disabled={isPending}
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="source"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>MAL Image Link</FormLabel>
+									<FormControl>
+										<Input
+											placeholder="Optionally enter the mal image link if you don't have the image saved as a file"
 											disabled={isPending}
 											{...field}
 										/>

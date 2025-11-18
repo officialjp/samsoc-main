@@ -4,6 +4,9 @@ import { adminRouter } from '~/server/api/routers/admin';
 import { carouselRouter } from './routers/carousel';
 import { committeeRouter } from './routers/committee';
 import { animeCardsRouter } from './routers/animecard';
+import { eventRouter } from './routers/event';
+import { imageRouter } from './routers/image';
+import { mangaRouter } from './routers/manga';
 
 /**
  * This is the primary router for your server.
@@ -16,6 +19,9 @@ export const appRouter = createTRPCRouter({
 	carousel: carouselRouter,
 	committee: committeeRouter,
 	animecards: animeCardsRouter,
+	event: eventRouter,
+	image: imageRouter,
+	manga: mangaRouter,
 });
 
 export type AppRouter = typeof appRouter;

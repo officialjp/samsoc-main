@@ -5,27 +5,9 @@ import {
 } from '~/server/api/trpc';
 import { TRPCError } from '@trpc/server';
 import * as z from 'zod';
-import {
-	S3Client,
-	PutObjectCommand,
-	DeleteObjectCommand,
-} from '@aws-sdk/client-s3';
+import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { Prisma } from '@prisma/client';
-const R2_ENDPOINT = process.env.R2_ENDPOINT!;
-const R2_BUCKET_NAME = process.env.R2_BUCKET_NAME!;
-const R2_ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID!;
-const R2_SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY!;
-const R2_PUBLIC_DOMAIN = process.env.R2_PUBLIC_DOMAIN!;
-
-const s3Client = new S3Client({
-	endpoint: R2_ENDPOINT,
-	region: 'auto',
-	credentials: {
-		accessKeyId: R2_ACCESS_KEY_ID,
-		secretAccessKey: R2_SECRET_ACCESS_KEY,
-	},
-});
-
+import { r2Client, R2_BUCKET, R2_PUBLIC_URL } from '~/server/r2-client';
 const fileUploadSchema = z.object({
 	base64: z.string().startsWith('data:'),
 	fileName: z.string().min(1),
@@ -56,9 +38,9 @@ async function uploadToR2(
 	const key = `animeCards/${dbId}/${safeFileName}`;
 
 	try {
-		await s3Client.send(
+		await r2Client.send(
 			new PutObjectCommand({
-				Bucket: R2_BUCKET_NAME,
+				Bucket: R2_BUCKET,
 				Key: key,
 				Body: imageBuffer,
 				ContentType: mimeType,
@@ -72,24 +54,24 @@ async function uploadToR2(
 		});
 	}
 
-	return `${R2_PUBLIC_DOMAIN}/${key}`;
+	return `${R2_PUBLIC_URL}/${key}`;
 }
 
 async function deleteFromR2(url: string | undefined): Promise<void> {
-	if (!url || !R2_PUBLIC_DOMAIN || !url.startsWith(R2_PUBLIC_DOMAIN)) {
+	if (!url || !R2_PUBLIC_URL || !url.startsWith(R2_PUBLIC_URL)) {
 		return;
 	}
 
-	const key = url.substring(R2_PUBLIC_DOMAIN.length + 1);
+	const key = url.substring(R2_PUBLIC_URL.length + 1);
 
 	if (!key || key.includes('/placeholder.svg')) {
 		return;
 	}
 
 	try {
-		await s3Client.send(
+		await r2Client.send(
 			new DeleteObjectCommand({
-				Bucket: R2_BUCKET_NAME,
+				Bucket: R2_BUCKET,
 				Key: key,
 			}),
 		);
@@ -163,7 +145,7 @@ export const animeCardsRouter = createTRPCRouter({
 			if (
 				newImage &&
 				oldSourceUrl &&
-				oldSourceUrl.startsWith(R2_PUBLIC_DOMAIN!)
+				oldSourceUrl.startsWith(R2_PUBLIC_URL!)
 			) {
 				await deleteFromR2(oldSourceUrl);
 			}

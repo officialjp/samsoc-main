@@ -14,13 +14,13 @@ import {
 	DropdownMenuLabel,
 } from '../../ui/dropdown-menu';
 
-interface CarouselItem {
+interface MangaItem {
 	id: number;
-	alt: string;
-	order: number;
+	title: string;
+	volume: number;
 }
 
-export default function CarouselRemove() {
+export default function MangaRemove() {
 	const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
 	const [searchTerm, setSearchTerm] = useState('');
 
@@ -28,9 +28,9 @@ export default function CarouselRemove() {
 		data: items,
 		isLoading,
 		refetch,
-	} = api.carousel.getAllItems.useQuery();
+	} = api.manga.getAllItems.useQuery();
 
-	const deleteMutation = api.carousel.deleteItem.useMutation({
+	const deleteMutation = api.manga.deleteItem.useMutation({
 		onSuccess: () => {
 			alert(
 				`Item ID ${selectedItemId} successfully deleted (R2 files cleaned up).`,
@@ -51,10 +51,12 @@ export default function CarouselRemove() {
 
 		return items.filter((item) => {
 			const idMatch = String(item.id).includes(lowerCaseSearch);
-			const orderMatch = String(item.order).includes(lowerCaseSearch);
-			const altMatch = item.alt.toLowerCase().includes(lowerCaseSearch);
+			const volumeMatch = String(item.volume).includes(lowerCaseSearch);
+			const titleMatch = item.title
+				.toLowerCase()
+				.includes(lowerCaseSearch);
 
-			return idMatch || orderMatch || altMatch;
+			return idMatch || titleMatch || volumeMatch;
 		});
 	}, [items, searchTerm]);
 
@@ -66,16 +68,11 @@ export default function CarouselRemove() {
 		const selectedItem = items.find((item) => item.id === itemToDelete);
 		if (!selectedItem) return 'Select item to delete...';
 
-		return `ID: ${selectedItem.id} (Order: ${selectedItem.order}) - "${selectedItem.alt.substring(0, 30)}${selectedItem.alt.length > 30 ? '...' : ''}"`;
+		return `ID: ${selectedItem.id} VOLUME: ${selectedItem.volume} - "${selectedItem.title.substring(0, 30)}${selectedItem.title.length > 30 ? '...' : ''}"`;
 	}, [items, itemToDelete]);
 
 	const handleDelete = () => {
 		if (!itemToDelete) return;
-
-		if (itemToDelete === 1 || itemToDelete === 2) {
-			alert('Items with ID 1 and 2 are protected and cannot be deleted.');
-			return;
-		}
 
 		if (
 			window.confirm(
@@ -90,12 +87,10 @@ export default function CarouselRemove() {
 		setSelectedItemId(Number(value));
 	};
 
-	const isProtected = itemToDelete === 1 || itemToDelete === 2;
-
 	return (
 		<div className="space-y-4 p-6 border rounded-lg shadow-md bg-white">
 			<h3 className="text-lg font-semibold border-b pb-2">
-				Remove Carousel Item
+				Remove Manga Item
 			</h3>
 
 			{isLoading && (
@@ -158,11 +153,8 @@ export default function CarouselRemove() {
 											</DropdownMenuLabel>
 										) : (
 											filteredItems.map(
-												(item: CarouselItem) => {
-													const isItemProtected =
-														item.id === 1 ||
-														item.id === 2;
-													const itemLabel = `ID: ${item.id} (Order: ${item.order}) - ${item.alt.substring(0, 40)}${item.alt.length > 40 ? '...' : ''}`;
+												(item: MangaItem) => {
+													const itemLabel = `ID: ${item.id} VOLUME: ${item.volume} - ${item.title.substring(0, 40)}${item.title.length > 40 ? '...' : ''}`;
 
 													return (
 														<DropdownMenuRadioItem
@@ -170,9 +162,6 @@ export default function CarouselRemove() {
 															value={String(
 																item.id,
 															)}
-															disabled={
-																isItemProtected
-															}
 															className="whitespace-normal h-auto py-2"
 														>
 															{itemLabel}
@@ -189,7 +178,7 @@ export default function CarouselRemove() {
 
 					<Button
 						onClick={handleDelete}
-						disabled={!itemToDelete || isSubmitting || isProtected}
+						disabled={!itemToDelete || isSubmitting}
 						className="w-full sm:w-auto flex items-center"
 					>
 						{isSubmitting ? (
@@ -205,15 +194,6 @@ export default function CarouselRemove() {
 						)}
 					</Button>
 				</div>
-			)}
-
-			{itemToDelete && isProtected && (
-				<p className="text-red-500 text-sm mt-2">
-					<span className="font-bold">
-						Item ID {itemToDelete} is protected
-					</span>{' '}
-					and cannot be deleted. Please select another item.
-				</p>
 			)}
 		</div>
 	);

@@ -15,7 +15,7 @@ import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Button } from '../../ui/button';
-import { FormDropzone } from './form-dropzone';
+import { FormDropzone } from '../form-dropzone';
 import { useState } from 'react';
 
 const fileToBase64 = (file: File): Promise<string> => {
@@ -27,47 +27,58 @@ const fileToBase64 = (file: File): Promise<string> => {
 	});
 };
 
+const category = ['Events', 'Collaborations'] as const;
+
 const formSchema = z.object({
 	alt: z.string().min(1, {
 		message: 'Description must be at least 1 character long!',
 	}),
-	mobileImage: z.array(z.instanceof(File)).min(1, 'Please upload an image.'),
-	pcImage: z.array(z.instanceof(File)).min(1, 'Please upload an image.'),
+	category: z.enum(category),
+	year: z.number(),
+	sourceImage: z.array(z.instanceof(File)).min(1, 'Please upload an image.'),
+	thumbnailImage: z
+		.array(z.instanceof(File))
+		.min(1, 'Please upload an image.'),
 });
 
-export default function CarouselForm() {
-	const createItem = api.carousel.createCarouselItem.useMutation();
+export default function ImageAdd() {
+	const createItem = api.image.createItem.useMutation();
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
+			year: 0,
+			category: 'Events',
 			alt: '',
-			mobileImage: [],
-			pcImage: [],
+			sourceImage: [],
+			thumbnailImage: [],
 		},
 	});
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		setIsSubmitting(true);
 		try {
-			const mobileImageBase64 = await fileToBase64(
-				values.mobileImage[0]!,
+			const sourceImageBase64 = await fileToBase64(
+				values.sourceImage[0]!,
 			);
-			const pcImageBase64 = await fileToBase64(values.pcImage[0]!);
+			const thumbnailImageBase64 = await fileToBase64(
+				values.thumbnailImage[0]!,
+			);
 
 			const input = {
 				alt: values.alt,
-				order: 0,
-				mobileImage: {
-					base64: mobileImageBase64,
-					fileName: values.mobileImage[0]!.name,
-					mimeType: values.mobileImage[0]!.type,
+				year: values.year,
+				category: values.category,
+				sourceImage: {
+					base64: sourceImageBase64,
+					fileName: values.sourceImage[0]!.name,
+					mimeType: values.sourceImage[0]!.type,
 				},
-				pcImage: {
-					base64: pcImageBase64,
-					fileName: values.pcImage[0]!.name,
-					mimeType: values.pcImage[0]!.type,
+				thumbnailImage: {
+					base64: thumbnailImageBase64,
+					fileName: values.thumbnailImage[0]!.name,
+					mimeType: values.thumbnailImage[0]!.type,
 				},
 			};
 
@@ -93,7 +104,7 @@ export default function CarouselForm() {
 				onSubmit={form.handleSubmit(onSubmit)}
 				className="space-y-4 flex items-center justify-center flex-col"
 			>
-				<h3 className="text-lg font-semibold">Adding Carousel Item</h3>
+				<h3 className="text-lg font-semibold">Adding Image Item</h3>
 
 				<FormField
 					control={form.control}
@@ -113,10 +124,10 @@ export default function CarouselForm() {
 				/>
 				<FormField
 					control={form.control}
-					name="mobileImage"
+					name="sourceImage"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Mobile Image</FormLabel>
+							<FormLabel>Display Image</FormLabel>
 							<FormControl>
 								<FormDropzone
 									field={field}
@@ -133,7 +144,7 @@ export default function CarouselForm() {
 								/>
 							</FormControl>
 							<FormDescription>
-								Upload the image for mobile devices.
+								Upload the image for inside the component.
 							</FormDescription>
 							<FormMessage />
 						</FormItem>
@@ -141,10 +152,10 @@ export default function CarouselForm() {
 				/>
 				<FormField
 					control={form.control}
-					name="pcImage"
+					name="thumbnailImage"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>PC Image</FormLabel>
+							<FormLabel>Thumbnail Image</FormLabel>
 							<FormControl>
 								<FormDropzone
 									field={field}
@@ -161,7 +172,39 @@ export default function CarouselForm() {
 								/>
 							</FormControl>
 							<FormDescription>
-								Upload the image for desktop devices.
+								Upload the image for the thumbnail.
+							</FormDescription>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+				<FormField
+					control={form.control}
+					name="category"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Category</FormLabel>
+							<FormControl>
+								<Input {...field} />
+							</FormControl>
+							<FormDescription>
+								The category of the image.
+							</FormDescription>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+				<FormField
+					control={form.control}
+					name="year"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Year</FormLabel>
+							<FormControl>
+								<Input type="number" {...field} />
+							</FormControl>
+							<FormDescription>
+								The year the image was taken.
 							</FormDescription>
 							<FormMessage />
 						</FormItem>

@@ -16,15 +16,16 @@ const fileUploadSchema = z.object({
 
 const createItemInputSchema = z.object({
 	alt: z.string().min(1),
-	order: z.number().int().min(0),
-	mobileImage: fileUploadSchema,
-	pcImage: fileUploadSchema,
+	category: z.string().min(1),
+	year: z.number(),
+	sourceImage: fileUploadSchema,
+	thumbnailImage: fileUploadSchema,
 });
 
 async function uploadToR2(
 	fileData: z.infer<typeof fileUploadSchema>,
 	dbId: number,
-	device: 'mobile' | 'desktop',
+	device: 'source' | 'thumbnail',
 ): Promise<string> {
 	const { base64, fileName, mimeType } = fileData;
 
@@ -35,7 +36,7 @@ async function uploadToR2(
 
 	const imageBuffer = Buffer.from(base64Data, 'base64');
 
-	const key = `carousel/${dbId}/${device}_${fileName.replace(/[^a-z0-9.]/gi, '_').toLowerCase()}`;
+	const key = `image/${dbId}/${device}_${fileName.replace(/[^a-z0-9.]/gi, '_').toLowerCase()}`;
 
 	try {
 		await r2Client.send(
@@ -65,15 +66,14 @@ const getKeyFromUrl = (url: string): string | null => {
 	return url.substring(R2_PUBLIC_URL.length + 1);
 };
 
-export const carouselRouter = createTRPCRouter({
+export const imageRouter = createTRPCRouter({
 	getAllItems: publicProcedure.query(async ({ ctx }) => {
-		return ctx.db.carousel.findMany({
+		return ctx.db.image.findMany({
 			select: {
 				id: true,
 				alt: true,
-				order: true,
 			},
-			orderBy: { order: 'asc' },
+			orderBy: { id: 'asc' },
 		});
 	}),
 	deleteItem: adminProcedure
@@ -81,46 +81,40 @@ export const carouselRouter = createTRPCRouter({
 		.mutation(async ({ ctx, input }) => {
 			const itemId = input.id;
 
-			if (itemId === 1 || itemId === 2) {
-				throw new TRPCError({
-					code: 'BAD_REQUEST',
-					message: `Carousel items with ID 1 and 2 are protected and cannot be deleted.`,
-				});
-			}
-			const itemToDelete = await ctx.db.carousel.findUnique({
+			const itemToDelete = await ctx.db.image.findUnique({
 				where: { id: itemId },
-				select: { mobileSource: true, desktopSource: true },
+				select: { source: true, thumbnailSource: true },
 			});
 
 			if (!itemToDelete) {
 				throw new TRPCError({
 					code: 'NOT_FOUND',
-					message: 'Carousel item not found in DB.',
+					message: 'Image item not found in DB.',
 				});
 			}
 
-			const mobileKey = getKeyFromUrl(itemToDelete.mobileSource);
-			const desktopKey = getKeyFromUrl(itemToDelete.desktopSource);
+			const sourceKey = getKeyFromUrl(itemToDelete.source);
+			const thumbnailKey = getKeyFromUrl(itemToDelete.thumbnailSource);
 
 			try {
 				const deletePromises: Promise<any>[] = [];
 
-				if (mobileKey) {
+				if (sourceKey) {
 					deletePromises.push(
 						r2Client.send(
 							new DeleteObjectCommand({
 								Bucket: R2_BUCKET,
-								Key: mobileKey,
+								Key: sourceKey,
 							}),
 						),
 					);
 				}
-				if (desktopKey) {
+				if (thumbnailKey) {
 					deletePromises.push(
 						r2Client.send(
 							new DeleteObjectCommand({
 								Bucket: R2_BUCKET,
-								Key: desktopKey,
+								Key: thumbnailKey,
 							}),
 						),
 					);
@@ -134,51 +128,46 @@ export const carouselRouter = createTRPCRouter({
 				);
 			}
 
-			await ctx.db.carousel.delete({ where: { id: itemId } });
+			await ctx.db.image.delete({ where: { id: itemId } });
 
 			return { success: true, itemId };
 		}),
-	createCarouselItem: adminProcedure
+	createItem: adminProcedure
 		.input(createItemInputSchema)
 		.mutation(async ({ ctx, input }) => {
 			let itemId: number | undefined;
 
-			const latestOrderRecord = await ctx.db.carousel.findFirst({
-				orderBy: { order: 'desc' },
-				select: { order: true },
-			});
-			const finalOrder = (latestOrderRecord?.order ?? 0) + 1;
-
 			try {
-				const placeholderItem = await ctx.db.carousel.create({
+				const placeholderItem = await ctx.db.image.create({
 					data: {
 						alt: input.alt,
-						order: finalOrder,
-						mobileSource: 'R2_URL_PENDING',
-						desktopSource: 'R2_URL_PENDING',
+						category: input.category,
+						year: input.year,
+						source: 'R2_URL_PENDING',
+						thumbnailSource: 'R2_URL_PENDING',
 					},
 				});
 				itemId = placeholderItem.id;
 
-				const [mobileSource, desktopSource] = await Promise.all([
-					uploadToR2(input.mobileImage, itemId, 'mobile'),
-					uploadToR2(input.pcImage, itemId, 'desktop'),
+				const [source, thumbnailSource] = await Promise.all([
+					uploadToR2(input.sourceImage, itemId, 'source'),
+					uploadToR2(input.thumbnailImage, itemId, 'thumbnail'),
 				]);
 
-				const updatedCarouselItem = await ctx.db.carousel.update({
+				const updatedImageItem = await ctx.db.image.update({
 					where: { id: itemId },
 					data: {
-						mobileSource: mobileSource,
-						desktopSource: desktopSource,
+						source: source,
+						thumbnailSource: thumbnailSource,
 					},
 				});
 
-				return updatedCarouselItem;
+				return updatedImageItem;
 			} catch (error) {
 				console.error(error);
 
 				if (itemId) {
-					await ctx.db.carousel
+					await ctx.db.image
 						.delete({ where: { id: itemId } })
 						.catch((e) => {
 							console.error(

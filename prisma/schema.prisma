@@ -51,7 +51,7 @@ model Committee {
 model Image {
   id              Int      @id @default(autoincrement())
   source          String 
-  thumbnailSource String? 
+  thumbnailSource String
   alt             String
   category        String
   year            Int

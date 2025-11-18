@@ -7,12 +7,8 @@ import type {
 } from 'react-hook-form';
 
 import type { DropEvent, FileRejection } from 'react-dropzone';
-import {
-	Dropzone,
-	DropzoneContent,
-	DropzoneEmptyState,
-} from '../../ui/dropzone';
-import type { DropzoneProps } from '../../ui/dropzone';
+import { Dropzone, DropzoneContent, DropzoneEmptyState } from '../ui/dropzone';
+import type { DropzoneProps } from '../ui/dropzone';
 
 interface FormDropzoneProps<
 	DFieldValues extends FieldValues,

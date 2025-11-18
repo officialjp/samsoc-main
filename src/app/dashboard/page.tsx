@@ -19,11 +19,6 @@ export default function Page() {
 							Landing Page
 						</Button>
 					</Link>
-					<Link href={'/dashboard/events'}>
-						<Button className="hover:cursor-pointer bg-button2 hover:bg-button1">
-							Events Page
-						</Button>
-					</Link>
 					<Link href={'/dashboard/library'}>
 						<Button className="hover:cursor-pointer bg-button2 hover:bg-button1">
 							Library Page
@@ -39,9 +34,18 @@ export default function Page() {
 							Gallery Page
 						</Button>
 					</Link>
-					<Link href={'/dashboard/games'}>
-						<Button className="hover:cursor-pointer bg-button2 hover:bg-button1">
-							Games Page
+					<p className="font-bold italic">
+						Ahem... Do not and I REPEAT do not, go to the admin
+						panel if you don't know what you're doing
+					</p>
+					<Link href={'/admin/users'}>
+						<Button className="hover:cursor-pointer bg-red-500 hover:bg-red-600">
+							Admin Panel
+						</Button>
+					</Link>
+					<Link href={'/'}>
+						<Button className="hover:cursor-pointer hover:bg-blue-600">
+							Back to Home
 						</Button>
 					</Link>
 				</div>
