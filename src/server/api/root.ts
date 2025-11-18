@@ -1,5 +1,12 @@
 import { postRouter } from '~/server/api/routers/post';
 import { createCallerFactory, createTRPCRouter } from '~/server/api/trpc';
+import { adminRouter } from '~/server/api/routers/admin';
+import { carouselRouter } from './routers/carousel';
+import { committeeRouter } from './routers/committee';
+import { animeCardsRouter } from './routers/animecard';
+import { eventRouter } from './routers/event';
+import { imageRouter } from './routers/image';
+import { mangaRouter } from './routers/manga';
 
 /**
  * This is the primary router for your server.
@@ -8,6 +15,13 @@ import { createCallerFactory, createTRPCRouter } from '~/server/api/trpc';
  */
 export const appRouter = createTRPCRouter({
 	post: postRouter,
+	admin: adminRouter,
+	carousel: carouselRouter,
+	committee: committeeRouter,
+	animecards: animeCardsRouter,
+	event: eventRouter,
+	image: imageRouter,
+	manga: mangaRouter,
 });
 
 export type AppRouter = typeof appRouter;

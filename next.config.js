@@ -16,6 +16,10 @@ const config = {
 				protocol: 'https',
 				hostname: 'heyitsmejp.com/**',
 			},
+			{
+				protocol: 'https',
+				hostname: 'cdn.discordapp.com/**',
+			},
 		],
 		formats: ['image/avif'],
 		imageSizes: [16, 32, 64, 128, 256, 640],

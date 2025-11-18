@@ -1,8 +1,4 @@
-import {
-	createTRPCRouter,
-	protectedProcedure,
-	publicProcedure,
-} from '~/server/api/trpc';
+import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
 
 export const postRouter = createTRPCRouter({
 	getCarouselData: publicProcedure.query(async ({ ctx }) => {
@@ -48,6 +44,13 @@ export const postRouter = createTRPCRouter({
 		};
 	}),
 
+	getCarouselIdAndName: publicProcedure.query(async ({ ctx }) => {
+		const allIdAndNames = await ctx.db.carousel.findMany({
+			select: { id: true, alt: true },
+		});
+		return { data: allIdAndNames };
+	}),
+
 	getSpecialEvents: publicProcedure.query(async ({ ctx }) => {
 		const allEvents = await ctx.db.event.findMany({
 			where: { is_regular_session: false },
@@ -67,9 +70,5 @@ export const postRouter = createTRPCRouter({
 			orderBy: [{ id: 'asc' }],
 		});
 		return { data: allMembers };
-	}),
-
-	getSecretMessage: protectedProcedure.query(() => {
-		return 'you can now see this secret message!';
 	}),
 });

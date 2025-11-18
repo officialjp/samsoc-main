@@ -21,6 +21,16 @@ export const metadata: Metadata = {
 	},
 };
 
+interface MangaWithGenres {
+	id: number;
+	title: string;
+	author: string;
+	volume: number;
+	borrowed_by: string | null;
+	source: string;
+	genres: Array<{ id: number; name: string }>;
+}
+
 interface MangaData {
 	id: number;
 	title: string;
@@ -30,7 +40,6 @@ interface MangaData {
 	volume: number;
 	genres: string[];
 }
-
 const ALL_GENRES = [
 	'Action',
 	'Adventure',
@@ -55,7 +64,7 @@ const ALL_GENRES = [
 
 export default async function LibraryPage() {
 	const mangaResponse = await api.post.getMangaData();
-	const rawMangaData = mangaResponse?.data || [];
+	const rawMangaData = (mangaResponse?.data ?? []) as MangaWithGenres[];
 
 	const mangaData: MangaData[] = rawMangaData.map((manga) => ({
 		id: manga.id,
