@@ -29,9 +29,19 @@ export const authConfig = {
 	callbacks: {
 		jwt: async ({ token, user }) => {
 			if (user) {
-				token.id = user.id;
+				token.id = user.id!;
 				token.role = (user as { role?: string }).role ?? 'user';
 			}
+			if (!token.role && token.id) {
+				const dbUser = await db.user.findUnique({
+					where: {
+						id: token.id as string,
+					},
+					select: { role: true },
+				});
+				token.role = dbUser?.role ?? 'user';
+			}
+
 			return token;
 		},
 		session: ({ session, token }) => {
