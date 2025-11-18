@@ -259,13 +259,7 @@ export function Header() {
 								{link.label}
 							</Link>
 						))}
-
-						<Button
-							className=" w-full bg-pink-500 py-2 flex justify-center cursor-pointer hover:bg-pink-600 text-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-							href="/#join"
-						>
-							Login
-						</Button>
+						<AccountButton />
 					</div>
 				</nav>
 			</div>
