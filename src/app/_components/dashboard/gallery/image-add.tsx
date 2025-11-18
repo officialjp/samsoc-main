@@ -90,7 +90,7 @@ export default function ImageAdd() {
 		} catch (error) {
 			console.error('Submission failed:', error);
 			const errorMessage =
-				createItem.error?.message ||
+				createItem.error?.message ??
 				'An error occurred during submission and file upload.';
 			alert(errorMessage);
 		} finally {

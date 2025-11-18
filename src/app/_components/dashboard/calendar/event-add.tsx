@@ -59,7 +59,7 @@ export default function EventAdd() {
 		} catch (error) {
 			console.error('Submission failed:', error);
 			const errorMessage =
-				createItem.error?.message ||
+				createItem.error?.message ??
 				'An error occurred during submission.';
 			console.error(errorMessage);
 		} finally {

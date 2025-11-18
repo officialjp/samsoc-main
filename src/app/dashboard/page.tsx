@@ -36,7 +36,7 @@ export default function Page() {
 					</Link>
 					<p className="font-bold italic">
 						Ahem... Do not and I REPEAT do not, go to the admin
-						panel if you don't know what you're doing
+						panel if you don&apos;t know what you&apos;re doing
 					</p>
 					<Link href={'/admin/users'}>
 						<Button className="hover:cursor-pointer bg-red-500 hover:bg-red-600">
