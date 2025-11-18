@@ -6,7 +6,7 @@ import { getToken } from 'next-auth/jwt';
 export async function middleware(req: NextRequest) {
 	const token = await getToken({
 		req,
-		secret: process.env.AUTH_SECRET, // Changed from NEXTAUTH_SECRET
+		secret: process.env.NEXTAUTH_SECRET,
 	});
 
 	const isDashboard = req.nextUrl.pathname.startsWith('/dashboard');
