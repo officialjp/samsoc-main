@@ -1,7 +1,11 @@
+import Link from 'next/link';
 import OpenFormButton from '~/app/_components/dashboard/landing/open-carousel-form';
+import OpenRemovalButton from '~/app/_components/dashboard/landing/open-carousel-removal';
+import OpenCommitteeEditor from '~/app/_components/dashboard/landing/open-committee-editor';
 import { SectionContainer } from '~/app/_components/section-container';
 import { SectionHeading } from '~/app/_components/section-heading';
 import { Button } from '~/app/_components/ui/button';
+import OpenAnimeCardEditor from '~/app/_components/dashboard/landing/open-animecard-editor';
 
 export default function Page() {
 	return (
@@ -15,12 +19,12 @@ export default function Page() {
 				/>
 				<div className="flex items-center justify-center mx-auto max-w-7xl py-12 flex-col gap-6">
 					<OpenFormButton />
-					<Button className="hover:cursor-pointer bg-button2 hover:bg-button1">
-						Change Anime-Cards Data
-					</Button>
-					<Button className="hover:cursor-pointer bg-button2 hover:bg-button1">
-						Change Committee Display Data
-					</Button>
+					<OpenRemovalButton />
+					<OpenCommitteeEditor />
+					<OpenAnimeCardEditor />
+					<Link href={'/dashboard'}>
+						<Button className="hover:cursor-pointer">Back</Button>
+					</Link>
 				</div>
 			</SectionContainer>
 		</div>

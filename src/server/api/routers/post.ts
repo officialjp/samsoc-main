@@ -1,4 +1,3 @@
-import z from 'zod';
 import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
 
 export const postRouter = createTRPCRouter({
@@ -44,21 +43,6 @@ export const postRouter = createTRPCRouter({
 			total: images.length,
 		};
 	}),
-
-	getCarouselItem: publicProcedure
-		.input(
-			z.object({
-				id: z.number(),
-			}),
-		)
-		.query(async ({ ctx, input }) => {
-			const carouselItem = await ctx.db.carousel.findFirst({
-				where: {
-					id: input.id,
-				},
-			});
-			return { data: carouselItem };
-		}),
 
 	getCarouselIdAndName: publicProcedure.query(async ({ ctx }) => {
 		const allIdAndNames = await ctx.db.carousel.findMany({

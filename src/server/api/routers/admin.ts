@@ -1,4 +1,3 @@
-// server/api/routers/admin.ts
 import { z } from 'zod';
 import { adminProcedure, createTRPCRouter } from '~/server/api/trpc';
 import { TRPCError } from '@trpc/server';

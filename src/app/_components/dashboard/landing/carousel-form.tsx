@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { api } from '~/trpc/react';
 import {
 	Form,
@@ -16,94 +15,86 @@ import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Button } from '../../ui/button';
+import { FormDropzone } from './form-dropzone';
+import { useState } from 'react';
+
+const fileToBase64 = (file: File): Promise<string> => {
+	return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.readAsDataURL(file);
+		reader.onload = () => resolve(reader.result as string);
+		reader.onerror = (error) => reject(error);
+	});
+};
+
+const formSchema = z.object({
+	alt: z.string().min(1, {
+		message: 'Description must be at least 1 character long!',
+	}),
+	mobileImage: z.array(z.instanceof(File)).min(1, 'Please upload an image.'),
+	pcImage: z.array(z.instanceof(File)).min(1, 'Please upload an image.'),
+});
 
 export default function CarouselForm() {
-	const [id, setId] = useState(1);
-
-	const {
-		data: carouselResult,
-		isLoading: isLoadingNames,
-		error: errorNames,
-	} = api.post.getCarouselIdAndName.useQuery();
-
-	const {
-		data: itemResult,
-		isLoading: isLoadingItem,
-		error: errorItem,
-	} = api.post.getCarouselItem.useQuery({ id: id });
-
-	const itemData = itemResult?.data;
-
-	const formSchema = z.object({
-		id: z.number().min(1, {
-			message: 'ID must be at least 1!',
-		}),
-		alt: z.string().min(1, {
-			message: 'Description must be at least 1 character long!',
-		}),
-		mobileSource: z.string(),
-		desktopSource: z.string(),
-		order: z.number().min(1, {
-			message: 'Order must be at least 1',
-		}),
-	});
+	const createItem = api.carousel.createCarouselItem.useMutation();
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			id: itemData?.id,
-			alt: itemData?.alt,
-			mobileSource: itemData?.mobileSource,
-			desktopSource: itemData?.desktopSource,
-			order: itemData?.order,
+			alt: '',
+			mobileImage: [],
+			pcImage: [],
 		},
 	});
 
-	if (isLoadingNames || isLoadingItem) {
-		return <div>Loading item...</div>;
-	}
+	async function onSubmit(values: z.infer<typeof formSchema>) {
+		setIsSubmitting(true);
+		try {
+			const mobileImageBase64 = await fileToBase64(
+				values.mobileImage[0]!,
+			);
+			const pcImageBase64 = await fileToBase64(values.pcImage[0]!);
 
-	if (errorNames || errorItem) {
-		const error = errorNames || errorItem;
-		return <div>Error fetching data: {error?.message}</div>;
-	}
+			const input = {
+				alt: values.alt,
+				order: 0,
+				mobileImage: {
+					base64: mobileImageBase64,
+					fileName: values.mobileImage[0]!.name,
+					mimeType: values.mobileImage[0]!.type,
+				},
+				pcImage: {
+					base64: pcImageBase64,
+					fileName: values.pcImage[0]!.name,
+					mimeType: values.pcImage[0]!.type,
+				},
+			};
 
-	if (!carouselResult || !itemResult) {
-		return <div>No data found...</div>;
-	}
+			await createItem.mutateAsync(input);
 
-	function onSubmit(values: z.infer<typeof formSchema>) {
-		console.log(values);
+			alert('Carousel item created and images uploaded successfully!');
+
+			form.reset();
+		} catch (error) {
+			console.error('Submission failed:', error);
+			const errorMessage =
+				createItem.error?.message ||
+				'An error occurred during submission and file upload.';
+			alert(errorMessage);
+		} finally {
+			setIsSubmitting(false);
+		}
 	}
 
 	return (
 		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-				<h3 className="text-lg font-semibold">
-					Editing Carousel Item {itemData?.id}
-				</h3>
-				<FormField
-					control={form.control}
-					name="id"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>ID</FormLabel>
-							<FormControl>
-								<Input
-									type="number"
-									{...field}
-									onChange={(e) =>
-										field.onChange(Number(e.target.value))
-									}
-								/>
-							</FormControl>
-							<FormDescription>
-								The unique identifier for the carousel item.
-							</FormDescription>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
+			<form
+				onSubmit={form.handleSubmit(onSubmit)}
+				className="space-y-4 flex items-center justify-center flex-col"
+			>
+				<h3 className="text-lg font-semibold">Adding Carousel Item</h3>
+
 				<FormField
 					control={form.control}
 					name="alt"
@@ -120,7 +111,68 @@ export default function CarouselForm() {
 						</FormItem>
 					)}
 				/>
-				<Button type="submit">Submit Changes</Button>
+				<FormField
+					control={form.control}
+					name="mobileImage"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Mobile Image</FormLabel>
+							<FormControl>
+								<FormDropzone
+									field={field}
+									options={{
+										maxFiles: 1,
+										accept: {
+											'image/*': [
+												'.jpeg',
+												'.png',
+												'.webp',
+											],
+										},
+									}}
+								/>
+							</FormControl>
+							<FormDescription>
+								Upload the image for mobile devices.
+							</FormDescription>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+				<FormField
+					control={form.control}
+					name="pcImage"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>PC Image</FormLabel>
+							<FormControl>
+								<FormDropzone
+									field={field}
+									options={{
+										maxFiles: 1,
+										accept: {
+											'image/*': [
+												'.jpeg',
+												'.png',
+												'.webp',
+											],
+										},
+									}}
+								/>
+							</FormControl>
+							<FormDescription>
+								Upload the image for desktop devices.
+							</FormDescription>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+
+				<Button type="submit" disabled={isSubmitting}>
+					{isSubmitting
+						? 'Uploading & Creating...'
+						: 'Submit Changes'}
+				</Button>
 			</form>
 		</Form>
 	);
