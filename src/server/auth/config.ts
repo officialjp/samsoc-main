@@ -26,18 +26,6 @@ export const authConfig = {
 		strategy: 'jwt',
 	},
 	secret: process.env.AUTH_SECRET,
-	cookies: {
-		sessionToken: {
-			name: 'next-auth.session-token',
-			options: {
-				httpOnly: true,
-				sameSite: 'lax',
-				path: '/',
-				secure: true,
-				domain: '.samsoc.co.uk',
-			},
-		},
-	},
 	callbacks: {
 		jwt: async ({ token, user }) => {
 			if (user) {
