@@ -25,6 +25,7 @@ export const authConfig = {
 	session: {
 		strategy: 'jwt',
 	},
+	secret: process.env.AUTH_SECRET,
 	cookies: {
 		sessionToken: {
 			name: 'next-auth.session-token',
