@@ -53,8 +53,6 @@ export default function EventAdd() {
 		try {
 			await createItem.mutateAsync(values);
 
-			console.log('Event item created successfully!');
-
 			form.reset();
 		} catch (error) {
 			console.error('Submission failed:', error);
