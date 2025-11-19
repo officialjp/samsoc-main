@@ -1,4 +1,3 @@
-// server/auth/config.ts
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { type DefaultSession, type NextAuthConfig } from 'next-auth';
 import type { Session } from 'next-auth';
@@ -25,6 +24,21 @@ export const authConfig = {
 	adapter: PrismaAdapter(db) as Adapter,
 	session: {
 		strategy: 'jwt',
+	},
+	cookies: {
+		sessionToken: {
+			name: `${process.env.NODE_ENV === 'production' ? '__Secure-' : ''}next-auth.session-token`,
+			options: {
+				httpOnly: true,
+				sameSite: 'lax',
+				path: '/',
+				secure: process.env.NODE_ENV === 'production',
+				domain:
+					process.env.NODE_ENV === 'production'
+						? '.samsoc.co.uk'
+						: 'localhost',
+			},
+		},
 	},
 	callbacks: {
 		jwt: async ({ token, user }) => {
