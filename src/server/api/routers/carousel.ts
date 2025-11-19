@@ -47,8 +47,7 @@ async function uploadToR2(
 			}),
 		);
 	} catch (error) {
-		console.log(error);
-
+		console.error(error);
 		throw new TRPCError({
 			code: 'INTERNAL_SERVER_ERROR',
 			message: `File upload failed for ${device} image. Check server logs for the specific R2 error code.`,

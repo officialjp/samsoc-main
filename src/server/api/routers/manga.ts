@@ -74,7 +74,7 @@ async function uploadToR2(
 			}),
 		);
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 
 		throw new TRPCError({
 			code: 'INTERNAL_SERVER_ERROR',

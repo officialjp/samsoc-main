@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Loader2, Save, XCircle, ChevronDown, User } from 'lucide-react';
+import { Loader2, Save, XCircle, ChevronDown, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 
 import { api } from '~/trpc/react';
@@ -465,7 +465,7 @@ export function AnimeCardEditor() {
 								onClick={() => setSelectedCardId(cards.id)}
 								disabled={cards.id === selectedCardId}
 							>
-								<User className="mr-2 size-4" />
+								<Sparkles className="mr-2 size-4" />
 								{cards.title}
 							</DropdownMenuItem>
 						))}
