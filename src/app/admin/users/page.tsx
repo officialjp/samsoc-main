@@ -25,7 +25,6 @@ export default async function AdminUsersPage() {
 							<th className="px-6 py-3 text-left">Name</th>
 							<th className="px-6 py-3 text-left">Role</th>
 							<th className="px-6 py-3 text-left">Created</th>
-							<th className="px-6 py-3 text-left">Actions</th>
 						</tr>
 					</thead>
 					<tbody>

@@ -24,7 +24,9 @@ const staticNavLinks = [
 	{ href: '/gallery', label: 'Gallery' },
 	{ href: '/games', label: 'Games' },
 ];
+
 const adminLink = { href: '/dashboard', label: 'Dashboard' };
+
 type NavLink = (typeof staticNavLinks)[number];
 
 function Button({
@@ -85,12 +87,12 @@ export function Header() {
 	const finalNavLinks = [...staticNavLinks, ...(isAdmin ? [adminLink] : [])];
 
 	const stateRef = useRef<{
-		transformPosY: number;
+		screenMoveY: number;
 		lastScroll: number;
 		scrollBuffer: number;
 		rAFId: number | null;
 	}>({
-		transformPosY: 0,
+		screenMoveY: 0,
 		lastScroll: 0,
 		scrollBuffer: 0,
 		rAFId: null,
@@ -119,14 +121,14 @@ export function Header() {
 			return;
 		}
 
-		if (state.transformPosY > hiddenHeight || scrollDelta > 0) {
-			state.transformPosY = Math.min(
-				Math.max(state.transformPosY + scrollDelta, hiddenHeight),
+		if (state.screenMoveY > hiddenHeight || scrollDelta > 0) {
+			state.screenMoveY = Math.min(
+				Math.max(state.screenMoveY + scrollDelta, hiddenHeight),
 				0,
 			);
 		}
 
-		const range = state.transformPosY / hiddenHeight;
+		const range = state.screenMoveY / hiddenHeight;
 
 		if (range <= 0 && scrollDelta > 0) {
 			state.scrollBuffer = 0;
@@ -144,7 +146,12 @@ export function Header() {
 		if (scroll <= 0) {
 			headerElement.style.opacity = '1';
 			state.scrollBuffer = 0;
-			state.transformPosY = 0;
+			state.screenMoveY = 0;
+			if (state.rAFId) {
+				cancelAnimationFrame(state.rAFId);
+				state.rAFId = null;
+			}
+			return;
 		}
 	}, []);
 
@@ -156,6 +163,7 @@ export function Header() {
 			if (!isTicking) {
 				currentRef.rAFId = window.requestAnimationFrame(() => {
 					animateHeader();
+
 					isTicking = false;
 				});
 				isTicking = true;

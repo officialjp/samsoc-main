@@ -80,12 +80,12 @@ const ImagePreview = ({
 	if (!src) return null;
 
 	return (
-		<div className="relative h-48 w-32 shrink-0 overflow-hidden rounded-md border-2 border-border">
+		<div className="relative h-48 w-32 shrink-0 overflow-hidden rounded-2xl border-2 border-border">
 			<Image
 				src={src}
 				alt="Manga Image Preview"
 				fill
-				style={{ objectFit: 'cover' }}
+				className="object-cover"
 				unoptimized={!!file}
 			/>
 		</div>
@@ -203,12 +203,17 @@ const MangaEditorRow: React.FC<MangaEditorRowProps> = ({
 		<Form {...form}>
 			<form
 				onSubmit={form.handleSubmit(onSubmit)}
-				className="flex flex-col gap-4 rounded-base border-2 border-border bg-main p-6 shadow-shadow"
+				className="flex flex-col gap-4 rounded-2xl border-2 border-border bg-main p-6 shadow-shadow"
 			>
 				<div className="flex items-start gap-6">
 					<div className="flex w-full max-w-xs flex-col gap-2 shrink-0">
 						<Label>Manga Image</Label>
-						<ImagePreview file={newImageFile} url={manga.source} />
+						<div className="grow flex justify-center">
+							<ImagePreview
+								file={newImageFile}
+								url={manga.source}
+							/>
+						</div>
 
 						<FormField
 							control={form.control}
@@ -217,9 +222,8 @@ const MangaEditorRow: React.FC<MangaEditorRowProps> = ({
 								<FormItem className="mt-2">
 									<FormControl>
 										<Dropzone
+											className="bg-white"
 											accept={{
-												'image/jpeg': ['.jpg', '.jpeg'],
-												'image/png': ['.png'],
 												'image/avif': ['.avif'],
 											}}
 											maxSize={1024 * 1024 * 10}
@@ -450,9 +454,10 @@ export function MangaItemEditor() {
 	}
 
 	return (
-		<div className="space-y-6">
-			<h2 className="text-2xl font-heading">Edit Manga Item</h2>
-
+		<div className="space-y-4 p-6 border rounded-lg shadow-md bg-white">
+			<h3 className="text-lg font-semibold border-b pb-2">
+				Edit Manga Item
+			</h3>
 			<div className="flex items-center gap-4">
 				<Label htmlFor="manga-select" className="shrink-0">
 					Select Manga:
@@ -476,7 +481,7 @@ export function MangaItemEditor() {
 						</Button>
 					</DropdownMenuTrigger>
 
-					<DropdownMenuContent className="w-full min-w-[320px] max-w-lg">
+					<DropdownMenuContent className="w-[80%] min-w-[320px] max-w-lg">
 						<DropdownMenuLabel className="p-3">
 							Select an Item to Edit
 						</DropdownMenuLabel>

@@ -18,7 +18,7 @@ export const appRouter = createTRPCRouter({
 	admin: adminRouter,
 	carousel: carouselRouter,
 	committee: committeeRouter,
-	animecards: animeCardsRouter,
+	animecard: animeCardsRouter,
 	event: eventRouter,
 	image: imageRouter,
 	manga: mangaRouter,

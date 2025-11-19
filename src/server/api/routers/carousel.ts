@@ -137,7 +137,7 @@ export const carouselRouter = createTRPCRouter({
 
 			return { success: true, itemId };
 		}),
-	createCarouselItem: adminProcedure
+	createItem: adminProcedure
 		.input(createItemInputSchema)
 		.mutation(async ({ ctx, input }) => {
 			let itemId: number | undefined;

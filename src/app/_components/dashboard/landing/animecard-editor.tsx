@@ -64,7 +64,7 @@ const ImagePreview = ({
 	if (!src) return null;
 
 	return (
-		<div className="relative h-96 shrink-0 overflow-hidden rounded-md border-2 border-border">
+		<div className="relative h-96 shrink-0 overflow-hidden rounded-2xl border-2 border-border">
 			<Image
 				src={src}
 				alt="Card Image Preview"
@@ -101,7 +101,7 @@ const MemberEditorRow: React.FC<CardEditorRowProps> = ({ card, onSuccess }) => {
 	const newImageFile = useWatch({ control: form.control, name: 'newImage' });
 	const isFormDirty = form.formState.isDirty || !!newImageFile;
 
-	const updateCardMutation = api.animecards.updateCard.useMutation({
+	const updateCardMutation = api.animecard.updateCard.useMutation({
 		onSuccess: (updatedCard) => {
 			onSuccess();
 			form.reset({
@@ -197,7 +197,7 @@ const MemberEditorRow: React.FC<CardEditorRowProps> = ({ card, onSuccess }) => {
 		<Form {...form}>
 			<form
 				onSubmit={form.handleSubmit(onSubmit)}
-				className="flex flex-col gap-4 rounded-base border-2 border-border bg-main p-6 shadow-shadow"
+				className="flex flex-col gap-4 rounded-2xl border-2 border-border bg-main p-6 shadow-shadow"
 			>
 				<div className="flex items-start gap-6">
 					<div className="flex w-full max-w-xs flex-col gap-2 shrink-0">
@@ -211,9 +211,8 @@ const MemberEditorRow: React.FC<CardEditorRowProps> = ({ card, onSuccess }) => {
 								<FormItem className="mt-2">
 									<FormControl>
 										<Dropzone
+											className="bg-white"
 											accept={{
-												'image/jpeg': ['.jpg', '.jpeg'],
-												'image/png': ['.png'],
 												'image/avif': ['.avif'],
 											}}
 											maxSize={1024 * 1024 * 10}
@@ -413,10 +412,10 @@ export function AnimeCardEditor() {
 		data: cards,
 		isFetching,
 		isError,
-	} = api.animecards.getAllCards.useQuery();
+	} = api.animecard.getAllCards.useQuery();
 
 	const refetch = () => {
-		void utils.animecards.getAllCards.invalidate();
+		void utils.animecard.getAllCards.invalidate();
 	};
 
 	const selectedCard = cards?.find((m) => m.id === selectedCardId) ?? null;
@@ -440,8 +439,10 @@ export function AnimeCardEditor() {
 	}
 
 	return (
-		<div className="space-y-6">
-			<h2 className="text-2xl font-heading">Edit Anime Cards</h2>
+		<div className="space-y-4 flex-col p-6 border rounded-2xl shadow-md bg-white">
+			<h3 className="text-lg font-semibold border-b pb-2">
+				Edit Anime Cards
+			</h3>
 
 			<div className="flex items-center gap-4">
 				<Label htmlFor="title-select">Select Card:</Label>

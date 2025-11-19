@@ -1,9 +1,20 @@
-import Link from 'next/link';
-import OpenEventAdd from '~/app/_components/dashboard/calendar/open-event-add';
-import OpenRemovalButton from '~/app/_components/dashboard/calendar/open-event-removal';
+import EventAdd from '~/app/_components/dashboard/calendar/event-add';
+import EventRemove from '~/app/_components/dashboard/calendar/event-removal';
+import DashButtons from '~/app/_components/dashboard/dashboard-link-buttons';
+import DashboardTabArray from '~/app/_components/dashboard/dashboard-tab-array';
 import { SectionContainer } from '~/app/_components/section-container';
 import { SectionHeading } from '~/app/_components/section-heading';
-import { Button } from '~/app/_components/ui/button';
+
+const calendarPageObj = [
+	{
+		name: 'Create calendar event',
+		page: <EventAdd />,
+	},
+	{
+		name: 'Remove calendar event',
+		page: <EventRemove />,
+	},
+];
 
 export default function Page() {
 	return (
@@ -16,11 +27,8 @@ export default function Page() {
 					badgeColor="bg-purple-200"
 				/>
 				<div className="flex items-center justify-center mx-auto max-w-7xl py-12 flex-col gap-6">
-					<OpenRemovalButton />
-					<OpenEventAdd />
-					<Link href={'/dashboard'}>
-						<Button className="hover:cursor-pointer">Back</Button>
-					</Link>
+					<DashButtons />
+					<DashboardTabArray tabData={calendarPageObj} />
 				</div>
 			</SectionContainer>
 		</div>

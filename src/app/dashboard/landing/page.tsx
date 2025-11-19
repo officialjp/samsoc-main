@@ -1,11 +1,31 @@
-import Link from 'next/link';
-import OpenFormButton from '~/app/_components/dashboard/landing/open-carousel-add';
-import OpenRemovalButton from '~/app/_components/dashboard/landing/open-carousel-removal';
-import OpenCommitteeEditor from '~/app/_components/dashboard/landing/open-committee-editor';
 import { SectionContainer } from '~/app/_components/section-container';
 import { SectionHeading } from '~/app/_components/section-heading';
-import { Button } from '~/app/_components/ui/button';
-import OpenAnimeCardEditor from '~/app/_components/dashboard/landing/open-animecard-editor';
+import CarouselForm from '~/app/_components/dashboard/landing/carousel-add';
+import CarouselRemove from '~/app/_components/dashboard/landing/carousel-removal';
+import { CommitteeMemberEditor } from '~/app/_components/dashboard/landing/committee-editor';
+import { AnimeCardEditor } from '~/app/_components/dashboard/landing/animecard-editor';
+
+import DashboardTabArray from '~/app/_components/dashboard/dashboard-tab-array';
+import DashButtons from '~/app/_components/dashboard/dashboard-link-buttons';
+
+const carouselPageObj = [
+	{
+		name: 'Create carousel page',
+		page: <CarouselForm />,
+	},
+	{
+		name: 'Remove carousel page',
+		page: <CarouselRemove />,
+	},
+	{
+		name: 'Edit committee members',
+		page: <CommitteeMemberEditor />,
+	},
+	{
+		name: 'Edit anime cards',
+		page: <AnimeCardEditor />,
+	},
+];
 
 export default function Page() {
 	return (
@@ -17,14 +37,9 @@ export default function Page() {
 					description="This is the dashboard for the landing page of the website"
 					badgeColor="bg-purple-200"
 				/>
-				<div className="flex items-center justify-center mx-auto max-w-7xl py-12 flex-col gap-6">
-					<OpenFormButton />
-					<OpenRemovalButton />
-					<OpenCommitteeEditor />
-					<OpenAnimeCardEditor />
-					<Link href={'/dashboard'}>
-						<Button className="hover:cursor-pointer">Back</Button>
-					</Link>
+				<div className="flex items-center justify-center flex-col mx-auto max-w-7xl">
+					<DashButtons />
+					<DashboardTabArray tabData={carouselPageObj} />
 				</div>
 			</SectionContainer>
 		</div>
