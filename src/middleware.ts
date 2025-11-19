@@ -14,7 +14,7 @@ export async function middleware(req: NextRequest) {
 	const token = await getToken({
 		req,
 		secret: secretValue,
-		salt: 'authjs.session-token',
+		cookieName: '__Secure-authjs.session-token',
 	});
 
 	console.log('Token in Middleware:', token);
