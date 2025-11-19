@@ -4,6 +4,12 @@ import { getToken } from 'next-auth/jwt';
 
 export async function middleware(req: NextRequest) {
 	const secretValue = process.env.AUTH_SECRET;
+	console.log('--- DEBUG COOKIES ---');
+	console.log('Environment:', process.env.NODE_ENV);
+	req.cookies.getAll().forEach((c) => {
+		console.log(`Cookie: ${c.name}`);
+	});
+	console.log('---------------------');
 	console.log('AUTH_SECRET is set:', !!secretValue);
 	const token = await getToken({
 		req,
