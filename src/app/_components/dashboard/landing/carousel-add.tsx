@@ -17,20 +17,8 @@ import { useForm } from 'react-hook-form';
 import { Button } from '../../ui/button';
 import { FormDropzone } from '../form-dropzone';
 import { useState } from 'react';
-
-const fileToBase64 = (file: File): Promise<string> => {
-	return new Promise((resolve, reject) => {
-		const reader = new FileReader();
-		reader.readAsDataURL(file);
-		reader.onload = () => resolve(reader.result as string);
-		reader.onerror = (error) =>
-			reject(
-				new Error('FileReader failed to read the file.', {
-					cause: error,
-				}),
-			);
-	});
-};
+import { fileToBase64 } from '~/lib/utils';
+import { Save } from 'lucide-react';
 
 const formSchema = z.object({
 	alt: z.string().min(1, {
@@ -41,7 +29,7 @@ const formSchema = z.object({
 });
 
 export default function CarouselForm() {
-	const createItem = api.carousel.createCarouselItem.useMutation();
+	const createItem = api.carousel.createItem.useMutation();
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -96,9 +84,11 @@ export default function CarouselForm() {
 		<Form {...form}>
 			<form
 				onSubmit={form.handleSubmit(onSubmit)}
-				className="space-y-4 flex items-center justify-center flex-col"
+				className="space-y-4 flex-col p-6 border rounded-lg shadow-md bg-white"
 			>
-				<h3 className="text-lg font-semibold">Adding Carousel Item</h3>
+				<h3 className="text-lg font-semibold border-b pb-2">
+					Adding Carousel Item
+				</h3>
 
 				<FormField
 					control={form.control}
@@ -128,11 +118,7 @@ export default function CarouselForm() {
 									options={{
 										maxFiles: 1,
 										accept: {
-											'image/*': [
-												'.jpeg',
-												'.png',
-												'.webp',
-											],
+											'image/avif': ['.avif'],
 										},
 									}}
 								/>
@@ -172,12 +158,17 @@ export default function CarouselForm() {
 						</FormItem>
 					)}
 				/>
-
-				<Button type="submit" disabled={isSubmitting}>
-					{isSubmitting
-						? 'Uploading & Creating...'
-						: 'Submit Changes'}
-				</Button>
+				<div className="mt-4 flex justify-end">
+					<Button type="submit" disabled={isSubmitting}>
+						{isSubmitting ? (
+							'Uploading & Creating...'
+						) : (
+							<>
+								Save Changes <Save />
+							</>
+						)}
+					</Button>
+				</div>
 			</form>
 		</Form>
 	);

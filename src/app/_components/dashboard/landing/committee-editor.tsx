@@ -65,12 +65,12 @@ const ImagePreview = ({
 	if (!src) return null;
 
 	return (
-		<div className="relative size-24 shrink-0 overflow-hidden rounded-md border-2 border-border">
+		<div className="relative size-30 overflow-hidden rounded-2xl border-2 border-border bg-white">
 			<Image
 				src={src}
 				alt="Member Image Preview"
 				fill
-				style={{ objectFit: 'cover' }}
+				className="object-cover"
 				unoptimized={!!file}
 			/>
 		</div>
@@ -156,12 +156,17 @@ const MemberEditorRow: React.FC<MemberEditorRowProps> = ({
 		<Form {...form}>
 			<form
 				onSubmit={form.handleSubmit(onSubmit)}
-				className="flex flex-col gap-4 rounded-base border-2 border-border bg-main p-6 shadow-shadow"
+				className="flex flex-col gap-4 rounded-2xl border-2 border-border bg-main p-6 shadow-shadow"
 			>
-				<div className="flex items-start gap-6">
-					<div className="flex w-full max-w-xs flex-col gap-2 shrink-0">
+				<div className="flex items-start flex-wrap gap-6">
+					<div className="flex w-full flex-col grow gap-2 shrink-0">
 						<Label>Member Image</Label>
-						<ImagePreview file={newImageFile} url={member.source} />
+						<div className="grow flex justify-center">
+							<ImagePreview
+								file={newImageFile}
+								url={member.source}
+							/>
+						</div>
 
 						<FormField
 							control={form.control}
@@ -170,9 +175,8 @@ const MemberEditorRow: React.FC<MemberEditorRowProps> = ({
 								<FormItem className="mt-2">
 									<FormControl>
 										<Dropzone
+											className="bg-white"
 											accept={{
-												'image/jpeg': ['.jpg', '.jpeg'],
-												'image/png': ['.png'],
 												'image/avif': ['.avif'],
 											}}
 											maxSize={1024 * 1024 * 10}
@@ -319,8 +323,10 @@ export function CommitteeMemberEditor() {
 	}
 
 	return (
-		<div className="space-y-6">
-			<h2 className="text-2xl font-heading">Edit Committee Members</h2>
+		<div className="space-y-4 flex-col p-6 border rounded-2xl shadow-md bg-white">
+			<h3 className="text-lg font-semibold border-b pb-2">
+				Edit Committee Members
+			</h3>
 
 			<div className="flex items-center gap-4">
 				<Label htmlFor="member-select">Select Member:</Label>

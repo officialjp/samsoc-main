@@ -118,7 +118,7 @@ export default function EventRemove() {
 	const buttonText = confirmingDelete ? 'Confirm Delete' : 'Delete Selected';
 
 	return (
-		<div className="space-y-4 p-6 rounded-xl max-w-md mx-auto font-sans">
+		<div className="space-y-4 p-6 border rounded-lg shadow-md bg-white">
 			<h3 className="text-xl font-bold border-b pb-2 flex items-center">
 				<Trash2 className="mr-2 h-5 w-5" />
 				Remove Event Item

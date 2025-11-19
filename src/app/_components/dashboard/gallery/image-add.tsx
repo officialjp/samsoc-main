@@ -17,20 +17,8 @@ import { useForm } from 'react-hook-form';
 import { Button } from '../../ui/button';
 import { FormDropzone } from '../form-dropzone';
 import { useState } from 'react';
-
-const fileToBase64 = (file: File): Promise<string> => {
-	return new Promise((resolve, reject) => {
-		const reader = new FileReader();
-		reader.readAsDataURL(file);
-		reader.onload = () => resolve(reader.result as string);
-		reader.onerror = (error) =>
-			reject(
-				new Error('FileReader failed to read the file.', {
-					cause: error,
-				}),
-			);
-	});
-};
+import { fileToBase64 } from '~/lib/utils';
+import { Save } from 'lucide-react';
 
 const category = ['Events', 'Collaborations'] as const;
 
@@ -107,10 +95,11 @@ export default function ImageAdd() {
 		<Form {...form}>
 			<form
 				onSubmit={form.handleSubmit(onSubmit)}
-				className="space-y-4 flex items-center justify-center flex-col"
+				className="space-y-4 p-6 border rounded-lg shadow-md bg-white"
 			>
-				<h3 className="text-lg font-semibold">Adding Image Item</h3>
-
+				<h3 className="text-lg font-semibold border-b pb-2">
+					Adding Image Item
+				</h3>
 				<FormField
 					control={form.control}
 					name="alt"
@@ -216,11 +205,17 @@ export default function ImageAdd() {
 					)}
 				/>
 
-				<Button type="submit" disabled={isSubmitting}>
-					{isSubmitting
-						? 'Uploading & Creating...'
-						: 'Submit Changes'}
-				</Button>
+				<div className="mt-4 flex justify-end">
+					<Button type="submit" disabled={isSubmitting}>
+						{isSubmitting ? (
+							'Uploading & Creating...'
+						) : (
+							<>
+								Save Changes <Save />
+							</>
+						)}
+					</Button>
+				</div>
 			</form>
 		</Form>
 	);

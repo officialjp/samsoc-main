@@ -16,6 +16,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Button } from '../../ui/button';
 import { useState } from 'react';
+import { Save } from 'lucide-react';
 
 const color = ['bg-pink-200', 'bg-blue-200'] as const;
 
@@ -69,9 +70,9 @@ export default function EventAdd() {
 		<Form {...form}>
 			<form
 				onSubmit={form.handleSubmit(onSubmit)}
-				className="p-6 max-w-lg mx-auto rounded-xl space-y-6"
+				className="space-y-4 p-6 border rounded-lg shadow-md bg-white"
 			>
-				<h3 className="text-2xl font-bold text-center text-gray-800">
+				<h3 className="text-lg font-semibold border-b pb-2">
 					Add New Event
 				</h3>
 
@@ -212,6 +213,7 @@ export default function EventAdd() {
 								<Input
 									type="checkbox"
 									checked={field.value}
+									className="size-10"
 									onChange={(e) =>
 										field.onChange(e.target.checked)
 									}
@@ -229,9 +231,17 @@ export default function EventAdd() {
 					)}
 				/>
 
-				<Button type="submit" disabled={isSubmitting}>
-					{isSubmitting ? 'Submitting...' : 'Submit Event'}
-				</Button>
+				<div className="mt-4 flex justify-end">
+					<Button type="submit" disabled={isSubmitting}>
+						{isSubmitting ? (
+							'Uploading & Creating...'
+						) : (
+							<>
+								Save Changes <Save />
+							</>
+						)}
+					</Button>
+				</div>
 			</form>
 		</Form>
 	);
