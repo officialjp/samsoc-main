@@ -115,11 +115,7 @@ export default function MangaAdd() {
 									options={{
 										maxFiles: 1,
 										accept: {
-											'image/*': [
-												'.jpeg',
-												'.png',
-												'.webp',
-											],
+											'image/avif': ['.avif'],
 										},
 									}}
 								/>

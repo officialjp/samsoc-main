@@ -142,11 +142,7 @@ export default function CarouselForm() {
 									options={{
 										maxFiles: 1,
 										accept: {
-											'image/*': [
-												'.jpeg',
-												'.png',
-												'.webp',
-											],
+											'image/avif': ['.avif'],
 										},
 									}}
 								/>

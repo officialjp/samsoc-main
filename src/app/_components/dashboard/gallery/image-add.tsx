@@ -128,11 +128,7 @@ export default function ImageAdd() {
 									options={{
 										maxFiles: 1,
 										accept: {
-											'image/*': [
-												'.jpeg',
-												'.png',
-												'.webp',
-											],
+											'image/avif': ['.avif'],
 										},
 									}}
 								/>
@@ -156,11 +152,7 @@ export default function ImageAdd() {
 									options={{
 										maxFiles: 1,
 										accept: {
-											'image/*': [
-												'.jpeg',
-												'.png',
-												'.webp',
-											],
+											'image/avif': ['.avif'],
 										},
 									}}
 								/>
