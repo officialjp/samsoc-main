@@ -2,6 +2,7 @@ import { SectionContainer } from '~/app/_components/section-container';
 import { SectionHeading } from '~/app/_components/section-heading';
 import { HydrateClient } from '~/trpc/server';
 import type { Metadata } from 'next';
+import AnimeSearch from '../_components/games/search-component';
 
 export const metadata: Metadata = {
 	title: 'Surrey Anime and Manga Society',
@@ -20,7 +21,16 @@ export const metadata: Metadata = {
 	},
 };
 
-export default async function Page() {
+interface PageProps {
+	searchParams: Promise<{ animeId?: string }>;
+}
+
+export default async function Page({ searchParams }: PageProps) {
+	const { animeId } = await searchParams;
+	if (animeId) {
+		console.log(parseInt(animeId));
+	}
+
 	return (
 		<HydrateClient>
 			<main>
@@ -29,6 +39,7 @@ export default async function Page() {
 						badge="GAMES"
 						title="Here are all the online games you can play to win prizes!"
 					></SectionHeading>
+					<AnimeSearch />
 				</SectionContainer>
 			</main>
 		</HydrateClient>
