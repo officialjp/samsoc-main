@@ -55,7 +55,7 @@ export default function HeroCarousel({
 								src={element.mobileSource}
 								alt={element.alt}
 								fill
-								sizes="(max-width: 768px) 100vw, 0px"
+								sizes="(max-width: 768px) 100vw, 1px"
 								priority={index === 0}
 								loading={index === 0 ? 'eager' : 'lazy'}
 								fetchPriority={index === 0 ? 'high' : 'auto'}

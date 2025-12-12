@@ -4,8 +4,7 @@ import { type EmblaOptionsType } from 'embla-carousel';
 import { SectionContainer } from './_components/section-container';
 import { SectionHeading } from './_components/section-heading';
 import { FeatureCard } from './_components/landing/feature-card';
-import { CalendarDays, Check, Library, UserPlus } from 'lucide-react';
-import { AnimeCard } from './_components/landing/anime-card';
+import { Check, Library, UserPlus } from 'lucide-react';
 import { Button } from './_components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -14,8 +13,9 @@ import Logo from '../../public/images/logo.webp';
 import { MembershipCard } from './_components/landing/membership-card';
 import Marquee from 'react-fast-marquee';
 import { SvgIcon } from './_components/util/svg-icon';
-import { CommitteeCard } from './_components/landing/committee-card';
 import { FREE_FEATURES, PAID_FEATURES, FEATURES } from '~/lib/constants';
+import { AnimeSection } from './_components/landing/anime-section';
+import { CommitteeSection } from './_components/landing/committee-section';
 
 const DEVELOPERS = ['J.P', 'Michael', 'Maiham', 'David'];
 const LIBRARY_STATS = [
@@ -85,15 +85,8 @@ function MarqueeContent() {
 export default async function Home() {
 	const options: EmblaOptionsType = { loop: true };
 
-	const [cardResult, carouselResult, committeResult] = await Promise.all([
-		api.post.getAnimeCardData(),
-		api.post.getCarouselData(),
-		api.post.getCommitteeMembers(),
-	]);
-
-	const cardData = cardResult.data ?? [];
+	const carouselResult = await api.post.getCarouselData();
 	const carouselData = carouselResult.data ?? [];
-	const committee = committeResult.data ?? [];
 
 	return (
 		<HydrateClient>
@@ -138,31 +131,7 @@ export default async function Home() {
 					id="now-streaming"
 					className="w-full py-12 md:py-16 overflow-hidden"
 				>
-					<SectionHeading
-						badge="NOW STREAMING"
-						title="This Week's Anime"
-						description="Join us every Wednesday at 6PM in Lecture Theatre G for our weekly anime screenings!"
-						badgeColor="bg-purple-200"
-					/>
-					<AnimeCard animes={cardData} />
-					<div className="mb-8 -mt-8 text-center">
-						<p className="font-medium mb-4">
-							Don&apos;t worry if you&apos;ve missed previous
-							episodes - you have plenty of time to catch-up!
-						</p>
-						<Button
-							asChild
-							className="bg-button2 hover:bg-button1 text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-						>
-							<Link
-								href="/calendar"
-								className="flex items-center"
-							>
-								<CalendarDays className="mr-2 h-4 w-4" />
-								View Full Calendar
-							</Link>
-						</Button>
-					</div>
+					<AnimeSection />
 				</SectionContainer>
 
 				<SectionContainer id="library">
@@ -203,23 +172,7 @@ export default async function Home() {
 				</SectionContainer>
 
 				<SectionContainer id="committee">
-					<SectionHeading
-						badge="COMMITTEE"
-						title="Meet Our Committee"
-						badgeColor="bg-purple-200"
-						description="The masterminds behind our beautifully constructed events, sessions and much more!"
-					/>
-					<div className="flex flex-col lg:flex-row gap-8 items-center justify-center py-6 auto-rows-fr">
-						{committee.map((member) => (
-							<CommitteeCard
-								key={member.id}
-								id={member.id}
-								name={member.name}
-								role={member.role}
-								source={member.source}
-							/>
-						))}
-					</div>
+					<CommitteeSection />
 				</SectionContainer>
 
 				<SectionContainer id="join">
