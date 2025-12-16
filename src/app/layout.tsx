@@ -4,7 +4,6 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import { Footer } from './_components/footer';
 import { Header } from './_components/header';
 import { TRPCReactProvider } from '~/trpc/react';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 import AuthProvider from './_components/auth-provider';
 
 export const metadata: Metadata = {
@@ -48,7 +47,6 @@ export default function RootLayout({
 						<Header />
 						<TRPCReactProvider>{children}</TRPCReactProvider>
 						<Footer />
-						<SpeedInsights />
 					</div>
 				</AuthProvider>
 			</body>
