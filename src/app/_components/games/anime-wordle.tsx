@@ -7,6 +7,7 @@ interface AnimeWordleProps {
 	searchedAnimeId: string | undefined;
 	gameWon: boolean;
 	setGameWon: (won: boolean) => void;
+	setGameFailed: (failed: boolean) => void;
 }
 
 type FieldKey =
@@ -158,6 +159,7 @@ export default function AnimeWordle({
 	searchedAnimeId,
 	gameWon,
 	setGameWon,
+	setGameFailed,
 }: AnimeWordleProps) {
 	const [guesses, setGuesses] = useState<Record<string, unknown>[]>([]);
 	const [isCopied, setIsCopied] = useState(false);
@@ -198,13 +200,17 @@ export default function AnimeWordle({
 		if (saved) {
 			try {
 				const parsed = JSON.parse(saved) as SavedGuesses;
-				if (parsed.date === today) setGuesses(parsed.data);
-				else localStorage.removeItem('anime_wordle_guesses');
+				if (parsed.date === today) {
+					setGuesses(parsed.data);
+					if (parsed.data.length >= 12) setGameFailed(true);
+				} else {
+					localStorage.removeItem('anime_wordle_guesses');
+				}
 			} catch (e) {
 				console.error('Failed to parse local storage', e);
 			}
 		}
-	}, []);
+	}, [setGameFailed]);
 
 	const processGuess = useCallback(() => {
 		if (isGameOver || !searchedAnime || !answerAnime) return;
@@ -231,12 +237,15 @@ export default function AnimeWordle({
 			}),
 		);
 
-		if (
+		const isCorrect =
 			formatDisplayValue(searchedAnime.title).toLowerCase().trim() ===
-			formatDisplayValue(answerAnime.title).toLowerCase().trim()
-		) {
+			formatDisplayValue(answerAnime.title).toLowerCase().trim();
+
+		if (isCorrect) {
 			setGameWon(true);
 			winMutation.mutate({ tries: newGuesses.length });
+		} else if (newGuesses.length >= 12) {
+			setGameFailed(true);
 		}
 	}, [
 		searchedAnime,
@@ -245,6 +254,7 @@ export default function AnimeWordle({
 		guesses,
 		recordGuessMutation,
 		setGameWon,
+		setGameFailed,
 		winMutation,
 	]);
 

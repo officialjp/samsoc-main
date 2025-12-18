@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, Suspense } from 'react'; // 1. Import Suspense
+import { useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useSession, signIn } from 'next-auth/react';
 import { Loader2, Lock } from 'lucide-react';
@@ -12,6 +12,7 @@ function WordleContent() {
 	const searchParams = useSearchParams();
 	const animeId = searchParams.get('animeId');
 	const [gameWon, setGameWon] = useState(false);
+	const [gameFailed, setGameFailed] = useState(false);
 
 	const { status } = useSession();
 
@@ -53,7 +54,10 @@ function WordleContent() {
 	}
 
 	const isGameOver =
-		gameWon || !!gameData?.hasWonToday || !!gameData?.hasFailedToday;
+		gameWon ||
+		gameFailed ||
+		!!gameData?.hasWonToday ||
+		!!gameData?.hasFailedToday;
 
 	return (
 		<main className="min-h-screen">
@@ -62,12 +66,12 @@ function WordleContent() {
 				searchedAnimeId={animeId ?? undefined}
 				gameWon={gameWon}
 				setGameWon={setGameWon}
+				setGameFailed={setGameFailed}
 			/>
 		</main>
 	);
 }
 
-// 3. Keep the Page component as the entry point with Suspense
 export default function WordlePage() {
 	return (
 		<Suspense
