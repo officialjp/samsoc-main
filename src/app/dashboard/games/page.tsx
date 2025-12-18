@@ -4,11 +4,16 @@ import { SectionHeading } from '~/app/_components/section-heading';
 import DashboardTabArray from '~/app/_components/dashboard/dashboard-tab-array';
 import DashButtons from '~/app/_components/dashboard/dashboard-link-buttons';
 import AdminAnimeScheduler from '~/app/_components/dashboard/games/daily-anime';
+import AdminStudioScheduler from '~/app/_components/dashboard/games/daily-studio';
 
 const carouselPageObj = [
 	{
 		name: 'Change Daily Anime',
 		page: <AdminAnimeScheduler />,
+	},
+	{
+		name: 'Change Daily Studio',
+		page: <AdminStudioScheduler />,
 	},
 ];
 
