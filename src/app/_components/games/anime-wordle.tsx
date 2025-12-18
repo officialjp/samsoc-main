@@ -112,6 +112,82 @@ function FieldCell({
 			arrowDirection = guessNum < targetNum ? 'up' : 'down';
 	}
 
+	const renderColorCodedValue = () => {
+		const isArrayField =
+			label === 'Genres' || label === 'Themes' || label === 'Studios';
+
+		if (isArrayField && value && targetValue !== undefined) {
+			const valueStr =
+				typeof value === 'string' ? value : formatDisplayValue(value);
+			const targetStr =
+				typeof targetValue === 'string'
+					? targetValue
+					: formatDisplayValue(targetValue);
+
+			const valueArray = Array.isArray(value)
+				? value
+				: valueStr.split(',').map((s) => s.trim());
+
+			const targetArray = Array.isArray(targetValue)
+				? targetValue
+				: targetStr.split(',').map((s) => s.trim());
+
+			const targetSet = new Set(
+				targetArray.map((v) => {
+					const itemStr =
+						typeof v === 'string' ? v : formatDisplayValue(v);
+					return itemStr.toLowerCase().trim();
+				}),
+			);
+
+			return (
+				<div className="text-sm font-semibold wrap-break-word">
+					{valueArray.map((item, idx) => {
+						const itemStr =
+							typeof item === 'string'
+								? item
+								: formatDisplayValue(item);
+						const itemMatch = targetSet.has(
+							itemStr.toLowerCase().trim(),
+						);
+
+						return (
+							<span key={idx}>
+								<span
+									className={
+										itemMatch
+											? 'text-green-600'
+											: 'text-red-600'
+									}
+								>
+									{itemStr.trim()}
+								</span>
+								{idx < valueArray.length - 1 && ', '}
+							</span>
+						);
+					})}
+				</div>
+			);
+		}
+
+		if (isMatch !== undefined) {
+			const textColor = isMatch ? 'text-green-600' : 'text-red-600';
+			return (
+				<div
+					className={`text-sm font-semibold ${textColor} wrap-break-word`}
+				>
+					{formatDisplayValue(value)}
+				</div>
+			);
+		}
+
+		return (
+			<div className="text-sm font-semibold text-gray-900 wrap-break-word">
+				{formatDisplayValue(value)}
+			</div>
+		);
+	};
+
 	return (
 		<div
 			className={`${bgColor} border-2 border-black rounded-lg p-4 text-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] min-h-[100px] flex flex-col justify-center relative`}
@@ -119,9 +195,7 @@ function FieldCell({
 			<div className="text-xs font-bold text-gray-900 mb-2 uppercase tracking-wide">
 				{label}
 			</div>
-			<div className="text-sm font-semibold text-gray-900 wrap-break-word">
-				{formatDisplayValue(value)}
-			</div>
+			{renderColorCodedValue()}
 			{arrowDirection && (
 				<div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-30 text-6xl font-bold">
 					{arrowDirection === 'up' ? '↑' : '↓'}

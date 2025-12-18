@@ -94,12 +94,16 @@ export const animeRouter = createTRPCRouter({
 			select: { dailyGuesses: true, lastGuessAt: true },
 		});
 
+		if (!user) {
+			throw new Error('User record not found in database.');
+		}
+
 		const now = new Date();
 		const londonTime = { timeZone: 'Europe/London' };
 		const todayStr = now.toLocaleDateString('en-GB', londonTime);
 
 		let newCount = 1;
-		if (user?.lastGuessAt) {
+		if (user.lastGuessAt) {
 			const lastGuessStr = user.lastGuessAt.toLocaleDateString(
 				'en-GB',
 				londonTime,
