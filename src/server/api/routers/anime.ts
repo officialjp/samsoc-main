@@ -59,7 +59,6 @@ export const animeRouter = createTRPCRouter({
 					timeZone: 'Europe/London',
 				});
 
-				// Check Win Status
 				if (user.lastWonAt) {
 					const lastWonStr = user.lastWonAt.toLocaleDateString(
 						'en-GB',
@@ -68,12 +67,13 @@ export const animeRouter = createTRPCRouter({
 					hasWonToday = todayStr === lastWonStr;
 				}
 
-				// Check Failure Status (Limit 12)
 				if (user.lastGuessAt) {
 					const lastGuessStr = user.lastGuessAt.toLocaleDateString(
 						'en-GB',
 						{ timeZone: 'Europe/London' },
 					);
+
+					// If they made 12 guesses today and haven't won, they have failed.
 					if (
 						todayStr === lastGuessStr &&
 						user.dailyGuesses >= 12 &&
@@ -107,17 +107,11 @@ export const animeRouter = createTRPCRouter({
 			newCount = todayStr === lastGuessStr ? user.dailyGuesses + 1 : 1;
 		}
 
-		// Logic: If they hit 12, they have failed for the day
-		// Note: Ensure your win logic clears this or takes precedence
-		const hasFailed = newCount >= 12;
-
 		return ctx.db.user.update({
 			where: { id: ctx.session.user.id },
 			data: {
 				dailyGuesses: newCount,
 				lastGuessAt: now,
-				// Assuming this field exists in your schema based on your frontend usage
-				hasFailedToday: hasFailed,
 			},
 		});
 	}),
