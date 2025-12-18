@@ -168,7 +168,11 @@ export default function AnimeWordle({
 	const hasAlreadyWonToday = gameData?.hasWonToday;
 	const hasFailedToday = gameData?.hasFailedToday;
 
-	const isGameOver = gameWon || !!hasAlreadyWonToday || !!hasFailedToday;
+	const isGameOver =
+		gameWon ||
+		!!hasAlreadyWonToday ||
+		!!hasFailedToday ||
+		guesses.length >= 12;
 
 	const { data: leaderboard } = api.anime.getLeaderboard.useQuery(undefined, {
 		enabled: !!isGameOver,
