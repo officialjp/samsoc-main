@@ -27,14 +27,12 @@ export const animeRouter = createTRPCRouter({
 		}),
 
 	getAnswerAnime: publicProcedure.query(async ({ ctx }) => {
-		// 1. Get Today's Date at Midnight London Time
 		const now = new Date();
 		const today = new Date(
 			now.toLocaleString('en-US', { timeZone: 'Europe/London' }),
 		);
 		today.setHours(0, 0, 0, 0);
 
-		// 2. Fetch the scheduled anime for today
 		const schedule = await ctx.db.dailyAnime.findUnique({
 			where: { date: today },
 			include: {
@@ -55,20 +53,43 @@ export const animeRouter = createTRPCRouter({
 		});
 
 		let anime = schedule?.anime;
-		anime ??= await ctx.db.anime.findUnique({
-			where: { id: 1 },
-			select: {
-				id: true,
-				title: true,
-				releasedYear: true,
-				releasedSeason: true,
-				genres: true,
-				themes: true,
-				studios: true,
-				source: true,
-				score: true,
-			},
-		});
+
+		if (!anime) {
+			const fallback = await ctx.db.anime.findUnique({
+				where: { id: 1 },
+				select: {
+					id: true,
+					title: true,
+					releasedYear: true,
+					releasedSeason: true,
+					genres: true,
+					themes: true,
+					studios: true,
+					source: true,
+					score: true,
+				},
+			});
+
+			// We assign fallback to anime. TypeScript still thinks this could be null.
+			anime = fallback ?? undefined;
+		}
+
+		if (!anime) {
+			throw new TRPCError({
+				code: 'NOT_FOUND',
+				message:
+					'No daily anime scheduled and fallback anime (ID: 1) not found.',
+			});
+		}
+
+		// This check solves the Type 'null' is not assignable to 'undefined' issue
+		// by ensuring anime is never null when returned to the client.
+		if (!anime) {
+			throw new TRPCError({
+				code: 'NOT_FOUND',
+				message: 'No daily anime or fallback anime found in database.',
+			});
+		}
 
 		let hasWonToday = false;
 		let hasFailedToday = false;
@@ -113,7 +134,11 @@ export const animeRouter = createTRPCRouter({
 			}
 		}
 
-		return { anime, hasWonToday, hasFailedToday };
+		return {
+			anime, // TypeScript now knows this is the object type, not null
+			hasWonToday,
+			hasFailedToday,
+		};
 	}),
 
 	scheduleDaily: adminProcedure
@@ -124,11 +149,6 @@ export const animeRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			// Optional: Check if user is an admin
-			// if (ctx.session.user.role !== 'ADMIN') {
-			// 	throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access only' });
-			// }
-
 			const targetDate = new Date(input.date);
 			targetDate.setHours(0, 0, 0, 0);
 
