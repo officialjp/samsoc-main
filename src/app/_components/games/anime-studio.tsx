@@ -64,8 +64,6 @@ export default function StudioGame({
 
 	const answerStudio = gameData?.studio;
 
-	// FIXED LOGIC: Use OR (||) instead of Nullish Coalescing (??)
-	// to ensure game failure or win state is caught correctly.
 	const isGameOver =
 		gameWon ||
 		!!gameData?.hasWonToday ||
@@ -77,27 +75,43 @@ export default function StudioGame({
 		onSuccess: () => void utils.studio.getLeaderboard.invalidate(),
 	});
 
-	// FIXED: Safe parsing of localStorage to avoid @typescript-eslint/no-unsafe-assignment
 	useEffect(() => {
 		if (answerStudio) {
 			const saved = localStorage.getItem('studio_game_guesses');
 			if (saved) {
 				try {
 					const parsed = JSON.parse(saved) as SavedStudioGame;
-					// Validate structure before setting state
+
 					if (
 						parsed &&
 						parsed.studioId === answerStudio.id &&
 						Array.isArray(parsed.guesses)
 					) {
 						setGuesses(parsed.guesses);
+
+						// Check if the saved state is a WIN
+						const isWin = parsed.guesses.some(
+							(g) =>
+								g.studioName.toLowerCase().trim() ===
+								answerStudio.name.toLowerCase().trim(),
+						);
+
+						// Check if the saved state is a LOSS
+						const isLoss = parsed.guesses.length >= 5;
+
+						if (isWin) {
+							setGameWon(true);
+						} else if (isLoss) {
+							setGameFailed(true);
+						}
 					}
 				} catch (e) {
 					console.error('Failed to parse saved guesses:', e);
 				}
 			}
 		}
-	}, [answerStudio]);
+	}, [answerStudio, setGameWon, setGameFailed]);
+	// --- FIX END ---
 
 	const processGuess = useCallback(() => {
 		if (isGameOver || !selectedStudioId || !answerStudio || !allStudios)
@@ -151,7 +165,6 @@ export default function StudioGame({
 			case 2:
 				return answerStudio.prominentSource;
 			case 3:
-				// Ensure these are arrays before joining to avoid runtime errors
 				return Array.isArray(answerStudio.characters)
 					? answerStudio.characters.join(', ')
 					: '';

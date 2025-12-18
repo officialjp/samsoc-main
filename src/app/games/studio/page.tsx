@@ -55,6 +55,8 @@ function StudioGameContent() {
 		);
 	}
 
+	// This check will now resolve correctly on refresh because
+	// StudioGame will immediately call setGameWon or setGameFailed upon mounting
 	const isGameOver =
 		gameWon ||
 		gameFailed ||
