@@ -21,7 +21,7 @@ export default function AnimeSearch() {
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const [combinedData, setCombinedData] = useState<AnimeItem[]>([]);
 
-	// 1. Load both JSON files and merge them
+	// 1. Fetch and Merge Data from both sources
 	useEffect(() => {
 		const loadAnimeData = async (): Promise<void> => {
 			try {
@@ -33,13 +33,22 @@ export default function AnimeSearch() {
 				const dataEn = (await resEn.json()) as AnimeDataRaw;
 				const dataJp = (await resJp.json()) as AnimeDataRaw;
 
-				// Merge by ID (assuming keys match in both files)
-				const merged: AnimeItem[] = Object.keys(dataEn).map((id) => ({
-					id,
-					// Use the nullish coalescing operator (??) or OR (||) to provide a fallback
-					nameEn: dataEn[id] ?? '',
-					nameJp: dataJp[id] ?? '',
-				}));
+				// Create a unique list of all IDs present in either file
+				const allIds = Array.from(
+					new Set([...Object.keys(dataEn), ...Object.keys(dataJp)]),
+				);
+
+				const merged: AnimeItem[] = allIds.map((id) => {
+					const enName = dataEn[id];
+					const jpName = dataJp[id];
+
+					return {
+						id,
+						// Fallback logic: if EN is missing, use JP. If both missing, empty string.
+						nameEn: enName ?? jpName ?? '',
+						nameJp: jpName ?? enName ?? '',
+					};
+				});
 
 				setCombinedData(merged);
 			} catch (error) {
@@ -49,29 +58,34 @@ export default function AnimeSearch() {
 		void loadAnimeData();
 	}, []);
 
-	// 2. Setup Fuse to search across both language keys
+	// 2. Initialize Fuse with multi-key support
 	const fuse = useMemo((): Fuse<AnimeItem> | null => {
 		if (combinedData.length === 0) return null;
 
 		return new Fuse(combinedData, {
-			keys: ['nameEn', 'nameJp'],
+			keys: [
+				{ name: 'nameEn', weight: 0.7 },
+				{ name: 'nameJp', weight: 0.3 },
+			],
 			threshold: 0.3,
 			minMatchCharLength: 2,
 		});
 	}, [combinedData]);
 
-	// 3. Search logic
+	// 3. Search logic with debouncing
 	useEffect(() => {
-		if (!input || !fuse) {
+		if (!input.trim() || !fuse) {
 			setResults([]);
 			setIsOpen(false);
 			return;
 		}
+
 		const timer = setTimeout(() => {
 			const searchResults = fuse.search(input);
 			setResults(searchResults.map((result) => result.item).slice(0, 5));
 			setIsOpen(true);
 		}, 200);
+
 		return () => clearTimeout(timer);
 	}, [input, fuse]);
 
@@ -97,10 +111,11 @@ export default function AnimeSearch() {
 						type="text"
 						value={input}
 						onChange={handleInputChange}
-						placeholder="Search in English or Japanese..."
+						placeholder="Search anime (English or Japanese)..."
 						className="w-full pl-12 pr-4 py-4 rounded-xl bg-white text-gray-900 border-2 border-black font-semibold text-base focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5"
 					/>
 				</div>
+
 				{isOpen && results.length > 0 && (
 					<div className="absolute top-full left-4 right-4 mt-3 z-50 bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
 						{results.map((anime, index) => (
@@ -113,12 +128,17 @@ export default function AnimeSearch() {
 										: ''
 								}`}
 							>
-								{/* Displaying both names for clarity */}
-								<div className="font-bold text-gray-900">
+								<div className="font-bold text-gray-900 truncate">
 									{anime.nameEn}
 								</div>
-								<div className="text-sm font-medium text-gray-400 italic">
-									{anime.nameJp}
+								{/* Only show the Japanese name if it's different from the English one */}
+								{anime.nameJp !== anime.nameEn && (
+									<div className="text-sm font-medium text-gray-400 italic truncate">
+										{anime.nameJp}
+									</div>
+								)}
+								<div className="text-[10px] font-bold text-gray-400 mt-1 uppercase tracking-wider">
+									ID: {anime.id}
 								</div>
 							</button>
 						))}
