@@ -41,7 +41,65 @@ model Anime {
 
 model DailyStudio {
   date       DateTime @id @unique
-  studioName String // The name of the studio string from the Anime table
+  studioName String
+}
+
+// NEW: Track studio game guesses per user per day
+model StudioGameSession {
+  id        String        @id @default(cuid())
+  userId    String
+  date      DateTime      @default(now())
+  studioId  String // The ID of today's studio answer
+  guesses   StudioGuess[]
+  won       Boolean       @default(false)
+  failed    Boolean       @default(false)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date]) // One session per user per day
+  @@index([userId])
+  @@index([date])
+}
+
+// NEW: Track individual guesses
+model StudioGuess {
+  id         String            @id @default(cuid())
+  sessionId  String
+  studioName String
+  createdAt  DateTime          @default(now())
+  session    StudioGameSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+}
+
+// NEW: Track anime wordle game sessions per user per day
+model WordleGameSession {
+  id        String        @id @default(cuid())
+  userId    String
+  date      DateTime      @default(now())
+  animeId   Int // The ID of today's answer anime
+  guesses   WordleGuess[]
+  won       Boolean       @default(false)
+  failed    Boolean       @default(false)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  user      User          @relation("WordleGameSessions", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date]) // One session per user per day
+  @@index([userId])
+  @@index([date])
+}
+
+// NEW: Track individual wordle guesses with full anime data
+model WordleGuess {
+  id        String            @id @default(cuid())
+  sessionId String
+  guessData Json // Store the full guess data as JSON
+  createdAt DateTime          @default(now())
+  session   WordleGameSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
 }
 
 // Necessary for Next auth
@@ -144,14 +202,16 @@ model DailyAnime {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  role          String    @default("user")
-  accounts      Account[]
-  sessions      Session[]
+  id                 String              @id @default(cuid())
+  name               String?
+  email              String?             @unique
+  emailVerified      DateTime?
+  image              String?
+  role               String              @default("user")
+  accounts           Account[]
+  sessions           Session[]
+  studioGameSessions StudioGameSession[]
+  wordleGameSessions WordleGameSession[] @relation("WordleGameSessions")
 
   // Anime Wordle stats
   wordleWins         Int       @default(0)

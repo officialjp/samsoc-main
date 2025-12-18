@@ -11,12 +11,6 @@ interface StudioGameProps {
 	setGameFailed: (failed: boolean) => void;
 }
 
-// Define the shape of our local storage data
-interface SavedStudioGame {
-	studioId: string;
-	guesses: { studioName: string }[];
-}
-
 const HINT_LABELS = [
 	'Average Rating',
 	'First & Last Anime Year',
@@ -56,11 +50,13 @@ export default function StudioGame({
 	setGameFailed,
 }: StudioGameProps) {
 	const [guesses, setGuesses] = useState<{ studioName: string }[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
 	const utils = api.useUtils();
 
 	const { data: gameData } = api.studio.getAnswerStudio.useQuery();
 	const { data: leaderboard = [] } = api.studio.getLeaderboard.useQuery();
 	const { data: allStudios } = api.studio.getAllStudios.useQuery();
+	const { data: session } = api.studio.getTodaysSession.useQuery();
 
 	const answerStudio = gameData?.studio;
 
@@ -71,50 +67,44 @@ export default function StudioGame({
 		guesses.length >= 5;
 
 	const recordGuessMutation = api.studio.recordGuess.useMutation();
+	const addGuessMutation = api.studio.addGameGuess.useMutation();
 	const winMutation = api.studio.submitWin.useMutation({
 		onSuccess: () => void utils.studio.getLeaderboard.invalidate(),
 	});
 
+	// Load guesses from database on mount
 	useEffect(() => {
-		if (answerStudio) {
-			const saved = localStorage.getItem('studio_game_guesses');
-			if (saved) {
-				try {
-					const parsed = JSON.parse(saved) as SavedStudioGame;
+		if (session) {
+			setGuesses(
+				session.guesses.map((g) => ({ studioName: g.studioName })),
+			);
 
-					if (
-						parsed &&
-						parsed.studioId === answerStudio.id &&
-						Array.isArray(parsed.guesses)
-					) {
-						setGuesses(parsed.guesses);
+			const isWin = session.guesses.some(
+				(g) =>
+					g.studioName.toLowerCase().trim() ===
+					answerStudio?.name.toLowerCase().trim(),
+			);
 
-						// Check if the saved state is a WIN
-						const isWin = parsed.guesses.some(
-							(g) =>
-								g.studioName.toLowerCase().trim() ===
-								answerStudio.name.toLowerCase().trim(),
-						);
+			const isLoss = session.guesses.length >= 5;
 
-						// Check if the saved state is a LOSS
-						const isLoss = parsed.guesses.length >= 5;
-
-						if (isWin) {
-							setGameWon(true);
-						} else if (isLoss) {
-							setGameFailed(true);
-						}
-					}
-				} catch (e) {
-					console.error('Failed to parse saved guesses:', e);
-				}
+			if (isWin) {
+				setGameWon(true);
+			} else if (isLoss) {
+				setGameFailed(true);
 			}
+
+			setIsLoading(false);
 		}
-	}, [answerStudio, setGameWon, setGameFailed]);
-	// --- FIX END ---
+	}, [session, answerStudio, setGameWon, setGameFailed]);
 
 	const processGuess = useCallback(() => {
-		if (isGameOver || !selectedStudioId || !answerStudio || !allStudios)
+		if (
+			isGameOver ||
+			!selectedStudioId ||
+			!answerStudio ||
+			!allStudios ||
+			isLoading
+		)
 			return;
 
 		const selected = allStudios.find((s) => s.id === selectedStudioId);
@@ -125,10 +115,8 @@ export default function StudioGame({
 		setGuesses(newGuesses);
 		recordGuessMutation.mutate();
 
-		localStorage.setItem(
-			'studio_game_guesses',
-			JSON.stringify({ studioId: answerStudio.id, guesses: newGuesses }),
-		);
+		// Save guess to database
+		addGuessMutation.mutate({ studioName: selected.name });
 
 		if (
 			selected.name.toLowerCase().trim() ===
@@ -144,8 +132,10 @@ export default function StudioGame({
 		answerStudio,
 		allStudios,
 		isGameOver,
+		isLoading,
 		guesses,
 		recordGuessMutation,
+		addGuessMutation,
 		winMutation,
 		setGameWon,
 		setGameFailed,
@@ -177,7 +167,7 @@ export default function StudioGame({
 		}
 	};
 
-	if (!answerStudio) return null;
+	if (!answerStudio || isLoading) return null;
 
 	return (
 		<div className="max-w-7xl mx-auto p-4 md:p-8">

@@ -138,6 +138,107 @@ export const animeRouter = createTRPCRouter({
 		};
 	}),
 
+	// Get or create today's wordle game session for the current user
+	getTodaysSession: protectedProcedure.query(async ({ ctx }) => {
+		const now = new Date();
+		const today = new Date(
+			now.toLocaleString('en-US', { timeZone: 'Europe/London' }),
+		);
+		today.setHours(0, 0, 0, 0);
+
+		let session = await ctx.db.wordleGameSession.findUnique({
+			where: {
+				userId_date: {
+					userId: ctx.session.user.id,
+					date: today,
+				},
+			},
+			include: {
+				guesses: true,
+			},
+		});
+
+		// If no session exists, create one
+		if (!session) {
+			// Get today's anime answer
+			const dailyAnime = await ctx.db.dailyAnime.findUnique({
+				where: { date: today },
+			});
+
+			if (!dailyAnime) {
+				throw new TRPCError({
+					code: 'NOT_FOUND',
+					message: 'No anime selected for today',
+				});
+			}
+
+			session = await ctx.db.wordleGameSession.create({
+				data: {
+					userId: ctx.session.user.id,
+					date: today,
+					animeId: dailyAnime.animeId,
+				},
+				include: {
+					guesses: true,
+				},
+			});
+		}
+
+		return session;
+	}),
+
+	// Add a guess to today's session
+	addGameGuess: protectedProcedure
+		.input(z.object({ guessData: z.record(z.unknown()) }))
+		.mutation(async ({ ctx, input }) => {
+			const now = new Date();
+			const today = new Date(
+				now.toLocaleString('en-US', { timeZone: 'Europe/London' }),
+			);
+			today.setHours(0, 0, 0, 0);
+
+			// Get or create session
+			let session = await ctx.db.wordleGameSession.findUnique({
+				where: {
+					userId_date: {
+						userId: ctx.session.user.id,
+						date: today,
+					},
+				},
+			});
+
+			if (!session) {
+				const dailyAnime = await ctx.db.dailyAnime.findUnique({
+					where: { date: today },
+				});
+
+				if (!dailyAnime) {
+					throw new TRPCError({
+						code: 'NOT_FOUND',
+						message: 'No anime selected for today',
+					});
+				}
+
+				session = await ctx.db.wordleGameSession.create({
+					data: {
+						userId: ctx.session.user.id,
+						date: today,
+						animeId: dailyAnime.animeId,
+					},
+				});
+			}
+
+			// Add guess to session
+			const guess = await ctx.db.wordleGuess.create({
+				data: {
+					sessionId: session.id,
+					guessData: input.guessData,
+				},
+			});
+
+			return guess;
+		}),
+
 	scheduleDaily: adminProcedure
 		.input(
 			z.object({
@@ -199,15 +300,55 @@ export const animeRouter = createTRPCRouter({
 		.input(z.object({ tries: z.number() }))
 		.mutation(async ({ ctx, input }) => {
 			const now = new Date();
+			const today = new Date(
+				now.toLocaleString('en-US', { timeZone: 'Europe/London' }),
+			);
+			today.setHours(0, 0, 0, 0);
+
+			// Update session to mark as won
+			await ctx.db.wordleGameSession.update({
+				where: {
+					userId_date: {
+						userId: ctx.session.user.id,
+						date: today,
+					},
+				},
+				data: {
+					won: true,
+				},
+			});
+
+			// Update user stats
 			return ctx.db.user.update({
 				where: { id: ctx.session.user.id },
 				data: {
 					wordleWins: { increment: 1 },
 					wordleTotalTries: { increment: input.tries },
-					wordleLastWonAt: now,
+					wordleLastWonAt: new Date(),
 				},
 			});
 		}),
+
+	// Mark session as failed
+	submitLoss: protectedProcedure.mutation(async ({ ctx }) => {
+		const now = new Date();
+		const today = new Date(
+			now.toLocaleString('en-US', { timeZone: 'Europe/London' }),
+		);
+		today.setHours(0, 0, 0, 0);
+
+		return ctx.db.wordleGameSession.update({
+			where: {
+				userId_date: {
+					userId: ctx.session.user.id,
+					date: today,
+				},
+			},
+			data: {
+				failed: true,
+			},
+		});
+	}),
 
 	getLeaderboard: publicProcedure.query(async ({ ctx }) => {
 		return ctx.db.user.findMany({

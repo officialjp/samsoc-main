@@ -6,6 +6,7 @@ import {
 } from '~/server/api/trpc';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
+import { startOfDay } from 'date-fns';
 
 interface CharacterEntry {
 	name?: string;
@@ -196,9 +197,120 @@ export const studioRouter = createTRPCRouter({
 		});
 	}),
 
+	// Get or create today's game session for the current user
+	getTodaysSession: protectedProcedure.query(async ({ ctx }) => {
+		const now = new Date();
+		const today = new Date(
+			now.toLocaleString('en-US', { timeZone: 'Europe/London' }),
+		);
+		today.setHours(0, 0, 0, 0);
+
+		let session = await ctx.db.studioGameSession.findUnique({
+			where: {
+				userId_date: {
+					userId: ctx.session.user.id,
+					date: today,
+				},
+			},
+			include: {
+				guesses: true,
+			},
+		});
+
+		// If no session exists, create one
+		if (!session) {
+			// Get today's studio answer
+			const dailyStudio = await ctx.db.dailyStudio.findUnique({
+				where: { date: today },
+			});
+
+			const studioId = dailyStudio?.studioName ?? 'Madhouse';
+
+			session = await ctx.db.studioGameSession.create({
+				data: {
+					userId: ctx.session.user.id,
+					date: today,
+					studioId,
+				},
+				include: {
+					guesses: true,
+				},
+			});
+		}
+
+		return session;
+	}),
+
+	// Add a guess to today's session
+	addGameGuess: protectedProcedure
+		.input(z.object({ studioName: z.string() }))
+		.mutation(async ({ ctx, input }) => {
+			const now = new Date();
+			const today = new Date(
+				now.toLocaleString('en-US', { timeZone: 'Europe/London' }),
+			);
+			today.setHours(0, 0, 0, 0);
+
+			// Get or create session
+			let session = await ctx.db.studioGameSession.findUnique({
+				where: {
+					userId_date: {
+						userId: ctx.session.user.id,
+						date: today,
+					},
+				},
+			});
+
+			if (!session) {
+				const dailyStudio = await ctx.db.dailyStudio.findUnique({
+					where: { date: today },
+				});
+
+				const studioId = dailyStudio?.studioName ?? 'Madhouse';
+
+				session = await ctx.db.studioGameSession.create({
+					data: {
+						userId: ctx.session.user.id,
+						date: today,
+						studioId,
+					},
+				});
+			}
+
+			// Add guess to session
+			const guess = await ctx.db.studioGuess.create({
+				data: {
+					sessionId: session.id,
+					studioName: input.studioName,
+				},
+			});
+
+			return guess;
+		}),
+
 	submitWin: protectedProcedure
 		.input(z.object({ tries: z.number() }))
 		.mutation(async ({ ctx, input }) => {
+			const now = new Date();
+			const today = new Date(
+				now.toLocaleString('en-US', { timeZone: 'Europe/London' }),
+			);
+			today.setHours(0, 0, 0, 0);
+
+			// Update session to mark as won
+			await ctx.db.studioGameSession.update({
+				where: {
+					userId_date: {
+						userId: ctx.session.user.id,
+						date: today,
+					},
+				},
+				data: {
+					won: true,
+				},
+			});
+
+			// Update user stats
 			return ctx.db.user.update({
 				where: { id: ctx.session.user.id },
 				data: {
@@ -208,6 +320,27 @@ export const studioRouter = createTRPCRouter({
 				},
 			});
 		}),
+
+	// Mark session as failed
+	submitLoss: protectedProcedure.mutation(async ({ ctx }) => {
+		const now = new Date();
+		const today = new Date(
+			now.toLocaleString('en-US', { timeZone: 'Europe/London' }),
+		);
+		today.setHours(0, 0, 0, 0);
+
+		return ctx.db.studioGameSession.update({
+			where: {
+				userId_date: {
+					userId: ctx.session.user.id,
+					date: today,
+				},
+			},
+			data: {
+				failed: true,
+			},
+		});
+	}),
 
 	getLeaderboard: publicProcedure.query(async ({ ctx }) => {
 		return ctx.db.user.findMany({

@@ -25,11 +25,6 @@ interface DisplayField {
 	label: string;
 }
 
-interface SavedGuesses {
-	animeId: number;
-	data: Record<string, unknown>[];
-}
-
 const DISPLAY_FIELDS: DisplayField[] = [
 	{ key: 'title', label: 'Title' },
 	{ key: 'releasedYear', label: 'Year' },
@@ -237,12 +232,15 @@ export default function AnimeWordle({
 }: AnimeWordleProps) {
 	const [guesses, setGuesses] = useState<Record<string, unknown>[]>([]);
 	const [isCopied, setIsCopied] = useState(false);
+	const [isLoading, setIsLoading] = useState(true);
 	const utils = api.useUtils();
 
 	const { data: gameData } = api.anime.getAnswerAnime.useQuery();
 	const answerAnime = gameData?.anime;
 	const hasAlreadyWonToday = gameData?.hasWonToday;
 	const hasFailedToday = gameData?.hasFailedToday;
+
+	const { data: session } = api.anime.getTodaysSession.useQuery();
 
 	const isGameOver =
 		gameWon ||
@@ -255,6 +253,7 @@ export default function AnimeWordle({
 	});
 
 	const recordGuessMutation = api.anime.recordGuess.useMutation();
+	const addGuessMutation = api.anime.addGameGuess.useMutation();
 	const winMutation = api.anime.submitWin.useMutation({
 		onSuccess: () => void utils.anime.getLeaderboard.invalidate(),
 	});
@@ -263,6 +262,34 @@ export default function AnimeWordle({
 		{ id: parseInt(searchedAnimeId ?? '0') },
 		{ enabled: !!searchedAnimeId && !isGameOver },
 	);
+
+	// Load guesses from database on mount
+	useEffect(() => {
+		if (session) {
+			const loadedGuesses = session.guesses.map((g) => {
+				const parsed =
+					typeof g.guessData === 'string'
+						? (JSON.parse(g.guessData) as Record<string, unknown>)
+						: (g.guessData as Record<string, unknown>);
+				return parsed;
+			});
+			setGuesses(loadedGuesses);
+
+			const hasWinningGuess = loadedGuesses.some(
+				(guess) =>
+					formatDisplayValue(guess.title).toLowerCase().trim() ===
+					formatDisplayValue(answerAnime?.title).toLowerCase().trim(),
+			);
+
+			if (hasWinningGuess) {
+				setGameWon(true);
+			} else if (loadedGuesses.length >= 12) {
+				setGameFailed(true);
+			}
+
+			setIsLoading(false);
+		}
+	}, [session, answerAnime, setGameWon, setGameFailed]);
 
 	useEffect(() => {
 		if (hasAlreadyWonToday && !gameWon) setGameWon(true);
@@ -275,45 +302,8 @@ export default function AnimeWordle({
 		setGameFailed,
 	]);
 
-	useEffect(() => {
-		if (!answerAnime) return;
-
-		const saved = localStorage.getItem('anime_wordle_guesses');
-		if (saved) {
-			try {
-				const parsed = JSON.parse(saved) as SavedGuesses;
-				if (parsed.animeId === answerAnime.id) {
-					setGuesses(parsed.data);
-
-					const hasWinningGuess = parsed.data.some(
-						(guess) =>
-							formatDisplayValue(guess.title)
-								.toLowerCase()
-								.trim() ===
-							formatDisplayValue(answerAnime.title)
-								.toLowerCase()
-								.trim(),
-					);
-
-					if (hasWinningGuess) {
-						setGameWon(true);
-					} else if (parsed.data.length >= 12) {
-						setGameFailed(true);
-					}
-				} else {
-					localStorage.removeItem('anime_wordle_guesses');
-					setGuesses([]);
-					setGameFailed(false);
-					setGameWon(false);
-				}
-			} catch (e) {
-				console.error('Failed to parse local storage', e);
-			}
-		}
-	}, [answerAnime, setGameFailed, setGameWon]);
-
 	const processGuess = useCallback(() => {
-		if (isGameOver || !searchedAnime || !answerAnime) return;
+		if (isGameOver || !searchedAnime || !answerAnime || isLoading) return;
 
 		const guessData = DISPLAY_FIELDS.reduce(
 			(acc, { key }) => ({
@@ -329,13 +319,8 @@ export default function AnimeWordle({
 		setGuesses(newGuesses);
 		recordGuessMutation.mutate();
 
-		localStorage.setItem(
-			'anime_wordle_guesses',
-			JSON.stringify({
-				animeId: answerAnime.id,
-				data: newGuesses,
-			}),
-		);
+		// Save guess to database
+		addGuessMutation.mutate({ guessData });
 
 		const isCorrect =
 			formatDisplayValue(searchedAnime.title).toLowerCase().trim() ===
@@ -351,8 +336,10 @@ export default function AnimeWordle({
 		searchedAnime,
 		answerAnime,
 		isGameOver,
+		isLoading,
 		guesses,
 		recordGuessMutation,
+		addGuessMutation,
 		setGameWon,
 		setGameFailed,
 		winMutation,
@@ -398,7 +385,7 @@ export default function AnimeWordle({
 		if (searchedAnime) void processGuess();
 	}, [searchedAnime, processGuess]);
 
-	if (!answerAnime) return null;
+	if (!answerAnime || isLoading) return null;
 
 	return (
 		<div className="max-w-7xl mx-auto p-4 md:p-8">
