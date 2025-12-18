@@ -38,13 +38,32 @@ export const studioRouter = createTRPCRouter({
 			});
 		}
 
-		// FILTER: Define recognizable pool (Score >= 7.5)
 		const highRatedAnime = studioAnimes.filter(
 			(a) => (a.score ?? 0) >= 7.5,
 		);
-		// Fallback to full list if the studio is small/new and has no 7.5+ shows
 		const recognizableSourcePool =
 			highRatedAnime.length > 0 ? highRatedAnime : studioAnimes;
+
+		// --- GENRE AGGREGATION ---
+		const genreMap = studioAnimes.reduce(
+			(acc, a) => {
+				if (a.genres) {
+					const splitGenres = a.genres
+						.split(',')
+						.map((g) => g.trim());
+					splitGenres.forEach((genre) => {
+						if (genre) acc[genre] = (acc[genre] ?? 0) + 1;
+					});
+				}
+				return acc;
+			},
+			{} as Record<string, number>,
+		);
+
+		const topGenres = Object.entries(genreMap)
+			.sort((a, b) => b[1] - a[1])
+			.slice(0, 5)
+			.map(([name]) => name);
 
 		const validScores = studioAnimes
 			.map((a) => a.score)
@@ -53,22 +72,10 @@ export const studioRouter = createTRPCRouter({
 			.map((a) => a.releasedYear)
 			.filter((y): y is number => y !== null);
 
-		const sourceMap = studioAnimes.reduce(
-			(acc, a) => {
-				if (a.source) acc[a.source] = (acc[a.source] ?? 0) + 1;
-				return acc;
-			},
-			{} as Record<string, number>,
-		);
-		const prominentSource =
-			Object.entries(sourceMap).sort((a, b) => b[1] - a[1])[0]?.[0] ??
-			'N/A';
-
-		// Hint 4: Characters from high-rated shows (Shuffled)
+		// Characters Logic
 		const characterList: string[] = [];
 		for (const anime of recognizableSourcePool) {
 			if (characterList.length >= 10) break;
-
 			const characters = anime.characters as CharacterEntry[] | null;
 			if (Array.isArray(characters) && characters.length > 0) {
 				const charData = characters[0];
@@ -76,15 +83,12 @@ export const studioRouter = createTRPCRouter({
 					const cleanName = charData.name.includes(',')
 						? charData.name.split(',').reverse().join(' ').trim()
 						: charData.name;
-
-					if (!characterList.includes(cleanName)) {
+					if (!characterList.includes(cleanName))
 						characterList.push(cleanName);
-					}
 				}
 			}
 		}
 
-		// Fisher-Yates Shuffle for character names
 		for (let i = characterList.length - 1; i > 0; i--) {
 			const j = Math.floor(Math.random() * (i + 1));
 			[characterList[i], characterList[j]] = [
@@ -93,7 +97,6 @@ export const studioRouter = createTRPCRouter({
 			];
 		}
 
-		// Hint 5: Top 5 Notable Anime Titles (Already sorted by score desc)
 		const animeList = recognizableSourcePool
 			.slice(0, 5)
 			.map((a) => a.title);
@@ -108,7 +111,7 @@ export const studioRouter = createTRPCRouter({
 					: 0,
 			firstAnimeYear: validYears.length > 0 ? Math.min(...validYears) : 0,
 			lastAnimeYear: validYears.length > 0 ? Math.max(...validYears) : 0,
-			prominentSource,
+			topGenres, // New Field
 			characters: characterList,
 			animeList,
 		};
@@ -156,7 +159,6 @@ export const studioRouter = createTRPCRouter({
 		const animes = await ctx.db.anime.findMany({
 			select: { studios: true },
 		});
-
 		const uniqueStudios = new Set<string>();
 		animes.forEach((a) => {
 			if (a.studios) {
@@ -166,13 +168,9 @@ export const studioRouter = createTRPCRouter({
 				});
 			}
 		});
-
 		return Array.from(uniqueStudios)
 			.sort()
-			.map((name) => ({
-				id: name,
-				name,
-			}));
+			.map((name) => ({ id: name, name }));
 	}),
 
 	recordGuess: protectedProcedure.mutation(async ({ ctx }) => {
@@ -180,7 +178,6 @@ export const studioRouter = createTRPCRouter({
 			where: { id: ctx.session.user.id },
 		});
 		if (!user) throw new TRPCError({ code: 'NOT_FOUND' });
-
 		const now = new Date();
 		const todayStr = now.toLocaleDateString('en-GB', {
 			timeZone: 'Europe/London',
@@ -189,16 +186,11 @@ export const studioRouter = createTRPCRouter({
 			'en-GB',
 			{ timeZone: 'Europe/London' },
 		);
-
 		const newCount =
 			todayStr === lastGuessStr ? user.studioDailyGuesses + 1 : 1;
-
 		return ctx.db.user.update({
 			where: { id: ctx.session.user.id },
-			data: {
-				studioDailyGuesses: newCount,
-				studioLastGuessAt: now,
-			},
+			data: { studioDailyGuesses: newCount, studioLastGuessAt: now },
 		});
 	}),
 
@@ -208,14 +200,12 @@ export const studioRouter = createTRPCRouter({
 			now.toLocaleString('en-US', { timeZone: 'Europe/London' }),
 		);
 		today.setHours(0, 0, 0, 0);
-
 		let session = await ctx.db.studioGameSession.findUnique({
 			where: {
 				userId_date: { userId: ctx.session.user.id, date: today },
 			},
 			include: { guesses: true },
 		});
-
 		if (!session) {
 			const dailyStudio = await ctx.db.dailyStudio.findUnique({
 				where: { date: today },
@@ -237,13 +227,11 @@ export const studioRouter = createTRPCRouter({
 				now.toLocaleString('en-US', { timeZone: 'Europe/London' }),
 			);
 			today.setHours(0, 0, 0, 0);
-
 			let session = await ctx.db.studioGameSession.findUnique({
 				where: {
 					userId_date: { userId: ctx.session.user.id, date: today },
 				},
 			});
-
 			if (!session) {
 				const dailyStudio = await ctx.db.dailyStudio.findUnique({
 					where: { date: today },
@@ -257,7 +245,6 @@ export const studioRouter = createTRPCRouter({
 					},
 				});
 			}
-
 			return ctx.db.studioGuess.create({
 				data: { sessionId: session.id, studioName: input.studioName },
 			});
@@ -271,14 +258,12 @@ export const studioRouter = createTRPCRouter({
 				now.toLocaleString('en-US', { timeZone: 'Europe/London' }),
 			);
 			today.setHours(0, 0, 0, 0);
-
 			await ctx.db.studioGameSession.update({
 				where: {
 					userId_date: { userId: ctx.session.user.id, date: today },
 				},
 				data: { won: true },
 			});
-
 			return ctx.db.user.update({
 				where: { id: ctx.session.user.id },
 				data: {
@@ -295,7 +280,6 @@ export const studioRouter = createTRPCRouter({
 			now.toLocaleString('en-US', { timeZone: 'Europe/London' }),
 		);
 		today.setHours(0, 0, 0, 0);
-
 		return ctx.db.studioGameSession.update({
 			where: {
 				userId_date: { userId: ctx.session.user.id, date: today },
@@ -323,7 +307,6 @@ export const studioRouter = createTRPCRouter({
 		.mutation(async ({ ctx, input }) => {
 			const targetDate = new Date(input.date);
 			targetDate.setHours(0, 0, 0, 0);
-
 			return ctx.db.dailyStudio.upsert({
 				where: { date: targetDate },
 				update: { studioName: input.studioName },

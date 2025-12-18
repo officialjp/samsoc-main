@@ -8,39 +8,40 @@ import { Search } from 'lucide-react';
 
 interface AnimeItem {
 	id: string;
-	name: string;
+	nameEn: string;
+	nameJp: string;
 }
 
-type AnimeData = Record<string, string>;
+type AnimeDataRaw = Record<string, string>;
 
 export default function AnimeSearch() {
 	const router = useRouter();
 	const [input, setInput] = useState<string>('');
 	const [results, setResults] = useState<AnimeItem[]>([]);
 	const [isOpen, setIsOpen] = useState<boolean>(false);
-	const [animeData, setAnimeData] = useState<AnimeData | null>(null);
+	const [combinedData, setCombinedData] = useState<AnimeItem[]>([]);
 
-	const fuse = useMemo((): Fuse<AnimeItem> | null => {
-		if (!animeData) return null;
-		const entries: AnimeItem[] = Object.entries(animeData).map(
-			([id, name]) => ({
-				id,
-				name,
-			}),
-		);
-		return new Fuse(entries, {
-			keys: ['name'],
-			threshold: 0.3,
-			minMatchCharLength: 2,
-		});
-	}, [animeData]);
-
+	// 1. Load both JSON files and merge them
 	useEffect(() => {
 		const loadAnimeData = async (): Promise<void> => {
 			try {
-				const response = await fetch('/indexes.json');
-				const data = (await response.json()) as AnimeData;
-				setAnimeData(data);
+				const [resEn, resJp] = await Promise.all([
+					fetch('/indexes_en.json'),
+					fetch('/indexes_jp.json'),
+				]);
+
+				const dataEn = (await resEn.json()) as AnimeDataRaw;
+				const dataJp = (await resJp.json()) as AnimeDataRaw;
+
+				// Merge by ID (assuming keys match in both files)
+				const merged: AnimeItem[] = Object.keys(dataEn).map((id) => ({
+					id,
+					// Use the nullish coalescing operator (??) or OR (||) to provide a fallback
+					nameEn: dataEn[id] ?? '',
+					nameJp: dataJp[id] ?? '',
+				}));
+
+				setCombinedData(merged);
 			} catch (error) {
 				console.error('Failed to load anime data:', error);
 			}
@@ -48,13 +49,25 @@ export default function AnimeSearch() {
 		void loadAnimeData();
 	}, []);
 
+	// 2. Setup Fuse to search across both language keys
+	const fuse = useMemo((): Fuse<AnimeItem> | null => {
+		if (combinedData.length === 0) return null;
+
+		return new Fuse(combinedData, {
+			keys: ['nameEn', 'nameJp'],
+			threshold: 0.3,
+			minMatchCharLength: 2,
+		});
+	}, [combinedData]);
+
+	// 3. Search logic
 	useEffect(() => {
 		if (!input || !fuse) {
 			setResults([]);
 			setIsOpen(false);
 			return;
 		}
-		const timer: NodeJS.Timeout = setTimeout(() => {
+		const timer = setTimeout(() => {
 			const searchResults = fuse.search(input);
 			setResults(searchResults.map((result) => result.item).slice(0, 5));
 			setIsOpen(true);
@@ -84,13 +97,13 @@ export default function AnimeSearch() {
 						type="text"
 						value={input}
 						onChange={handleInputChange}
-						placeholder="Search for an anime..."
+						placeholder="Search in English or Japanese..."
 						className="w-full pl-12 pr-4 py-4 rounded-xl bg-white text-gray-900 border-2 border-black font-semibold text-base focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5"
 					/>
 				</div>
 				{isOpen && results.length > 0 && (
 					<div className="absolute top-full left-4 right-4 mt-3 z-50 bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
-						{results.map((anime: AnimeItem, index) => (
+						{results.map((anime, index) => (
 							<button
 								key={anime.id}
 								onClick={() => handleSelect(anime)}
@@ -100,11 +113,12 @@ export default function AnimeSearch() {
 										: ''
 								}`}
 							>
+								{/* Displaying both names for clarity */}
 								<div className="font-bold text-gray-900">
-									{anime.name}
+									{anime.nameEn}
 								</div>
-								<div className="text-xs font-medium text-gray-500 mt-1">
-									ID: {anime.id}
+								<div className="text-sm font-medium text-gray-400 italic">
+									{anime.nameJp}
 								</div>
 							</button>
 						))}

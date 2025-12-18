@@ -14,7 +14,7 @@ interface StudioGameProps {
 const HINT_LABELS = [
 	'Average Rating',
 	'First & Last Anime Year',
-	'Prominent Source Material',
+	'Top 5 Most Adapted Genres', // Hint 3 label updated
 	'10 Notable Characters',
 	'5 Notable Shows',
 ];
@@ -153,7 +153,10 @@ export default function StudioGame({
 			case 1:
 				return `${answerStudio.firstAnimeYear} - ${answerStudio.lastAnimeYear}`;
 			case 2:
-				return answerStudio.prominentSource;
+				// REPLACED: prominentSource with topGenres
+				return Array.isArray(answerStudio.topGenres)
+					? answerStudio.topGenres.join(', ')
+					: '';
 			case 3:
 				return Array.isArray(answerStudio.characters)
 					? answerStudio.characters.join(', ')
@@ -183,7 +186,7 @@ export default function StudioGame({
 							</div>
 						) : (
 							<span className="text-sm font-bold text-gray-600 uppercase tracking-tighter">
-								Guesses Used: {guesses.length} / 6
+								Guesses Used: {guesses.length} / 5
 							</span>
 						)}
 					</div>
