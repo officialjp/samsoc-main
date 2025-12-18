@@ -14,15 +14,21 @@ import {
 } from '../../ui/form';
 import { Input } from '../../ui/input';
 import { Button } from '../../ui/button';
-import { Calendar, Save } from 'lucide-react';
+import { Calendar, Info } from 'lucide-react';
+import AnimeSearch from '../../games/search-component';
+import { useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 
 const adminSchema = z.object({
-	animeId: z.number().int().min(1),
-	scheduledDate: z.string(), // Format YYYY-MM-DD
+	animeId: z.number().int().min(1, 'Please search and select an anime'),
+	scheduledDate: z.string(),
 });
 
 export default function AdminAnimeScheduler() {
 	const utils = api.useUtils();
+	const searchParams = useSearchParams();
+	const queryAnimeId = searchParams.get('animeId');
+
 	const scheduleMutation = api.anime.scheduleDaily.useMutation({
 		onSuccess: () => {
 			alert('Daily anime scheduled successfully!');
@@ -38,76 +44,96 @@ export default function AdminAnimeScheduler() {
 		},
 	});
 
+	// Sync the form's animeId with the URL whenever the Search component updates it
+	useEffect(() => {
+		if (queryAnimeId) {
+			form.setValue('animeId', parseInt(queryAnimeId));
+		}
+	}, [queryAnimeId, form]);
+
 	async function onSubmit(values: z.infer<typeof adminSchema>) {
 		await scheduleMutation.mutateAsync({
 			animeId: values.animeId,
 			date: new Date(values.scheduledDate),
 		});
 	}
+
 	const isPending = !!scheduleMutation.isPending;
 
 	return (
-		<Form {...form}>
-			<form
-				onSubmit={form.handleSubmit(onSubmit)}
-				className="space-y-4 p-6 border-4 border-black rounded-2xl bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-			>
-				<h2 className="text-2xl font-black uppercase italic flex items-center gap-2">
-					<Calendar className="w-6 h-6" /> Schedule Daily Anime
-				</h2>
-
-				<FormField
-					control={form.control}
-					name="animeId"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel className="font-bold">
-								Anime ID
-							</FormLabel>
-							<FormControl>
-								<Input
-									type="number"
-									{...field}
-									onChange={(e) =>
-										field.onChange(parseInt(e.target.value))
-									}
-								/>
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-
-				<FormField
-					control={form.control}
-					name="scheduledDate"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel className="font-bold">
-								Date to Appear
-							</FormLabel>
-							<FormControl>
-								<Input type="date" {...field} />
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-
-				<Button
-					type="submit"
-					disabled={isPending}
-					className="w-full bg-yellow-400 hover:bg-yellow-500 text-black border-2 border-black font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+		<div className="max-w-2xl mx-auto p-6">
+			<Form {...form}>
+				<form
+					onSubmit={form.handleSubmit(onSubmit)}
+					className="space-y-6 p-6 border-4 border-black rounded-2xl bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
 				>
-					{isPending ? (
-						'Scheduling...'
-					) : (
-						<span className="flex items-center gap-2">
-							SAVE SCHEDULE <Save className="w-4 h-4" />
-						</span>
-					)}
-				</Button>
-			</form>
-		</Form>
+					<h2 className="text-3xl font-black uppercase italic flex items-center gap-3">
+						<Calendar className="w-8 h-8" /> Scheduler
+					</h2>
+
+					<div className="bg-blue-50 border-2 border-blue-200 p-4 rounded-xl flex gap-3">
+						<Info className="w-5 h-5 text-blue-600 shrink-0" />
+						<p className="text-sm text-blue-800 font-medium">
+							Search for an anime below. Once selected, its ID
+							will be automatically captured for the schedule.
+						</p>
+					</div>
+
+					{/* Your original component, untouched */}
+					<AnimeSearch />
+
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+						<FormField
+							control={form.control}
+							name="animeId"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel className="font-bold uppercase text-xs">
+										Selected ID
+									</FormLabel>
+									<FormControl>
+										<Input
+											type="number"
+											readOnly
+											{...field}
+											className="bg-gray-100 border-2 border-black font-bold h-12"
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="scheduledDate"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel className="font-bold uppercase text-xs">
+										Release Date
+									</FormLabel>
+									<FormControl>
+										<Input
+											type="date"
+											{...field}
+											className="border-2 border-black font-bold h-12"
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					</div>
+
+					<Button
+						type="submit"
+						disabled={isPending || !form.watch('animeId')}
+						className="w-full bg-yellow-400 hover:bg-yellow-500 text-black border-2 border-black font-black py-6 text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1 transition-all"
+					>
+						{isPending ? 'SAVING...' : 'SAVE SCHEDULE'}
+					</Button>
+				</form>
+			</Form>
+		</div>
 	);
 }
