@@ -63,7 +63,6 @@ function StudioGameContent() {
 
 	const handleSelect = (id: string) => {
 		setSelectedStudioId(id);
-		// Brief timeout to allow the StudioGame component to react before resetting state
 		setTimeout(() => setSelectedStudioId(undefined), 100);
 	};
 
