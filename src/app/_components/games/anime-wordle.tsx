@@ -215,7 +215,15 @@ export default function AnimeWordle({
 	const processGuess = useCallback(() => {
 		if (isGameOver || !searchedAnime || !answerAnime) return;
 
-		// ... existing guess data construction ...
+		const guessData = DISPLAY_FIELDS.reduce(
+			(acc, { key }) => ({
+				...acc,
+				[key]: searchedAnime[key as keyof typeof searchedAnime],
+			}),
+			{} as Record<string, unknown>,
+		);
+
+		if (guesses.some((g) => g.title === guessData.title)) return;
 
 		const newGuesses = [...guesses, guessData];
 		setGuesses(newGuesses);
@@ -235,10 +243,9 @@ export default function AnimeWordle({
 
 		if (isCorrect) {
 			setGameWon(true);
-			// Your winMutation should update the user's `dailyWinAt` to now()
 			winMutation.mutate({ tries: newGuesses.length });
 		} else if (newGuesses.length >= 12) {
-			setGameFailed(true); // Updates page-level state to hide search bar
+			setGameFailed(true);
 		}
 	}, [
 		searchedAnime,
