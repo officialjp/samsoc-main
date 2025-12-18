@@ -6,11 +6,10 @@ import {
 } from '~/server/api/trpc';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
-import { startOfDay } from 'date-fns';
 
 interface CharacterEntry {
 	name?: string;
-	role?: string; // or any other fields your JSON contains
+	role?: string;
 }
 
 export const studioRouter = createTRPCRouter({
@@ -25,10 +24,8 @@ export const studioRouter = createTRPCRouter({
 			where: { date: today },
 		});
 
-		// Fallback studio if none scheduled
 		const targetStudioName = schedule?.studioName ?? 'Madhouse';
 
-		// Fetch all anime associated with this studio string
 		const studioAnimes = await ctx.db.anime.findMany({
 			where: { studios: { contains: targetStudioName } },
 			orderBy: { score: 'desc' },
@@ -41,7 +38,14 @@ export const studioRouter = createTRPCRouter({
 			});
 		}
 
-		// Hint logic calculations
+		// FILTER: Define recognizable pool (Score >= 7.5)
+		const highRatedAnime = studioAnimes.filter(
+			(a) => (a.score ?? 0) >= 7.5,
+		);
+		// Fallback to full list if the studio is small/new and has no 7.5+ shows
+		const recognizableSourcePool =
+			highRatedAnime.length > 0 ? highRatedAnime : studioAnimes;
+
 		const validScores = studioAnimes
 			.map((a) => a.score)
 			.filter((s): s is number => s !== null);
@@ -49,7 +53,6 @@ export const studioRouter = createTRPCRouter({
 			.map((a) => a.releasedYear)
 			.filter((y): y is number => y !== null);
 
-		// Calculate Prominent Source
 		const sourceMap = studioAnimes.reduce(
 			(acc, a) => {
 				if (a.source) acc[a.source] = (acc[a.source] ?? 0) + 1;
@@ -61,31 +64,39 @@ export const studioRouter = createTRPCRouter({
 			Object.entries(sourceMap).sort((a, b) => b[1] - a[1])[0]?.[0] ??
 			'N/A';
 
-		// Hint 4: Grab exactly 10 unique, formatted character names
-		const characterNames = new Set<string>();
-		for (const anime of studioAnimes) {
-			if (characterNames.size >= 10) break;
+		// Hint 4: Characters from high-rated shows (Shuffled)
+		const characterList: string[] = [];
+		for (const anime of recognizableSourcePool) {
+			if (characterList.length >= 10) break;
 
-			// Use a type assertion to our interface instead of 'any'
 			const characters = anime.characters as CharacterEntry[] | null;
-
 			if (Array.isArray(characters) && characters.length > 0) {
-				// Safe access to the first character
 				const charData = characters[0];
-
 				if (charData?.name) {
-					// Format "Lastname, Firstname" to "Firstname Lastname"
 					const cleanName = charData.name.includes(',')
 						? charData.name.split(',').reverse().join(' ').trim()
 						: charData.name;
 
-					characterNames.add(cleanName);
+					if (!characterList.includes(cleanName)) {
+						characterList.push(cleanName);
+					}
 				}
 			}
 		}
 
-		// Hint 5: 5 Notable Anime Titles
-		const animeList = studioAnimes.slice(0, 5).map((a) => a.title);
+		// Fisher-Yates Shuffle for character names
+		for (let i = characterList.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[characterList[i], characterList[j]] = [
+				characterList[j]!,
+				characterList[i]!,
+			];
+		}
+
+		// Hint 5: Top 5 Notable Anime Titles (Already sorted by score desc)
+		const animeList = recognizableSourcePool
+			.slice(0, 5)
+			.map((a) => a.title);
 
 		const studio = {
 			id: targetStudioName,
@@ -98,11 +109,10 @@ export const studioRouter = createTRPCRouter({
 			firstAnimeYear: validYears.length > 0 ? Math.min(...validYears) : 0,
 			lastAnimeYear: validYears.length > 0 ? Math.max(...validYears) : 0,
 			prominentSource,
-			characters: Array.from(characterNames),
+			characters: characterList,
 			animeList,
 		};
 
-		// Check User progress
 		let hasWonToday = false;
 		let hasFailedToday = false;
 
@@ -150,7 +160,6 @@ export const studioRouter = createTRPCRouter({
 		const uniqueStudios = new Set<string>();
 		animes.forEach((a) => {
 			if (a.studios) {
-				// Split comma-separated studios and trim whitespace
 				a.studios.split(',').forEach((s) => {
 					const clean = s.trim();
 					if (clean) uniqueStudios.add(clean);
@@ -170,7 +179,6 @@ export const studioRouter = createTRPCRouter({
 		const user = await ctx.db.user.findUnique({
 			where: { id: ctx.session.user.id },
 		});
-
 		if (!user) throw new TRPCError({ code: 'NOT_FOUND' });
 
 		const now = new Date();
@@ -179,12 +187,9 @@ export const studioRouter = createTRPCRouter({
 		});
 		const lastGuessStr = user.studioLastGuessAt?.toLocaleDateString(
 			'en-GB',
-			{
-				timeZone: 'Europe/London',
-			},
+			{ timeZone: 'Europe/London' },
 		);
 
-		// Increment if same day, otherwise reset to 1
 		const newCount =
 			todayStr === lastGuessStr ? user.studioDailyGuesses + 1 : 1;
 
@@ -197,7 +202,6 @@ export const studioRouter = createTRPCRouter({
 		});
 	}),
 
-	// Get or create today's game session for the current user
 	getTodaysSession: protectedProcedure.query(async ({ ctx }) => {
 		const now = new Date();
 		const today = new Date(
@@ -207,41 +211,24 @@ export const studioRouter = createTRPCRouter({
 
 		let session = await ctx.db.studioGameSession.findUnique({
 			where: {
-				userId_date: {
-					userId: ctx.session.user.id,
-					date: today,
-				},
+				userId_date: { userId: ctx.session.user.id, date: today },
 			},
-			include: {
-				guesses: true,
-			},
+			include: { guesses: true },
 		});
 
-		// If no session exists, create one
 		if (!session) {
-			// Get today's studio answer
 			const dailyStudio = await ctx.db.dailyStudio.findUnique({
 				where: { date: today },
 			});
-
 			const studioId = dailyStudio?.studioName ?? 'Madhouse';
-
 			session = await ctx.db.studioGameSession.create({
-				data: {
-					userId: ctx.session.user.id,
-					date: today,
-					studioId,
-				},
-				include: {
-					guesses: true,
-				},
+				data: { userId: ctx.session.user.id, date: today, studioId },
+				include: { guesses: true },
 			});
 		}
-
 		return session;
 	}),
 
-	// Add a guess to today's session
 	addGameGuess: protectedProcedure
 		.input(z.object({ studioName: z.string() }))
 		.mutation(async ({ ctx, input }) => {
@@ -251,13 +238,9 @@ export const studioRouter = createTRPCRouter({
 			);
 			today.setHours(0, 0, 0, 0);
 
-			// Get or create session
 			let session = await ctx.db.studioGameSession.findUnique({
 				where: {
-					userId_date: {
-						userId: ctx.session.user.id,
-						date: today,
-					},
+					userId_date: { userId: ctx.session.user.id, date: today },
 				},
 			});
 
@@ -265,9 +248,7 @@ export const studioRouter = createTRPCRouter({
 				const dailyStudio = await ctx.db.dailyStudio.findUnique({
 					where: { date: today },
 				});
-
 				const studioId = dailyStudio?.studioName ?? 'Madhouse';
-
 				session = await ctx.db.studioGameSession.create({
 					data: {
 						userId: ctx.session.user.id,
@@ -277,15 +258,9 @@ export const studioRouter = createTRPCRouter({
 				});
 			}
 
-			// Add guess to session
-			const guess = await ctx.db.studioGuess.create({
-				data: {
-					sessionId: session.id,
-					studioName: input.studioName,
-				},
+			return ctx.db.studioGuess.create({
+				data: { sessionId: session.id, studioName: input.studioName },
 			});
-
-			return guess;
 		}),
 
 	submitWin: protectedProcedure
@@ -297,20 +272,13 @@ export const studioRouter = createTRPCRouter({
 			);
 			today.setHours(0, 0, 0, 0);
 
-			// Update session to mark as won
 			await ctx.db.studioGameSession.update({
 				where: {
-					userId_date: {
-						userId: ctx.session.user.id,
-						date: today,
-					},
+					userId_date: { userId: ctx.session.user.id, date: today },
 				},
-				data: {
-					won: true,
-				},
+				data: { won: true },
 			});
 
-			// Update user stats
 			return ctx.db.user.update({
 				where: { id: ctx.session.user.id },
 				data: {
@@ -321,7 +289,6 @@ export const studioRouter = createTRPCRouter({
 			});
 		}),
 
-	// Mark session as failed
 	submitLoss: protectedProcedure.mutation(async ({ ctx }) => {
 		const now = new Date();
 		const today = new Date(
@@ -331,14 +298,9 @@ export const studioRouter = createTRPCRouter({
 
 		return ctx.db.studioGameSession.update({
 			where: {
-				userId_date: {
-					userId: ctx.session.user.id,
-					date: today,
-				},
+				userId_date: { userId: ctx.session.user.id, date: today },
 			},
-			data: {
-				failed: true,
-			},
+			data: { failed: true },
 		});
 	}),
 
@@ -365,10 +327,7 @@ export const studioRouter = createTRPCRouter({
 			return ctx.db.dailyStudio.upsert({
 				where: { date: targetDate },
 				update: { studioName: input.studioName },
-				create: {
-					date: targetDate,
-					studioName: input.studioName,
-				},
+				create: { date: targetDate, studioName: input.studioName },
 			});
 		}),
 });
