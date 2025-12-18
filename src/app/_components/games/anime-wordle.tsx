@@ -549,11 +549,11 @@ export default function AnimeWordle({
 												{idx + 1}. {user.name ?? 'Anon'}
 											</span>
 											<span className="text-[10px] text-gray-500 uppercase font-semibold">
-												{user.totalTries} tries
+												{user.wordleTotalTries} tries
 											</span>
 										</div>
 										<div className="bg-black text-white px-2 py-1 rounded text-xs font-bold shrink-0">
-											{user.wins} W
+											{user.wordleWins} W
 										</div>
 									</div>
 								))}

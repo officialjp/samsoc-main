@@ -70,7 +70,6 @@ export const animeRouter = createTRPCRouter({
 				},
 			});
 
-			// We assign fallback to anime. TypeScript still thinks this could be null.
 			anime = fallback ?? undefined;
 		}
 
@@ -82,8 +81,6 @@ export const animeRouter = createTRPCRouter({
 			});
 		}
 
-		// This check solves the Type 'null' is not assignable to 'undefined' issue
-		// by ensuring anime is never null when returned to the client.
 		if (!anime) {
 			throw new TRPCError({
 				code: 'NOT_FOUND',
@@ -98,9 +95,9 @@ export const animeRouter = createTRPCRouter({
 			const user = await ctx.db.user.findUnique({
 				where: { id: ctx.session.user.id },
 				select: {
-					lastWonAt: true,
-					dailyGuesses: true,
-					lastGuessAt: true,
+					wordleLastWonAt: true,
+					wordleDailyGuesses: true,
+					wordleLastGuessAt: true,
 				},
 			});
 
@@ -109,23 +106,23 @@ export const animeRouter = createTRPCRouter({
 					timeZone: 'Europe/London',
 				});
 
-				if (user.lastWonAt) {
-					const lastWonStr = user.lastWonAt.toLocaleDateString(
+				if (user.wordleLastWonAt) {
+					const lastWonStr = user.wordleLastWonAt.toLocaleDateString(
 						'en-GB',
 						{ timeZone: 'Europe/London' },
 					);
 					hasWonToday = todayStr === lastWonStr;
 				}
 
-				if (user.lastGuessAt) {
-					const lastGuessStr = user.lastGuessAt.toLocaleDateString(
-						'en-GB',
-						{ timeZone: 'Europe/London' },
-					);
+				if (user.wordleLastGuessAt) {
+					const lastGuessStr =
+						user.wordleLastGuessAt.toLocaleDateString('en-GB', {
+							timeZone: 'Europe/London',
+						});
 
 					if (
 						todayStr === lastGuessStr &&
-						user.dailyGuesses >= 12 &&
+						user.wordleDailyGuesses >= 12 &&
 						!hasWonToday
 					) {
 						hasFailedToday = true;
@@ -135,7 +132,7 @@ export const animeRouter = createTRPCRouter({
 		}
 
 		return {
-			anime, // TypeScript now knows this is the object type, not null
+			anime,
 			hasWonToday,
 			hasFailedToday,
 		};
@@ -165,7 +162,7 @@ export const animeRouter = createTRPCRouter({
 	recordGuess: protectedProcedure.mutation(async ({ ctx }) => {
 		const user = await ctx.db.user.findUnique({
 			where: { id: ctx.session.user.id },
-			select: { dailyGuesses: true, lastGuessAt: true },
+			select: { wordleDailyGuesses: true, wordleLastGuessAt: true },
 		});
 
 		if (!user) {
@@ -180,19 +177,20 @@ export const animeRouter = createTRPCRouter({
 		const todayStr = now.toLocaleDateString('en-GB', londonTime);
 
 		let newCount = 1;
-		if (user.lastGuessAt) {
-			const lastGuessStr = user.lastGuessAt.toLocaleDateString(
+		if (user.wordleLastGuessAt) {
+			const lastGuessStr = user.wordleLastGuessAt.toLocaleDateString(
 				'en-GB',
 				londonTime,
 			);
-			newCount = todayStr === lastGuessStr ? user.dailyGuesses + 1 : 1;
+			newCount =
+				todayStr === lastGuessStr ? user.wordleDailyGuesses + 1 : 1;
 		}
 
 		return ctx.db.user.update({
 			where: { id: ctx.session.user.id },
 			data: {
-				dailyGuesses: newCount,
-				lastGuessAt: now,
+				wordleDailyGuesses: newCount,
+				wordleLastGuessAt: now,
 			},
 		});
 	}),
@@ -204,19 +202,24 @@ export const animeRouter = createTRPCRouter({
 			return ctx.db.user.update({
 				where: { id: ctx.session.user.id },
 				data: {
-					wins: { increment: 1 },
-					totalTries: { increment: input.tries },
-					lastWonAt: now,
+					wordleWins: { increment: 1 },
+					wordleTotalTries: { increment: input.tries },
+					wordleLastWonAt: now,
 				},
 			});
 		}),
 
 	getLeaderboard: publicProcedure.query(async ({ ctx }) => {
 		return ctx.db.user.findMany({
-			where: { wins: { gt: 0 } },
-			orderBy: [{ wins: 'desc' }, { totalTries: 'asc' }],
+			where: { wordleWins: { gt: 0 } },
+			orderBy: [{ wordleWins: 'desc' }, { wordleTotalTries: 'asc' }],
 			take: 10,
-			select: { id: true, name: true, wins: true, totalTries: true },
+			select: {
+				id: true,
+				name: true,
+				wordleWins: true,
+				wordleTotalTries: true,
+			},
 		});
 	}),
 });
