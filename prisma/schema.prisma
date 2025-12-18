@@ -14,6 +14,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Anime {
+  id             Int     @id
+  title          String
+  description    String? @db.Text
+  image          String?
+  type           String?
+  episodes       String?
+  status         String?
+  premiered      String?
+  releasedSeason String?
+  releasedYear   Float?
+  source         String?
+  genres         String?
+  themes         String?
+  studios        String?
+  producers      String?
+  demographic    String?
+  duration       String?
+  rating         String?
+  score          Float?
+  ranked         String?
+  popularity     String?
+  members        String?
+  favorites      String?
+  characters     Json?
+  sourceUrl      String?
+}
+
 // Necessary for Next auth
 model Account {
   id                       String  @id @default(cuid())
@@ -113,9 +141,14 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+  wins          Int       @default(0)
+  lastWonAt     DateTime?
+  totalTries    Int       @default(0)
   role          String    @default("user")
   accounts      Account[]
   sessions      Session[]
+  dailyGuesses  Int       @default(0)
+  lastGuessAt   DateTime?
 }
 
 model VerificationToken {

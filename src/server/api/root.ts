@@ -7,6 +7,7 @@ import { animeCardsRouter } from './routers/animecard';
 import { eventRouter } from './routers/event';
 import { imageRouter } from './routers/image';
 import { mangaRouter } from './routers/manga';
+import { animeRouter } from './routers/anime';
 
 /**
  * This is the primary router for your server.
@@ -22,6 +23,7 @@ export const appRouter = createTRPCRouter({
 	event: eventRouter,
 	image: imageRouter,
 	manga: mangaRouter,
+	anime: animeRouter,
 });
 
 export type AppRouter = typeof appRouter;
