@@ -3,7 +3,7 @@ import { SectionHeading } from '~/app/_components/section-heading';
 
 import DashboardTabArray from '~/app/_components/dashboard/dashboard-tab-array';
 import DashButtons from '~/app/_components/dashboard/dashboard-link-buttons';
-import AdminAnimeScheduler from '~/app/_components/dashboard/games/wordle/daily-anime';
+import AdminAnimeScheduler from '~/app/_components/dashboard/games/daily-anime';
 
 const carouselPageObj = [
 	{
