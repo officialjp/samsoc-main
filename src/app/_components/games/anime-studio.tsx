@@ -177,9 +177,15 @@ export default function StudioGame({
 						<h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
 							Studio Guesser
 						</h1>
-						<div className="flex items-center gap-4">
-							<Countdown />
-						</div>
+						{isGameOver ? (
+							<div className="flex items-center gap-3">
+								<Countdown />
+							</div>
+						) : (
+							<span className="text-sm font-bold text-gray-600 uppercase tracking-tighter">
+								Guesses Used: {guesses.length} / 6
+							</span>
+						)}
 					</div>
 
 					{isGameOver && (

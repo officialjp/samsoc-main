@@ -329,7 +329,6 @@ export const animeRouter = createTRPCRouter({
 			});
 		}),
 
-	// Mark session as failed
 	submitLoss: protectedProcedure.mutation(async ({ ctx }) => {
 		const now = new Date();
 		const today = new Date(
