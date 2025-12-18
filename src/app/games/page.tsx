@@ -6,14 +6,14 @@ export default function GamesPage() {
 			id: 'wordle',
 			title: 'Anime Wordle',
 			description: 'Guess the anime based on its attributes',
-			emoji: '🎮',
+			emoji: '🌸',
 			href: '/games/wordle',
 		},
 		{
 			id: 'studio',
 			title: 'Studio Guessr',
 			description: 'Guess the anime studio based on its attributes',
-			emoji: '🎮',
+			emoji: '🎬',
 			href: '/games/studio',
 		},
 	];
