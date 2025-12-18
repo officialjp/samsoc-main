@@ -1,14 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import {
-	type ReactNode,
-	useEffect,
-	useRef,
-	useState,
-	useCallback,
-} from 'react';
-import { SvgIcon } from './util/svg-icon';
+import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
 import Logo from '../../../public/images/logo.webp';
@@ -16,6 +9,7 @@ import { cn } from '~/lib/utils';
 import { usePathname } from 'next/navigation';
 import AccountButton from './login-btn';
 import { useSession } from 'next-auth/react';
+import { SvgIcon } from './util/svg-icon';
 
 const staticNavLinks = [
 	{ href: '/library', label: 'Library' },
@@ -27,250 +21,173 @@ const staticNavLinks = [
 
 const adminLink = { href: '/dashboard', label: 'Dashboard' };
 
-type NavLink = (typeof staticNavLinks)[number];
-
-function Button({
-	children,
-	href,
-	className,
-	isActive,
-}: {
-	children: React.ReactElement<ReactNode> | string;
-	href: string;
-	className?: string;
-	isActive?: boolean;
-}) {
-	return (
-		<Link
-			href={href}
-			className={cn(
-				'px-4 relative h-full w-fit rounded-full transition duration-300 font-medium flex items-center',
-				'group-hover:bg-transparent group-hover:text-black hover:bg-black hover:text-white text-black',
-				isActive &&
-					'bg-black text-white hover:bg-black hover:text-white',
-				className,
-			)}
-		>
-			{children}
-		</Link>
-	);
-}
-
-function Nav({ links }: { links: NavLink[] }) {
-	const pathname = usePathname();
-
-	return (
-		<nav className="hidden md:flex gap-3 h-full mx-auto group">
-			{links.map((link: NavLink) => (
-				<Button
-					key={link.href}
-					href={link.href}
-					isActive={
-						pathname === link.href ||
-						pathname.startsWith(`${link.href}/`)
-					}
-				>
-					{link.label}
-				</Button>
-			))}
-		</nav>
-	);
-}
-
 export function Header() {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
-	const navRef = useRef<HTMLElement>(null);
+	const [isVisible, setIsVisible] = useState(true);
+	const [lastScrollY, setLastScrollY] = useState(0);
 	const { data: session } = useSession();
+	const pathname = usePathname();
 
-	const isAdmin = session?.user.role === 'admin';
-
+	const isAdmin = session?.user?.role === 'admin';
 	const finalNavLinks = [...staticNavLinks, ...(isAdmin ? [adminLink] : [])];
 
-	const stateRef = useRef<{
-		screenMoveY: number;
-		lastScroll: number;
-		scrollBuffer: number;
-		rAFId: number | null;
-	}>({
-		screenMoveY: 0,
-		lastScroll: 0,
-		scrollBuffer: 0,
-		rAFId: null,
-	});
-
-	const toggleMenu = () => {
-		setIsMenuOpen((prev) => !prev);
-	};
-
-	const animateHeader = useCallback(() => {
-		const headerElement = navRef.current;
-		if (!headerElement) return;
-
-		const state = stateRef.current;
-		const scroll = window.scrollY;
-		const scrollDelta = state.lastScroll - scroll;
-		const hiddenHeight = -(headerElement.offsetHeight + 40);
-
-		state.lastScroll = scroll;
-		state.scrollBuffer = Math.max(state.scrollBuffer - scrollDelta, 0);
-		if (state.scrollBuffer <= 300) {
-			if (state.rAFId) {
-				cancelAnimationFrame(state.rAFId);
-				state.rAFId = null;
-			}
-			return;
-		}
-
-		if (state.screenMoveY > hiddenHeight || scrollDelta > 0) {
-			state.screenMoveY = Math.min(
-				Math.max(state.screenMoveY + scrollDelta, hiddenHeight),
-				0,
-			);
-		}
-
-		const range = state.screenMoveY / hiddenHeight;
-
-		if (range <= 0 && scrollDelta > 0) {
-			state.scrollBuffer = 0;
-		}
-
-		if (range >= 0.5) {
-			setIsMenuOpen(false);
-			headerElement.style.pointerEvents = 'none';
-		} else {
-			headerElement.style.pointerEvents = 'auto';
-		}
-
-		headerElement.style.opacity = (1 - range).toString();
-
-		if (scroll <= 0) {
-			headerElement.style.opacity = '1';
-			state.scrollBuffer = 0;
-			state.screenMoveY = 0;
-			if (state.rAFId) {
-				cancelAnimationFrame(state.rAFId);
-				state.rAFId = null;
-			}
-			return;
-		}
-	}, []);
-
+	// Handle Scroll Direction
 	useEffect(() => {
-		let isTicking = false;
-		const currentRef = stateRef.current;
+		const controlNavbar = () => {
+			const currentScrollY = window.scrollY;
 
-		const handleScroll = () => {
-			if (!isTicking) {
-				currentRef.rAFId = window.requestAnimationFrame(() => {
-					animateHeader();
-
-					isTicking = false;
-				});
-				isTicking = true;
+			// 1. Always show at the very top
+			if (currentScrollY < 10) {
+				setIsVisible(true);
 			}
+			// 2. Hide on scroll down, Show on scroll up
+			else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+				setIsVisible(false);
+				setIsMenuOpen(false); // Close mobile menu if user scrolls down
+			} else if (currentScrollY < lastScrollY) {
+				setIsVisible(true);
+			}
+
+			setLastScrollY(currentScrollY);
 		};
 
-		window.addEventListener('scroll', handleScroll, { passive: true });
-
-		return () => {
-			window.removeEventListener('scroll', handleScroll);
-			if (currentRef.rAFId !== null) {
-				cancelAnimationFrame(currentRef.rAFId);
-			}
-		};
-	}, [animateHeader]);
+		window.addEventListener('scroll', controlNavbar);
+		return () => window.removeEventListener('scroll', controlNavbar);
+	}, [lastScrollY]);
 
 	return (
 		<header
-			ref={navRef}
-			className="fixed top-2.5 left-[50%] z-50 w-[min(calc(100%-20px),1000px)] blur-[0px] backdrop-blur-[10px] rounded-2xl lg:rounded-full shadow-[0px_5px_10px_#00000090] overflow-hidden transition-opacity transform-[translateX(-50%)]"
+			className={cn(
+				'fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-[1000px]',
+				'transition-all duration-300 ease-in-out',
+				isVisible
+					? 'translate-y-0 opacity-100'
+					: '-translate-y-24 opacity-0',
+			)}
 		>
-			<div className="container w-full max-w-full px-4 md:px-6 lg:px-2.5 flex h-[55px] py-2.5 items-center justify-between bg-linear-to-r from-[#ffcfd4a0] to-[#ffffffa0]">
-				<Link
-					href="/"
-					className="relative w-10 h-10 flex items-center justify-center font-bold md:mr-2 rounded-full overflow-hidden shrink-0 shadow-[0,0,0px_#000000ff] hover:shadow-[0_0_10px_#00000040] active:shadow-[0_0_4px_#000000a0] hover:scale-110 active:duration-50 active:scale-105 transition duration-300"
-				>
-					<Image
-						src={Logo}
-						loading="lazy"
-						className="absolute shrink-0 w-full h-full"
-						alt="logo"
-						draggable="false"
-						height={40}
-						width={40}
-					/>
-				</Link>
-
-				<Nav links={finalNavLinks} />
-
-				<div className="flex-row flex gap-6 mx-auto md:hidden">
-					<Link href="https://www.instagram.com/unisamsoc/?hl=en">
-						<SvgIcon
-							src={'/instagram.svg'}
-							height={30}
-							width={30}
-							className={'bg-[#ff0069]'}
-						></SvgIcon>
-					</Link>
-					<Link href="https://www.facebook.com/UniSAMSoc">
-						<SvgIcon
-							src={'/facebook.svg'}
-							height={30}
-							width={30}
-							className={'bg-[#0866ff]'}
-						></SvgIcon>
-					</Link>
-					<Link href="https://discord.gg/tQUrdxzUZ4">
-						<SvgIcon
-							src={'/discord.svg'}
-							height={30}
-							width={30}
-							className={'bg-[#5865F2]'}
-						></SvgIcon>
-					</Link>
-				</div>
-
-				<div className="flex items-center relative h-full">
-					<button
-						className=" p-2 text-black hover:cursor-pointer md:hidden"
-						onClick={toggleMenu}
-						aria-label="Toggle menu"
+			<div className="backdrop-blur-md bg-white/70 border border-white/20 rounded-2xl lg:rounded-full shadow-lg overflow-hidden">
+				<div className="flex h-[60px] items-center justify-between px-4 md:px-6">
+					{/* Logo */}
+					<Link
+						href="/"
+						className="relative w-10 h-10 flex items-center justify-center transition-transform hover:scale-110 active:scale-95"
 					>
-						{isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-					</button>
-					<div className="hidden md:flex">
-						<AccountButton />
-					</div>
-				</div>
-			</div>
+						<Image
+							src={Logo}
+							alt="logo"
+							className="object-contain"
+							fill
+							sizes="40px"
+							priority
+						/>
+					</Link>
 
-			<div
-				className="bg-[#ffffffa0] md:hidden grid grid-rows-[0fr] transition-[grid-template-rows] duration-400 ease-in-out"
-				style={{
-					gridTemplateRows: isMenuOpen ? '1fr' : '0fr',
-				}}
-			>
-				<nav
-					className="overflow-hidden transition-opacity duration-400"
-					style={{
-						opacity: isMenuOpen ? '1' : '0',
-					}}
-				>
-					<div className="p-4 flex flex-col space-y-4 border-black border-t">
-						{finalNavLinks.map((link: NavLink) => (
+					{/* Desktop Nav */}
+					<nav className="hidden md:flex items-center gap-1">
+						{finalNavLinks.map((link) => (
 							<Link
 								key={link.href}
 								href={link.href}
-								className="font-medium py-2 hover:underline underline-offset-4"
-								onClick={() => setIsMenuOpen(false)}
+								className={cn(
+									'px-4 py-2 rounded-full text-sm font-medium transition-colors',
+									pathname === link.href
+										? 'bg-black text-white'
+										: 'text-black/70 hover:bg-black/5 hover:text-black',
+								)}
 							>
 								{link.label}
 							</Link>
 						))}
-						<AccountButton />
+					</nav>
+
+					{/* Mobile Socials (Center) */}
+					<div className="flex md:hidden gap-4 items-center">
+						<SocialIcon
+							href="https://discord.gg/tQUrdxzUZ4"
+							src="/discord.svg"
+							color="bg-[#5865F2]"
+						/>
+						<SocialIcon
+							href="https://www.instagram.com/unisamsoc"
+							src="/instagram.svg"
+							color="bg-[#ff0069]"
+						/>
 					</div>
-				</nav>
+
+					{/* Right Side Actions */}
+					<div className="flex items-center gap-2">
+						<div className="hidden md:block">
+							<AccountButton />
+						</div>
+
+						<button
+							className="p-2 md:hidden text-black"
+							onClick={() => setIsMenuOpen(!isMenuOpen)}
+							aria-label="Toggle menu"
+						>
+							{isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+						</button>
+					</div>
+				</div>
+
+				{/* Mobile Menu Dropdown */}
+				<div
+					className={cn(
+						'grid transition-all duration-300 ease-in-out md:hidden bg-white/90',
+						isMenuOpen
+							? 'grid-rows-[1fr] border-t'
+							: 'grid-rows-[0fr]',
+					)}
+				>
+					<div className="overflow-hidden">
+						<div className="p-4 flex flex-col gap-2">
+							{finalNavLinks.map((link) => (
+								<Link
+									key={link.href}
+									href={link.href}
+									onClick={() => setIsMenuOpen(false)}
+									className={cn(
+										'px-4 py-3 rounded-lg font-medium',
+										pathname === link.href
+											? 'bg-black/5'
+											: '',
+									)}
+								>
+									{link.label}
+								</Link>
+							))}
+							<div className="pt-2 mt-2 border-t">
+								<AccountButton />
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</header>
+	);
+}
+
+function SocialIcon({
+	href,
+	src,
+	color,
+}: {
+	href: string;
+	src: string;
+	color: string;
+}) {
+	return (
+		<Link
+			href={href}
+			target="_blank"
+			className="transition-transform hover:scale-110"
+		>
+			<SvgIcon
+				src={src}
+				height={24}
+				width={24}
+				className={cn('rounded-md', color)}
+			/>
+		</Link>
 	);
 }
