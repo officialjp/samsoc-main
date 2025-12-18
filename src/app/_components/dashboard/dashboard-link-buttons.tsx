@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export default function DashButtons() {
 	const pathname = usePathname();
-	const dashPages = ['calendar', 'gallery', 'landing', 'library'];
+	const dashPages = ['calendar', 'gallery', 'landing', 'library', 'games'];
 
 	return (
 		<div className="flex gap-3 mb-5 flex-wrap mt-3">

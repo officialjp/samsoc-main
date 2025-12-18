@@ -26,7 +26,7 @@ interface DisplayField {
 }
 
 interface SavedGuesses {
-	date: string;
+	animeId: number;
 	data: Record<string, unknown>[];
 }
 
@@ -266,25 +266,51 @@ export default function AnimeWordle({
 
 	useEffect(() => {
 		if (hasAlreadyWonToday && !gameWon) setGameWon(true);
-	}, [hasAlreadyWonToday, gameWon, setGameWon]);
+		if (hasFailedToday) setGameFailed(true);
+	}, [
+		hasAlreadyWonToday,
+		hasFailedToday,
+		gameWon,
+		setGameWon,
+		setGameFailed,
+	]);
 
 	useEffect(() => {
-		const today = new Date().toLocaleDateString('en-GB');
+		if (!answerAnime) return;
+
 		const saved = localStorage.getItem('anime_wordle_guesses');
 		if (saved) {
 			try {
 				const parsed = JSON.parse(saved) as SavedGuesses;
-				if (parsed.date === today) {
+				if (parsed.animeId === answerAnime.id) {
 					setGuesses(parsed.data);
-					if (parsed.data.length >= 12) setGameFailed(true);
+
+					const hasWinningGuess = parsed.data.some(
+						(guess) =>
+							formatDisplayValue(guess.title)
+								.toLowerCase()
+								.trim() ===
+							formatDisplayValue(answerAnime.title)
+								.toLowerCase()
+								.trim(),
+					);
+
+					if (hasWinningGuess) {
+						setGameWon(true);
+					} else if (parsed.data.length >= 12) {
+						setGameFailed(true);
+					}
 				} else {
 					localStorage.removeItem('anime_wordle_guesses');
+					setGuesses([]);
+					setGameFailed(false);
+					setGameWon(false);
 				}
 			} catch (e) {
 				console.error('Failed to parse local storage', e);
 			}
 		}
-	}, [setGameFailed]);
+	}, [answerAnime, setGameFailed, setGameWon]);
 
 	const processGuess = useCallback(() => {
 		if (isGameOver || !searchedAnime || !answerAnime) return;
@@ -306,7 +332,7 @@ export default function AnimeWordle({
 		localStorage.setItem(
 			'anime_wordle_guesses',
 			JSON.stringify({
-				date: new Date().toLocaleDateString('en-GB'),
+				animeId: answerAnime.id,
 				data: newGuesses,
 			}),
 		);
