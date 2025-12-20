@@ -20,6 +20,8 @@ type FieldKey =
 	| 'source'
 	| 'score';
 
+type MatchResult = 'exact' | 'partial' | 'none' | 'unknown';
+
 interface DisplayField {
 	key: FieldKey;
 	label: string;
@@ -36,6 +38,8 @@ const DISPLAY_FIELDS: DisplayField[] = [
 	{ key: 'score', label: 'Score' },
 ];
 
+const ARRAY_FIELDS: FieldKey[] = ['genres', 'themes', 'studios'];
+
 function formatDisplayValue(value: unknown): string {
 	if (value === null || value === undefined) return '—';
 	if (Array.isArray(value))
@@ -50,52 +54,118 @@ function formatDisplayValue(value: unknown): string {
 	return '—';
 }
 
-function checkFieldMatch(targetValue: unknown, guessValue: unknown): boolean {
-	if (
-		targetValue === null ||
-		targetValue === undefined ||
-		guessValue === null ||
-		guessValue === undefined
-	)
-		return false;
+function isEmpty(val: unknown): boolean {
+	if (val === null || val === undefined) return true;
+	if (typeof val === 'string' && val.trim() === '') return true;
+	if (Array.isArray(val) && val.length === 0) return true;
+	return false;
+}
 
-	if (Array.isArray(targetValue) && Array.isArray(guessValue)) {
-		const tArr = targetValue
+function parseToArray(val: unknown): string[] {
+	if (isEmpty(val)) return [];
+	if (Array.isArray(val)) {
+		return val
 			.map((v) => formatDisplayValue(v).toLowerCase().trim())
-			.sort();
-		const gArr = guessValue
-			.map((v) => formatDisplayValue(v).toLowerCase().trim())
-			.sort();
-		return (
-			tArr.length === gArr.length &&
-			tArr.every((val, idx) => val === gArr[idx])
-		);
+			.filter((s) => s && s !== '—');
+	}
+	const str = formatDisplayValue(val);
+	if (str === '—') return [];
+	return str
+		.split(',')
+		.map((s) => s.toLowerCase().trim())
+		.filter((s) => s);
+}
+
+function checkFieldMatch(
+	targetValue: unknown,
+	guessValue: unknown,
+	fieldKey?: FieldKey,
+): MatchResult {
+	const isArrayField = fieldKey && ARRAY_FIELDS.includes(fieldKey);
+
+	const targetEmpty = isEmpty(targetValue);
+	const guessEmpty = isEmpty(guessValue);
+
+	// Both empty - exact match
+	if (targetEmpty && guessEmpty) return 'exact';
+
+	// Target empty but guess has value - unknown (can't compare)
+	if (targetEmpty) return 'unknown';
+
+	// Target has value but guess is empty - no match
+	if (guessEmpty) return 'none';
+
+	// For array fields, check for partial matches
+	if (isArrayField) {
+		const targetArr = parseToArray(targetValue);
+		const guessArr = parseToArray(guessValue);
+
+		if (targetArr.length === 0 && guessArr.length === 0) return 'exact';
+		if (targetArr.length === 0) return 'unknown';
+		if (guessArr.length === 0) return 'none';
+
+		const targetSet = new Set(targetArr);
+		const guessSet = new Set(guessArr);
+
+		const matchCount = guessArr.filter((item) =>
+			targetSet.has(item),
+		).length;
+
+		// Exact match: same items (all match and same count)
+		if (targetSet.size === guessSet.size && matchCount === targetSet.size) {
+			return 'exact';
+		}
+
+		// Partial match: some items overlap
+		if (matchCount > 0) {
+			return 'partial';
+		}
+
+		return 'none';
 	}
 
+	// For non-array fields, only exact or no match
 	const tStr = formatDisplayValue(targetValue).toLowerCase().trim();
 	const gStr = formatDisplayValue(guessValue).toLowerCase().trim();
-	return tStr === gStr && tStr !== '—';
+
+	if (tStr === gStr && tStr !== '—') {
+		return 'exact';
+	}
+
+	return 'none';
 }
 
 function FieldCell({
 	label,
 	value,
-	isMatch,
+	matchResult,
 	targetValue,
+	fieldKey,
 }: {
 	label: string;
 	value: unknown;
-	isMatch?: boolean;
+	matchResult?: MatchResult;
 	targetValue?: unknown;
+	fieldKey?: FieldKey;
 }) {
-	const bgColor =
-		isMatch === undefined
-			? 'bg-white'
-			: isMatch
-				? 'bg-green-100'
-				: 'bg-red-100';
+	const getBgColor = () => {
+		if (matchResult === undefined) return 'bg-white';
+		switch (matchResult) {
+			case 'exact':
+				return 'bg-green-100';
+			case 'partial':
+				return 'bg-yellow-100';
+			case 'none':
+				return 'bg-red-100';
+			case 'unknown':
+				return 'bg-gray-100';
+			default:
+				return 'bg-white';
+		}
+	};
+
 	const showArrow =
-		!isMatch &&
+		matchResult === 'none' &&
 		targetValue !== undefined &&
 		(label === 'Year' || label === 'Score');
 	let arrowDirection: 'up' | 'down' | null = null;
@@ -108,36 +178,33 @@ function FieldCell({
 	}
 
 	const renderColorCodedValue = () => {
-		const isArrayField =
-			label === 'Genres' || label === 'Themes' || label === 'Studios';
+		const isArrayField = fieldKey && ARRAY_FIELDS.includes(fieldKey);
 
-		if (isArrayField && value && targetValue !== undefined) {
-			const valueStr =
-				typeof value === 'string' ? value : formatDisplayValue(value);
-			const targetStr =
-				typeof targetValue === 'string'
-					? targetValue
-					: formatDisplayValue(targetValue);
+		if (isArrayField && targetValue !== undefined) {
+			const targetArr = parseToArray(targetValue);
 
-			const valueArray = Array.isArray(value)
+			// If target is empty, show gray text
+			if (targetArr.length === 0) {
+				return (
+					<div className="text-sm font-semibold text-gray-500 wrap-break-word">
+						{formatDisplayValue(value)}
+					</div>
+				);
+			}
+
+			const targetSet = new Set(targetArr);
+
+			// Get the original display values (not lowercased)
+			const displayArray = Array.isArray(value)
 				? value
-				: valueStr.split(',').map((s) => s.trim());
-
-			const targetArray = Array.isArray(targetValue)
-				? targetValue
-				: targetStr.split(',').map((s) => s.trim());
-
-			const targetSet = new Set(
-				targetArray.map((v) => {
-					const itemStr =
-						typeof v === 'string' ? v : formatDisplayValue(v);
-					return itemStr.toLowerCase().trim();
-				}),
-			);
+				: formatDisplayValue(value)
+						.split(',')
+						.map((s) => s.trim())
+						.filter((s) => s && s !== '—');
 
 			return (
 				<div className="text-sm font-semibold wrap-break-word">
-					{valueArray.map((item, idx) => {
+					{displayArray.map((item, idx) => {
 						const itemStr =
 							typeof item === 'string'
 								? item
@@ -157,7 +224,7 @@ function FieldCell({
 								>
 									{itemStr.trim()}
 								</span>
-								{idx < valueArray.length - 1 && ', '}
+								{idx < displayArray.length - 1 && ', '}
 							</span>
 						);
 					})}
@@ -165,8 +232,24 @@ function FieldCell({
 			);
 		}
 
-		if (isMatch !== undefined) {
-			const textColor = isMatch ? 'text-green-600' : 'text-red-600';
+		if (matchResult !== undefined) {
+			let textColor: string;
+			switch (matchResult) {
+				case 'exact':
+					textColor = 'text-green-600';
+					break;
+				case 'partial':
+					textColor = 'text-yellow-600';
+					break;
+				case 'none':
+					textColor = 'text-red-600';
+					break;
+				case 'unknown':
+					textColor = 'text-gray-500';
+					break;
+				default:
+					textColor = 'text-gray-900';
+			}
 			return (
 				<div
 					className={`text-sm font-semibold ${textColor} wrap-break-word`}
@@ -185,7 +268,7 @@ function FieldCell({
 
 	return (
 		<div
-			className={`${bgColor} border-2 border-black rounded-lg p-4 text-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] min-h-[100px] flex flex-col justify-center relative`}
+			className={`${getBgColor()} border-2 border-black rounded-lg p-4 text-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] min-h-[100px] flex flex-col justify-center relative`}
 		>
 			<div className="text-xs font-bold text-gray-900 mb-2 uppercase tracking-wide">
 				{label}
@@ -222,6 +305,19 @@ function Countdown() {
 			<span>Next anime in: {timeLeft}</span>
 		</div>
 	);
+}
+
+function getMatchResultForProgress(result: MatchResult): string {
+	switch (result) {
+		case 'exact':
+			return 'bg-green-500';
+		case 'partial':
+			return 'bg-yellow-500';
+		case 'unknown':
+			return 'bg-gray-400';
+		default:
+			return 'bg-red-400';
+	}
 }
 
 export default function AnimeWordle({
@@ -349,11 +445,21 @@ export default function AnimeWordle({
 		const emojiGrid = guesses
 			.map((guess) => {
 				return DISPLAY_FIELDS.map((field) => {
-					const isMatch = checkFieldMatch(
+					const result = checkFieldMatch(
 						answerAnime?.[field.key as keyof typeof answerAnime],
 						guess[field.key],
+						field.key,
 					);
-					return isMatch ? '🟩' : '🟥';
+					switch (result) {
+						case 'exact':
+							return '🟩';
+						case 'partial':
+							return '🟨';
+						case 'unknown':
+							return '⬜';
+						default:
+							return '🟥';
+					}
 				}).join('');
 			})
 			.join('\n');
@@ -460,12 +566,22 @@ export default function AnimeWordle({
 										>
 											<div className="grid grid-cols-4 sm:grid-cols-8 gap-2 mb-3">
 												{DISPLAY_FIELDS.map(
-													({ key }) => (
-														<div
-															key={key}
-															className={`h-2 rounded-full border border-black/10 ${checkFieldMatch(answerAnime[key as keyof typeof answerAnime], guess[key]) ? 'bg-green-500' : 'bg-red-400'}`}
-														/>
-													),
+													({ key }) => {
+														const result =
+															checkFieldMatch(
+																answerAnime[
+																	key as keyof typeof answerAnime
+																],
+																guess[key],
+																key,
+															);
+														return (
+															<div
+																key={key}
+																className={`h-2 rounded-full border border-black/10 ${getMatchResultForProgress(result)}`}
+															/>
+														);
+													},
 												)}
 											</div>
 											<div className="text-xs font-bold uppercase text-gray-500">
@@ -495,17 +611,19 @@ export default function AnimeWordle({
 													key={key}
 													label={label}
 													value={guess[key]}
-													isMatch={checkFieldMatch(
+													matchResult={checkFieldMatch(
 														answerAnime[
 															key as keyof typeof answerAnime
 														],
 														guess[key],
+														key,
 													)}
 													targetValue={
 														answerAnime[
 															key as keyof typeof answerAnime
 														]
 													}
+													fieldKey={key}
 												/>
 											),
 										)}
