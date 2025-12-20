@@ -12,13 +12,37 @@ interface CharacterEntry {
 	role?: string;
 }
 
+/**
+ * Gets midnight UTC for the current London calendar date.
+ * This ensures consistent date values across all queries and mutations.
+ */
+function getLondonMidnightUTC(): Date {
+	const now = new Date();
+	const formatter = new Intl.DateTimeFormat('en-CA', {
+		timeZone: 'Europe/London',
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
+	});
+	const londonDateStr = formatter.format(now); // "2025-12-20"
+	const [year, month, day] = londonDateStr.split('-').map(Number) as [
+		number,
+		number,
+		number,
+	];
+	return new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+}
+
+/**
+ * Gets the London date string for comparison purposes.
+ */
+function getLondonDateString(date: Date): string {
+	return date.toLocaleDateString('en-GB', { timeZone: 'Europe/London' });
+}
+
 export const studioRouter = createTRPCRouter({
 	getAnswerStudio: publicProcedure.query(async ({ ctx }) => {
-		const now = new Date();
-		const today = new Date(
-			now.toLocaleString('en-US', { timeZone: 'Europe/London' }),
-		);
-		today.setHours(0, 0, 0, 0);
+		const today = getLondonMidnightUTC();
 
 		const schedule = await ctx.db.dailyStudio.findUnique({
 			where: { date: today },
@@ -111,7 +135,7 @@ export const studioRouter = createTRPCRouter({
 					: 0,
 			firstAnimeYear: validYears.length > 0 ? Math.min(...validYears) : 0,
 			lastAnimeYear: validYears.length > 0 ? Math.max(...validYears) : 0,
-			topGenres, // New Field
+			topGenres,
 			characters: characterList,
 			animeList,
 		};
@@ -130,24 +154,24 @@ export const studioRouter = createTRPCRouter({
 			});
 
 			if (user) {
-				const todayStr = today.toLocaleDateString('en-GB', {
-					timeZone: 'Europe/London',
-				});
-				if (
-					user.studioLastWonAt?.toLocaleDateString('en-GB', {
-						timeZone: 'Europe/London',
-					}) === todayStr
-				) {
-					hasWonToday = true;
+				const todayStr = getLondonDateString(new Date());
+
+				if (user.studioLastWonAt) {
+					const lastWonStr = getLondonDateString(
+						user.studioLastWonAt,
+					);
+					hasWonToday = todayStr === lastWonStr;
 				}
+
 				if (
 					!hasWonToday &&
 					user.studioDailyGuesses >= 5 &&
-					user.studioLastGuessAt?.toLocaleDateString('en-GB', {
-						timeZone: 'Europe/London',
-					}) === todayStr
+					user.studioLastGuessAt
 				) {
-					hasFailedToday = true;
+					const lastGuessStr = getLondonDateString(
+						user.studioLastGuessAt,
+					);
+					hasFailedToday = todayStr === lastGuessStr;
 				}
 			}
 		}
@@ -178,16 +202,16 @@ export const studioRouter = createTRPCRouter({
 			where: { id: ctx.session.user.id },
 		});
 		if (!user) throw new TRPCError({ code: 'NOT_FOUND' });
+
 		const now = new Date();
-		const todayStr = now.toLocaleDateString('en-GB', {
-			timeZone: 'Europe/London',
-		});
-		const lastGuessStr = user.studioLastGuessAt?.toLocaleDateString(
-			'en-GB',
-			{ timeZone: 'Europe/London' },
-		);
+		const todayStr = getLondonDateString(now);
+		const lastGuessStr = user.studioLastGuessAt
+			? getLondonDateString(user.studioLastGuessAt)
+			: null;
+
 		const newCount =
 			todayStr === lastGuessStr ? user.studioDailyGuesses + 1 : 1;
+
 		return ctx.db.user.update({
 			where: { id: ctx.session.user.id },
 			data: { studioDailyGuesses: newCount, studioLastGuessAt: now },
@@ -195,48 +219,47 @@ export const studioRouter = createTRPCRouter({
 	}),
 
 	getTodaysSession: protectedProcedure.query(async ({ ctx }) => {
-		const now = new Date();
-		const today = new Date(
-			now.toLocaleString('en-US', { timeZone: 'Europe/London' }),
-		);
-		today.setHours(0, 0, 0, 0);
+		const today = getLondonMidnightUTC();
+
 		let session = await ctx.db.studioGameSession.findUnique({
 			where: {
 				userId_date: { userId: ctx.session.user.id, date: today },
 			},
 			include: { guesses: true },
 		});
+
 		if (!session) {
 			const dailyStudio = await ctx.db.dailyStudio.findUnique({
 				where: { date: today },
 			});
 			const studioId = dailyStudio?.studioName ?? 'Madhouse';
+
 			session = await ctx.db.studioGameSession.create({
 				data: { userId: ctx.session.user.id, date: today, studioId },
 				include: { guesses: true },
 			});
 		}
+
 		return session;
 	}),
 
 	addGameGuess: protectedProcedure
 		.input(z.object({ studioName: z.string() }))
 		.mutation(async ({ ctx, input }) => {
-			const now = new Date();
-			const today = new Date(
-				now.toLocaleString('en-US', { timeZone: 'Europe/London' }),
-			);
-			today.setHours(0, 0, 0, 0);
+			const today = getLondonMidnightUTC();
+
 			let session = await ctx.db.studioGameSession.findUnique({
 				where: {
 					userId_date: { userId: ctx.session.user.id, date: today },
 				},
 			});
+
 			if (!session) {
 				const dailyStudio = await ctx.db.dailyStudio.findUnique({
 					where: { date: today },
 				});
 				const studioId = dailyStudio?.studioName ?? 'Madhouse';
+
 				session = await ctx.db.studioGameSession.create({
 					data: {
 						userId: ctx.session.user.id,
@@ -245,6 +268,7 @@ export const studioRouter = createTRPCRouter({
 					},
 				});
 			}
+
 			return ctx.db.studioGuess.create({
 				data: { sessionId: session.id, studioName: input.studioName },
 			});
@@ -253,17 +277,15 @@ export const studioRouter = createTRPCRouter({
 	submitWin: protectedProcedure
 		.input(z.object({ tries: z.number() }))
 		.mutation(async ({ ctx, input }) => {
-			const now = new Date();
-			const today = new Date(
-				now.toLocaleString('en-US', { timeZone: 'Europe/London' }),
-			);
-			today.setHours(0, 0, 0, 0);
+			const today = getLondonMidnightUTC();
+
 			await ctx.db.studioGameSession.update({
 				where: {
 					userId_date: { userId: ctx.session.user.id, date: today },
 				},
 				data: { won: true },
 			});
+
 			return ctx.db.user.update({
 				where: { id: ctx.session.user.id },
 				data: {
@@ -275,11 +297,8 @@ export const studioRouter = createTRPCRouter({
 		}),
 
 	submitLoss: protectedProcedure.mutation(async ({ ctx }) => {
-		const now = new Date();
-		const today = new Date(
-			now.toLocaleString('en-US', { timeZone: 'Europe/London' }),
-		);
-		today.setHours(0, 0, 0, 0);
+		const today = getLondonMidnightUTC();
+
 		return ctx.db.studioGameSession.update({
 			where: {
 				userId_date: { userId: ctx.session.user.id, date: today },
@@ -305,8 +324,19 @@ export const studioRouter = createTRPCRouter({
 	scheduleDaily: adminProcedure
 		.input(z.object({ studioName: z.string(), date: z.date() }))
 		.mutation(async ({ ctx, input }) => {
-			const targetDate = new Date(input.date);
-			targetDate.setHours(0, 0, 0, 0);
+			// Normalize the input date to midnight UTC
+			const targetDate = new Date(
+				Date.UTC(
+					input.date.getUTCFullYear(),
+					input.date.getUTCMonth(),
+					input.date.getUTCDate(),
+					0,
+					0,
+					0,
+					0,
+				),
+			);
+
 			return ctx.db.dailyStudio.upsert({
 				where: { date: targetDate },
 				update: { studioName: input.studioName },

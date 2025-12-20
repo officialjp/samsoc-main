@@ -7,6 +7,34 @@ import {
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 
+/**
+ * Gets midnight UTC for the current London calendar date.
+ * This ensures consistent date values across all queries and mutations.
+ */
+function getLondonMidnightUTC(): Date {
+	const now = new Date();
+	const formatter = new Intl.DateTimeFormat('en-CA', {
+		timeZone: 'Europe/London',
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
+	});
+	const londonDateStr = formatter.format(now); // "2025-12-20"
+	const [year, month, day] = londonDateStr.split('-').map(Number) as [
+		number,
+		number,
+		number,
+	];
+	return new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+}
+
+/**
+ * Gets the London date string for comparison purposes.
+ */
+function getLondonDateString(date: Date): string {
+	return date.toLocaleDateString('en-GB', { timeZone: 'Europe/London' });
+}
+
 export const animeRouter = createTRPCRouter({
 	getById: publicProcedure
 		.input(z.object({ id: z.number().int() }))
@@ -27,11 +55,7 @@ export const animeRouter = createTRPCRouter({
 		}),
 
 	getAnswerAnime: publicProcedure.query(async ({ ctx }) => {
-		const now = new Date();
-		const today = new Date(
-			now.toLocaleString('en-US', { timeZone: 'Europe/London' }),
-		);
-		today.setHours(0, 0, 0, 0);
+		const today = getLondonMidnightUTC();
 
 		const schedule = await ctx.db.dailyAnime.findUnique({
 			where: { date: today },
@@ -81,13 +105,6 @@ export const animeRouter = createTRPCRouter({
 			});
 		}
 
-		if (!anime) {
-			throw new TRPCError({
-				code: 'NOT_FOUND',
-				message: 'No daily anime or fallback anime found in database.',
-			});
-		}
-
 		let hasWonToday = false;
 		let hasFailedToday = false;
 
@@ -102,23 +119,19 @@ export const animeRouter = createTRPCRouter({
 			});
 
 			if (user) {
-				const todayStr = today.toLocaleDateString('en-GB', {
-					timeZone: 'Europe/London',
-				});
+				const todayStr = getLondonDateString(new Date());
 
 				if (user.wordleLastWonAt) {
-					const lastWonStr = user.wordleLastWonAt.toLocaleDateString(
-						'en-GB',
-						{ timeZone: 'Europe/London' },
+					const lastWonStr = getLondonDateString(
+						user.wordleLastWonAt,
 					);
 					hasWonToday = todayStr === lastWonStr;
 				}
 
 				if (user.wordleLastGuessAt) {
-					const lastGuessStr =
-						user.wordleLastGuessAt.toLocaleDateString('en-GB', {
-							timeZone: 'Europe/London',
-						});
+					const lastGuessStr = getLondonDateString(
+						user.wordleLastGuessAt,
+					);
 
 					if (
 						todayStr === lastGuessStr &&
@@ -140,11 +153,7 @@ export const animeRouter = createTRPCRouter({
 
 	// Get or create today's wordle game session for the current user
 	getTodaysSession: protectedProcedure.query(async ({ ctx }) => {
-		const now = new Date();
-		const today = new Date(
-			now.toLocaleString('en-US', { timeZone: 'Europe/London' }),
-		);
-		today.setHours(0, 0, 0, 0);
+		const today = getLondonMidnightUTC();
 
 		let session = await ctx.db.wordleGameSession.findUnique({
 			where: {
@@ -191,11 +200,7 @@ export const animeRouter = createTRPCRouter({
 	addGameGuess: protectedProcedure
 		.input(z.object({ guessData: z.record(z.unknown()) }))
 		.mutation(async ({ ctx, input }) => {
-			const now = new Date();
-			const today = new Date(
-				now.toLocaleString('en-US', { timeZone: 'Europe/London' }),
-			);
-			today.setHours(0, 0, 0, 0);
+			const today = getLondonMidnightUTC();
 
 			// Get or create session
 			let session = await ctx.db.wordleGameSession.findUnique({
@@ -247,8 +252,18 @@ export const animeRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const targetDate = new Date(input.date);
-			targetDate.setHours(0, 0, 0, 0);
+			// Normalize the input date to midnight UTC
+			const targetDate = new Date(
+				Date.UTC(
+					input.date.getUTCFullYear(),
+					input.date.getUTCMonth(),
+					input.date.getUTCDate(),
+					0,
+					0,
+					0,
+					0,
+				),
+			);
 
 			return ctx.db.dailyAnime.upsert({
 				where: { date: targetDate },
@@ -274,15 +289,11 @@ export const animeRouter = createTRPCRouter({
 		}
 
 		const now = new Date();
-		const londonTime = { timeZone: 'Europe/London' };
-		const todayStr = now.toLocaleDateString('en-GB', londonTime);
+		const todayStr = getLondonDateString(now);
 
 		let newCount = 1;
 		if (user.wordleLastGuessAt) {
-			const lastGuessStr = user.wordleLastGuessAt.toLocaleDateString(
-				'en-GB',
-				londonTime,
-			);
+			const lastGuessStr = getLondonDateString(user.wordleLastGuessAt);
 			newCount =
 				todayStr === lastGuessStr ? user.wordleDailyGuesses + 1 : 1;
 		}
@@ -299,11 +310,7 @@ export const animeRouter = createTRPCRouter({
 	submitWin: protectedProcedure
 		.input(z.object({ tries: z.number() }))
 		.mutation(async ({ ctx, input }) => {
-			const now = new Date();
-			const today = new Date(
-				now.toLocaleString('en-US', { timeZone: 'Europe/London' }),
-			);
-			today.setHours(0, 0, 0, 0);
+			const today = getLondonMidnightUTC();
 
 			// Update session to mark as won
 			await ctx.db.wordleGameSession.update({
@@ -330,11 +337,7 @@ export const animeRouter = createTRPCRouter({
 		}),
 
 	submitLoss: protectedProcedure.mutation(async ({ ctx }) => {
-		const now = new Date();
-		const today = new Date(
-			now.toLocaleString('en-US', { timeZone: 'Europe/London' }),
-		);
-		today.setHours(0, 0, 0, 0);
+		const today = getLondonMidnightUTC();
 
 		return ctx.db.wordleGameSession.update({
 			where: {
