@@ -1,14 +1,14 @@
 'use client';
 
-import React from 'react';
+import { useMemo } from 'react';
 import type { EmblaOptionsType } from 'embla-carousel';
 import { DotButton, useDotButton } from './hero-carousel-button';
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
-import { SvgIcon } from '../util/svg-icon';
 import type { Carousel } from '@prisma/client';
 import Image from 'next/image';
 import Link from 'next/link';
+import { SvgIcon } from '../util/svg-icon';
 
 type CarouselType = {
 	slides: Carousel[];
@@ -16,71 +16,74 @@ type CarouselType = {
 	useSocials: boolean;
 };
 
+const autoplayOptions = {
+	delay: 5000,
+	stopOnInteraction: true,
+} as const;
+
 export default function HeroCarousel({
 	slides,
 	options,
 	useSocials,
 }: CarouselType) {
-	const [emblaRef, emblaApi] = useEmblaCarousel(options, [
-		Autoplay({
-			delay: 5000,
-			stopOnInteraction: true,
-		}),
-	]);
-
+	const plugins = useMemo(() => [Autoplay(autoplayOptions)], []);
+	const [emblaRef, emblaApi] = useEmblaCarousel(options, plugins);
 	const { selectedIndex, scrollSnaps, onDotButtonClick } =
 		useDotButton(emblaApi);
 
 	if (slides.length === 0) {
 		return (
-			<div className="w-full max-w-[min(1200px,calc(100%-20px))] p-8 text-center text-gray-500 rounded-2xl border border-dashed border-gray-300">
+			<div className="w-full max-w-[min(1200px,calc(100%-20px))] rounded-2xl border border-dashed border-gray-300 p-8 text-center text-gray-500">
 				No carousel slides available.
 			</div>
 		);
 	}
 
 	return (
-		<section className="relative w-full m-auto h-fit flex flex-col items-center">
+		<section className="relative m-auto flex h-fit w-full flex-col items-center">
 			<div
-				className="overflow-hidden w-full max-w-[min(1200px,calc(100%-20px))] shadow-[0px_5px_10px_#00000090] rounded-2xl md:rounded-4xl cursor-grab active:cursor-grabbing"
+				className="w-full max-w-[min(1200px,calc(100%-20px))] cursor-grab overflow-hidden rounded-2xl shadow-[0px_5px_10px_#00000090] active:cursor-grabbing md:rounded-4xl"
 				ref={emblaRef}
 			>
-				<div className="flex touch-pinch-zoom touch-pan-y">
-					{slides.map((element, index) => (
-						<div
-							className="relative flex-[0_0_100%] min-w-0 aspect-9/16 md:aspect-video"
-							key={element.id}
-						>
-							<Image
-								src={element.mobileSource}
-								alt={element.alt}
-								fill
-								sizes="(max-width: 768px) 100vw, 1px"
-								priority={index === 0}
-								loading={index === 0 ? 'eager' : 'lazy'}
-								fetchPriority={index === 0 ? 'high' : 'auto'}
-								quality={75}
-								className="object-cover md:hidden"
-							/>
-
-							<Image
-								src={element.desktopSource}
-								alt={element.alt}
-								fill
-								sizes="(max-width: 768px) 0px, (max-width: 1200px) 100vw, 1200px"
-								priority={index === 0}
-								loading={index === 0 ? 'eager' : 'lazy'}
-								quality={75}
-								fetchPriority={index === 0 ? 'high' : 'auto'}
-								className="object-cover hidden md:block"
-							/>
-						</div>
-					))}
+				<div className="flex touch-pan-y touch-pinch-zoom">
+					{slides.map((element, index) => {
+						const isFirst = index === 0;
+						return (
+							<div
+								className="relative aspect-9/16 min-w-0 flex-[0_0_100%] md:aspect-video"
+								key={element.id}
+							>
+								{/* Mobile image */}
+								<Image
+									src={element.mobileSource}
+									alt={element.alt}
+									fill
+									sizes="(max-width: 768px) 100vw, 1px"
+									priority={isFirst}
+									loading={isFirst ? 'eager' : 'lazy'}
+									fetchPriority={isFirst ? 'high' : 'auto'}
+									quality={75}
+									className="object-cover md:hidden"
+								/>
+								<Image
+									src={element.desktopSource}
+									alt={element.alt}
+									fill
+									sizes="(max-width: 768px) 0px, (max-width: 1200px) 100vw, 1200px"
+									priority={isFirst}
+									loading={isFirst ? 'eager' : 'lazy'}
+									fetchPriority={isFirst ? 'high' : 'auto'}
+									quality={75}
+									className="hidden object-cover md:block"
+								/>
+							</div>
+						);
+					})}
 				</div>
 			</div>
 
 			{useSocials && (
-				<div className="flex-row gap-4 flex-nowrap w-full max-w-[1200px] absolute -bottom-1 hidden lg:flex">
+				<div className="absolute -bottom-1 hidden w-full max-w-[1200px] flex-row flex-nowrap gap-4 lg:flex">
 					<Link
 						href="https://www.instagram.com/unisamsoc/?hl=en"
 						aria-label="Visit our Instagram"
@@ -120,15 +123,15 @@ export default function HeroCarousel({
 				</div>
 			)}
 
-			<div className="relative flex items-center justify-center gap-2 mt-7">
+			<div className="relative mt-7 flex items-center justify-center gap-2">
 				{scrollSnaps.map((_, index) => (
 					<DotButton
 						key={index}
 						onClick={() => onDotButtonClick(index)}
 						aria-label={`Go to slide ${index + 1}`}
-						className={`appearance-none rounded-full transition-all h-6 w-6 bg-pink-300 cursor-pointer hover:bg-pink-400 border-2 border-black ${
+						className={`h-6 w-6 cursor-pointer appearance-none rounded-full border-2 border-black bg-pink-300 transition-all hover:bg-pink-400 ${
 							index === selectedIndex
-								? 'bg-pink-500 hover:bg-pink-600 w-12'
+								? 'w-12 bg-pink-500 hover:bg-pink-600'
 								: ''
 						}`}
 					/>

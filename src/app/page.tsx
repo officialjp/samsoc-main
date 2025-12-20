@@ -1,23 +1,20 @@
+import { Suspense } from 'react';
 import { api, HydrateClient } from '~/trpc/server';
-import HeroCarousel from './_components/landing/hero-carousel';
-import { type EmblaOptionsType } from 'embla-carousel';
 import { SectionContainer } from './_components/section-container';
 import { SectionHeading } from './_components/section-heading';
 import { FeatureCard } from './_components/landing/feature-card';
+import { MembershipCard } from './_components/landing/membership-card';
+import { AnimeSection } from './_components/landing/anime-section';
+import { CommitteeSection } from './_components/landing/committee-section';
+import HeroCarousel from './_components/landing/hero-carousel';
+import MarqueeSection from './_components/landing/marquee-section';
 import { Check, Library, UserPlus } from 'lucide-react';
 import { Button } from './_components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
 import LibraryPhoto from '../../public/images/sam_manga.webp';
-import Logo from '../../public/images/logo.webp';
-import { MembershipCard } from './_components/landing/membership-card';
-import Marquee from 'react-fast-marquee';
-import { SvgIcon } from './_components/util/svg-icon';
-import { FREE_FEATURES, PAID_FEATURES, FEATURES } from '~/lib/constants';
-import { AnimeSection } from './_components/landing/anime-section';
-import { CommitteeSection } from './_components/landing/committee-section';
+import { FEATURES, FREE_FEATURES, PAID_FEATURES } from '~/lib/constants';
 
-const DEVELOPERS = ['J.P', 'Michael', 'Maiham', 'David'];
 const LIBRARY_STATS = [
 	'250+ manga volumes',
 	'25+ different series',
@@ -25,10 +22,12 @@ const LIBRARY_STATS = [
 	'Member requests welcomed',
 ] as const;
 
+const CAROUSEL_OPTIONS = { loop: true } as const;
+
 function LibraryStats() {
 	return (
-		<div className="absolute lg:-left-10 -bottom-20 -left-4 bg-white border-2 border-black lg:p-4 p-2 rounded-2xl md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-3">
-			<h3 className="text-base md:text-xl font-bold mb-1 md:mb-2">
+		<div className="absolute -bottom-20 -left-4 rotate-3 rounded-2xl border-2 border-black bg-white p-2 lg:-left-10 lg:p-4 md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+			<h3 className="mb-1 text-base font-bold md:mb-2 md:text-xl">
 				Library Stats
 			</h3>
 			<ul className="space-y-0.5 md:space-y-1">
@@ -37,7 +36,7 @@ function LibraryStats() {
 						key={stat}
 						className="flex items-center text-xs sm:text-sm"
 					>
-						<Check className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2 text-green-500" />{' '}
+						<Check className="mr-1 h-3 w-3 text-green-500 md:mr-2 md:h-4 md:w-4" />
 						{stat}
 					</li>
 				))}
@@ -46,65 +45,43 @@ function LibraryStats() {
 	);
 }
 
-function MarqueeContent() {
+async function CarouselSection() {
+	let carouselData: Awaited<
+		ReturnType<typeof api.post.getCarouselData>
+	>['data'] = [];
+	try {
+		const carouselResult = await api.post.getCarouselData();
+		carouselData = carouselResult.data ?? [];
+	} catch (error) {
+		console.error('Failed to fetch carousel data:', error);
+	}
+
 	return (
-		<div className="flex gap-10 items-center mr-10">
-			<span className="flex items-center gap-2">
-				<p>Developed by:</p>
-				<p>{DEVELOPERS.join(', ')}</p>
-			</span>
-			<span>●</span>
-			<span className="flex items-center gap-2">
-				<p>A community for students at</p>
-				<div className="relative w-fit h-fit block px-2">
-					<SvgIcon
-						className="bg-black"
-						height={50}
-						width={130}
-						src="/surrey.svg"
-					/>
-				</div>
-			</span>
-			<span>●</span>
-			<span className="flex items-center gap-2">
-				<p>Made with love for</p>
-				<div className="relative w-[50px] h-fit block mx-2">
-					<Image
-						src={Logo}
-						height={50}
-						width={50}
-						alt="samsoc logo"
-					/>
-				</div>
-			</span>
-			<span>●</span>
-		</div>
+		<HeroCarousel
+			slides={carouselData}
+			options={CAROUSEL_OPTIONS}
+			useSocials={true}
+		/>
 	);
 }
 
-export default async function Home() {
-	const options: EmblaOptionsType = { loop: true };
+function CarouselSkeleton() {
+	return (
+		<div className="mx-auto aspect-9/16 w-full max-w-[min(1200px,calc(100%-20px))] animate-pulse rounded-2xl bg-gray-200 md:aspect-video md:rounded-4xl" />
+	);
+}
 
-	const carouselResult = await api.post.getCarouselData();
-	const carouselData = carouselResult.data ?? [];
-
+export default function Home() {
 	return (
 		<HydrateClient>
-			<main className="flex min-h-screen flex-col w-full">
-				<section className="w-full pb-3 pt-0 md:pt-3 lg:pt-[3vh] flex items-center justify-center flex-col">
+			<main className="flex min-h-screen w-full flex-col">
+				<section className="flex w-full flex-col items-center justify-center pb-3 pt-0 md:pt-3 lg:pt-[3vh]">
 					<div className="container w-full max-w-full px-0 md:px-6 lg:px-8">
-						<HeroCarousel
-							slides={carouselData}
-							options={options}
-							useSocials={true}
-						/>
+						<Suspense fallback={<CarouselSkeleton />}>
+							<CarouselSection />
+						</Suspense>
 					</div>
-					<Marquee
-						autoFill
-						className="mt-20 mask-[linear-gradient(90deg,hsla(0,0%,0%,0)_0%,hsla(0,0%,0%,1)_10%,hsla(0,0%,0%,1)_90%,hsla(0,0%,0%,0)_100%)]"
-					>
-						<MarqueeContent />
-					</Marquee>
+					<MarqueeSection />
 				</section>
 
 				<SectionContainer id="about">
@@ -114,7 +91,7 @@ export default async function Home() {
 						description="We're a society for all people that love or are interested in anime and manga."
 						badgeColor="bg-purple-200"
 					/>
-					<div className="mx-auto max-w-7xl items-center gap-6 py-12 grid lg:grid-cols-3 lg:gap-12">
+					<div className="mx-auto grid max-w-7xl items-center gap-6 py-12 lg:grid-cols-3 lg:gap-12">
 						{FEATURES.map((feature) => (
 							<FeatureCard
 								key={feature.title}
@@ -129,7 +106,7 @@ export default async function Home() {
 
 				<SectionContainer
 					id="now-streaming"
-					className="w-full py-12 md:py-16 overflow-hidden"
+					className="w-full overflow-hidden py-12 md:py-16"
 				>
 					<AnimeSection />
 				</SectionContainer>
@@ -141,9 +118,9 @@ export default async function Home() {
 						description="With hundreds of volumes across various genres, there's something for every anime fan!"
 						badgeColor="bg-purple-200"
 					/>
-					<div className="flex items-center justify-center mx-auto max-w-7xl py-12 flex-col">
+					<div className="mx-auto flex max-w-7xl flex-col items-center justify-center py-12">
 						<div className="relative">
-							<div className="overflow-hidden lg:w-[800px] lg:h-[450px] md:w-[540px] md:h-[300px] w-[320px] h-[180px] border-2 rounded-2xl border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+							<div className="h-[180px] w-[320px] overflow-hidden rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:h-[300px] md:w-[540px] lg:h-[450px] lg:w-[800px]">
 								<Image
 									src={LibraryPhoto}
 									height={450}
@@ -151,18 +128,19 @@ export default async function Home() {
 									draggable={false}
 									alt="SAMSoc manga library collection"
 									className="aspect-video object-cover"
-									priority={false}
 									placeholder="blur"
+									loading="lazy"
+									sizes="(max-width: 768px) 320px, (max-width: 1024px) 540px, 800px"
 								/>
 							</div>
 							<LibraryStats />
 						</div>
-						<div className="text-center pt-32">
-							<Button className="bg-button2 hover:bg-button1 hover:cursor-pointer text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-								<Link
-									href="/library"
-									className="flex items-center"
-								>
+						<div className="pt-32 text-center">
+							<Button
+								asChild
+								className="border-2 border-black bg-button2 text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer hover:bg-button1"
+							>
+								<Link href="/library">
 									<Library className="mr-2 h-4 w-4" />
 									View Full Library
 								</Link>
@@ -183,7 +161,7 @@ export default async function Home() {
 						description="Here you can look at all the benefits you can get from one of our memberships!"
 					/>
 					<div className="flex items-center justify-center py-8">
-						<div className="grid gap-8 md:grid-cols-2 w-full lg:w-4xl">
+						<div className="grid w-full gap-8 md:grid-cols-2 lg:w-4xl">
 							<MembershipCard
 								title="Free"
 								color="bg-membership2"
@@ -202,11 +180,11 @@ export default async function Home() {
 						</div>
 					</div>
 					<div className="text-center">
-						<Button className="bg-button2 hover:bg-button1 hover:cursor-pointer text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-							<Link
-								href="https://surreyunion.org/your-activity/clubs-and-societies-a-z/anime-manga-society"
-								className="flex items-center"
-							>
+						<Button
+							asChild
+							className="border-2 border-black bg-button2 text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer hover:bg-button1"
+						>
+							<Link href="https://surreyunion.org/your-activity/clubs-and-societies-a-z/anime-manga-society">
 								<UserPlus className="mr-2 h-4 w-4" />
 								View Sign-Up Page
 							</Link>
