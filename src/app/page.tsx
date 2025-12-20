@@ -1,45 +1,19 @@
 import { Suspense } from 'react';
-import dynamic from 'next/dynamic';
 import { api, HydrateClient } from '~/trpc/server';
 import { SectionContainer } from './_components/section-container';
 import { SectionHeading } from './_components/section-heading';
 import { FeatureCard } from './_components/landing/feature-card';
+import { MembershipCard } from './_components/landing/membership-card';
+import { AnimeSection } from './_components/landing/anime-section';
+import { CommitteeSection } from './_components/landing/committee-section';
+import HeroCarousel from './_components/landing/hero-carousel';
+import MarqueeSection from './_components/landing/marquee-section';
 import { Check, Library, UserPlus } from 'lucide-react';
 import { Button } from './_components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
 import LibraryPhoto from '../../public/images/sam_manga.webp';
 import { FEATURES, FREE_FEATURES, PAID_FEATURES } from '~/lib/constants';
-import MarqueeSection from './_components/landing/marquee-section';
-
-const HeroCarousel = dynamic(
-	() => import('./_components/landing/hero-carousel'),
-	{ ssr: true },
-);
-
-const AnimeSection = dynamic(
-	() =>
-		import('./_components/landing/anime-section').then((mod) => ({
-			default: mod.AnimeSection,
-		})),
-	{ ssr: true },
-);
-
-const CommitteeSection = dynamic(
-	() =>
-		import('./_components/landing/committee-section').then((mod) => ({
-			default: mod.CommitteeSection,
-		})),
-	{ ssr: true },
-);
-
-const MembershipCard = dynamic(
-	() =>
-		import('./_components/landing/membership-card').then((mod) => ({
-			default: mod.MembershipCard,
-		})),
-	{ ssr: true },
-);
 
 const LIBRARY_STATS = [
 	'250+ manga volumes',
@@ -72,8 +46,15 @@ function LibraryStats() {
 }
 
 async function CarouselSection() {
-	const carouselResult = await api.post.getCarouselData();
-	const carouselData = carouselResult.data ?? [];
+	let carouselData: Awaited<
+		ReturnType<typeof api.post.getCarouselData>
+	>['data'] = [];
+	try {
+		const carouselResult = await api.post.getCarouselData();
+		carouselData = carouselResult.data ?? [];
+	} catch (error) {
+		console.error('Failed to fetch carousel data:', error);
+	}
 
 	return (
 		<HeroCarousel
