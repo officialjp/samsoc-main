@@ -1,7 +1,7 @@
 import { SectionContainer } from '../_components/section-container';
 import { SectionHeading } from '../_components/section-heading';
 import type { Metadata } from 'next';
-import { api, HydrateClient } from '~/trpc/server';
+import { api } from '~/trpc/server';
 import { Calendar } from '../_components/calendar/calendar';
 import type { Event } from '@prisma/client';
 
@@ -90,36 +90,31 @@ function generateWeeklySessions(regularSessions: Event[]): Event[] {
 }
 
 export default async function CalendarPage() {
-	const [eventResponse, sessionResponse] = await Promise.all([
-		api.post.getSpecialEvents(),
-		api.post.getRegularSessions(),
+	const [eventData, regularSessions] = await Promise.all([
+		api.event.getSpecialEvents(),
+		api.event.getRegularSessions(),
 	]);
-
-	const eventData = eventResponse.data ?? [];
-	const regularSessions = sessionResponse.data ?? [];
 
 	const weeklySessions = generateWeeklySessions(regularSessions);
 	const allEvents = [...eventData, ...weeklySessions] as Event[];
 
 	return (
-		<HydrateClient>
-			<div className="flex min-h-screen flex-col w-full">
-				<main className="flex-1">
-					<SectionContainer>
-						<SectionHeading
-							badge="SCHEDULE"
-							title="Event Calendar"
-							description="Browse our upcoming events and regular anime screenings. Click on any event for more details!"
-							badgeColor="bg-purple-200"
-							className="mb-12"
-						/>
-						<div>
-							<Calendar events={allEvents} />
-							<EventColorGuide />
-						</div>
-					</SectionContainer>
-				</main>
-			</div>
-		</HydrateClient>
+		<div className="flex min-h-screen flex-col w-full">
+			<main className="flex-1">
+				<SectionContainer>
+					<SectionHeading
+						badge="SCHEDULE"
+						title="Event Calendar"
+						description="Browse our upcoming events and regular anime screenings. Click on any event for more details!"
+						badgeColor="bg-purple-200"
+						className="mb-12"
+					/>
+					<div>
+						<Calendar events={allEvents} />
+						<EventColorGuide />
+					</div>
+				</SectionContainer>
+			</main>
+		</div>
 	);
 }

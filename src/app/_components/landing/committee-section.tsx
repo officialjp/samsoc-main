@@ -4,8 +4,7 @@ import { CommitteeCard } from './committee-card';
 import { SectionHeading } from '../section-heading';
 
 async function CommitteeFetcher() {
-	const committeResult = await api.post.getCommitteeMembers();
-	const committee = committeResult.data ?? [];
+	const committee = await api.committee.getPublicMembers();
 
 	return (
 		<div className="flex flex-col lg:flex-row gap-8 items-center justify-center py-6 auto-rows-fr">

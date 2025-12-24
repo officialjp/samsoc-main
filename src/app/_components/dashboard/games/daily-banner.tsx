@@ -27,7 +27,7 @@ const adminSchema = z.object({
 });
 
 // The inner component
-function SchedulerContent() {
+function BannerSchedulerContent() {
 	const utils = api.useUtils();
 	const router = useRouter();
 	const [dateHasEntry, setDateHasEntry] = useState(false);
@@ -47,19 +47,20 @@ function SchedulerContent() {
 	};
 
 	// Check if the selected date already has an entry
-	const { data: dateCheckResult } = api.anime.checkDateScheduled.useQuery(
-		{ date: new Date(scheduledDate + 'T00:00:00Z') },
-		{ enabled: !!scheduledDate },
-	);
+	const { data: dateCheckResult } =
+		api.anime.checkBannerDateScheduled.useQuery(
+			{ date: new Date(scheduledDate + 'T00:00:00Z') },
+			{ enabled: !!scheduledDate },
+		);
 
 	useEffect(() => {
 		setDateHasEntry(!!dateCheckResult?.hasSchedule);
 	}, [dateCheckResult]);
 
-	const scheduleMutation = api.anime.scheduleDaily.useMutation({
+	const scheduleMutation = api.anime.scheduleDailyBanner.useMutation({
 		onSuccess: () => {
-			toast.success('Daily anime scheduled successfully!');
-			void utils.anime.getAnswerAnime.invalidate();
+			toast.success('Daily banner anime scheduled successfully!');
+			void utils.anime.getBannerAnswerAnime.invalidate();
 			// Clear the search param from URL
 			router.push(window.location.pathname);
 			form.reset({
@@ -74,7 +75,7 @@ function SchedulerContent() {
 
 	async function onSubmit(values: z.infer<typeof adminSchema>) {
 		if (dateHasEntry) {
-			toast.error('This date already has a scheduled anime.');
+			toast.error('This date already has a scheduled banner anime.');
 			return;
 		}
 		await scheduleMutation.mutateAsync({
@@ -94,13 +95,14 @@ function SchedulerContent() {
 					className="space-y-4 p-6 border rounded-lg shadow-md bg-white"
 				>
 					<h3 className="text-lg font-semibold border-b pb-2">
-						Anime Scheduler
+						Banner Game Scheduler
 					</h3>
 
 					<div className="bg-blue-50 border border-blue-200 p-3 rounded-lg text-sm">
 						<p className="text-blue-800">
 							Search for an anime below. Its ID will be captured
-							automatically.
+							automatically. This anime will be featured in the
+							Zoomed-In Banner game.
 						</p>
 					</div>
 
@@ -147,7 +149,7 @@ function SchedulerContent() {
 									{dateHasEntry && (
 										<FormDescription className="text-red-600 font-medium">
 											This date already has a scheduled
-											anime
+											banner anime
 										</FormDescription>
 									)}
 									<FormMessage />
@@ -163,7 +165,7 @@ function SchedulerContent() {
 							) : (
 								<>
 									<Save className="w-4 h-4 mr-2" />
-									Save Schedule
+									Save Banner Schedule
 								</>
 							)}
 						</Button>
@@ -175,19 +177,19 @@ function SchedulerContent() {
 }
 
 // The main export that handles the Suspense bailout
-export default function AdminAnimeScheduler() {
+export default function AdminBannerScheduler() {
 	return (
 		<Suspense
 			fallback={
 				<div className="flex flex-col items-center justify-center p-12 border rounded-lg shadow-md bg-white max-w-2xl mx-auto">
 					<Loader2 className="w-10 h-10 animate-spin text-blue-600 mb-4" />
 					<p className="font-semibold text-center">
-						Loading Admin Tools...
+						Loading Banner Scheduler Tools...
 					</p>
 				</div>
 			}
 		>
-			<SchedulerContent />
+			<BannerSchedulerContent />
 		</Suspense>
 	);
 }

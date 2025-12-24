@@ -5,6 +5,7 @@ import DashboardTabArray from '~/app/_components/dashboard/dashboard-tab-array';
 import DashButtons from '~/app/_components/dashboard/dashboard-link-buttons';
 import AdminAnimeScheduler from '~/app/_components/dashboard/games/daily-anime';
 import AdminStudioScheduler from '~/app/_components/dashboard/games/daily-studio';
+import AdminBannerScheduler from '~/app/_components/dashboard/games/daily-banner';
 
 const carouselPageObj = [
 	{
@@ -14,6 +15,10 @@ const carouselPageObj = [
 	{
 		name: 'Change Daily Studio',
 		page: <AdminStudioScheduler />,
+	},
+	{
+		name: 'Change Daily Banner',
+		page: <AdminBannerScheduler />,
 	},
 ];
 

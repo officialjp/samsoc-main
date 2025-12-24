@@ -1,5 +1,5 @@
 'use client';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import GalleryFilter from '~/app/_components/gallery/gallery-filter';
 import GalleryImage from '~/app/_components/gallery/gallery-image';
 import { Button } from '~/app/_components/ui/button';
@@ -24,40 +24,36 @@ const CURRENT_YEAR = new Date().getFullYear();
 const START_YEAR = 2022;
 const ITEMS_PER_PAGE = 15;
 
-const generateYears = (): string[] => {
-	const yearsCount = CURRENT_YEAR - START_YEAR + 1;
-	return [
-		'All',
-		...Array.from({ length: yearsCount }, (_, i) => String(START_YEAR + i)),
-	];
-};
+const YEARS = [
+	'All',
+	...Array.from({ length: CURRENT_YEAR - START_YEAR + 1 }, (_, i) =>
+		String(START_YEAR + i),
+	),
+];
 
 export function GallerySearch({ initialItems }: GallerySearchProps) {
 	const [activeCategory, setActiveCategory] = useState<string>('All');
 	const [activeYear, setActiveYear] = useState<string>('All');
 	const [currentPage, setCurrentPage] = useState(1);
 
-	const years = useMemo(() => generateYears(), []);
+	const filteredItems =
+		activeCategory === 'All' && activeYear === 'All'
+			? initialItems
+			: initialItems.filter((item) => {
+					const categoryMatch =
+						activeCategory === 'All' ||
+						item.category === activeCategory;
+					const yearMatch =
+						activeYear === 'All' ||
+						item.year === parseInt(activeYear);
+					return categoryMatch && yearMatch;
+				});
 
-	const filteredItems = useMemo(() => {
-		if (activeCategory === 'All' && activeYear === 'All') {
-			return initialItems;
-		}
-
-		return initialItems.filter((item) => {
-			const categoryMatch =
-				activeCategory === 'All' || item.category === activeCategory;
-			const yearMatch =
-				activeYear === 'All' || item.year === parseInt(activeYear);
-			return categoryMatch && yearMatch;
-		});
-	}, [initialItems, activeCategory, activeYear]);
-
-	const paginatedItems = useMemo(() => {
-		const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-		const endIndex = startIndex + ITEMS_PER_PAGE;
-		return filteredItems.slice(startIndex, endIndex);
-	}, [filteredItems, currentPage]);
+	const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+	const paginatedItems = filteredItems.slice(
+		startIndex,
+		startIndex + ITEMS_PER_PAGE,
+	);
 
 	const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
 
@@ -108,7 +104,7 @@ export function GallerySearch({ initialItems }: GallerySearchProps) {
 
 						<GalleryFilter
 							categories={CATEGORIES}
-							years={years}
+							years={YEARS}
 							onCategoryChange={handleCategoryChange}
 							onYearChange={handleYearChange}
 							activeCategory={activeCategory}

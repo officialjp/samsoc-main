@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import {
 	format,
 	startOfMonth,
@@ -29,30 +29,23 @@ export function CalendarCells({
 	onDateClick,
 }: CalendarCellsProps) {
 	const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-	const calendarDays = useMemo(() => {
-		const monthStart = startOfMonth(currentMonth);
-		const monthEnd = endOfMonth(monthStart);
-		const startDate = startOfWeek(monthStart);
-		const endDate = endOfWeek(monthEnd);
+	const monthStart = startOfMonth(currentMonth);
+	const monthEnd = endOfMonth(monthStart);
+	const startDate = startOfWeek(monthStart);
+	const endDate = endOfWeek(monthEnd);
 
-		const days: Date[] = [];
-		let day = startDate;
+	const calendarDays: Date[] = [];
+	let day = startDate;
 
-		while (day <= endDate) {
-			days.push(day);
-			day = addDays(day, 1);
-		}
+	while (day <= endDate) {
+		calendarDays.push(day);
+		day = addDays(day, 1);
+	}
 
-		return days;
-	}, [currentMonth]);
-
-	const weeks = useMemo(() => {
-		const weeksArray: Date[][] = [];
-		for (let i = 0; i < calendarDays.length; i += 7) {
-			weeksArray.push(calendarDays.slice(i, i + 7));
-		}
-		return weeksArray;
-	}, [calendarDays]);
+	const weeks: Date[][] = [];
+	for (let i = 0; i < calendarDays.length; i += 7) {
+		weeks.push(calendarDays.slice(i, i + 7));
+	}
 
 	return (
 		<div>

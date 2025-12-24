@@ -106,6 +106,32 @@ export const mangaRouter = createTRPCRouter({
 			orderBy: { id: 'asc' },
 		});
 	}),
+
+	/**
+	 * Optimized query for the public library page.
+	 * Includes genres and uses efficient field selection.
+	 */
+	getLibraryData: publicProcedure.query(async ({ ctx }) => {
+		const allManga = await ctx.db.manga.findMany({
+			select: {
+				id: true,
+				title: true,
+				author: true,
+				volume: true,
+				borrowed_by: true,
+				source: true,
+				genres: {
+					select: {
+						id: true,
+						name: true,
+					},
+				},
+			},
+			orderBy: { id: 'asc' },
+		});
+
+		return { data: allManga };
+	}),
 	deleteItem: adminProcedure
 		.input(z.object({ id: z.number().int().min(1) }))
 		.mutation(async ({ ctx, input }) => {

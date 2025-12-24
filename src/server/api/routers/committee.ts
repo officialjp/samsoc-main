@@ -87,6 +87,22 @@ export const committeeRouter = createTRPCRouter({
 		});
 	}),
 
+	/**
+	 * Optimized query for public landing page - only fetches display fields
+	 * Used by: CommitteeSection on landing page
+	 */
+	getPublicMembers: publicProcedure.query(async ({ ctx }) => {
+		return ctx.db.committee.findMany({
+			select: {
+				id: true,
+				name: true,
+				role: true,
+				source: true,
+			},
+			orderBy: { id: 'asc' },
+		});
+	}),
+
 	updateMember: adminProcedure
 		.input(updateMemberInputSchema)
 		.mutation(async ({ ctx, input }) => {

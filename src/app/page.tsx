@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { api, HydrateClient } from '~/trpc/server';
+import { api } from '~/trpc/server';
 import { SectionContainer } from './_components/section-container';
 import { SectionHeading } from './_components/section-heading';
 import { FeatureCard } from './_components/landing/feature-card';
@@ -47,10 +47,10 @@ function LibraryStats() {
 
 async function CarouselSection() {
 	let carouselData: Awaited<
-		ReturnType<typeof api.post.getCarouselData>
+		ReturnType<typeof api.carousel.getFullData>
 	>['data'] = [];
 	try {
-		const carouselResult = await api.post.getCarouselData();
+		const carouselResult = await api.carousel.getFullData();
 		carouselData = carouselResult.data ?? [];
 	} catch (error) {
 		console.error('Failed to fetch carousel data:', error);
@@ -73,124 +73,122 @@ function CarouselSkeleton() {
 
 export default function Home() {
 	return (
-		<HydrateClient>
-			<main className="flex min-h-screen w-full flex-col">
-				<section className="flex w-full flex-col items-center justify-center pb-3 pt-0 md:pt-3 lg:pt-[3vh]">
-					<div className="container w-full max-w-full px-0 md:px-6 lg:px-8">
-						<Suspense fallback={<CarouselSkeleton />}>
-							<CarouselSection />
-						</Suspense>
-					</div>
-					<MarqueeSection />
-				</section>
+		<main className="flex min-h-screen w-full flex-col">
+			<section className="flex w-full flex-col items-center justify-center pb-3 pt-0 md:pt-3 lg:pt-[3vh]">
+				<div className="container w-full max-w-full px-0 md:px-6 lg:px-8">
+					<Suspense fallback={<CarouselSkeleton />}>
+						<CarouselSection />
+					</Suspense>
+				</div>
+				<MarqueeSection />
+			</section>
 
-				<SectionContainer id="about">
-					<SectionHeading
-						badge="ABOUT US"
-						title="What We're All About"
-						description="We're a society for all people that love or are interested in anime and manga."
-						badgeColor="bg-purple-200"
-					/>
-					<div className="mx-auto grid max-w-7xl items-center gap-6 py-12 lg:grid-cols-3 lg:gap-12">
-						{FEATURES.map((feature) => (
-							<FeatureCard
-								key={feature.title}
-								icon={feature.icon}
-								title={feature.title}
-								description={feature.description}
-								color={feature.color}
-							/>
-						))}
-					</div>
-				</SectionContainer>
+			<SectionContainer id="about">
+				<SectionHeading
+					badge="ABOUT US"
+					title="What We're All About"
+					description="We're a society for all people that love or are interested in anime and manga."
+					badgeColor="bg-purple-200"
+				/>
+				<div className="mx-auto grid max-w-7xl items-center gap-6 py-12 lg:grid-cols-3 lg:gap-12">
+					{FEATURES.map((feature) => (
+						<FeatureCard
+							key={feature.title}
+							icon={feature.icon}
+							title={feature.title}
+							description={feature.description}
+							color={feature.color}
+						/>
+					))}
+				</div>
+			</SectionContainer>
 
-				<SectionContainer
-					id="now-streaming"
-					className="w-full overflow-hidden py-12 md:py-16"
-				>
-					<AnimeSection />
-				</SectionContainer>
+			<SectionContainer
+				id="now-streaming"
+				className="w-full overflow-hidden py-12 md:py-16"
+			>
+				<AnimeSection />
+			</SectionContainer>
 
-				<SectionContainer id="library">
-					<SectionHeading
-						badge="MANGA LIBRARY"
-						title="Dive Into Our Manga Collection"
-						description="With hundreds of volumes across various genres, there's something for every anime fan!"
-						badgeColor="bg-purple-200"
-					/>
-					<div className="mx-auto flex max-w-7xl flex-col items-center justify-center py-12">
-						<div className="relative">
-							<div className="h-[180px] w-[320px] overflow-hidden rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:h-[300px] md:w-[540px] lg:h-[450px] lg:w-[800px]">
-								<Image
-									src={LibraryPhoto}
-									height={450}
-									width={800}
-									draggable={false}
-									alt="SAMSoc manga library collection"
-									className="aspect-video object-cover"
-									placeholder="empty"
-									sizes="(max-width: 768px) 320px, (max-width: 1024px) 540px, 800px"
-								/>
-							</div>
-							<LibraryStats />
-						</div>
-						<div className="pt-32 text-center">
-							<Button
-								asChild
-								className="border-2 border-black bg-button2 text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer hover:bg-button1"
-							>
-								<Link href="/library">
-									<Library className="mr-2 h-4 w-4" />
-									View Full Library
-								</Link>
-							</Button>
-						</div>
-					</div>
-				</SectionContainer>
-
-				<SectionContainer id="committee">
-					<CommitteeSection />
-				</SectionContainer>
-
-				<SectionContainer id="join">
-					<SectionHeading
-						badge="MEMBERSHIP"
-						title="Get Your Membership Here"
-						badgeColor="bg-purple-200"
-						description="Here you can look at all the benefits you can get from one of our memberships!"
-					/>
-					<div className="flex items-center justify-center py-8">
-						<div className="grid w-full gap-8 md:grid-cols-2 lg:w-4xl">
-							<MembershipCard
-								title="Free"
-								color="bg-membership2"
-								price="£0"
-								flavorText="Your gateway into the SAMSoC community"
-								features={FREE_FEATURES}
-							/>
-							<MembershipCard
-								title="Premium"
-								color="bg-membership1"
-								price="£2"
-								flavorText="Satiate your manga reading hunger"
-								features={PAID_FEATURES}
-								recommended={true}
+			<SectionContainer id="library">
+				<SectionHeading
+					badge="MANGA LIBRARY"
+					title="Dive Into Our Manga Collection"
+					description="With hundreds of volumes across various genres, there's something for every anime fan!"
+					badgeColor="bg-purple-200"
+				/>
+				<div className="mx-auto flex max-w-7xl flex-col items-center justify-center py-12">
+					<div className="relative">
+						<div className="h-[180px] w-[320px] overflow-hidden rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:h-[300px] md:w-[540px] lg:h-[450px] lg:w-[800px]">
+							<Image
+								src={LibraryPhoto}
+								height={450}
+								width={800}
+								draggable={false}
+								alt="SAMSoc manga library collection"
+								className="aspect-video object-cover"
+								placeholder="blur"
+								sizes="(max-width: 768px) 320px, (max-width: 1024px) 540px, 800px"
 							/>
 						</div>
+						<LibraryStats />
 					</div>
-					<div className="text-center">
+					<div className="pt-32 text-center">
 						<Button
 							asChild
 							className="border-2 border-black bg-button2 text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer hover:bg-button1"
 						>
-							<Link href="https://surreyunion.org/your-activity/clubs-and-societies-a-z/anime-manga-society">
-								<UserPlus className="mr-2 h-4 w-4" />
-								View Sign-Up Page
+							<Link href="/library">
+								<Library className="mr-2 h-4 w-4" />
+								View Full Library
 							</Link>
 						</Button>
 					</div>
-				</SectionContainer>
-			</main>
-		</HydrateClient>
+				</div>
+			</SectionContainer>
+
+			<SectionContainer id="committee">
+				<CommitteeSection />
+			</SectionContainer>
+
+			<SectionContainer id="join">
+				<SectionHeading
+					badge="MEMBERSHIP"
+					title="Get Your Membership Here"
+					badgeColor="bg-purple-200"
+					description="Here you can look at all the benefits you can get from one of our memberships!"
+				/>
+				<div className="flex items-center justify-center py-8">
+					<div className="grid w-full gap-8 md:grid-cols-2 lg:w-4xl">
+						<MembershipCard
+							title="Free"
+							color="bg-membership2"
+							price="£0"
+							flavorText="Your gateway into the SAMSoC community"
+							features={FREE_FEATURES}
+						/>
+						<MembershipCard
+							title="Premium"
+							color="bg-membership1"
+							price="£2"
+							flavorText="Satiate your manga reading hunger"
+							features={PAID_FEATURES}
+							recommended={true}
+						/>
+					</div>
+				</div>
+				<div className="text-center">
+					<Button
+						asChild
+						className="border-2 border-black bg-button2 text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer hover:bg-button1"
+					>
+						<Link href="https://surreyunion.org/your-activity/clubs-and-societies-a-z/anime-manga-society">
+							<UserPlus className="mr-2 h-4 w-4" />
+							View Sign-Up Page
+						</Link>
+					</Button>
+				</div>
+			</SectionContainer>
+		</main>
 	);
 }

@@ -1,14 +1,13 @@
 import { Suspense } from 'react';
 import { api } from '~/trpc/server';
-import { AnimeCard } from './anime-card'; 
-import { SectionHeading } from '../section-heading'; 
+import { AnimeCard } from './anime-card';
+import { SectionHeading } from '../section-heading';
 import { Button } from '../ui/button';
 import { CalendarDays } from 'lucide-react';
 import Link from 'next/link';
 
 async function AnimeFetcher() {
-	const cardResult = await api.post.getAnimeCardData();
-	const cardData = cardResult.data ?? [];
+	const cardData = await api.animecard.getPublicCards();
 
 	return <AnimeCard animes={cardData} />;
 }

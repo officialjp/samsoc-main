@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,10 +7,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// =============================================================================
+// ANIME & RELATED MODELS
+// =============================================================================
+
 model Anime {
-  id             Int          @id
+  id             Int     @id
   title          String
-  description    String?      @db.Text
+  description    String?
   image          String?
   type           String?
   episodes       String?
@@ -22,11 +23,6 @@ model Anime {
   releasedSeason String?
   releasedYear   Float?
   source         String?
-  genres         String?
-  themes         String?
-  studios        String?
-  producers      String?
-  demographic    String?
   duration       String?
   rating         String?
   score          Float?
@@ -36,73 +32,227 @@ model Anime {
   favorites      String?
   characters     Json?
   sourceUrl      String?
-  dailyAnimes    DailyAnime[]
+
+  // Normalized relationships
+  animeGenres    AnimeGenre[]
+  animeThemes    AnimeTheme[]
+  animeStudios   AnimeStudio[]
+  animeProducers AnimeProducer[]
+  demographicRef Demographic?    @relation(fields: [demographicId], references: [id])
+  demographicId  Int?
+
+  // Game relationships
+  dailySchedules DailySchedule[]
+
+  @@index([score])
+  @@index([releasedYear])
+  @@index([title])
 }
 
-model DailyStudio {
-  date       DateTime @id @unique
-  studioName String
+// =============================================================================
+// NORMALIZED LOOKUP TABLES
+// =============================================================================
+
+model Studio {
+  id             Int             @id @default(autoincrement())
+  name           String          @unique
+  animes         AnimeStudio[]
+  dailySchedules DailySchedule[]
+
+  @@index([name])
 }
 
-// NEW: Track studio game guesses per user per day
-model StudioGameSession {
-  id        String        @id @default(cuid())
+model Genre {
+  id     Int          @id @default(autoincrement())
+  name   String       @unique
+  animes AnimeGenre[]
+  cards  AnimeCard[]  @relation("AnimeCardToGenre")
+  mangas Manga[]      @relation("GenreToManga")
+
+  @@index([name])
+}
+
+model Theme {
+  id     Int          @id @default(autoincrement())
+  name   String       @unique
+  animes AnimeTheme[]
+
+  @@index([name])
+}
+
+model Producer {
+  id     Int             @id @default(autoincrement())
+  name   String          @unique
+  animes AnimeProducer[]
+
+  @@index([name])
+}
+
+model Demographic {
+  id     Int     @id @default(autoincrement())
+  name   String  @unique
+  animes Anime[]
+
+  @@index([name])
+}
+
+// =============================================================================
+// JUNCTION TABLES FOR MANY-TO-MANY RELATIONSHIPS
+// =============================================================================
+
+model AnimeGenre {
+  animeId Int
+  genreId Int
+  anime   Anime @relation(fields: [animeId], references: [id], onDelete: Cascade)
+  genre   Genre @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@id([animeId, genreId])
+  @@index([genreId])
+}
+
+model AnimeTheme {
+  animeId Int
+  themeId Int
+  anime   Anime @relation(fields: [animeId], references: [id], onDelete: Cascade)
+  theme   Theme @relation(fields: [themeId], references: [id], onDelete: Cascade)
+
+  @@id([animeId, themeId])
+  @@index([themeId])
+}
+
+model AnimeStudio {
+  animeId  Int
+  studioId Int
+  anime    Anime  @relation(fields: [animeId], references: [id], onDelete: Cascade)
+  studio   Studio @relation(fields: [studioId], references: [id], onDelete: Cascade)
+
+  @@id([animeId, studioId])
+  @@index([studioId])
+}
+
+model AnimeProducer {
+  animeId    Int
+  producerId Int
+  anime      Anime    @relation(fields: [animeId], references: [id], onDelete: Cascade)
+  producer   Producer @relation(fields: [producerId], references: [id], onDelete: Cascade)
+
+  @@id([animeId, producerId])
+  @@index([producerId])
+}
+
+// =============================================================================
+// DAILY GAME SCHEDULE (CONSOLIDATED)
+// =============================================================================
+// Game types: 'wordle', 'banner', 'studio'
+
+model DailySchedule {
+  id       Int      @id @default(autoincrement())
+  date     DateTime
+  gameType String   // 'wordle', 'banner', 'studio'
+
+  // Target references (one will be set based on gameType)
+  animeId  Int?
+  studioId Int?
+  anime    Anime?   @relation(fields: [animeId], references: [id])
+  studio   Studio?  @relation(fields: [studioId], references: [id])
+
+  @@unique([date, gameType])
+  @@index([date])
+  @@index([gameType])
+  @@index([animeId])
+  @@index([studioId])
+}
+
+// =============================================================================
+// GAME SESSION (CONSOLIDATED)
+// =============================================================================
+// Game types: 'wordle', 'banner', 'studio'
+
+model GameSession {
+  id        String      @id @default(cuid())
   userId    String
-  date      DateTime      @default(now())
-  studioId  String // The ID of today's studio answer
-  guesses   StudioGuess[]
-  won       Boolean       @default(false)
-  failed    Boolean       @default(false)
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gameType  String      // 'wordle', 'banner', 'studio'
+  date      DateTime    @default(now())
+  targetId  String      // animeId (as string) for wordle/banner, studioName for studio
+  won       Boolean     @default(false)
+  failed    Boolean     @default(false)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  guesses   GameGuess[]
 
-  @@unique([userId, date]) // One session per user per day
+  @@unique([userId, date, gameType])
   @@index([userId])
   @@index([date])
+  @@index([gameType])
 }
 
-// NEW: Track individual guesses
-model StudioGuess {
-  id         String            @id @default(cuid())
-  sessionId  String
-  studioName String
-  createdAt  DateTime          @default(now())
-  session    StudioGameSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+// =============================================================================
+// GAME GUESS (CONSOLIDATED)
+// =============================================================================
+// guessData format varies by game type:
+//   - wordle: { animeId, title, ... comparison data }
+//   - banner: { animeId }
+//   - studio: { studioName }
 
-  @@index([sessionId])
-}
-
-// NEW: Track anime wordle game sessions per user per day
-model WordleGameSession {
-  id        String        @id @default(cuid())
-  userId    String
-  date      DateTime      @default(now())
-  animeId   Int // The ID of today's answer anime
-  guesses   WordleGuess[]
-  won       Boolean       @default(false)
-  failed    Boolean       @default(false)
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-  user      User          @relation("WordleGameSessions", fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, date]) // One session per user per day
-  @@index([userId])
-  @@index([date])
-}
-
-// NEW: Track individual wordle guesses with full anime data
-model WordleGuess {
-  id        String            @id @default(cuid())
+model GameGuess {
+  id        String      @id @default(cuid())
   sessionId String
-  guessData Json // Store the full guess data as JSON
-  createdAt DateTime          @default(now())
-  session   WordleGameSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  guessData Json        // Flexible storage for any guess type
+  createdAt DateTime    @default(now())
+  session   GameSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
   @@index([sessionId])
 }
 
-// Necessary for Next auth
+// =============================================================================
+// GAME STATISTICS
+// =============================================================================
+
+model GameStats {
+  id           String    @id @default(cuid())
+  userId       String
+  gameType     String
+  wins         Int       @default(0)
+  lastWonAt    DateTime?
+  totalTries   Int       @default(0)
+  dailyGuesses Int       @default(0)
+  lastGuessAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, gameType])
+  @@index([userId])
+  @@index([gameType])
+  @@index([wins])
+  @@index([userId, gameType, wins])
+}
+
+// =============================================================================
+// USER & AUTHENTICATION
+// =============================================================================
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  role          String    @default("user")
+
+  // Auth relationships
+  accounts Account[]
+  sessions Session[]
+
+  // Game relationships
+  gameStats    GameStats[]
+  gameSessions GameSession[]
+
+  @@index([email])
+  @@index([role])
+}
+
 model Account {
   id                       String  @id @default(cuid())
   userId                   String
@@ -116,11 +266,36 @@ model Account {
   scope                    String?
   id_token                 String?
   session_state            String?
-  user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   refresh_token_expires_in Int?
+  user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expires])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@index([expires])
+}
+
+// =============================================================================
+// CONTENT MODELS
+// =============================================================================
 
 model Carousel {
   id            Int    @id @default(autoincrement())
@@ -128,6 +303,8 @@ model Carousel {
   mobileSource  String
   desktopSource String
   order         Int    @default(0)
+
+  @@index([order])
 }
 
 model Committee {
@@ -135,16 +312,22 @@ model Committee {
   role   String
   source String?
   name   String
+
+  @@index([role])
 }
 
 model Image {
   id              Int      @id @default(autoincrement())
-  source          String
-  thumbnailSource String
   alt             String
   category        String
   year            Int
+  source          String
   createdAt       DateTime @default(now())
+  thumbnailSource String
+
+  @@index([category])
+  @@index([year])
+  @@index([category, year])
 }
 
 model Event {
@@ -156,6 +339,8 @@ model Event {
   color              String
   is_regular_session Boolean
   session_count      Int?
+
+  @@index([date])
 }
 
 model Manga {
@@ -165,14 +350,10 @@ model Manga {
   volume      Int
   borrowed_by String?
   source      String
-  genres      Genre[]
-}
+  genres      Genre[] @relation("GenreToManga")
 
-model Genre {
-  id     Int         @id @default(autoincrement())
-  name   String      @unique
-  cards  AnimeCard[]
-  mangas Manga[]
+  @@index([title])
+  @@index([author])
 }
 
 model AnimeCard {
@@ -184,54 +365,8 @@ model AnimeCard {
   total_episodes Int
   show_type      String
   studio         String
-  genres         Genre[]
-}
+  genres         Genre[] @relation("AnimeCardToGenre")
 
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model DailyAnime {
-  date    DateTime @id @unique
-  animeId Int
-  anime   Anime    @relation(fields: [animeId], references: [id])
-}
-
-model User {
-  id                 String              @id @default(cuid())
-  name               String?
-  email              String?             @unique
-  emailVerified      DateTime?
-  image              String?
-  role               String              @default("user")
-  accounts           Account[]
-  sessions           Session[]
-  studioGameSessions StudioGameSession[]
-  wordleGameSessions WordleGameSession[] @relation("WordleGameSessions")
-
-  // Anime Wordle stats
-  wordleWins         Int       @default(0)
-  wordleLastWonAt    DateTime?
-  wordleTotalTries   Int       @default(0)
-  wordleDailyGuesses Int       @default(0)
-  wordleLastGuessAt  DateTime?
-
-  // Studio Game stats
-  studioWins         Int       @default(0)
-  studioLastWonAt    DateTime?
-  studioTotalTries   Int       @default(0)
-  studioDailyGuesses Int       @default(0)
-  studioLastGuessAt  DateTime?
-}
-
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
+  @@index([title])
+  @@index([studio])
 }

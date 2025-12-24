@@ -1,6 +1,6 @@
 import { SectionContainer } from '~/app/_components/section-container';
 import { SectionHeading } from '~/app/_components/section-heading';
-import { api, HydrateClient } from '~/trpc/server';
+import { api } from '~/trpc/server';
 import { LibrarySearch } from '~/app/_components/library/library-search';
 import type { Metadata } from 'next';
 
@@ -80,7 +80,7 @@ const ALL_GENRES = [
 ] as const;
 
 export default async function LibraryPage() {
-	const mangaResponse = await api.post.getMangaData();
+	const mangaResponse = await api.manga.getLibraryData();
 	const rawMangaData = (mangaResponse?.data ?? []) as MangaWithGenres[];
 
 	const mangaData: MangaData[] = rawMangaData.map((manga) => ({
@@ -94,22 +94,20 @@ export default async function LibraryPage() {
 	}));
 
 	return (
-		<HydrateClient>
-			<main className="min-h-screen w-full">
-				<SectionContainer>
-					<SectionHeading
-						badge="MANGA"
-						title="Our Library"
-						description="Browse our collection of manga available to borrow. Paid members can check out up to 3 volumes at a time for up to 2 weeks."
-						badgeColor="bg-purple-200"
-						className="mb-8"
-					/>
-					<LibrarySearch
-						initialMangaData={mangaData}
-						allGenres={ALL_GENRES}
-					/>
-				</SectionContainer>
-			</main>
-		</HydrateClient>
+		<main className="min-h-screen w-full">
+			<SectionContainer>
+				<SectionHeading
+					badge="MANGA"
+					title="Our Library"
+					description="Browse our collection of manga available to borrow. Paid members can check out up to 3 volumes at a time for up to 2 weeks."
+					badgeColor="bg-purple-200"
+					className="mb-8"
+				/>
+				<LibrarySearch
+					initialMangaData={mangaData}
+					allGenres={ALL_GENRES}
+				/>
+			</SectionContainer>
+		</main>
 	);
 }

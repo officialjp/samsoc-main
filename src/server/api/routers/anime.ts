@@ -6,6 +6,74 @@ import {
 } from '~/server/api/trpc';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
+import {
+	incrementWin,
+	getLeaderboard,
+	GAME_TYPES,
+} from '~/server/api/helpers/gameStats';
+import type { GameStatsWithUser } from '~/server/api/helpers/gameStats';
+
+/**
+ * Return type for anime data used in wordle game
+ */
+interface AnimeWordleData {
+	id: number;
+	title: string;
+	releasedYear: number | null;
+	releasedSeason: string | null;
+	genres: string | null;
+	themes: string | null;
+	studios: string | null;
+	source: string | null;
+	score: number | null;
+}
+
+/**
+ * Return type for leaderboard entries
+ */
+interface LeaderboardEntry {
+	id: string;
+	name: string | null;
+	image: string | null;
+	wins: number;
+	totalTries: number;
+}
+
+/**
+ * Helper to convert normalized genre relations to comma-separated string
+ */
+function normalizedGenresToString(
+	animeGenres: Array<{ genre: { name: string } }> | undefined | null,
+): string | null {
+	if (animeGenres && animeGenres.length > 0) {
+		return animeGenres.map((ag) => ag.genre.name).join(', ');
+	}
+	return null;
+}
+
+/**
+ * Helper to convert normalized theme relations to comma-separated string
+ */
+function normalizedThemesToString(
+	animeThemes: Array<{ theme: { name: string } }> | undefined | null,
+): string | null {
+	if (animeThemes && animeThemes.length > 0) {
+		return animeThemes.map((at) => at.theme.name).join(', ');
+	}
+	return null;
+}
+
+/**
+ * Helper to convert normalized studio relations to comma-separated string
+ */
+function normalizedStudiosToString(
+	animeStudios: Array<{ studio: { name: string } }> | undefined | null,
+): string | null {
+	if (animeStudios && animeStudios.length > 0) {
+		return animeStudios.map((as) => as.studio.name).join(', ');
+	}
+	return null;
+}
 
 /**
  * Gets midnight UTC for the current London calendar date.
@@ -28,37 +96,58 @@ function getLondonMidnightUTC(): Date {
 	return new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
 }
 
-/**
- * Gets the London date string for comparison purposes.
- */
-function getLondonDateString(date: Date): string {
-	return date.toLocaleDateString('en-GB', { timeZone: 'Europe/London' });
-}
-
 export const animeRouter = createTRPCRouter({
 	getById: publicProcedure
 		.input(z.object({ id: z.number().int() }))
 		.query(async ({ ctx, input }) => {
-			return ctx.db.anime.findUnique({
+			const anime = await ctx.db.anime.findUnique({
 				where: { id: input.id },
 				select: {
+					id: true,
+					title: true,
 					releasedYear: true,
 					releasedSeason: true,
-					score: true,
 					source: true,
-					studios: true,
-					themes: true,
-					title: true,
-					genres: true,
+					score: true,
+					animeGenres: {
+						select: { genre: { select: { name: true } } },
+					},
+					animeThemes: {
+						select: { theme: { select: { name: true } } },
+					},
+					animeStudios: {
+						select: { studio: { select: { name: true } } },
+					},
 				},
 			});
+
+			if (!anime) return null;
+
+			return {
+				id: anime.id,
+				title: anime.title,
+				releasedYear: anime.releasedYear,
+				releasedSeason: anime.releasedSeason,
+				genres: normalizedGenresToString(anime.animeGenres),
+				themes: normalizedThemesToString(anime.animeThemes),
+				studios: normalizedStudiosToString(anime.animeStudios),
+				source: anime.source,
+				score: anime.score,
+			};
 		}),
 
+	// Wordle Game Routes
 	getAnswerAnime: publicProcedure.query(async ({ ctx }) => {
 		const today = getLondonMidnightUTC();
 
-		const schedule = await ctx.db.dailyAnime.findUnique({
-			where: { date: today },
+		// Use consolidated DailySchedule model
+		const schedule = await ctx.db.dailySchedule.findUnique({
+			where: {
+				date_gameType: {
+					date: today,
+					gameType: GAME_TYPES.WORDLE,
+				},
+			},
 			include: {
 				anime: {
 					select: {
@@ -66,19 +155,39 @@ export const animeRouter = createTRPCRouter({
 						title: true,
 						releasedYear: true,
 						releasedSeason: true,
-						genres: true,
-						themes: true,
-						studios: true,
 						source: true,
 						score: true,
+						animeGenres: {
+							select: { genre: { select: { name: true } } },
+						},
+						animeThemes: {
+							select: { theme: { select: { name: true } } },
+						},
+						animeStudios: {
+							select: { studio: { select: { name: true } } },
+						},
 					},
 				},
 			},
 		});
 
-		let anime = schedule?.anime;
+		let anime: AnimeWordleData | null = null;
 
-		if (!anime) {
+		if (schedule?.anime) {
+			const a = schedule.anime;
+			anime = {
+				id: a.id,
+				title: a.title,
+				releasedYear: a.releasedYear,
+				releasedSeason: a.releasedSeason,
+				genres: normalizedGenresToString(a.animeGenres),
+				themes: normalizedThemesToString(a.animeThemes),
+				studios: normalizedStudiosToString(a.animeStudios),
+				source: a.source,
+				score: a.score,
+			};
+		} else {
+			// Fallback to anime with ID 1 for development
 			const fallback = await ctx.db.anime.findUnique({
 				where: { id: 1 },
 				select: {
@@ -86,61 +195,61 @@ export const animeRouter = createTRPCRouter({
 					title: true,
 					releasedYear: true,
 					releasedSeason: true,
-					genres: true,
-					themes: true,
-					studios: true,
 					source: true,
 					score: true,
+					animeGenres: {
+						select: { genre: { select: { name: true } } },
+					},
+					animeThemes: {
+						select: { theme: { select: { name: true } } },
+					},
+					animeStudios: {
+						select: { studio: { select: { name: true } } },
+					},
 				},
 			});
 
-			anime = fallback ?? undefined;
+			if (fallback) {
+				anime = {
+					id: fallback.id,
+					title: fallback.title,
+					releasedYear: fallback.releasedYear,
+					releasedSeason: fallback.releasedSeason,
+					genres: normalizedGenresToString(fallback.animeGenres),
+					themes: normalizedThemesToString(fallback.animeThemes),
+					studios: normalizedStudiosToString(fallback.animeStudios),
+					source: fallback.source,
+					score: fallback.score,
+				};
+			}
 		}
 
 		if (!anime) {
-			throw new TRPCError({
-				code: 'NOT_FOUND',
-				message:
-					'No daily anime scheduled and fallback anime (ID: 1) not found.',
-			});
+			return {
+				anime: null,
+				hasWonToday: false,
+				hasFailedToday: false,
+			};
 		}
 
 		let hasWonToday = false;
 		let hasFailedToday = false;
 
 		if (ctx.session?.user) {
-			const user = await ctx.db.user.findUnique({
-				where: { id: ctx.session.user.id },
-				select: {
-					wordleLastWonAt: true,
-					wordleDailyGuesses: true,
-					wordleLastGuessAt: true,
+			// Use consolidated GameSession model
+			const session = await ctx.db.gameSession.findUnique({
+				where: {
+					userId_date_gameType: {
+						userId: ctx.session.user.id,
+						date: today,
+						gameType: GAME_TYPES.WORDLE,
+					},
 				},
 			});
 
-			if (user) {
-				const todayStr = getLondonDateString(new Date());
-
-				if (user.wordleLastWonAt) {
-					const lastWonStr = getLondonDateString(
-						user.wordleLastWonAt,
-					);
-					hasWonToday = todayStr === lastWonStr;
-				}
-
-				if (user.wordleLastGuessAt) {
-					const lastGuessStr = getLondonDateString(
-						user.wordleLastGuessAt,
-					);
-
-					if (
-						todayStr === lastGuessStr &&
-						user.wordleDailyGuesses >= 12 &&
-						!hasWonToday
-					) {
-						hasFailedToday = true;
-					}
-				}
+			if (session) {
+				hasWonToday = session.won;
+				hasFailedToday = session.failed;
 			}
 		}
 
@@ -155,11 +264,13 @@ export const animeRouter = createTRPCRouter({
 	getTodaysSession: protectedProcedure.query(async ({ ctx }) => {
 		const today = getLondonMidnightUTC();
 
-		let session = await ctx.db.wordleGameSession.findUnique({
+		// Use consolidated GameSession model
+		let session = await ctx.db.gameSession.findUnique({
 			where: {
-				userId_date: {
+				userId_date_gameType: {
 					userId: ctx.session.user.id,
 					date: today,
+					gameType: GAME_TYPES.WORDLE,
 				},
 			},
 			include: {
@@ -169,23 +280,29 @@ export const animeRouter = createTRPCRouter({
 
 		// If no session exists, create one
 		if (!session) {
-			// Get today's anime answer
-			const dailyAnime = await ctx.db.dailyAnime.findUnique({
-				where: { date: today },
+			// Get today's anime from consolidated DailySchedule
+			const dailySchedule = await ctx.db.dailySchedule.findUnique({
+				where: {
+					date_gameType: {
+						date: today,
+						gameType: GAME_TYPES.WORDLE,
+					},
+				},
 			});
 
-			if (!dailyAnime) {
+			if (!dailySchedule?.animeId) {
 				throw new TRPCError({
 					code: 'NOT_FOUND',
 					message: 'No anime selected for today',
 				});
 			}
 
-			session = await ctx.db.wordleGameSession.create({
+			session = await ctx.db.gameSession.create({
 				data: {
 					userId: ctx.session.user.id,
+					gameType: GAME_TYPES.WORDLE,
 					date: today,
-					animeId: dailyAnime.animeId,
+					targetId: String(dailySchedule.animeId),
 				},
 				include: {
 					guesses: true,
@@ -202,39 +319,46 @@ export const animeRouter = createTRPCRouter({
 		.mutation(async ({ ctx, input }) => {
 			const today = getLondonMidnightUTC();
 
-			// Get or create session
-			let session = await ctx.db.wordleGameSession.findUnique({
+			// Get or create session using consolidated model
+			let session = await ctx.db.gameSession.findUnique({
 				where: {
-					userId_date: {
+					userId_date_gameType: {
 						userId: ctx.session.user.id,
 						date: today,
+						gameType: GAME_TYPES.WORDLE,
 					},
 				},
 			});
 
 			if (!session) {
-				const dailyAnime = await ctx.db.dailyAnime.findUnique({
-					where: { date: today },
+				const dailySchedule = await ctx.db.dailySchedule.findUnique({
+					where: {
+						date_gameType: {
+							date: today,
+							gameType: GAME_TYPES.WORDLE,
+						},
+					},
 				});
 
-				if (!dailyAnime) {
+				if (!dailySchedule?.animeId) {
 					throw new TRPCError({
 						code: 'NOT_FOUND',
 						message: 'No anime selected for today',
 					});
 				}
 
-				session = await ctx.db.wordleGameSession.create({
+				session = await ctx.db.gameSession.create({
 					data: {
 						userId: ctx.session.user.id,
+						gameType: GAME_TYPES.WORDLE,
 						date: today,
-						animeId: dailyAnime.animeId,
+						targetId: String(dailySchedule.animeId),
 					},
 				});
 			}
 
-			// Add guess to session
-			const guess = await ctx.db.wordleGuess.create({
+			// Add guess using consolidated GameGuess model
+			const guess = await ctx.db.gameGuess.create({
 				data: {
 					sessionId: session.id,
 					guessData: input.guessData,
@@ -260,8 +384,14 @@ export const animeRouter = createTRPCRouter({
 				),
 			);
 
-			const schedule = await ctx.db.dailyAnime.findUnique({
-				where: { date: targetDate },
+			// Use consolidated DailySchedule model
+			const schedule = await ctx.db.dailySchedule.findUnique({
+				where: {
+					date_gameType: {
+						date: targetDate,
+						gameType: GAME_TYPES.WORDLE,
+					},
+				},
 			});
 
 			return { hasSchedule: !!schedule };
@@ -288,46 +418,45 @@ export const animeRouter = createTRPCRouter({
 				),
 			);
 
-			return ctx.db.dailyAnime.upsert({
-				where: { date: targetDate },
+			// Use consolidated DailySchedule model
+			return ctx.db.dailySchedule.upsert({
+				where: {
+					date_gameType: {
+						date: targetDate,
+						gameType: GAME_TYPES.WORDLE,
+					},
+				},
 				update: { animeId: input.animeId },
 				create: {
 					date: targetDate,
+					gameType: GAME_TYPES.WORDLE,
 					animeId: input.animeId,
 				},
 			});
 		}),
 
 	recordGuess: protectedProcedure.mutation(async ({ ctx }) => {
-		const user = await ctx.db.user.findUnique({
-			where: { id: ctx.session.user.id },
-			select: { wordleDailyGuesses: true, wordleLastGuessAt: true },
+		// Session is created in getTodaysSession, so we just need to verify it exists
+		const today = getLondonMidnightUTC();
+		const session = await ctx.db.gameSession.findUnique({
+			where: {
+				userId_date_gameType: {
+					userId: ctx.session.user.id,
+					date: today,
+					gameType: GAME_TYPES.WORDLE,
+				},
+			},
 		});
 
-		if (!user) {
+		if (!session) {
 			throw new TRPCError({
 				code: 'NOT_FOUND',
-				message: 'User record not found',
+				message: 'Game session not found',
 			});
 		}
 
-		const now = new Date();
-		const todayStr = getLondonDateString(now);
-
-		let newCount = 1;
-		if (user.wordleLastGuessAt) {
-			const lastGuessStr = getLondonDateString(user.wordleLastGuessAt);
-			newCount =
-				todayStr === lastGuessStr ? user.wordleDailyGuesses + 1 : 1;
-		}
-
-		return ctx.db.user.update({
-			where: { id: ctx.session.user.id },
-			data: {
-				wordleDailyGuesses: newCount,
-				wordleLastGuessAt: now,
-			},
-		});
+		// The guess is added in addGuess mutation
+		return { success: true };
 	}),
 
 	submitWin: protectedProcedure
@@ -335,12 +464,13 @@ export const animeRouter = createTRPCRouter({
 		.mutation(async ({ ctx, input }) => {
 			const today = getLondonMidnightUTC();
 
-			// Update session to mark as won
-			await ctx.db.wordleGameSession.update({
+			// Update session to mark as won using consolidated model
+			await ctx.db.gameSession.update({
 				where: {
-					userId_date: {
+					userId_date_gameType: {
 						userId: ctx.session.user.id,
 						date: today,
+						gameType: GAME_TYPES.WORDLE,
 					},
 				},
 				data: {
@@ -349,24 +479,25 @@ export const animeRouter = createTRPCRouter({
 			});
 
 			// Update user stats
-			return ctx.db.user.update({
-				where: { id: ctx.session.user.id },
-				data: {
-					wordleWins: { increment: 1 },
-					wordleTotalTries: { increment: input.tries },
-					wordleLastWonAt: new Date(),
-				},
-			});
+			await incrementWin(
+				ctx.db,
+				ctx.session.user.id,
+				GAME_TYPES.WORDLE,
+				input.tries,
+			);
+
+			return { success: true };
 		}),
 
 	submitLoss: protectedProcedure.mutation(async ({ ctx }) => {
 		const today = getLondonMidnightUTC();
 
-		return ctx.db.wordleGameSession.update({
+		return ctx.db.gameSession.update({
 			where: {
-				userId_date: {
+				userId_date_gameType: {
 					userId: ctx.session.user.id,
 					date: today,
+					gameType: GAME_TYPES.WORDLE,
 				},
 			},
 			data: {
@@ -375,17 +506,375 @@ export const animeRouter = createTRPCRouter({
 		});
 	}),
 
-	getLeaderboard: publicProcedure.query(async ({ ctx }) => {
-		return ctx.db.user.findMany({
-			where: { wordleWins: { gt: 0 } },
-			orderBy: [{ wordleWins: 'desc' }, { wordleTotalTries: 'asc' }],
-			take: 10,
-			select: {
-				id: true,
-				name: true,
-				wordleWins: true,
-				wordleTotalTries: true,
+	getLeaderboard: publicProcedure.query(
+		async ({ ctx }): Promise<LeaderboardEntry[]> => {
+			const leaderboard = await getLeaderboard(
+				ctx.db,
+				GAME_TYPES.WORDLE,
+				10,
+			);
+			return leaderboard.map((stat: GameStatsWithUser) => ({
+				id: stat.user.id,
+				name: stat.user.name,
+				image: stat.user.image,
+				wins: stat.wins,
+				totalTries: stat.totalTries,
+			}));
+		},
+	),
+
+	// Banner Game Routes
+	getBannerAnswerAnime: publicProcedure.query(async ({ ctx }) => {
+		const today = getLondonMidnightUTC();
+
+		// Use consolidated DailySchedule model
+		const schedule = await ctx.db.dailySchedule.findUnique({
+			where: {
+				date_gameType: {
+					date: today,
+					gameType: GAME_TYPES.BANNER,
+				},
+			},
+			include: {
+				anime: {
+					select: {
+						id: true,
+						title: true,
+						image: true,
+					},
+				},
+			},
+		});
+
+		const anime = schedule?.anime ?? null;
+
+		if (!anime) {
+			return {
+				anime: null,
+				hasWonToday: false,
+				hasFailedToday: false,
+			};
+		}
+
+		let hasWonToday = false;
+		let hasFailedToday = false;
+
+		if (ctx.session?.user) {
+			// Use consolidated GameSession model
+			const session = await ctx.db.gameSession.findUnique({
+				where: {
+					userId_date_gameType: {
+						userId: ctx.session.user.id,
+						date: today,
+						gameType: GAME_TYPES.BANNER,
+					},
+				},
+			});
+
+			if (session) {
+				hasWonToday = session.won;
+				hasFailedToday = session.failed;
+			}
+		}
+
+		return {
+			anime,
+			hasWonToday,
+			hasFailedToday,
+		};
+	}),
+
+	getBannerTodaysSession: protectedProcedure.query(async ({ ctx }) => {
+		const today = getLondonMidnightUTC();
+
+		// Use consolidated GameSession model
+		let session = await ctx.db.gameSession.findUnique({
+			where: {
+				userId_date_gameType: {
+					userId: ctx.session.user.id,
+					date: today,
+					gameType: GAME_TYPES.BANNER,
+				},
+			},
+			include: {
+				guesses: true,
+			},
+		});
+
+		if (!session) {
+			const dailySchedule = await ctx.db.dailySchedule.findUnique({
+				where: {
+					date_gameType: {
+						date: today,
+						gameType: GAME_TYPES.BANNER,
+					},
+				},
+			});
+
+			if (!dailySchedule?.animeId) {
+				throw new TRPCError({
+					code: 'NOT_FOUND',
+					message: 'No banner anime selected for today',
+				});
+			}
+
+			session = await ctx.db.gameSession.create({
+				data: {
+					userId: ctx.session.user.id,
+					gameType: GAME_TYPES.BANNER,
+					date: today,
+					targetId: String(dailySchedule.animeId),
+				},
+				include: {
+					guesses: true,
+				},
+			});
+		}
+
+		// Fetch anime titles for all guesses
+		// GuessData for banner contains { animeId: number }
+		const guessesWithTitles = await Promise.all(
+			session.guesses.map(async (guess) => {
+				const guessData = guess.guessData as { animeId?: number };
+				const animeId = guessData?.animeId;
+				let animeTitle = 'Unknown';
+
+				if (animeId) {
+					const anime = await ctx.db.anime.findUnique({
+						where: { id: animeId },
+						select: { title: true },
+					});
+					animeTitle = anime?.title ?? 'Unknown';
+				}
+
+				return {
+					...guess,
+					animeId: animeId ?? 0,
+					animeTitle,
+				};
+			}),
+		);
+
+		return {
+			...session,
+			guesses: guessesWithTitles,
+		};
+	}),
+
+	addBannerGuess: protectedProcedure
+		.input(z.object({ animeId: z.number().int() }))
+		.mutation(async ({ ctx, input }) => {
+			const today = getLondonMidnightUTC();
+
+			// Use consolidated GameSession model
+			let session = await ctx.db.gameSession.findUnique({
+				where: {
+					userId_date_gameType: {
+						userId: ctx.session.user.id,
+						date: today,
+						gameType: GAME_TYPES.BANNER,
+					},
+				},
+			});
+
+			if (!session) {
+				const dailySchedule = await ctx.db.dailySchedule.findUnique({
+					where: {
+						date_gameType: {
+							date: today,
+							gameType: GAME_TYPES.BANNER,
+						},
+					},
+				});
+
+				if (!dailySchedule?.animeId) {
+					throw new TRPCError({
+						code: 'NOT_FOUND',
+						message: 'No banner anime selected for today',
+					});
+				}
+
+				session = await ctx.db.gameSession.create({
+					data: {
+						userId: ctx.session.user.id,
+						gameType: GAME_TYPES.BANNER,
+						date: today,
+						targetId: String(dailySchedule.animeId),
+					},
+				});
+			}
+
+			// Fetch the anime title
+			const anime = await ctx.db.anime.findUnique({
+				where: { id: input.animeId },
+				select: { title: true },
+			});
+
+			// Use consolidated GameGuess model with guessData containing animeId
+			const guess = await ctx.db.gameGuess.create({
+				data: {
+					sessionId: session.id,
+					guessData: { animeId: input.animeId },
+				},
+			});
+
+			// Return guess with anime title
+			return {
+				...guess,
+				animeId: input.animeId,
+				animeTitle: anime?.title ?? 'Unknown',
+			};
+		}),
+
+	recordBannerGuess: protectedProcedure.mutation(async ({ ctx }) => {
+		// Session is created in getBannerTodaysSession, so we just need to verify it exists
+		const today = getLondonMidnightUTC();
+		const session = await ctx.db.gameSession.findUnique({
+			where: {
+				userId_date_gameType: {
+					userId: ctx.session.user.id,
+					date: today,
+					gameType: GAME_TYPES.BANNER,
+				},
+			},
+		});
+
+		if (!session) {
+			throw new TRPCError({
+				code: 'NOT_FOUND',
+				message: 'Game session not found',
+			});
+		}
+
+		// The guess is added in addBannerGuess mutation
+		return { success: true };
+	}),
+
+	submitBannerWin: protectedProcedure
+		.input(z.object({ tries: z.number() }))
+		.mutation(async ({ ctx, input }) => {
+			const today = getLondonMidnightUTC();
+
+			// Use consolidated GameSession model
+			await ctx.db.gameSession.update({
+				where: {
+					userId_date_gameType: {
+						userId: ctx.session.user.id,
+						date: today,
+						gameType: GAME_TYPES.BANNER,
+					},
+				},
+				data: {
+					won: true,
+				},
+			});
+
+			await incrementWin(
+				ctx.db,
+				ctx.session.user.id,
+				GAME_TYPES.BANNER,
+				input.tries,
+			);
+
+			return { success: true };
+		}),
+
+	submitBannerLoss: protectedProcedure.mutation(async ({ ctx }) => {
+		const today = getLondonMidnightUTC();
+
+		return ctx.db.gameSession.update({
+			where: {
+				userId_date_gameType: {
+					userId: ctx.session.user.id,
+					date: today,
+					gameType: GAME_TYPES.BANNER,
+				},
+			},
+			data: {
+				failed: true,
 			},
 		});
 	}),
+
+	getBannerLeaderboard: publicProcedure.query(
+		async ({ ctx }): Promise<LeaderboardEntry[]> => {
+			const leaderboard = await getLeaderboard(
+				ctx.db,
+				GAME_TYPES.BANNER,
+				10,
+			);
+			return leaderboard.map((stat: GameStatsWithUser) => ({
+				id: stat.user.id,
+				name: stat.user.name,
+				image: stat.user.image,
+				wins: stat.wins,
+				totalTries: stat.totalTries,
+			}));
+		},
+	),
+
+	scheduleDailyBanner: adminProcedure
+		.input(
+			z.object({
+				animeId: z.number().int(),
+				date: z.date(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const targetDate = new Date(
+				Date.UTC(
+					input.date.getUTCFullYear(),
+					input.date.getUTCMonth(),
+					input.date.getUTCDate(),
+					0,
+					0,
+					0,
+					0,
+				),
+			);
+
+			// Use consolidated DailySchedule model
+			return ctx.db.dailySchedule.upsert({
+				where: {
+					date_gameType: {
+						date: targetDate,
+						gameType: GAME_TYPES.BANNER,
+					},
+				},
+				update: { animeId: input.animeId },
+				create: {
+					date: targetDate,
+					gameType: GAME_TYPES.BANNER,
+					animeId: input.animeId,
+				},
+			});
+		}),
+
+	checkBannerDateScheduled: adminProcedure
+		.input(z.object({ date: z.date() }))
+		.query(async ({ ctx, input }) => {
+			const targetDate = new Date(
+				Date.UTC(
+					input.date.getUTCFullYear(),
+					input.date.getUTCMonth(),
+					input.date.getUTCDate(),
+					0,
+					0,
+					0,
+					0,
+				),
+			);
+
+			// Use consolidated DailySchedule model
+			const schedule = await ctx.db.dailySchedule.findUnique({
+				where: {
+					date_gameType: {
+						date: targetDate,
+						gameType: GAME_TYPES.BANNER,
+					},
+				},
+			});
+
+			return { hasSchedule: !!schedule };
+		}),
 });

@@ -1,6 +1,5 @@
 'use client';
 
-import { useMemo } from 'react';
 import type { EmblaOptionsType } from 'embla-carousel';
 import { DotButton, useDotButton } from './hero-carousel-button';
 import useEmblaCarousel from 'embla-carousel-react';
@@ -21,12 +20,13 @@ const autoplayOptions = {
 	stopOnInteraction: true,
 } as const;
 
+const plugins = [Autoplay(autoplayOptions)];
+
 export default function HeroCarousel({
 	slides,
 	options,
 	useSocials,
 }: CarouselType) {
-	const plugins = useMemo(() => [Autoplay(autoplayOptions)], []);
 	const [emblaRef, emblaApi] = useEmblaCarousel(options, plugins);
 	const { selectedIndex, scrollSnaps, onDotButtonClick } =
 		useDotButton(emblaApi);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import {
 	format,
 	startOfMonth,
@@ -31,25 +31,17 @@ export function MobileCalendarView({
 	const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 	const [expandedDate, setExpandedDate] = useState<string | null>(null);
 
-	const daysInMonth = useMemo(() => {
-		const monthStart = startOfWeek(startOfMonth(currentMonth));
-		const monthEnd = endOfMonth(startOfMonth(currentMonth));
-		return eachDayOfInterval({ start: monthStart, end: monthEnd });
-	}, [currentMonth]);
+	const monthStart = startOfWeek(startOfMonth(currentMonth));
+	const monthEnd = endOfMonth(startOfMonth(currentMonth));
+	const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
-	const sortedEventKeys = useMemo(
-		() => Object.keys(groupedEvents).sort(),
-		[groupedEvents],
-	);
+	const sortedEventKeys = Object.keys(groupedEvents).sort();
 
-	const hasEventsMap = useMemo(() => {
-		const map = new Map<string, boolean>();
-		for (const key in groupedEvents) {
-			const events = groupedEvents[key];
-			map.set(key, events !== undefined && events.length > 0);
-		}
-		return map;
-	}, [groupedEvents]);
+	const hasEventsMap = new Map<string, boolean>();
+	for (const key in groupedEvents) {
+		const events = groupedEvents[key];
+		hasEventsMap.set(key, events !== undefined && events.length > 0);
+	}
 
 	const toggleDateExpansion = (dateKey: string) => {
 		setExpandedDate((prev) => (prev === dateKey ? null : dateKey));

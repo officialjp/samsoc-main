@@ -1,18 +1,20 @@
 'use client';
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { api } from '~/trpc/react';
 import { toast } from 'sonner';
 import Countdown from './countdown';
 import Leaderboard from './leaderboard';
 import GameOverBanner from './game-over-banner';
+import DailyNotFound from './daily-not-found';
 import FieldCell from './field-cell';
+import GameSkeleton from './game-skeleton';
 import {
 	checkFieldMatch,
 	formatDisplayValue,
 	getMatchResultForProgress,
 } from './game-utils';
 import { DISPLAY_FIELDS, GAME_CONFIG } from '~/lib/game-config';
-import type { WordleGuessData } from '~/lib/game-types';
+import type { WordleGuessData, LeaderboardUser } from '~/lib/game-types';
 
 interface AnimeWordleProps {
 	searchedAnimeId: string | undefined;
@@ -31,14 +33,23 @@ export default function AnimeWordle({
 	const [isCopied, setIsCopied] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
 	const isProcessingRef = useRef(false);
+	const lastProcessedIdRef = useRef<string | null>(null);
 	const utils = api.useUtils();
 
-	const { data: gameData } = api.anime.getAnswerAnime.useQuery();
+	const { data: gameData, error: gameError } =
+		api.anime.getAnswerAnime.useQuery(undefined, {
+			staleTime: 1000 * 60 * 5, // 5 minutes
+			refetchOnWindowFocus: false,
+		});
+
 	const answerAnime = gameData?.anime;
 	const hasAlreadyWonToday = gameData?.hasWonToday;
 	const hasFailedToday = gameData?.hasFailedToday;
 
-	const { data: session } = api.anime.getTodaysSession.useQuery();
+	const { data: session } = api.anime.getTodaysSession.useQuery(undefined, {
+		enabled: !!answerAnime,
+		staleTime: 1000 * 60, // 1 minute
+	});
 
 	const isGameOver =
 		gameWon ||
@@ -47,13 +58,8 @@ export default function AnimeWordle({
 		guesses.length >= GAME_CONFIG.WORDLE.MAX_GUESSES;
 
 	const { data: leaderboard } = api.anime.getLeaderboard.useQuery(undefined, {
-		enabled: !!isGameOver,
-	});
-
-	const recordGuessMutation = api.anime.recordGuess.useMutation({
-		onError: (error) => {
-			toast.error(`Failed to record guess: ${error.message}`);
-		},
+		enabled: isGameOver,
+		staleTime: 1000 * 60 * 2, // 2 minutes
 	});
 
 	const addGuessMutation = api.anime.addGameGuess.useMutation({
@@ -72,9 +78,18 @@ export default function AnimeWordle({
 		},
 	});
 
+	const lossMutation = api.anime.submitLoss.useMutation({
+		onError: (error) => {
+			toast.error(`Failed to submit loss: ${error.message}`);
+		},
+	});
+
 	const { data: searchedAnime } = api.anime.getById.useQuery(
 		{ id: parseInt(searchedAnimeId ?? '0') },
-		{ enabled: !!searchedAnimeId && !isGameOver },
+		{
+			enabled: !!searchedAnimeId && !isGameOver,
+			staleTime: 1000 * 60 * 10, // 10 minutes - anime data rarely changes
+		},
 	);
 
 	// Load guesses from database on mount
@@ -123,10 +138,15 @@ export default function AnimeWordle({
 			!answerAnime ||
 			isLoading ||
 			isProcessingRef.current ||
-			recordGuessMutation.isPending ||
 			addGuessMutation.isPending
 		)
 			return;
+
+		// Check if we've already processed this selection
+		const animeIdStr = String(searchedAnime.id);
+		if (lastProcessedIdRef.current === animeIdStr) {
+			return;
+		}
 
 		// Check for duplicate guess
 		const guessTitle = formatDisplayValue(searchedAnime.title)
@@ -139,11 +159,14 @@ export default function AnimeWordle({
 					guessTitle,
 			)
 		) {
+			// Mark as processed to prevent duplicate toasts
+			lastProcessedIdRef.current = animeIdStr;
 			toast.error('You already guessed this anime!');
 			return;
 		}
 
 		isProcessingRef.current = true;
+		lastProcessedIdRef.current = animeIdStr;
 
 		const guessData = DISPLAY_FIELDS.reduce(
 			(acc, { key }) => ({
@@ -155,7 +178,6 @@ export default function AnimeWordle({
 
 		const newGuesses = [...guesses, guessData];
 		setGuesses(newGuesses);
-		recordGuessMutation.mutate();
 
 		// Save guess to database
 		addGuessMutation.mutate(
@@ -166,6 +188,7 @@ export default function AnimeWordle({
 				},
 				onError: () => {
 					isProcessingRef.current = false;
+					lastProcessedIdRef.current = null;
 				},
 			},
 		);
@@ -179,18 +202,19 @@ export default function AnimeWordle({
 			winMutation.mutate({ tries: newGuesses.length });
 		} else if (newGuesses.length >= GAME_CONFIG.WORDLE.MAX_GUESSES) {
 			setGameFailed(true);
+			lossMutation.mutate();
 		}
 	}, [
+		isGameOver,
 		searchedAnime,
 		answerAnime,
-		isGameOver,
 		isLoading,
-		guesses,
-		recordGuessMutation,
 		addGuessMutation,
+		guesses,
 		setGameWon,
 		setGameFailed,
 		winMutation,
+		lossMutation,
 	]);
 
 	const handleShare = async () => {
@@ -247,9 +271,16 @@ export default function AnimeWordle({
 
 	useEffect(() => {
 		if (searchedAnime && !isProcessingRef.current) {
-			void processGuess();
+			processGuess();
 		}
 	}, [searchedAnime, processGuess]);
+
+	// Reset lastProcessedIdRef when searchedAnimeId changes to allow re-selection
+	useEffect(() => {
+		if (!searchedAnimeId) {
+			lastProcessedIdRef.current = null;
+		}
+	}, [searchedAnimeId]);
 
 	// Keyboard shortcuts
 	useEffect(() => {
@@ -263,34 +294,29 @@ export default function AnimeWordle({
 		return () => window.removeEventListener('keydown', handleKeyPress);
 	}, [isGameOver]);
 
-	if (!answerAnime || isLoading) return null;
+	// Show error state if daily anime not found
+	if (gameError || (!answerAnime && !isLoading)) {
+		return <DailyNotFound gameType="anime" />;
+	}
 
-	const leaderboardData =
-		leaderboard?.map((user) => ({
-			id: user.id,
-			name: user.name,
-			wins: user.wordleWins,
-			totalTries: user.wordleTotalTries,
-		})) ?? [];
+	if (!answerAnime || isLoading) return <GameSkeleton gameType="wordle" />;
+
+	// Leaderboard data is already flattened from the router
+	const leaderboardData: LeaderboardUser[] = leaderboard ?? [];
 
 	return (
 		<div className="max-w-7xl mx-auto p-4 md:p-8">
 			<div className="flex flex-col lg:flex-row gap-8">
 				<div className="flex-1">
-					<div className="mb-8">
-						<h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
-							{GAME_CONFIG.WORDLE.NAME}
-						</h1>
-						<div className="flex items-center gap-4">
-							{isGameOver ? (
-								<Countdown label="Next anime in:" />
-							) : (
-								<span className="text-sm font-bold text-gray-600 uppercase tracking-tighter">
-									Guesses Used: {guesses.length} /{' '}
-									{GAME_CONFIG.WORDLE.MAX_GUESSES}
-								</span>
-							)}
-						</div>
+					<div className="mb-8 flex items-center gap-4">
+						{isGameOver ? (
+							<Countdown label="Next anime in:" />
+						) : (
+							<span className="text-sm font-bold text-gray-600 uppercase tracking-tighter">
+								Guesses Used: {guesses.length} /{' '}
+								{GAME_CONFIG.WORDLE.MAX_GUESSES}
+							</span>
+						)}
 					</div>
 
 					{isGameOver ? (

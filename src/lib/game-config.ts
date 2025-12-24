@@ -12,7 +12,19 @@ export const GAME_CONFIG = {
 		MAX_GUESSES: 5,
 		NAME: 'Studio Guesser',
 	} as const,
+	BANNER: {
+		MAX_GUESSES: 5,
+		NAME: 'Zoomed-In Banner',
+	} as const,
 } as const;
+
+export const BANNER_ZOOM_LEVELS = [
+	0.15, // 15% zoom - most zoomed in
+	0.25,
+	0.4,
+	0.6,
+	1.0, // 100% zoom - full image
+] as const;
 
 export const HINT_LABELS = [
 	'Average Rating',
@@ -36,4 +48,3 @@ export const DISPLAY_FIELDS = [
 export type DisplayFieldKey = (typeof DISPLAY_FIELDS)[number]['key'];
 
 export const ARRAY_FIELDS: DisplayFieldKey[] = ['genres', 'themes', 'studios'];
-
