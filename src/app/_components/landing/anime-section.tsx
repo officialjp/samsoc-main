@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { api } from '~/trpc/server';
-import { AnimeCard } from './anime-card'; // Your existing component
-import { SectionHeading } from '../section-heading'; // Adjust imports as needed
+import { AnimeCard } from './anime-card'; 
+import { SectionHeading } from '../section-heading'; 
 import { Button } from '../ui/button';
 import { CalendarDays } from 'lucide-react';
 import Link from 'next/link';
