@@ -25,6 +25,9 @@ const config = {
 		imageSizes: [16, 32, 64, 128, 256, 640],
 		deviceSizes: [640, 750, 828, 1080, 1200],
 	},
+	compiler: {
+		removeConsole: process.env.NODE_ENV === 'production',
+	},
 };
 
 export default config;
