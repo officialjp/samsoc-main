@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import MangaCard from '~/app/_components/library/manga-card';
 import LibraryFilters from '~/app/_components/library/library-filters';
 import { Pagination } from '~/app/_components/pagination';
@@ -40,44 +40,35 @@ export function LibrarySearch({
 	});
 	const [currentPage, setCurrentPage] = useState(1);
 
-	const filteredManga = useMemo(() => {
-		return initialMangaData.filter((manga) => {
-			if (filters.status !== 'all') {
-				const isBorrowed =
-					!!manga.borrowed_by && manga.borrowed_by !== 'NULL';
-				if (filters.status === 'available' && isBorrowed) return false;
-				if (filters.status === 'borrowed' && !isBorrowed) return false;
-			}
+	const filteredManga = initialMangaData.filter((manga) => {
+		if (filters.status !== 'all') {
+			const isBorrowed =
+				!!manga.borrowed_by && manga.borrowed_by !== 'NULL';
+			if (filters.status === 'available' && isBorrowed) return false;
+			if (filters.status === 'borrowed' && !isBorrowed) return false;
+		}
 
-			if (
-				filters.genre !== 'all' &&
-				!manga.genres.includes(filters.genre)
-			) {
-				return false;
-			}
+		if (filters.genre !== 'all' && !manga.genres.includes(filters.genre)) {
+			return false;
+		}
 
-			if (filters.search) {
-				const searchLower = filters.search.toLowerCase();
-				return (
-					manga.title.toLowerCase().includes(searchLower) ||
-					manga.author.toLowerCase().includes(searchLower)
-				);
-			}
+		if (filters.search) {
+			const searchLower = filters.search.toLowerCase();
+			return (
+				manga.title.toLowerCase().includes(searchLower) ||
+				manga.author.toLowerCase().includes(searchLower)
+			);
+		}
 
-			return true;
-		});
-	}, [filters, initialMangaData]);
+		return true;
+	});
 
-	const { totalPages, paginatedManga } = useMemo(() => {
-		const total = Math.ceil(filteredManga.length / ITEMS_PER_PAGE);
-		const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-		const paginated = filteredManga.slice(
-			startIndex,
-			startIndex + ITEMS_PER_PAGE,
-		);
-
-		return { totalPages: total, paginatedManga: paginated };
-	}, [filteredManga, currentPage]);
+	const totalPages = Math.ceil(filteredManga.length / ITEMS_PER_PAGE);
+	const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+	const paginatedManga = filteredManga.slice(
+		startIndex,
+		startIndex + ITEMS_PER_PAGE,
+	);
 
 	useEffect(() => {
 		setCurrentPage(1);

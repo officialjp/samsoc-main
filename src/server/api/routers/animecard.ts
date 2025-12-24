@@ -106,6 +106,32 @@ export const animeCardsRouter = createTRPCRouter({
 		});
 	}),
 
+	/**
+	 * Optimized query for landing page - includes genres and only necessary fields
+	 * Used by public-facing pages for better LCP/FCP
+	 */
+	getPublicCards: publicProcedure.query(async ({ ctx }) => {
+		return ctx.db.animeCard.findMany({
+			select: {
+				id: true,
+				title: true,
+				episode: true,
+				total_episodes: true,
+				mal_link: true,
+				show_type: true,
+				studio: true,
+				source: true,
+				genres: {
+					select: {
+						id: true,
+						name: true,
+					},
+				},
+			},
+			orderBy: { id: 'asc' },
+		});
+	}),
+
 	updateCard: adminProcedure
 		.input(updateAnimeCardInputSchema)
 		.mutation(async ({ ctx, input }) => {

@@ -75,6 +75,24 @@ export const carouselRouter = createTRPCRouter({
 			orderBy: { order: 'asc' },
 		});
 	}),
+
+	/**
+	 * Full carousel data for public pages (hero carousel)
+	 * Optimized select to only fetch needed fields for rendering
+	 */
+	getFullData: publicProcedure.query(async ({ ctx }) => {
+		const allImages = await ctx.db.carousel.findMany({
+			select: {
+				id: true,
+				alt: true,
+				order: true,
+				mobileSource: true,
+				desktopSource: true,
+			},
+			orderBy: { order: 'asc' },
+		});
+		return { data: allImages };
+	}),
 	deleteItem: adminProcedure
 		.input(z.object({ id: z.number().int().min(1) }))
 		.mutation(async ({ ctx, input }) => {

@@ -52,8 +52,10 @@ export function parseToArray(val: unknown): string[] {
 /**
  * Checks if a field key is an array field
  */
-export function isArrayField(fieldKey: DisplayFieldKey): fieldKey is ArrayFieldKey {
-	return ARRAY_FIELDS.includes(fieldKey as ArrayFieldKey);
+export function isArrayField(
+	fieldKey: DisplayFieldKey,
+): fieldKey is ArrayFieldKey {
+	return (ARRAY_FIELDS as readonly string[]).includes(fieldKey);
 }
 
 /**
@@ -90,7 +92,9 @@ export function checkFieldMatch(
 		const targetSet = new Set(targetArr);
 		const guessSet = new Set(guessArr);
 
-		const matchCount = guessArr.filter((item) => targetSet.has(item)).length;
+		const matchCount = guessArr.filter((item) =>
+			targetSet.has(item),
+		).length;
 
 		// Exact match: same items (all match and same count)
 		if (targetSet.size === guessSet.size && matchCount === targetSet.size) {
@@ -167,4 +171,3 @@ export function getMatchResultForProgress(result: MatchResult): string {
 			return 'bg-red-400';
 	}
 }
-

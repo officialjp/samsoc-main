@@ -1,12 +1,15 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { api } from '~/trpc/react';
 import { toast } from 'sonner';
 import Countdown from './countdown';
 import Leaderboard from './leaderboard';
 import GameOverBanner from './game-over-banner';
+import DailyNotFound from './daily-not-found';
+import GameSkeleton from './game-skeleton';
 import { HINT_LABELS, GAME_CONFIG } from '~/lib/game-config';
+import type { LeaderboardUser } from '~/lib/game-types';
 
 interface StudioGameProps {
 	selectedStudioId: string | undefined;
@@ -25,12 +28,14 @@ export default function StudioGame({
 	const [isLoading, setIsLoading] = useState(true);
 	const [isCopied, setIsCopied] = useState(false);
 	const isProcessingRef = useRef(false);
+	const lastProcessedIdRef = useRef<string | null>(null);
 	const utils = api.useUtils();
 
-	const { data: gameData } = api.studio.getAnswerStudio.useQuery();
-	const { data: leaderboard = [] } = api.studio.getLeaderboard.useQuery();
-	const { data: allStudios } = api.studio.getAllStudios.useQuery();
-	const { data: session } = api.studio.getTodaysSession.useQuery();
+	const { data: gameData, error: gameError } =
+		api.studio.getAnswerStudio.useQuery(undefined, {
+			staleTime: 1000 * 60 * 5, // 5 minutes
+			refetchOnWindowFocus: false,
+		});
 
 	const answerStudio = gameData?.studio;
 
@@ -39,6 +44,24 @@ export default function StudioGame({
 		!!gameData?.hasWonToday ||
 		!!gameData?.hasFailedToday ||
 		guesses.length >= GAME_CONFIG.STUDIO.MAX_GUESSES;
+
+	// Only fetch leaderboard when game is over
+	const { data: leaderboard = [] } = api.studio.getLeaderboard.useQuery(
+		undefined,
+		{
+			enabled: isGameOver,
+			staleTime: 1000 * 60 * 2, // 2 minutes
+		},
+	);
+
+	const { data: allStudios } = api.studio.getAllStudios.useQuery(undefined, {
+		staleTime: 1000 * 60 * 30, // 30 minutes - studio list rarely changes
+	});
+
+	const { data: session } = api.studio.getTodaysSession.useQuery(undefined, {
+		enabled: !!gameData?.studio,
+		staleTime: 1000 * 60, // 1 minute
+	});
 
 	const addGuessMutation = api.studio.addGameGuess.useMutation({
 		onError: (error) => {
@@ -62,6 +85,12 @@ export default function StudioGame({
 		},
 	});
 
+	const lossMutation = api.studio.submitLoss.useMutation({
+		onError: (error) => {
+			toast.error(`Failed to submit loss: ${error.message}`);
+		},
+	});
+
 	// Load guesses from database on mount
 	useEffect(() => {
 		if (session) {
@@ -75,7 +104,8 @@ export default function StudioGame({
 					answerStudio?.name.toLowerCase().trim(),
 			);
 
-			const isLoss = session.guesses.length >= GAME_CONFIG.STUDIO.MAX_GUESSES;
+			const isLoss =
+				session.guesses.length >= GAME_CONFIG.STUDIO.MAX_GUESSES;
 
 			if (isWin) {
 				setGameWon(true);
@@ -99,16 +129,24 @@ export default function StudioGame({
 		)
 			return;
 
+		// Check if we've already processed this selection
+		if (lastProcessedIdRef.current === selectedStudioId) {
+			return;
+		}
+
 		const selected = allStudios.find((s) => s.id === selectedStudioId);
 		if (!selected) return;
 
 		// Check for duplicate guess
 		if (guesses.some((g) => g.studioName === selected.name)) {
+			// Mark as processed to prevent duplicate toasts
+			lastProcessedIdRef.current = selectedStudioId;
 			toast.error('You already guessed this studio!');
 			return;
 		}
 
 		isProcessingRef.current = true;
+		lastProcessedIdRef.current = selectedStudioId;
 
 		const newGuesses = [...guesses, { studioName: selected.name }];
 		setGuesses(newGuesses);
@@ -124,26 +162,35 @@ export default function StudioGame({
 			winMutation.mutate({ tries: newGuesses.length });
 		} else if (newGuesses.length >= GAME_CONFIG.STUDIO.MAX_GUESSES) {
 			setGameFailed(true);
+			lossMutation.mutate();
 		}
 	}, [
+		isGameOver,
 		selectedStudioId,
 		answerStudio,
 		allStudios,
-		isGameOver,
 		isLoading,
-		guesses,
 		addGuessMutation,
-		winMutation,
+		guesses,
 		setGameWon,
 		setGameFailed,
+		winMutation,
+		lossMutation,
 	]);
 
 	// Process guess when studio is selected
 	useEffect(() => {
 		if (selectedStudioId && !isProcessingRef.current) {
-			void processGuess();
+			processGuess();
 		}
 	}, [selectedStudioId, processGuess]);
+
+	// Reset lastProcessedIdRef when selectedStudioId changes to allow re-selection
+	useEffect(() => {
+		if (!selectedStudioId) {
+			lastProcessedIdRef.current = null;
+		}
+	}, [selectedStudioId]);
 
 	const getHintValue = (idx: number) => {
 		if (!answerStudio) return '';
@@ -208,33 +255,29 @@ export default function StudioGame({
 		}
 	};
 
-	if (!answerStudio || isLoading) return null;
+	// Show error state if daily studio not found
+	if (gameError || (!answerStudio && !isLoading)) {
+		return <DailyNotFound gameType="studio" />;
+	}
 
-	const leaderboardData = leaderboard.map((user) => ({
-		id: user.id,
-		name: user.name,
-		wins: user.studioWins,
-		totalTries: user.studioTotalTries,
-	}));
+	if (!answerStudio || isLoading) return <GameSkeleton gameType="studio" />;
+
+	// Leaderboard data is already flattened from the router
+	const leaderboardData: LeaderboardUser[] = leaderboard;
 
 	return (
 		<div className="max-w-7xl mx-auto p-4 md:p-8">
 			<div className="flex flex-col lg:flex-row gap-8">
 				<div className="flex-1">
-					<div className="mb-8">
-						<h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
-							{GAME_CONFIG.STUDIO.NAME}
-						</h1>
-						<div className="flex items-center gap-4">
-							{isGameOver ? (
-								<Countdown label="Next studio in:" />
-							) : (
-								<span className="text-sm font-bold text-gray-600 uppercase tracking-tighter">
-									Guesses Used: {guesses.length} /{' '}
-									{GAME_CONFIG.STUDIO.MAX_GUESSES}
-								</span>
-							)}
-						</div>
+					<div className="mb-8 flex items-center gap-4">
+						{isGameOver ? (
+							<Countdown label="Next studio in:" />
+						) : (
+							<span className="text-sm font-bold text-gray-600 uppercase tracking-tighter">
+								Guesses Used: {guesses.length} /{' '}
+								{GAME_CONFIG.STUDIO.MAX_GUESSES}
+							</span>
+						)}
 					</div>
 
 					{isGameOver && (
@@ -276,9 +319,17 @@ export default function StudioGame({
 					</div>
 				</div>
 
-				<aside className="w-full lg:w-80" aria-label="Game leaderboard">
-					<Leaderboard users={leaderboardData} gameType="studio" />
-				</aside>
+				{isGameOver && (
+					<aside
+						className="w-full lg:w-80"
+						aria-label="Game leaderboard"
+					>
+						<Leaderboard
+							users={leaderboardData}
+							gameType="studio"
+						/>
+					</aside>
+				)}
 			</div>
 		</div>
 	);

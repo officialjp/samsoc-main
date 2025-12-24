@@ -1,6 +1,5 @@
 'use client';
 
-import { useMemo } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '../ui/button';
 
@@ -17,21 +16,17 @@ export function CalendarHeader({
 	onNextMonth,
 	onCurrentMonth,
 }: CalendarHeaderProps) {
-	const { desktopDate, mobileDate } = useMemo(() => {
-		const desktopFormat = new Intl.DateTimeFormat('en-US', {
-			month: 'long',
-			year: 'numeric',
-		});
-		const mobileFormat = new Intl.DateTimeFormat('en-US', {
-			month: 'short',
-			year: 'numeric',
-		});
+	const desktopFormat = new Intl.DateTimeFormat('en-US', {
+		month: 'long',
+		year: 'numeric',
+	});
+	const mobileFormat = new Intl.DateTimeFormat('en-US', {
+		month: 'short',
+		year: 'numeric',
+	});
 
-		return {
-			desktopDate: desktopFormat.format(currentMonth),
-			mobileDate: mobileFormat.format(currentMonth),
-		};
-	}, [currentMonth]);
+	const desktopDate = desktopFormat.format(currentMonth);
+	const mobileDate = mobileFormat.format(currentMonth);
 
 	return (
 		<div className="flex items-center justify-between mb-6">

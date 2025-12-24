@@ -29,6 +29,38 @@ export const eventRouter = createTRPCRouter({
 			},
 		});
 	}),
+
+	getSpecialEvents: publicProcedure.query(async ({ ctx }) => {
+		return ctx.db.event.findMany({
+			where: { is_regular_session: false },
+			select: {
+				id: true,
+				title: true,
+				description: true,
+				location: true,
+				date: true,
+				color: true,
+				is_regular_session: true,
+				session_count: true,
+			},
+		});
+	}),
+
+	getRegularSessions: publicProcedure.query(async ({ ctx }) => {
+		return ctx.db.event.findMany({
+			where: { is_regular_session: true },
+			select: {
+				id: true,
+				title: true,
+				description: true,
+				location: true,
+				date: true,
+				color: true,
+				is_regular_session: true,
+				session_count: true,
+			},
+		});
+	}),
 	deleteItem: adminProcedure
 		.input(z.object({ id: z.number().int().min(1) }))
 		.mutation(async ({ ctx, input }) => {

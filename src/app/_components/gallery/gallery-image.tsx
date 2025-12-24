@@ -1,5 +1,5 @@
 'use client';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { X } from 'lucide-react';
 
@@ -20,9 +20,9 @@ export default function GalleryImage({
 		setIsOpen(true);
 	};
 
-	const closeModal = useCallback(() => {
+	const closeModal = () => {
 		setIsOpen(false);
-	}, []);
+	};
 
 	useEffect(() => {
 		if (!isOpen) return;

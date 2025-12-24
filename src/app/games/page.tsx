@@ -16,6 +16,13 @@ export default function GamesPage() {
 			emoji: '🎬',
 			href: '/games/studio',
 		},
+		{
+			id: 'banner',
+			title: 'Zoomed-In Banner',
+			description: 'Guess the anime from a zoomed-in image',
+			emoji: '🔍',
+			href: '/games/banner',
+		},
 	];
 
 	return (

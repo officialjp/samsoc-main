@@ -1,63 +1,26 @@
 'use client';
 
-import { useState, Suspense } from 'react';
-import { useSession, signIn } from 'next-auth/react';
-import { Loader2, Lock } from 'lucide-react';
+import { useState } from 'react';
 import StudioSearch from '~/app/_components/games/studio-search';
 import StudioGame from '~/app/_components/games/anime-studio';
 import { GameErrorBoundary } from '~/app/_components/games/error-boundary';
+import AuthGate from '~/app/_components/games/auth-gate';
 import { api } from '~/trpc/react';
+import GameHeader from '~/app/_components/games/game-header';
 
-function StudioGameContent() {
+export default function StudioPage() {
 	const [selectedStudioId, setSelectedStudioId] = useState<
 		string | undefined
 	>();
 	const [gameWon, setGameWon] = useState(false);
 	const [gameFailed, setGameFailed] = useState(false);
 
-	const { status } = useSession();
-
 	const { data: gameData, isLoading: gameLoading } =
 		api.studio.getAnswerStudio.useQuery(undefined, {
-			enabled: status === 'authenticated',
+			staleTime: 1000 * 60 * 5,
+			refetchOnWindowFocus: false,
 		});
 
-	if (status === 'loading' || (status === 'authenticated' && gameLoading)) {
-		return (
-			<div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-				<Loader2 className="w-10 h-10 animate-spin text-blue-600" />
-				<p className="font-bold text-gray-700 uppercase tracking-tighter">
-					Syncing Studio Data...
-				</p>
-			</div>
-		);
-	}
-
-	if (status === 'unauthenticated') {
-		return (
-			<div className="flex flex-col items-center justify-center min-h-[60vh] p-6 text-center">
-				<div className="bg-white border-4 border-black p-8 rounded-3xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] max-w-md">
-					<Lock className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-					<h2 className="text-2xl font-black mb-2 uppercase italic">
-						LOGIN REQUIRED!
-					</h2>
-					<p className="text-gray-600 mb-6 font-medium">
-						You must be logged in to track your studio streaks and
-						climb the leaderboard.
-					</p>
-					<button
-						onClick={() => void signIn()}
-						className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-none transition-all"
-					>
-						LOG IN TO PLAY
-					</button>
-				</div>
-			</div>
-		);
-	}
-
-	// This check will now resolve correctly on refresh because
-	// StudioGame will immediately call setGameWon or setGameFailed upon mounting
 	const isGameOver =
 		gameWon ||
 		gameFailed ||
@@ -65,41 +28,35 @@ function StudioGameContent() {
 		!!gameData?.hasFailedToday;
 
 	const handleSelect = (id: string) => {
-		// Only set if game is not over and we don't already have this ID
 		if (!isGameOver && id !== selectedStudioId) {
 			setSelectedStudioId(id);
 		}
 	};
 
 	return (
-		<GameErrorBoundary>
-			<main className="min-h-screen py-12">
-				{!isGameOver && (
-					<div className="mb-8">
-						<StudioSearch onSelect={handleSelect} />
-					</div>
-				)}
-				<StudioGame
-					selectedStudioId={selectedStudioId}
-					gameWon={gameWon}
-					setGameWon={setGameWon}
-					setGameFailed={setGameFailed}
-				/>
-			</main>
-		</GameErrorBoundary>
-	);
-}
-
-export default function StudioPage() {
-	return (
-		<Suspense
-			fallback={
-				<div className="flex items-center justify-center min-h-screen">
-					<Loader2 className="w-10 h-10 animate-spin text-blue-600" />
-				</div>
-			}
+		<AuthGate
+			loadingMessage="Syncing Studio Data..."
+			isGameDataLoading={gameLoading}
 		>
-			<StudioGameContent />
-		</Suspense>
+			<GameErrorBoundary>
+				<main className="min-h-screen py-12">
+					<GameHeader gameType="studio" />
+					{!isGameOver && (
+						<div className="mb-8">
+							<StudioSearch
+								onSelect={handleSelect}
+								disabled={gameLoading}
+							/>
+						</div>
+					)}
+					<StudioGame
+						selectedStudioId={selectedStudioId}
+						gameWon={gameWon}
+						setGameWon={setGameWon}
+						setGameFailed={setGameFailed}
+					/>
+				</main>
+			</GameErrorBoundary>
+		</AuthGate>
 	);
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, Suspense } from 'react';
+import { useState } from 'react';
 import { addMonths, subMonths, format } from 'date-fns';
 import { CalendarHeader } from './calendar-header';
 import { CalendarDays } from './calendar-days';
@@ -33,46 +33,39 @@ export function Calendar({ events }: CalendarProps) {
 		setSelectedDate(now);
 	};
 
-	const groupedEvents = useMemo(() => {
-		const monthStart = new Date(
-			currentMonth.getFullYear(),
-			currentMonth.getMonth(),
-			1,
-		);
-		const monthEnd = new Date(
-			currentMonth.getFullYear(),
-			currentMonth.getMonth() + 1,
-			0,
-		);
+	const monthStart = new Date(
+		currentMonth.getFullYear(),
+		currentMonth.getMonth(),
+		1,
+	);
+	const monthEnd = new Date(
+		currentMonth.getFullYear(),
+		currentMonth.getMonth() + 1,
+		0,
+	);
 
-		const filtered = events.filter((event) => {
-			const eventDate = new Date(event.date);
-			return eventDate >= monthStart && eventDate <= monthEnd;
-		});
+	const filtered = events.filter((event) => {
+		const eventDate = new Date(event.date);
+		return eventDate >= monthStart && eventDate <= monthEnd;
+	});
 
-		const grouped: Record<string, Event[]> = {};
-		for (const event of filtered) {
-			const dateKey = format(new Date(event.date), 'yyyy-MM-dd');
-			grouped[dateKey] ??= [];
-			grouped[dateKey].push(event);
+	const groupedEvents: Record<string, Event[]> = {};
+	for (const event of filtered) {
+		const dateKey = format(new Date(event.date), 'yyyy-MM-dd');
+		groupedEvents[dateKey] ??= [];
+		groupedEvents[dateKey].push(event);
+	}
+
+	const eventsMap = new Map<string, Event[]>();
+	for (const event of events) {
+		const dateKey = format(new Date(event.date), 'yyyy-MM-dd');
+		const existing = eventsMap.get(dateKey);
+		if (existing) {
+			existing.push(event);
+		} else {
+			eventsMap.set(dateKey, [event]);
 		}
-
-		return grouped;
-	}, [events, currentMonth]);
-
-	const eventsMap = useMemo(() => {
-		const map = new Map<string, Event[]>();
-		for (const event of events) {
-			const dateKey = format(new Date(event.date), 'yyyy-MM-dd');
-			const existing = map.get(dateKey);
-			if (existing) {
-				existing.push(event);
-			} else {
-				map.set(dateKey, [event]);
-			}
-		}
-		return map;
-	}, [events]);
+	}
 
 	return (
 		<div className="bg-white overflow-hidden border-2 rounded-2xl border-black p-4 md:p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
@@ -84,22 +77,12 @@ export function Calendar({ events }: CalendarProps) {
 			/>
 
 			<div className="md:hidden">
-				<Suspense
-					fallback={
-						<div className="h-96 flex items-center justify-center">
-							<div className="text-gray-500">
-								Loading calendar...
-							</div>
-						</div>
-					}
-				>
-					<MobileCalendarView
-						currentMonth={currentMonth}
-						selectedDate={selectedDate}
-						groupedEvents={groupedEvents}
-						onDateClick={onDateClick}
-					/>
-				</Suspense>
+				<MobileCalendarView
+					currentMonth={currentMonth}
+					selectedDate={selectedDate}
+					groupedEvents={groupedEvents}
+					onDateClick={onDateClick}
+				/>
 			</div>
 
 			<div className="hidden md:block">

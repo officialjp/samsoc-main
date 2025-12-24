@@ -2,6 +2,8 @@
 
 import { XCircle, CheckCircle2 } from 'lucide-react';
 
+type GameType = 'wordle' | 'studio' | 'banner';
+
 interface GameOverBannerProps {
 	won: boolean;
 	answer: string;
@@ -9,41 +11,64 @@ interface GameOverBannerProps {
 	onShare?: () => void;
 	shareButtonText?: string;
 	isShareCopied?: boolean;
-	gameType?: 'wordle' | 'studio';
+	gameType?: GameType;
 }
+
+const GAME_MESSAGES: Record<
+	GameType,
+	{
+		win: {
+			title: string;
+			subtitle: (answer: string, tries: number) => string;
+		};
+		loss: { title: string; subtitle: (answer: string) => string };
+	}
+> = {
+	wordle: {
+		win: {
+			title: 'Journey Complete!',
+			subtitle: (answer, tries) =>
+				`You identified ${answer} in ${tries} tries.`,
+		},
+		loss: {
+			title: 'Out of Guesses',
+			subtitle: (answer) => `The answer was ${answer}.`,
+		},
+	},
+	studio: {
+		win: {
+			title: 'Contract Signed!',
+			subtitle: (answer) => `Correct! It was ${answer}`,
+		},
+		loss: {
+			title: 'Studio Closed',
+			subtitle: (answer) => `The answer was ${answer}.`,
+		},
+	},
+	banner: {
+		win: {
+			title: 'Sharp Eyes!',
+			subtitle: (answer, tries) =>
+				`You spotted ${answer} in ${tries} ${tries === 1 ? 'guess' : 'guesses'}!`,
+		},
+		loss: {
+			title: 'Zoomed Out',
+			subtitle: (answer) => `The anime was ${answer}.`,
+		},
+	},
+};
 
 export default function GameOverBanner({
 	won,
 	answer,
-	tries,
+	tries = 0,
 	onShare,
 	shareButtonText = 'SHARE RESULTS',
 	isShareCopied = false,
 	gameType = 'wordle',
 }: GameOverBannerProps) {
-	const winMessages =
-		gameType === 'studio'
-			? {
-					title: 'Contract Signed!',
-					subtitle: `Correct! It was ${answer}`,
-				}
-			: {
-					title: 'Journey Complete!',
-					subtitle: `You identified ${answer} in ${tries ?? 0} tries.`,
-				};
-
-	const lossMessages =
-		gameType === 'studio'
-			? {
-					title: 'Studio Closed',
-					subtitle: `The answer was ${answer}.`,
-				}
-			: {
-					title: 'Out of Guesses',
-					subtitle: `The answer was ${answer}.`,
-				};
-
-	const messages = won ? winMessages : lossMessages;
+	const messages = GAME_MESSAGES[gameType];
+	const currentMessage = won ? messages.win : messages.loss;
 
 	return (
 		<div
@@ -67,19 +92,23 @@ export default function GameOverBanner({
 				)}
 				<div>
 					<h2 className="text-2xl font-bold text-gray-900">
-						{messages.title}
+						{currentMessage.title}
 					</h2>
-					<p className="text-gray-700">{messages.subtitle}</p>
+					<p className="text-gray-700">
+						{currentMessage.subtitle(answer, tries)}
+					</p>
 				</div>
 			</div>
 
 			{onShare && (
 				<button
 					onClick={onShare}
-					className={`flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-black font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-none transition-all ${
+					className={`flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-black font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-none transition-all hover:cursor-pointer ${
 						isShareCopied ? 'bg-green-400' : 'bg-white'
 					}`}
-					aria-label={isShareCopied ? 'Results copied!' : 'Share results'}
+					aria-label={
+						isShareCopied ? 'Results copied!' : 'Share results'
+					}
 				>
 					{isShareCopied ? 'COPIED!' : shareButtonText}
 				</button>
@@ -87,4 +116,3 @@ export default function GameOverBanner({
 		</div>
 	);
 }
-

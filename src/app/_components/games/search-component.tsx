@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import SearchInput from './search-input';
 
 interface AnimeItem {
@@ -12,8 +11,12 @@ interface AnimeItem {
 
 type AnimeDataRaw = Record<string, string>;
 
-export default function AnimeSearch() {
-	const router = useRouter();
+interface AnimeSearchProps {
+	onSelect: (id: string) => void;
+	disabled?: boolean;
+}
+
+export default function AnimeSearch({ onSelect, disabled }: AnimeSearchProps) {
 	const [combinedData, setCombinedData] = useState<AnimeItem[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -65,9 +68,7 @@ export default function AnimeSearch() {
 	}, []);
 
 	const handleSelect = (anime: AnimeItem): void => {
-		const params = new URLSearchParams();
-		params.set('animeId', anime.id);
-		router.push(`?${params.toString()}`);
+		onSelect(anime.id);
 	};
 
 	return (
@@ -79,6 +80,7 @@ export default function AnimeSearch() {
 			]}
 			onSelect={handleSelect}
 			placeholder="Search anime (English or Japanese)..."
+			disabled={disabled}
 			loading={loading}
 			error={error}
 			getItemId={(item) => item.id}

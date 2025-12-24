@@ -4,7 +4,7 @@ import levenshtein from 'js-levenshtein';
 import Link from 'next/link';
 import Image from 'next/image';
 import Miku from '../../public/miku.webp';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { SectionContainer } from '~/app/_components/section-container';
 import { Button } from '~/app/_components/ui/button';
 import { SectionHeading } from '~/app/_components/section-heading';
@@ -59,44 +59,40 @@ export default function NotFound() {
 		setPathName(normalizedPath ?? null);
 	}, []);
 
-	const links = useMemo(() => {
-		if (!pathName) {
-			return null;
-		}
+	const links = pathName
+		? Object.entries(pageIndex)
+				.filter(([name]) => {
+					const threshold = getThreshold(name);
 
-		return Object.entries(pageIndex)
-			.filter(([name]) => {
-				const threshold = getThreshold(name);
-
-				return (
-					levenshtein(name, pathName) < threshold ||
-					name.includes(pathName)
-				);
-			})
-			.map(([name, data], index) => {
-				return (
-					<Button
-						key={name + index}
-						asChild
-						className="hover:cursor-pointer bg-button2 hover:bg-button1"
-					>
-						<Link href={data.route} className="mb-2">
-							<span className="mr-2">{data.icon}</span>
-							{name
-								.split(' ')
-								.map((word) => {
-									return (
-										word.slice(0, 1).toUpperCase() +
-										word.slice(1)
-									);
-								})
-								.join(' ')}
-							<ChevronRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
-						</Link>
-					</Button>
-				);
-			});
-	}, [pathName]);
+					return (
+						levenshtein(name, pathName) < threshold ||
+						name.includes(pathName)
+					);
+				})
+				.map(([name, data], index) => {
+					return (
+						<Button
+							key={name + index}
+							asChild
+							className="hover:cursor-pointer bg-button2 hover:bg-button1"
+						>
+							<Link href={data.route} className="mb-2">
+								<span className="mr-2">{data.icon}</span>
+								{name
+									.split(' ')
+									.map((word) => {
+										return (
+											word.slice(0, 1).toUpperCase() +
+											word.slice(1)
+										);
+									})
+									.join(' ')}
+								<ChevronRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+							</Link>
+						</Button>
+					);
+				})
+		: null;
 
 	if (!pathName && typeof window === 'undefined') {
 		return null;

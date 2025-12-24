@@ -76,6 +76,29 @@ export const imageRouter = createTRPCRouter({
 			orderBy: { id: 'asc' },
 		});
 	}),
+
+	/**
+	 * Optimized query for the public gallery page.
+	 * Only fetches fields needed for display to improve LCP/FCP.
+	 */
+	getGalleryData: publicProcedure.query(async ({ ctx }) => {
+		const images = await ctx.db.image.findMany({
+			select: {
+				id: true,
+				source: true,
+				thumbnailSource: true,
+				alt: true,
+				category: true,
+				year: true,
+			},
+			orderBy: { createdAt: 'desc' },
+		});
+
+		return {
+			data: images,
+			total: images.length,
+		};
+	}),
 	deleteItem: adminProcedure
 		.input(z.object({ id: z.number().int().min(1) }))
 		.mutation(async ({ ctx, input }) => {
