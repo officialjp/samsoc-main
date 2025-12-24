@@ -126,6 +126,7 @@ export default function GenericItemRemoval<T extends RemovalItem>({
 					message: warningMsg,
 				});
 				setConfirmingDelete(true);
+				return;
 			}
 
 			setStatusMessage(null);
@@ -257,9 +258,7 @@ export default function GenericItemRemoval<T extends RemovalItem>({
 					<Button
 						onClick={handleDelete}
 						disabled={
-							!selectedItemId ||
-							isSubmitting ||
-							(useWindowConfirm && isProtected)
+							!selectedItemId || isSubmitting || isProtected
 						}
 						className={`w-full sm:w-auto flex items-center transition-all ${
 							useWarningMessage && confirmingDelete
@@ -282,7 +281,7 @@ export default function GenericItemRemoval<T extends RemovalItem>({
 				</div>
 			)}
 
-			{selectedItemId && isProtected && useWindowConfirm && (
+			{selectedItemId && isProtected && (
 				<p className="text-red-500 text-sm mt-2">
 					<span className="font-bold">
 						Item ID {selectedItemId} is protected
