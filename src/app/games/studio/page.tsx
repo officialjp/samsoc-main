@@ -5,6 +5,7 @@ import { useSession, signIn } from 'next-auth/react';
 import { Loader2, Lock } from 'lucide-react';
 import StudioSearch from '~/app/_components/games/studio-search';
 import StudioGame from '~/app/_components/games/anime-studio';
+import { GameErrorBoundary } from '~/app/_components/games/error-boundary';
 import { api } from '~/trpc/react';
 
 function StudioGameContent() {
@@ -64,24 +65,28 @@ function StudioGameContent() {
 		!!gameData?.hasFailedToday;
 
 	const handleSelect = (id: string) => {
-		setSelectedStudioId(id);
-		setTimeout(() => setSelectedStudioId(undefined), 100);
+		// Only set if game is not over and we don't already have this ID
+		if (!isGameOver && id !== selectedStudioId) {
+			setSelectedStudioId(id);
+		}
 	};
 
 	return (
-		<main className="min-h-screen py-12">
-			{!isGameOver && (
-				<div className="mb-8">
-					<StudioSearch onSelect={handleSelect} />
-				</div>
-			)}
-			<StudioGame
-				selectedStudioId={selectedStudioId}
-				gameWon={gameWon}
-				setGameWon={setGameWon}
-				setGameFailed={setGameFailed}
-			/>
-		</main>
+		<GameErrorBoundary>
+			<main className="min-h-screen py-12">
+				{!isGameOver && (
+					<div className="mb-8">
+						<StudioSearch onSelect={handleSelect} />
+					</div>
+				)}
+				<StudioGame
+					selectedStudioId={selectedStudioId}
+					gameWon={gameWon}
+					setGameWon={setGameWon}
+					setGameFailed={setGameFailed}
+				/>
+			</main>
+		</GameErrorBoundary>
 	);
 }
 

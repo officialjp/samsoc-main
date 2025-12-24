@@ -6,6 +6,7 @@ import { useSession, signIn } from 'next-auth/react';
 import { Loader2, Lock } from 'lucide-react';
 import AnimeSearch from '../../_components/games/search-component';
 import AnimeWordle from '../../_components/games/anime-wordle';
+import { GameErrorBoundary } from '../../_components/games/error-boundary';
 import { api } from '~/trpc/react';
 
 function WordleContent() {
@@ -60,15 +61,17 @@ function WordleContent() {
 		!!gameData?.hasFailedToday;
 
 	return (
-		<main className="min-h-screen">
-			{!isGameOver && <AnimeSearch />}
-			<AnimeWordle
-				searchedAnimeId={animeId ?? undefined}
-				gameWon={gameWon}
-				setGameWon={setGameWon}
-				setGameFailed={setGameFailed}
-			/>
-		</main>
+		<GameErrorBoundary>
+			<main className="min-h-screen">
+				{!isGameOver && <AnimeSearch />}
+				<AnimeWordle
+					searchedAnimeId={animeId ?? undefined}
+					gameWon={gameWon}
+					setGameWon={setGameWon}
+					setGameFailed={setGameFailed}
+				/>
+			</main>
+		</GameErrorBoundary>
 	);
 }
 
