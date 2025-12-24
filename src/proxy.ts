@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import { getAuthSecret } from '~/lib/auth-secret';
 
 export async function proxy(req: NextRequest) {
 	const isProtectedPath =
@@ -11,14 +12,8 @@ export async function proxy(req: NextRequest) {
 		return NextResponse.next();
 	}
 
-	// Get the secret from environment
-	let secretValue = process.env.AUTH_SECRET;
-
-	// In development, if AUTH_SECRET is not set, use a default development secret
-	// This ensures getToken can properly decode the JWT token
-	if (!secretValue && process.env.NODE_ENV === 'development') {
-		secretValue = 'development-secret-key-change-in-production';
-	}
+	// Get the secret from environment (shared utility ensures consistency)
+	const secretValue = getAuthSecret();
 
 	try {
 		const token = await getToken({

@@ -4,6 +4,7 @@ import DiscordProvider from 'next-auth/providers/discord';
 import type { Adapter } from 'next-auth/adapters';
 
 import { db } from '~/server/db';
+import { getAuthSecret } from '~/lib/auth-secret';
 
 declare module 'next-auth' {
 	interface Session extends DefaultSession {
@@ -23,17 +24,6 @@ declare module 'next-auth/jwt' {
 		id: string;
 		role: string;
 	}
-}
-
-// Ensure AUTH_SECRET is set, with a development default if missing
-function getAuthSecret() {
-	let secret = process.env.AUTH_SECRET;
-
-	if (!secret && process.env.NODE_ENV === 'development') {
-		secret = 'development-secret-key-change-in-production';
-	}
-
-	return secret;
 }
 
 export const authConfig = {

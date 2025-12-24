@@ -64,6 +64,13 @@ export default function GenericItemRemoval<T extends RemovalItem>({
 		}
 	}, [statusMessage]);
 
+	useEffect(() => {
+		if (confirmingDelete) {
+			const timer = setTimeout(() => setConfirmingDelete(false), 3000);
+			return () => clearTimeout(timer);
+		}
+	}, [confirmingDelete]);
+
 	const filteredItems = useMemo(() => {
 		if (!items) return [];
 		if (!searchTerm) return items;
@@ -119,11 +126,6 @@ export default function GenericItemRemoval<T extends RemovalItem>({
 					message: warningMsg,
 				});
 				setConfirmingDelete(true);
-				const timer = setTimeout(
-					() => setConfirmingDelete(false),
-					3000,
-				);
-				return () => clearTimeout(timer);
 			}
 
 			setStatusMessage(null);
