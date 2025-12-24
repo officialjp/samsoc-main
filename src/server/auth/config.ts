@@ -25,18 +25,33 @@ declare module 'next-auth/jwt' {
 	}
 }
 
+// Ensure AUTH_SECRET is set, with a development default if missing
+function getAuthSecret() {
+	let secret = process.env.AUTH_SECRET;
+
+	if (!secret && process.env.NODE_ENV === 'development') {
+		secret = 'development-secret-key-change-in-production';
+	}
+
+	return secret;
+}
+
 export const authConfig = {
 	providers: [DiscordProvider],
 	adapter: PrismaAdapter(db) as Adapter,
 	session: {
 		strategy: 'jwt',
 	},
-	secret: process.env.AUTH_SECRET,
+	secret: getAuthSecret(),
 	callbacks: {
 		jwt: async ({ token, user }) => {
-			if (user && user.id) {
+			if (user?.id) {
 				token.id = user.id;
-				if ('role' in user && typeof user.role === 'string' && user.role) {
+				if (
+					'role' in user &&
+					typeof user.role === 'string' &&
+					user.role
+				) {
 					token.role = user.role;
 				} else {
 					const dbUser = await db.user.findUnique({

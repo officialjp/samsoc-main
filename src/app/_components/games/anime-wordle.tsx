@@ -135,7 +135,8 @@ export default function AnimeWordle({
 		if (
 			guesses.some(
 				(g) =>
-					formatDisplayValue(g.title).toLowerCase().trim() === guessTitle,
+					formatDisplayValue(g.title).toLowerCase().trim() ===
+					guessTitle,
 			)
 		) {
 			toast.error('You already guessed this anime!');
@@ -147,7 +148,7 @@ export default function AnimeWordle({
 		const guessData = DISPLAY_FIELDS.reduce(
 			(acc, { key }) => ({
 				...acc,
-				[key]: searchedAnime[key as keyof typeof searchedAnime],
+				[key]: searchedAnime[key],
 			}),
 			{} as WordleGuessData,
 		);
@@ -315,25 +316,30 @@ export default function AnimeWordle({
 											role="listitem"
 										>
 											<div className="grid grid-cols-4 sm:grid-cols-8 gap-2 mb-3">
-												{DISPLAY_FIELDS.map(({ key }) => {
-													const result = checkFieldMatch(
-														answerAnime[
-															key as keyof typeof answerAnime
-														],
-														guess[key],
-														key,
-													);
-													return (
-														<div
-															key={key}
-															className={`h-2 rounded-full border border-black/10 ${getMatchResultForProgress(result)}`}
-															aria-label={`${key}: ${result}`}
-														/>
-													);
-												})}
+												{DISPLAY_FIELDS.map(
+													({ key }) => {
+														const result =
+															checkFieldMatch(
+																answerAnime[
+																	key as keyof typeof answerAnime
+																],
+																guess[key],
+																key,
+															);
+														return (
+															<div
+																key={key}
+																className={`h-2 rounded-full border border-black/10 ${getMatchResultForProgress(result)}`}
+																aria-label={`${key}: ${result}`}
+															/>
+														);
+													},
+												)}
 											</div>
 											<div className="text-xs font-bold uppercase text-gray-500">
-												{formatDisplayValue(guess.title)}
+												{formatDisplayValue(
+													guess.title,
+												)}
 											</div>
 										</div>
 									))}
@@ -352,26 +358,28 @@ export default function AnimeWordle({
 										Guess #{guesses.length - idx}
 									</div>
 									<div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-										{DISPLAY_FIELDS.map(({ key, label }) => (
-											<FieldCell
-												key={key}
-												label={label}
-												value={guess[key]}
-												matchResult={checkFieldMatch(
-													answerAnime[
-														key as keyof typeof answerAnime
-													],
-													guess[key],
-													key,
-												)}
-												targetValue={
-													answerAnime[
-														key as keyof typeof answerAnime
-													]
-												}
-												fieldKey={key}
-											/>
-										))}
+										{DISPLAY_FIELDS.map(
+											({ key, label }) => (
+												<FieldCell
+													key={key}
+													label={label}
+													value={guess[key]}
+													matchResult={checkFieldMatch(
+														answerAnime[
+															key as keyof typeof answerAnime
+														],
+														guess[key],
+														key,
+													)}
+													targetValue={
+														answerAnime[
+															key as keyof typeof answerAnime
+														]
+													}
+													fieldKey={key}
+												/>
+											),
+										)}
 									</div>
 								</div>
 							))}
@@ -381,7 +389,10 @@ export default function AnimeWordle({
 
 				{isGameOver && (
 					<div className="w-full lg:w-80">
-						<Leaderboard users={leaderboardData} gameType="wordle" />
+						<Leaderboard
+							users={leaderboardData}
+							gameType="wordle"
+						/>
 					</div>
 				)}
 			</div>
