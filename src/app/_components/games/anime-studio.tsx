@@ -1,47 +1,18 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { api } from '~/trpc/react';
-import { Trophy, XCircle, CheckCircle2, Timer } from 'lucide-react';
 import { toast } from 'sonner';
+import Countdown from './countdown';
+import Leaderboard from './leaderboard';
+import GameOverBanner from './game-over-banner';
+import { HINT_LABELS, GAME_CONFIG } from '~/lib/game-config';
 
 interface StudioGameProps {
 	selectedStudioId: string | undefined;
 	gameWon: boolean;
 	setGameWon: (won: boolean) => void;
 	setGameFailed: (failed: boolean) => void;
-}
-
-const HINT_LABELS = [
-	'Average Rating',
-	'First & Last Anime Year',
-	'Top 5 Most Adapted Genres', // Hint 3 label updated
-	'10 Notable Characters',
-	'5 Notable Shows',
-];
-
-function Countdown() {
-	const [timeLeft, setTimeLeft] = useState('');
-	useEffect(() => {
-		const calculate = () => {
-			const now = new Date();
-			const tomorrow = new Date();
-			tomorrow.setUTCHours(24, 0, 0, 0);
-			const diff = tomorrow.getTime() - now.getTime();
-			const h = Math.floor(diff / 3600000);
-			const m = Math.floor((diff % 3600000) / 60000);
-			setTimeLeft(`${h}h ${m}m`);
-		};
-		calculate();
-		const timer = setInterval(calculate, 1000 * 60);
-		return () => clearInterval(timer);
-	}, []);
-	return (
-		<div className="flex items-center gap-2 text-sm font-bold text-gray-700 bg-white/50 px-3 py-1.5 rounded-full border border-black/10">
-			<Timer className="w-4 h-4 text-blue-600" />
-			<span>Next studio in: {timeLeft}</span>
-		</div>
-	);
 }
 
 export default function StudioGame({
@@ -52,6 +23,8 @@ export default function StudioGame({
 }: StudioGameProps) {
 	const [guesses, setGuesses] = useState<{ studioName: string }[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
+	const [isCopied, setIsCopied] = useState(false);
+	const isProcessingRef = useRef(false);
 	const utils = api.useUtils();
 
 	const { data: gameData } = api.studio.getAnswerStudio.useQuery();
@@ -65,18 +38,20 @@ export default function StudioGame({
 		gameWon ||
 		!!gameData?.hasWonToday ||
 		!!gameData?.hasFailedToday ||
-		guesses.length >= 5;
+		guesses.length >= GAME_CONFIG.STUDIO.MAX_GUESSES;
 
-	const recordGuessMutation = api.studio.recordGuess.useMutation({
-		onError: (error) => {
-			toast.error(`Failed to record guess: ${error.message}`);
-		},
-	});
 	const addGuessMutation = api.studio.addGameGuess.useMutation({
 		onError: (error) => {
 			toast.error(`Failed to save guess: ${error.message}`);
+			isProcessingRef.current = false;
+			// Revert the guess on error
+			setGuesses((prev) => prev.slice(0, -1));
+		},
+		onSuccess: () => {
+			isProcessingRef.current = false;
 		},
 	});
+
 	const winMutation = api.studio.submitWin.useMutation({
 		onSuccess: () => {
 			void utils.studio.getLeaderboard.invalidate();
@@ -100,7 +75,7 @@ export default function StudioGame({
 					answerStudio?.name.toLowerCase().trim(),
 			);
 
-			const isLoss = session.guesses.length >= 5;
+			const isLoss = session.guesses.length >= GAME_CONFIG.STUDIO.MAX_GUESSES;
 
 			if (isWin) {
 				setGameWon(true);
@@ -119,18 +94,24 @@ export default function StudioGame({
 			!answerStudio ||
 			!allStudios ||
 			isLoading ||
-			recordGuessMutation.isPending ||
+			isProcessingRef.current ||
 			addGuessMutation.isPending
 		)
 			return;
 
 		const selected = allStudios.find((s) => s.id === selectedStudioId);
-		if (!selected || guesses.some((g) => g.studioName === selected.name))
+		if (!selected) return;
+
+		// Check for duplicate guess
+		if (guesses.some((g) => g.studioName === selected.name)) {
+			toast.error('You already guessed this studio!');
 			return;
+		}
+
+		isProcessingRef.current = true;
 
 		const newGuesses = [...guesses, { studioName: selected.name }];
 		setGuesses(newGuesses);
-		recordGuessMutation.mutate();
 
 		// Save guess to database
 		addGuessMutation.mutate({ studioName: selected.name });
@@ -141,7 +122,7 @@ export default function StudioGame({
 		) {
 			setGameWon(true);
 			winMutation.mutate({ tries: newGuesses.length });
-		} else if (newGuesses.length >= 5) {
+		} else if (newGuesses.length >= GAME_CONFIG.STUDIO.MAX_GUESSES) {
 			setGameFailed(true);
 		}
 	}, [
@@ -151,15 +132,17 @@ export default function StudioGame({
 		isGameOver,
 		isLoading,
 		guesses,
-		recordGuessMutation,
 		addGuessMutation,
 		winMutation,
 		setGameWon,
 		setGameFailed,
 	]);
 
+	// Process guess when studio is selected
 	useEffect(() => {
-		if (selectedStudioId) void processGuess();
+		if (selectedStudioId && !isProcessingRef.current) {
+			void processGuess();
+		}
 	}, [selectedStudioId, processGuess]);
 
 	const getHintValue = (idx: number) => {
@@ -170,7 +153,6 @@ export default function StudioGame({
 			case 1:
 				return `${answerStudio.firstAnimeYear} - ${answerStudio.lastAnimeYear}`;
 			case 2:
-				// REPLACED: prominentSource with topGenres
 				return Array.isArray(answerStudio.topGenres)
 					? answerStudio.topGenres.join(', ')
 					: '';
@@ -187,7 +169,53 @@ export default function StudioGame({
 		}
 	};
 
+	const handleShare = async () => {
+		if (!answerStudio) return;
+
+		const emojiGrid = guesses
+			.map((guess) => {
+				const isCorrect =
+					guess.studioName.toLowerCase().trim() ===
+					answerStudio.name.toLowerCase().trim();
+				return isCorrect ? '🟩' : '🟥';
+			})
+			.join('');
+
+		const shareLink = 'https://samsoc.co.uk/games/studio';
+		const shareText = `Studio Guesser ${new Date().toLocaleDateString('en-GB')}\n${guesses.length}/${GAME_CONFIG.STUDIO.MAX_GUESSES}\n\n${emojiGrid}\n\nPlay here: ${shareLink}`;
+
+		if (navigator.share) {
+			try {
+				await navigator.share({
+					title: 'Studio Guesser Result',
+					text: shareText,
+				});
+			} catch (err) {
+				// User cancelled or error occurred - ignore
+				if (err instanceof Error && err.name !== 'AbortError') {
+					console.error('Error sharing:', err);
+				}
+			}
+		} else {
+			try {
+				await navigator.clipboard.writeText(shareText);
+				setIsCopied(true);
+				setTimeout(() => setIsCopied(false), 2000);
+			} catch (err) {
+				toast.error('Failed to copy to clipboard');
+				console.error('Failed to copy:', err);
+			}
+		}
+	};
+
 	if (!answerStudio || isLoading) return null;
+
+	const leaderboardData = leaderboard.map((user) => ({
+		id: user.id,
+		name: user.name,
+		wins: user.studioWins,
+		totalTries: user.studioTotalTries,
+	}));
 
 	return (
 		<div className="max-w-7xl mx-auto p-4 md:p-8">
@@ -195,46 +223,31 @@ export default function StudioGame({
 				<div className="flex-1">
 					<div className="mb-8">
 						<h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
-							Studio Guesser
+							{GAME_CONFIG.STUDIO.NAME}
 						</h1>
-						{isGameOver ? (
-							<div className="flex items-center gap-3">
-								<Countdown />
-							</div>
-						) : (
-							<span className="text-sm font-bold text-gray-600 uppercase tracking-tighter">
-								Guesses Used: {guesses.length} / 5
-							</span>
-						)}
+						<div className="flex items-center gap-4">
+							{isGameOver ? (
+								<Countdown label="Next studio in:" />
+							) : (
+								<span className="text-sm font-bold text-gray-600 uppercase tracking-tighter">
+									Guesses Used: {guesses.length} /{' '}
+									{GAME_CONFIG.WORDLE.MAX_GUESSES}
+								</span>
+							)}
+						</div>
 					</div>
 
 					{isGameOver && (
-						<div
-							className={`border-2 border-black rounded-2xl p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-8 flex flex-col md:flex-row items-center justify-between gap-6 ${
-								gameWon || gameData?.hasWonToday
-									? 'bg-green-50'
-									: 'bg-red-50'
-							}`}
-						>
-							<div className="flex items-start gap-4">
-								{gameWon || gameData?.hasWonToday ? (
-									<CheckCircle2 className="w-8 h-8 text-green-600 shrink-0" />
-								) : (
-									<XCircle className="w-8 h-8 text-red-600 shrink-0" />
-								)}
-								<div>
-									<h2 className="text-2xl font-bold text-gray-900">
-										{gameWon || gameData?.hasWonToday
-											? 'Contract Signed!'
-											: 'Studio Closed'}
-									</h2>
-									<p className="text-gray-700 font-medium">
-										{gameWon || gameData?.hasWonToday
-											? `Correct! It was ${answerStudio.name}`
-											: `The answer was ${answerStudio.name}.`}
-									</p>
-								</div>
-							</div>
+						<div className="mb-8">
+							<GameOverBanner
+								won={gameWon || !!gameData?.hasWonToday}
+								answer={answerStudio.name}
+								tries={guesses.length}
+								onShare={handleShare}
+								shareButtonText="SHARE RESULTS"
+								isShareCopied={isCopied}
+								gameType="studio"
+							/>
 						</div>
 					)}
 
@@ -247,13 +260,15 @@ export default function StudioGame({
 										? 'opacity-100'
 										: 'opacity-40'
 								}`}
+								role="region"
+								aria-label={`Hint ${idx + 1}: ${label}`}
 							>
 								<p className="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">
 									{label}
 								</p>
 								<p className="text-lg font-black text-gray-900 leading-tight">
 									{idx <= guesses.length || isGameOver
-										? getHintValue(idx)
+										? getHintValue(idx) || '—'
 										: 'LOCKED'}
 								</p>
 							</div>
@@ -261,35 +276,8 @@ export default function StudioGame({
 					</div>
 				</div>
 
-				<aside className="w-full lg:w-80">
-					<div className="border-2 border-black rounded-2xl bg-white p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sticky top-8">
-						<div className="flex items-center gap-2 mb-6 border-b-2 border-black pb-4">
-							<Trophy className="w-5 h-5 text-yellow-500" />
-							<h2 className="text-xl font-bold uppercase tracking-tighter">
-								Leaderboard
-							</h2>
-						</div>
-						<div className="space-y-3">
-							{leaderboard.map((user, idx) => (
-								<div
-									key={user.id}
-									className="flex justify-between items-center p-3 border-2 border-black rounded-lg bg-gray-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-								>
-									<div className="flex flex-col min-w-0">
-										<span className="font-bold text-sm truncate">
-											{idx + 1}. {user.name ?? 'Anon'}
-										</span>
-										<span className="text-[10px] text-gray-500 uppercase font-semibold">
-											{user.studioTotalTries} tries
-										</span>
-									</div>
-									<div className="bg-black text-white px-2 py-1 rounded text-xs font-bold shrink-0">
-										{user.studioWins}W
-									</div>
-								</div>
-							))}
-						</div>
-					</div>
+				<aside className="w-full lg:w-80" aria-label="Game leaderboard">
+					<Leaderboard users={leaderboardData} gameType="studio" />
 				</aside>
 			</div>
 		</div>
