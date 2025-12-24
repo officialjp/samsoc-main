@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '~/trpc/react';
 import { Trophy, Timer, XCircle, CheckCircle2, Share2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface AnimeWordleProps {
 	searchedAnimeId: string | undefined;
@@ -348,10 +349,24 @@ export default function AnimeWordle({
 		enabled: !!isGameOver,
 	});
 
-	const recordGuessMutation = api.anime.recordGuess.useMutation();
-	const addGuessMutation = api.anime.addGameGuess.useMutation();
+	const recordGuessMutation = api.anime.recordGuess.useMutation({
+		onError: (error) => {
+			toast.error(`Failed to record guess: ${error.message}`);
+		},
+	});
+	const addGuessMutation = api.anime.addGameGuess.useMutation({
+		onError: (error) => {
+			toast.error(`Failed to save guess: ${error.message}`);
+		},
+	});
 	const winMutation = api.anime.submitWin.useMutation({
-		onSuccess: () => void utils.anime.getLeaderboard.invalidate(),
+		onSuccess: () => {
+			void utils.anime.getLeaderboard.invalidate();
+			toast.success('Congratulations! You won!');
+		},
+		onError: (error) => {
+			toast.error(`Failed to submit win: ${error.message}`);
+		},
 	});
 
 	const { data: searchedAnime } = api.anime.getById.useQuery(
@@ -399,7 +414,15 @@ export default function AnimeWordle({
 	]);
 
 	const processGuess = useCallback(() => {
-		if (isGameOver || !searchedAnime || !answerAnime || isLoading) return;
+		if (
+			isGameOver ||
+			!searchedAnime ||
+			!answerAnime ||
+			isLoading ||
+			recordGuessMutation.isPending ||
+			addGuessMutation.isPending
+		)
+			return;
 
 		const guessData = DISPLAY_FIELDS.reduce(
 			(acc, { key }) => ({

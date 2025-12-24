@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { cn } from '~/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 
@@ -33,8 +33,6 @@ export function AnimeCard({ animes }: AnimeCardProps) {
 	const [selectedId, setSelectedId] = useState<number | null>(
 		animes[1]?.id ?? null,
 	);
-
-	const positions = useMemo(() => CARD_POSITIONS, []);
 
 	const handleCardClick = (
 		event: React.SyntheticEvent<HTMLDivElement>,
@@ -84,7 +82,7 @@ export function AnimeCard({ animes }: AnimeCardProps) {
 	return (
 		<div className="relative flex h-[min(600px,90vw)] w-full items-center justify-center overflow-hidden">
 			{animes.map((anime, index) => {
-				const position = positions[index]!;
+				const position = CARD_POSITIONS[index]!;
 				const isSelected = selectedId === anime.id;
 
 				return (

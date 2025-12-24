@@ -42,9 +42,6 @@ export default function GalleryImage({
 		};
 	}, [isOpen, closeModal]);
 
-	const displaySrc = thumbnailSrc ?? src;
-	const hasOptimizedThumbnail = !!thumbnailSrc;
-
 	return (
 		<>
 			<button
@@ -54,12 +51,11 @@ export default function GalleryImage({
 				type="button"
 			>
 				<Image
-					src={displaySrc}
+					src={thumbnailSrc ?? src}
 					width={600}
 					height={400}
 					alt={alt}
 					loading="lazy"
-					unoptimized={hasOptimizedThumbnail}
 					sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
 					className="aspect-video object-cover"
 				/>

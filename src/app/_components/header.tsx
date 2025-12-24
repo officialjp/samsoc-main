@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
 import Logo from '../../../public/images/logo.webp';
@@ -24,36 +24,52 @@ const adminLink = { href: '/dashboard', label: 'Dashboard' };
 export function Header() {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [isVisible, setIsVisible] = useState(true);
-	const [lastScrollY, setLastScrollY] = useState(0);
 	const { data: session } = useSession();
 	const pathname = usePathname();
 
 	const isAdmin = session?.user?.role === 'admin';
 	const finalNavLinks = [...staticNavLinks, ...(isAdmin ? [adminLink] : [])];
 
-	// Handle Scroll Direction
+	// Throttle scroll handler to improve performance
+	const throttleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+	const lastScrollYRef = useRef(0);
+
+	// Handle Scroll Direction with throttling
 	useEffect(() => {
-		const controlNavbar = () => {
-			const currentScrollY = window.scrollY;
-
-			// 1. Always show at the very top
-			if (currentScrollY < 10) {
-				setIsVisible(true);
-			}
-			// 2. Hide on scroll down, Show on scroll up
-			else if (currentScrollY > lastScrollY && currentScrollY > 100) {
-				setIsVisible(false);
-				setIsMenuOpen(false); // Close mobile menu if user scrolls down
-			} else if (currentScrollY < lastScrollY) {
-				setIsVisible(true);
+		const handleScroll = () => {
+			if (throttleTimeoutRef.current) {
+				return;
 			}
 
-			setLastScrollY(currentScrollY);
+			throttleTimeoutRef.current = setTimeout(() => {
+				const currentScrollY = window.scrollY;
+				const lastScrollY = lastScrollYRef.current;
+
+				// 1. Always show at the very top
+				if (currentScrollY < 10) {
+					setIsVisible(true);
+				}
+				// 2. Hide on scroll down, Show on scroll up
+				else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+					setIsVisible(false);
+					setIsMenuOpen(false); // Close mobile menu if user scrolls down
+				} else if (currentScrollY < lastScrollY) {
+					setIsVisible(true);
+				}
+
+				lastScrollYRef.current = currentScrollY;
+				throttleTimeoutRef.current = null;
+			}, 10); // Throttle to ~100fps max
 		};
 
-		window.addEventListener('scroll', controlNavbar);
-		return () => window.removeEventListener('scroll', controlNavbar);
-	}, [lastScrollY]);
+		window.addEventListener('scroll', handleScroll, { passive: true });
+		return () => {
+			window.removeEventListener('scroll', handleScroll);
+			if (throttleTimeoutRef.current) {
+				clearTimeout(throttleTimeoutRef.current);
+			}
+		};
+	}, []);
 
 	return (
 		<header

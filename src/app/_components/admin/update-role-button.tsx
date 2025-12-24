@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { api } from '~/trpc/react';
-import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 export function UpdateRoleButton({
 	userId,
@@ -15,14 +15,15 @@ export function UpdateRoleButton({
 	currentUserId: string;
 }) {
 	const [role, setRole] = useState(currentRole);
-	const router = useRouter();
+	const utils = api.useUtils();
 
 	const updateRole = api.admin.updateUserRole.useMutation({
 		onSuccess: () => {
-			router.refresh();
+			void utils.admin.getAllUsers.invalidate();
+			toast.success('User role updated successfully');
 		},
 		onError: (error) => {
-			alert(error.message);
+			toast.error(error.message);
 			setRole(currentRole);
 		},
 	});

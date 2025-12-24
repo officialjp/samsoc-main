@@ -13,6 +13,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuLabel,
 } from '../../ui/dropdown-menu';
+import { toast } from 'sonner';
 
 interface MangaItem {
 	id: number;
@@ -27,19 +28,18 @@ export default function MangaRemove() {
 	const {
 		data: items,
 		isLoading,
-		refetch,
 	} = api.manga.getAllItems.useQuery();
 
 	const deleteMutation = api.manga.deleteItem.useMutation({
 		onSuccess: () => {
-			alert(
+			toast.success(
 				`Item ID ${selectedItemId} successfully deleted (R2 files cleaned up).`,
 			);
 			setSelectedItemId(null);
-			void refetch();
+			// No invalidation needed for infrequent data
 		},
 		onError: (error) => {
-			alert(`Deletion failed: ${error.message}`);
+			toast.error(`Deletion failed: ${error.message}`);
 		},
 	});
 

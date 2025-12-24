@@ -19,6 +19,7 @@ import { FormDropzone } from '../form-dropzone';
 import { useState } from 'react';
 import { fileToBase64 } from '~/lib/utils';
 import { Save } from 'lucide-react';
+import { toast } from 'sonner';
 
 const category = ['Events', 'Collaborations'] as const;
 
@@ -77,15 +78,14 @@ export default function ImageAdd() {
 
 			await createItem.mutateAsync(input);
 
-			alert('Carousel item created and images uploaded successfully!');
+			toast.success('Image item created and images uploaded successfully!');
 
 			form.reset();
 		} catch (error) {
-			console.error('Submission failed:', error);
 			const errorMessage =
 				createItem.error?.message ??
 				'An error occurred during submission and file upload.';
-			alert(errorMessage);
+			toast.error(errorMessage);
 		} finally {
 			setIsSubmitting(false);
 		}

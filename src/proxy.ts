@@ -20,7 +20,9 @@ export async function proxy(req: NextRequest) {
 		if (!token) {
 			return NextResponse.redirect(new URL('/api/auth/signin', req.url));
 		}
-		if (token.role !== 'admin') {
+
+		const userRole = token.role;
+		if (userRole !== 'admin') {
 			return NextResponse.redirect(new URL('/unauthorized', req.url));
 		}
 	}

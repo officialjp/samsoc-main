@@ -12,12 +12,29 @@ export const metadata: Metadata = {
 		title: 'Surrey Anime and Manga Society - Library',
 		description:
 			'Browse our collection of manga available to borrow. Paid members can check out up to 3 volumes at a time for up to 2 weeks.',
+		images: [
+			{
+				url: '/opengraph-image',
+				width: 1200,
+				height: 630,
+				alt: 'Surrey Anime and Manga Society - Library',
+			},
+		],
+		type: 'website',
 	},
 	twitter: {
-		card: 'summary',
+		card: 'summary_large_image',
 		title: 'Surrey Anime and Manga Society - Library',
 		description:
 			'Browse our collection of manga available to borrow. Paid members can check out up to 3 volumes at a time for up to 2 weeks.',
+		images: ['/opengraph-image'],
+	},
+	alternates: {
+		canonical: '/library',
+	},
+	robots: {
+		index: true,
+		follow: true,
 	},
 };
 

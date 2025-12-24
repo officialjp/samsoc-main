@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '~/trpc/react';
 import { Trophy, XCircle, CheckCircle2, Timer } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface StudioGameProps {
 	selectedStudioId: string | undefined;
@@ -66,10 +67,24 @@ export default function StudioGame({
 		!!gameData?.hasFailedToday ||
 		guesses.length >= 5;
 
-	const recordGuessMutation = api.studio.recordGuess.useMutation();
-	const addGuessMutation = api.studio.addGameGuess.useMutation();
+	const recordGuessMutation = api.studio.recordGuess.useMutation({
+		onError: (error) => {
+			toast.error(`Failed to record guess: ${error.message}`);
+		},
+	});
+	const addGuessMutation = api.studio.addGameGuess.useMutation({
+		onError: (error) => {
+			toast.error(`Failed to save guess: ${error.message}`);
+		},
+	});
 	const winMutation = api.studio.submitWin.useMutation({
-		onSuccess: () => void utils.studio.getLeaderboard.invalidate(),
+		onSuccess: () => {
+			void utils.studio.getLeaderboard.invalidate();
+			toast.success('Congratulations! You won!');
+		},
+		onError: (error) => {
+			toast.error(`Failed to submit win: ${error.message}`);
+		},
 	});
 
 	// Load guesses from database on mount
@@ -103,7 +118,9 @@ export default function StudioGame({
 			!selectedStudioId ||
 			!answerStudio ||
 			!allStudios ||
-			isLoading
+			isLoading ||
+			recordGuessMutation.isPending ||
+			addGuessMutation.isPending
 		)
 			return;
 

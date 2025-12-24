@@ -10,15 +10,15 @@ const config = {
 		remotePatterns: [
 			{
 				protocol: 'https',
-				hostname: 'cdn.myanimelist.net/**',
+				hostname: 'cdn.myanimelist.net',
 			},
 			{
 				protocol: 'https',
-				hostname: 'heyitsmejp.com/**',
+				hostname: 'heyitsmejp.com',
 			},
 			{
 				protocol: 'https',
-				hostname: 'cdn.discordapp.com/**',
+				hostname: 'cdn.discordapp.com',
 			},
 		],
 		formats: ['image/avif'],

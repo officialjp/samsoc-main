@@ -128,8 +128,7 @@ export default function Home() {
 									draggable={false}
 									alt="SAMSoc manga library collection"
 									className="aspect-video object-cover"
-									placeholder="blur"
-									loading="lazy"
+									placeholder="empty"
 									sizes="(max-width: 768px) 320px, (max-width: 1024px) 540px, 800px"
 								/>
 							</div>
