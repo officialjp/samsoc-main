@@ -15,6 +15,14 @@ export async function proxy(req: NextRequest) {
 	// Get the secret from environment (shared utility ensures consistency)
 	const secretValue = getAuthSecret();
 
+	// Validate that AUTH_SECRET is available
+	if (!secretValue) {
+		console.error(
+			'AUTH_SECRET is not defined. Cannot verify authentication tokens.',
+		);
+		return NextResponse.redirect(new URL('/api/auth/signin', req.url));
+	}
+
 	try {
 		const token = await getToken({
 			req,

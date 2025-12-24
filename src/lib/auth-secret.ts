@@ -7,6 +7,9 @@ export function getAuthSecret(): string | undefined {
 	let secret = process.env.AUTH_SECRET;
 
 	if (!secret && process.env.NODE_ENV === 'development') {
+		console.warn(
+			'⚠️  AUTH_SECRET not set. Using development fallback. DO NOT use in production!',
+		);
 		secret = 'development-secret-key-change-in-production';
 	}
 

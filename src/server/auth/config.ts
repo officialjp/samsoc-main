@@ -26,13 +26,28 @@ declare module 'next-auth/jwt' {
 	}
 }
 
+const authSecret = getAuthSecret();
+
+// Validate AUTH_SECRET is available in production
+if (!authSecret && process.env.NODE_ENV === 'production') {
+	throw new Error(
+		'AUTH_SECRET environment variable is required in production. Please set it in your environment configuration.',
+	);
+}
+
+if (!authSecret) {
+	console.error(
+		'⚠️  AUTH_SECRET is not defined. Authentication will not work properly.',
+	);
+}
+
 export const authConfig = {
 	providers: [DiscordProvider],
 	adapter: PrismaAdapter(db) as Adapter,
 	session: {
 		strategy: 'jwt',
 	},
-	secret: getAuthSecret(),
+	secret: authSecret,
 	callbacks: {
 		jwt: async ({ token, user }) => {
 			if (user?.id) {
