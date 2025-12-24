@@ -1,50 +1,50 @@
 # Surrey Anime and Manga Society Website
 
-Welcome to the official website of the Surrey Anime and Manga Society (SAMSoC)! This is a modern web application built with cutting-edge technologies to serve our anime and manga community.
+Welcome to the official website of the Surrey Anime and Manga Society (SAMSoC). This is a modern web application built using contemporary technologies to support and engage our anime and manga community.
 
-## 🌟 About
+## About
 
-The Surrey Anime and Manga Society website is designed to be the central hub for our community, providing access to our manga library, event information, photo galleries, interactive games, and more. Whether you're a current member or interested in joining, this platform offers everything you need to stay connected with our society.
+The Surrey Anime and Manga Society website serves as the central hub for our community. It provides access to our manga library, event information, photo galleries, interactive games, and more. Whether you are a current member or interested in joining, this platform offers the tools and information needed to stay connected with the society.
 
-## 🚀 Features
+## Features
 
-### 📚 **Manga Library**
-- Comprehensive filtering system to browse our collection
-- Search by genre, author, title, and more
-- Detailed information about each manga volume
+### Manga Library
+- Comprehensive filtering system for browsing the collection
+- Search functionality by genre, author, title, and more
+- Detailed information for each manga volume
 - Member request system for new additions
 
-### 📸 **Gallery**
-- Photo collections from our events and collaborations
-- Organized albums for easy browsing
-- High-quality images showcasing our community activities
+### Gallery
+- Photo collections from society events and collaborations
+- Organised albums for straightforward browsing
+- High-quality images highlighting community activities
 
-### 📅 **Events**
+### Events
 - Detailed descriptions of all society events
-- Information about collaborations with other societies
-- Past event archives and upcoming event previews
+- Information on collaborations with other societies
+- Archives of past events and previews of upcoming ones
 
-### 🗓️ **Calendar**
-- Interactive calendar view
-- Upcoming events and collaborations
-- Easy-to-read schedule for the coming days/weeks
-- Integration with society scheduling
+### Calendar
+- Interactive calendar interface
+- Display of upcoming events and collaborations
+- Clear and accessible scheduling for upcoming days and weeks
+- Integration with society scheduling tools
 
-### 🎮 **Games**
+### Games
 - Browser-based mini-games
-- Anime-themed Wordle and other puzzles
-- Fun activities for members to enjoy
-- Regular updates with new games
+- Anime-themed word and puzzle games
+- Interactive activities for members
+- Regular updates with new content
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-- **Framework:** [Next.js](https://nextjs.org/) - React framework for production
-- **Database ORM:** [Prisma](https://www.prisma.io/) - Modern database toolkit
-- **Styling:** [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
-- **API Layer:** [tRPC](https://trpc.io/) - End-to-end typesafe APIs
-- **Package Manager:** [pnpm](https://pnpm.io/) - Fast, disk space efficient package manager
+- **Framework:** [Next.js](https://nextjs.org/) – React framework for production-ready applications  
+- **Database ORM:** [Prisma](https://www.prisma.io/) – Modern database toolkit  
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/) – Utility-first CSS framework  
+- **API Layer:** [tRPC](https://trpc.io/) – End-to-end type-safe APIs  
+- **Package Manager:** [pnpm](https://pnpm.io/) – Fast and disk space-efficient package manager  
 
-## 🚦 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -82,65 +82,65 @@ pnpm prisma migrate dev
 pnpm dev
 ```
 
-6. Open [http://localhost:3000](http://localhost:3000) in your browser
+6. Open http://localhost:3000 in your browser.
 
-## 📖 Available Scripts
+## Available Scripts
 
-- `pnpm dev` - Start the development server
-- `pnpm build` - Build the application for production
-- `pnpm start` - Start the production server
-- `pnpm lint` - Run ESLint
-- `pnpm prisma:generate` - Generate Prisma client
-- `pnpm prisma:migrate` - Run database migrations
-- `pnpm prisma:studio` - Open Prisma Studio
+- `pnpm dev` – Start the development server  
+- `pnpm build` – Build the application for production  
+- `pnpm start` – Start the production server  
+- `pnpm lint` – Run ESLint  
+- `pnpm prisma:generate` – Generate the Prisma client  
+- `pnpm prisma:migrate` – Run database migrations  
+- `pnpm prisma:studio` – Open Prisma Studio  
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 ├── prisma/                 # Database schema and migrations
 ├── src/
 │   ├── app/               # Next.js app directory
 │   ├── components/        # Reusable React components
-│   ├── lib/              # Utility functions and configurations
-│   ├── server/           # tRPC routers and procedures
-│   └── styles/           # Global styles and Tailwind config
-├── public/               # Static assets
+│   ├── lib/               # Utility functions and configuration
+│   ├── server/            # tRPC routers and procedures
+│   └── styles/            # Global styles and Tailwind configuration
+├── public/                # Static assets
 └── package.json
 ```
 
-## 🤝 Contributing
+## Contributing
 
-We welcome contributions from our community! If you'd like to help improve the website:
+Contributions from the community are welcome. To help improve the website:
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+1. Fork the repository  
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)  
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)  
+4. Push to the branch (`git push origin feature/amazing-feature`)  
+5. Open a Pull Request  
 
-Please make sure to:
+Please ensure that you:
 - Follow the existing code style
 - Add tests for new features
-- Update documentation as needed
-- Ensure all tests pass before submitting
+- Update documentation where necessary
+- Verify that all tests pass before submitting
 
-## 📄 License
+## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-## 📞 Contact
+## Contact
 
-- **Website:** [https://samsoc.co.uk](https://samsoc.co.uk)
-- **Email:** [society email]
-- **Discord:** [Join our Discord server](https://discord.gg/tQUrdxzUZ4)
-- **Instagram:** [@unisamsoc](https://instagram.com/unisamsoc)
+- **Website:** https://samsoc.co.uk  
+- **Email:** [society email]  
+- **Discord:** https://discord.gg/tQUrdxzUZ4  
+- **Instagram:** https://instagram.com/unisamsoc  
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
-- University of Surrey Students' Union for their support
-- All our committee members and volunteers
-- The amazing anime and manga community at Surrey
+- University of Surrey Students' Union for their continued support  
+- All committee members and volunteers  
+- The anime and manga community at the University of Surrey  
 
 ---
 
-Made with ❤️ by the Surrey Anime and Manga Society
+Developed and maintained by the Surrey Anime and Manga Society
