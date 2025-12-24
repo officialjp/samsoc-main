@@ -21,7 +21,7 @@ interface SearchInputProps<T> {
 	maxResults?: number;
 }
 
-export default function SearchInput<T extends Record<string, unknown>>({
+export default function SearchInput<T extends object>({
 	items,
 	searchKeys,
 	onSelect,
