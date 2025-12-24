@@ -32,11 +32,12 @@ export default function EventRemove() {
 	const {
 		data: items,
 		isLoading,
-		refetch,
 	} = api.event.getAllItems.useQuery<EventItem[]>();
 
+	const utils = api.useUtils();
 	const deleteMutation = api.event.deleteItem.useMutation({
 		onSuccess: () => {
+			void utils.event.getAllItems.invalidate();
 			setStatusMessage({
 				type: 'success',
 				message: `Event ID ${selectedItemId} successfully deleted.`,
@@ -45,8 +46,6 @@ export default function EventRemove() {
 			setSelectedItemId(null);
 			setSearchTerm('');
 			setConfirmingDelete(false);
-
-			void refetch();
 		},
 		onError: (error) => {
 			setStatusMessage({

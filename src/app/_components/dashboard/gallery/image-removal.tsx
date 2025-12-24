@@ -13,6 +13,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuLabel,
 } from '../../ui/dropdown-menu';
+import { toast } from 'sonner';
 
 interface ImageItem {
 	id: number;
@@ -26,19 +27,18 @@ export default function ImageRemove() {
 	const {
 		data: items,
 		isLoading,
-		refetch,
 	} = api.image.getAllItems.useQuery();
 
 	const deleteMutation = api.image.deleteItem.useMutation({
 		onSuccess: () => {
-			alert(
+			toast.success(
 				`Item ID ${selectedItemId} successfully deleted (R2 files cleaned up).`,
 			);
 			setSelectedItemId(null);
-			void refetch();
+			// No invalidation needed for infrequent data
 		},
 		onError: (error) => {
-			alert(`Deletion failed: ${error.message}`);
+			toast.error(`Deletion failed: ${error.message}`);
 		},
 	});
 

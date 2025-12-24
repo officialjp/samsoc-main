@@ -18,6 +18,7 @@ import { Calendar, Info, Loader2 } from 'lucide-react';
 import AnimeSearch from '../../games/search-component';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, Suspense } from 'react';
+import { toast } from 'sonner';
 
 const adminSchema = z.object({
 	animeId: z.number().int().min(1, 'Please search and select an anime'),
@@ -33,7 +34,7 @@ function SchedulerContent() {
 
 	const scheduleMutation = api.anime.scheduleDaily.useMutation({
 		onSuccess: () => {
-			alert('Daily anime scheduled successfully!');
+			toast.success('Daily anime scheduled successfully!');
 			void utils.anime.getAnswerAnime.invalidate();
 			// Clear the search param from URL
 			router.push(window.location.pathname);
@@ -41,6 +42,9 @@ function SchedulerContent() {
 				animeId: 0,
 				scheduledDate: new Date().toISOString().split('T')[0],
 			});
+		},
+		onError: (error) => {
+			toast.error(`Error: ${error.message}`);
 		},
 	});
 

@@ -18,6 +18,7 @@ import { Building2, Info, Loader2 } from 'lucide-react';
 import StudioSearch from '../../games/studio-search';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { Suspense } from 'react';
+import { toast } from 'sonner';
 
 const adminSchema = z.object({
 	studioName: z.string().min(1, 'Please search and select a studio'),
@@ -42,7 +43,7 @@ function StudioSchedulerContent() {
 
 	const scheduleMutation = api.studio.scheduleDaily.useMutation({
 		onSuccess: () => {
-			alert('Daily studio scheduled successfully!');
+			toast.success('Daily studio scheduled successfully!');
 			void utils.studio.getAnswerStudio.invalidate();
 			// Clear URL and Reset form
 			router.push(pathname);
@@ -52,7 +53,7 @@ function StudioSchedulerContent() {
 			});
 		},
 		onError: (error) => {
-			alert(`Error: ${error.message}`);
+			toast.error(`Error: ${error.message}`);
 		},
 	});
 

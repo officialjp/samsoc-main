@@ -10,19 +10,36 @@ import type { Metadata } from 'next';
 import type { StaticImageData } from 'next/image';
 
 export const metadata: Metadata = {
-	title: 'Surrey Anime and Manga Society',
+	title: 'Surrey Anime and Manga Society - Events',
 	description:
 		"Discover the wide range of events we host throughout the academic year. From weekly screenings to special collaborations, there's something for every anime enthusiast!",
 	openGraph: {
-		title: 'Surrey Anime and Manga Society',
+		title: 'Surrey Anime and Manga Society - Events',
 		description:
 			"Discover the wide range of events we host throughout the academic year. From weekly screenings to special collaborations, there's something for every anime enthusiast!",
+		images: [
+			{
+				url: '/opengraph-image',
+				width: 1200,
+				height: 630,
+				alt: 'Surrey Anime and Manga Society - Events',
+			},
+		],
+		type: 'website',
 	},
 	twitter: {
-		card: 'summary',
-		title: 'Surrey Anime and Manga Society',
+		card: 'summary_large_image',
+		title: 'Surrey Anime and Manga Society - Events',
 		description:
 			"Discover the wide range of events we host throughout the academic year. From weekly screenings to special collaborations, there's something for every anime enthusiast!",
+		images: ['/opengraph-image'],
+	},
+	alternates: {
+		canonical: '/events',
+	},
+	robots: {
+		index: true,
+		follow: true,
 	},
 };
 

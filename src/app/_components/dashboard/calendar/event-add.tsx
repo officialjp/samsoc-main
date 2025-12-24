@@ -17,6 +17,7 @@ import { useForm } from 'react-hook-form';
 import { Button } from '../../ui/button';
 import { useState } from 'react';
 import { Save } from 'lucide-react';
+import { toast } from 'sonner';
 
 const color = ['bg-pink-200', 'bg-blue-200'] as const;
 
@@ -33,7 +34,17 @@ const eventSchema = z.object({
 });
 
 export default function EventAdd() {
-	const createItem = api.event.createItem.useMutation();
+	const utils = api.useUtils();
+	const createItem = api.event.createItem.useMutation({
+		onSuccess: () => {
+			void utils.event.getAllItems.invalidate();
+			toast.success('Event created successfully');
+			form.reset();
+		},
+		onError: (error) => {
+			toast.error(error.message || 'Failed to create event');
+		},
+	});
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const form = useForm<z.infer<typeof eventSchema>>({
@@ -53,14 +64,8 @@ export default function EventAdd() {
 		setIsSubmitting(true);
 		try {
 			await createItem.mutateAsync(values);
-
-			form.reset();
 		} catch (error) {
-			console.error('Submission failed:', error);
-			const errorMessage =
-				createItem.error?.message ??
-				'An error occurred during submission.';
-			console.error(errorMessage);
+			// Error is handled by onError callback
 		} finally {
 			setIsSubmitting(false);
 		}

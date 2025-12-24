@@ -1,6 +1,5 @@
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { type DefaultSession, type NextAuthConfig } from 'next-auth';
-import type { Session } from 'next-auth';
 import DiscordProvider from 'next-auth/providers/discord';
 import type { Adapter } from 'next-auth/adapters';
 
@@ -19,6 +18,13 @@ declare module 'next-auth' {
 	}
 }
 
+declare module 'next-auth/jwt' {
+	interface JWT {
+		id: string;
+		role: string;
+	}
+}
+
 export const authConfig = {
 	providers: [DiscordProvider],
 	adapter: PrismaAdapter(db) as Adapter,
@@ -28,15 +34,22 @@ export const authConfig = {
 	secret: process.env.AUTH_SECRET,
 	callbacks: {
 		jwt: async ({ token, user }) => {
-			if (user) {
-				token.id = user.id!;
-				token.role = (user as { role?: string }).role ?? 'user';
+			if (user && user.id) {
+				token.id = user.id;
+				if ('role' in user && typeof user.role === 'string' && user.role) {
+					token.role = user.role;
+				} else {
+					const dbUser = await db.user.findUnique({
+						where: { id: user.id },
+						select: { role: true },
+					});
+					token.role = dbUser?.role ?? 'user';
+				}
 			}
+
 			if (!token.role && token.id) {
 				const dbUser = await db.user.findUnique({
-					where: {
-						id: token.id as string,
-					},
+					where: { id: token.id },
 					select: { role: true },
 				});
 				token.role = dbUser?.role ?? 'user';
@@ -49,10 +62,10 @@ export const authConfig = {
 				...session,
 				user: {
 					...session.user,
-					id: typeof token.id === 'string' ? token.id : '',
-					role: typeof token.role === 'string' ? token.role : 'user',
+					id: token.id,
+					role: token.role,
 				},
-			} as Session;
+			};
 		},
 	},
 } satisfies NextAuthConfig;

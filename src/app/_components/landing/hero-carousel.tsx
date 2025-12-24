@@ -53,14 +53,12 @@ export default function HeroCarousel({
 								className="relative aspect-9/16 min-w-0 flex-[0_0_100%] md:aspect-video"
 								key={element.id}
 							>
-								{/* Mobile image */}
 								<Image
 									src={element.mobileSource}
 									alt={element.alt}
 									fill
 									sizes="(max-width: 768px) 100vw, 1px"
 									priority={isFirst}
-									loading={isFirst ? 'eager' : 'lazy'}
 									fetchPriority={isFirst ? 'high' : 'auto'}
 									quality={75}
 									className="object-cover md:hidden"
@@ -71,7 +69,6 @@ export default function HeroCarousel({
 									fill
 									sizes="(max-width: 768px) 0px, (max-width: 1200px) 100vw, 1200px"
 									priority={isFirst}
-									loading={isFirst ? 'eager' : 'lazy'}
 									fetchPriority={isFirst ? 'high' : 'auto'}
 									quality={75}
 									className="hidden object-cover md:block"

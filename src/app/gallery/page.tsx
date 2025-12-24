@@ -12,12 +12,29 @@ export const metadata: Metadata = {
 		title: 'Surrey Anime and Manga Society - Gallery',
 		description:
 			'Browse through our collection of photos from events, weekly sessions, and collaborations over the years.',
+		images: [
+			{
+				url: '/opengraph-image',
+				width: 1200,
+				height: 630,
+				alt: 'Surrey Anime and Manga Society - Gallery',
+			},
+		],
+		type: 'website',
 	},
 	twitter: {
-		card: 'summary',
+		card: 'summary_large_image',
 		title: 'Surrey Anime and Manga Society - Gallery',
 		description:
 			'Browse through our collection of photos from events, weekly sessions, and collaborations over the years.',
+		images: ['/opengraph-image'],
+	},
+	alternates: {
+		canonical: '/gallery',
+	},
+	robots: {
+		index: true,
+		follow: true,
 	},
 };
 

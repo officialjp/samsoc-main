@@ -13,6 +13,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuLabel,
 } from '../../ui/dropdown-menu';
+import { toast } from 'sonner';
 
 interface CarouselItem {
 	id: number;
@@ -27,19 +28,18 @@ export default function CarouselRemove() {
 	const {
 		data: items,
 		isLoading,
-		refetch,
 	} = api.carousel.getAllItems.useQuery();
 
 	const deleteMutation = api.carousel.deleteItem.useMutation({
 		onSuccess: () => {
-			alert(
+			toast.success(
 				`Item ID ${selectedItemId} successfully deleted (R2 files cleaned up).`,
 			);
 			setSelectedItemId(null);
-			void refetch();
+			// No invalidation needed for infrequent data
 		},
 		onError: (error) => {
-			alert(`Deletion failed: ${error.message}`);
+			toast.error(`Deletion failed: ${error.message}`);
 		},
 	});
 
@@ -73,7 +73,7 @@ export default function CarouselRemove() {
 		if (!itemToDelete) return;
 
 		if (itemToDelete === 1 || itemToDelete === 2) {
-			alert('Items with ID 1 and 2 are protected and cannot be deleted.');
+			toast.warning('Items with ID 1 and 2 are protected and cannot be deleted.');
 			return;
 		}
 
