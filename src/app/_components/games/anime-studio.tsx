@@ -231,7 +231,7 @@ export default function StudioGame({
 							) : (
 								<span className="text-sm font-bold text-gray-600 uppercase tracking-tighter">
 									Guesses Used: {guesses.length} /{' '}
-									{GAME_CONFIG.WORDLE.MAX_GUESSES}
+									{GAME_CONFIG.STUDIO.MAX_GUESSES}
 								</span>
 							)}
 						</div>
