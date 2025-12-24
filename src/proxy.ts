@@ -1,22 +1,34 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import { getAuthSecret } from '~/lib/auth-secret';
 
 export async function proxy(req: NextRequest) {
-	const secretValue = process.env.AUTH_SECRET;
-	const cookieName = process.env.SECURE_KEY_NAME;
-
-	const token = await getToken({
-		req,
-		secret: secretValue,
-		cookieName: cookieName ?? '__Secure-authjs.session-token',
-	});
-
 	const isProtectedPath =
 		req.nextUrl.pathname.startsWith('/dashboard') ||
 		req.nextUrl.pathname.startsWith('/admin');
 
-	if (isProtectedPath) {
+	if (!isProtectedPath) {
+		return NextResponse.next();
+	}
+
+	// Get the secret from environment (shared utility ensures consistency)
+	const secretValue = getAuthSecret();
+
+	// Validate that AUTH_SECRET is available
+	if (!secretValue) {
+		console.error(
+			'AUTH_SECRET is not defined. Cannot verify authentication tokens.',
+		);
+		return NextResponse.redirect(new URL('/api/auth/signin', req.url));
+	}
+
+	try {
+		const token = await getToken({
+			req,
+			secret: secretValue,
+		});
+
 		if (!token) {
 			return NextResponse.redirect(new URL('/api/auth/signin', req.url));
 		}
@@ -25,9 +37,12 @@ export async function proxy(req: NextRequest) {
 		if (userRole !== 'admin') {
 			return NextResponse.redirect(new URL('/unauthorized', req.url));
 		}
-	}
 
-	return NextResponse.next();
+		return NextResponse.next();
+	} catch (error) {
+		console.error('Token verification error:', error);
+		return NextResponse.redirect(new URL('/api/auth/signin', req.url));
+	}
 }
 
 export const config = {

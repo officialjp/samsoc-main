@@ -321,6 +321,29 @@ export const studioRouter = createTRPCRouter({
 		});
 	}),
 
+	checkDateScheduled: adminProcedure
+		.input(z.object({ date: z.date() }))
+		.query(async ({ ctx, input }) => {
+			// Normalize the input date to midnight UTC
+			const targetDate = new Date(
+				Date.UTC(
+					input.date.getUTCFullYear(),
+					input.date.getUTCMonth(),
+					input.date.getUTCDate(),
+					0,
+					0,
+					0,
+					0,
+				),
+			);
+
+			const schedule = await ctx.db.dailyStudio.findUnique({
+				where: { date: targetDate },
+			});
+
+			return { hasSchedule: !!schedule };
+		}),
+
 	scheduleDaily: adminProcedure
 		.input(z.object({ studioName: z.string(), date: z.date() }))
 		.mutation(async ({ ctx, input }) => {

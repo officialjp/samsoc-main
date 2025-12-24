@@ -1,7 +1,6 @@
 'use client';
-import { cn } from '~/lib/utils';
-import { Button } from '../ui/button';
-import { useState } from 'react';
+
+import GenericNavigation from './generalized/generic-navigation';
 
 interface DashboardTabs {
 	name: string;
@@ -13,27 +12,10 @@ interface DashboardTabArray {
 }
 
 export default function DashboardTabArray({ tabData }: DashboardTabArray) {
-	const [pageIndex, setPageIndex] = useState<number>(0);
+	const navigationItems = tabData.map((tab) => ({
+		name: tab.name,
+		page: tab.page,
+	}));
 
-	return (
-		<div>
-			<header className="flex gap-3 mb-5 flex-wrap">
-				{tabData.map(({ name }, index) => {
-					return (
-						<Button
-							className={cn(
-								'cursor-pointer grow',
-								index === pageIndex ? 'bg-purple-200' : '',
-							)}
-							key={name + index}
-							onClick={() => setPageIndex(index)}
-						>
-							{name}
-						</Button>
-					);
-				})}
-			</header>
-			<section>{tabData[pageIndex]?.page}</section>
-		</div>
-	);
+	return <GenericNavigation items={navigationItems} mode="tabs" />;
 }

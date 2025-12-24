@@ -244,6 +244,29 @@ export const animeRouter = createTRPCRouter({
 			return guess;
 		}),
 
+	checkDateScheduled: adminProcedure
+		.input(z.object({ date: z.date() }))
+		.query(async ({ ctx, input }) => {
+			// Normalize the input date to midnight UTC
+			const targetDate = new Date(
+				Date.UTC(
+					input.date.getUTCFullYear(),
+					input.date.getUTCMonth(),
+					input.date.getUTCDate(),
+					0,
+					0,
+					0,
+					0,
+				),
+			);
+
+			const schedule = await ctx.db.dailyAnime.findUnique({
+				where: { date: targetDate },
+			});
+
+			return { hasSchedule: !!schedule };
+		}),
+
 	scheduleDaily: adminProcedure
 		.input(
 			z.object({

@@ -83,19 +83,16 @@ export default function AnimeSearch() {
 			error={error}
 			getItemId={(item) => item.id}
 			renderItem={(anime) => (
-				<>
-					<div className="font-bold text-gray-900 truncate">
+				<div className="space-y-1">
+					<div className="text-sm font-semibold text-gray-900 truncate">
 						{anime.nameEn}
 					</div>
 					{anime.nameJp !== anime.nameEn && (
-						<div className="text-sm font-medium text-gray-400 italic truncate">
+						<div className="text-xs text-gray-500 truncate">
 							{anime.nameJp}
 						</div>
 					)}
-					<div className="text-[10px] font-bold text-gray-400 mt-1 uppercase tracking-wider">
-						ID: {anime.id}
-					</div>
-				</>
+				</div>
 			)}
 		/>
 	);

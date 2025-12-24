@@ -7,6 +7,7 @@ import { api } from '~/trpc/react';
 import {
 	Form,
 	FormControl,
+	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -14,10 +15,10 @@ import {
 } from '../../ui/form';
 import { Input } from '../../ui/input';
 import { Button } from '../../ui/button';
-import { Building2, Info, Loader2 } from 'lucide-react';
+import { Loader2, Save } from 'lucide-react';
 import StudioSearch from '../../games/studio-search';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 const adminSchema = z.object({
@@ -30,6 +31,7 @@ function StudioSchedulerContent() {
 	const router = useRouter();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
+	const [dateHasEntry, setDateHasEntry] = useState(false);
 
 	const queryStudioName = searchParams.get('studioName');
 
@@ -40,6 +42,18 @@ function StudioSchedulerContent() {
 			scheduledDate: new Date().toISOString().split('T')[0],
 		},
 	});
+
+	const scheduledDate = form.watch('scheduledDate');
+
+	// Check if the selected date already has an entry
+	const { data: dateCheckResult } = api.studio.checkDateScheduled.useQuery(
+		{ date: new Date(scheduledDate + 'T00:00:00Z') },
+		{ enabled: !!scheduledDate },
+	);
+
+	useEffect(() => {
+		setDateHasEntry(!!dateCheckResult?.hasSchedule);
+	}, [dateCheckResult]);
 
 	const scheduleMutation = api.studio.scheduleDaily.useMutation({
 		onSuccess: () => {
@@ -67,6 +81,10 @@ function StudioSchedulerContent() {
 	};
 
 	async function onSubmit(values: z.infer<typeof adminSchema>) {
+		if (dateHasEntry) {
+			toast.error('This date already has a scheduled studio.');
+			return;
+		}
 		await scheduleMutation.mutateAsync({
 			studioName: values.studioName,
 			date: new Date(values.scheduledDate),
@@ -74,21 +92,21 @@ function StudioSchedulerContent() {
 	}
 
 	const isPending = !!scheduleMutation.isPending;
+	const isDisabled = isPending || !form.watch('studioName') || dateHasEntry;
 
 	return (
 		<div className="max-w-2xl mx-auto p-6">
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(onSubmit)}
-					className="space-y-6 p-6 border-4 border-black rounded-2xl bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
+					className="space-y-4 p-6 border rounded-lg shadow-md bg-white"
 				>
-					<h2 className="text-3xl font-black uppercase italic flex items-center gap-3">
-						<Building2 className="w-8 h-8" /> Studio Scheduler
-					</h2>
+					<h3 className="text-lg font-semibold border-b pb-2">
+						Studio Scheduler
+					</h3>
 
-					<div className="bg-purple-50 border-2 border-purple-200 p-4 rounded-xl flex gap-3">
-						<Info className="w-5 h-5 text-purple-600 shrink-0" />
-						<p className="text-sm text-purple-800 font-medium">
+					<div className="bg-blue-50 border border-blue-200 p-3 rounded-lg text-sm">
+						<p className="text-blue-800">
 							Search for a production studio below. The selection
 							will update the field below.
 						</p>
@@ -103,15 +121,13 @@ function StudioSchedulerContent() {
 							name="studioName"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel className="font-bold uppercase text-xs">
-										Selected Studio
-									</FormLabel>
+									<FormLabel>Selected Studio</FormLabel>
 									<FormControl>
 										<Input
 											readOnly
 											{...field}
 											placeholder="Select a studio above..."
-											className="bg-gray-100 border-2 border-black font-bold h-12"
+											className="bg-gray-100"
 										/>
 									</FormControl>
 									<FormMessage />
@@ -124,29 +140,42 @@ function StudioSchedulerContent() {
 							name="scheduledDate"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel className="font-bold uppercase text-xs">
-										Release Date
-									</FormLabel>
+									<FormLabel>Release Date</FormLabel>
 									<FormControl>
 										<Input
 											type="date"
 											{...field}
-											className="border-2 border-black font-bold h-12"
+											className={
+												dateHasEntry
+													? 'border-red-500 bg-red-50'
+													: ''
+											}
 										/>
 									</FormControl>
+									{dateHasEntry && (
+										<FormDescription className="text-red-600 font-medium">
+											This date already has a scheduled
+											studio
+										</FormDescription>
+									)}
 									<FormMessage />
 								</FormItem>
 							)}
 						/>
 					</div>
 
-					<Button
-						type="submit"
-						disabled={isPending || !form.watch('studioName')}
-						className="w-full bg-green-400 hover:bg-green-500 text-black border-2 border-black font-black py-6 text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1 transition-all"
-					>
-						{isPending ? 'SCHEDULING...' : 'SAVE STUDIO DAILY'}
-					</Button>
+					<div className="mt-4 flex justify-end">
+						<Button type="submit" disabled={isDisabled}>
+							{isPending ? (
+								'Scheduling...'
+							) : (
+								<>
+									<Save className="w-4 h-4 mr-2" />
+									Save Studio Daily
+								</>
+							)}
+						</Button>
+					</div>
 				</form>
 			</Form>
 		</div>
@@ -157,9 +186,9 @@ export default function AdminStudioScheduler() {
 	return (
 		<Suspense
 			fallback={
-				<div className="flex flex-col items-center justify-center p-12 border-4 border-black rounded-2xl bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] max-w-2xl mx-auto">
-					<Loader2 className="w-10 h-10 animate-spin text-purple-600 mb-4" />
-					<p className="font-black uppercase italic text-center">
+				<div className="flex flex-col items-center justify-center p-12 border rounded-lg shadow-md bg-white max-w-2xl mx-auto">
+					<Loader2 className="w-10 h-10 animate-spin text-blue-600 mb-4" />
+					<p className="font-semibold text-center">
 						Loading Studio Tools...
 					</p>
 				</div>

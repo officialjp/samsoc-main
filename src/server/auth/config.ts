@@ -4,6 +4,7 @@ import DiscordProvider from 'next-auth/providers/discord';
 import type { Adapter } from 'next-auth/adapters';
 
 import { db } from '~/server/db';
+import { getAuthSecret } from '~/lib/auth-secret';
 
 declare module 'next-auth' {
 	interface Session extends DefaultSession {
@@ -25,18 +26,37 @@ declare module 'next-auth/jwt' {
 	}
 }
 
+const authSecret = getAuthSecret();
+
+// Validate AUTH_SECRET is available in production
+if (!authSecret && process.env.NODE_ENV === 'production') {
+	throw new Error(
+		'AUTH_SECRET environment variable is required in production. Please set it in your environment configuration.',
+	);
+}
+
+if (!authSecret) {
+	console.error(
+		'⚠️  AUTH_SECRET is not defined. Authentication will not work properly.',
+	);
+}
+
 export const authConfig = {
 	providers: [DiscordProvider],
 	adapter: PrismaAdapter(db) as Adapter,
 	session: {
 		strategy: 'jwt',
 	},
-	secret: process.env.AUTH_SECRET,
+	secret: authSecret,
 	callbacks: {
 		jwt: async ({ token, user }) => {
-			if (user && user.id) {
+			if (user?.id) {
 				token.id = user.id;
-				if ('role' in user && typeof user.role === 'string' && user.role) {
+				if (
+					'role' in user &&
+					typeof user.role === 'string' &&
+					user.role
+				) {
 					token.role = user.role;
 				} else {
 					const dbUser = await db.user.findUnique({
