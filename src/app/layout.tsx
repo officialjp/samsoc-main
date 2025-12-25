@@ -72,7 +72,7 @@ export default function RootLayout({
 						<TRPCReactProvider>{children}</TRPCReactProvider>
 						<Footer />
 					</div>
-					<Toaster position="top-center" richColors />
+					<Toaster position="bottom-right" richColors closeButton />
 				</ErrorBoundary>
 			</body>
 		</html>

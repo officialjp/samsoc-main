@@ -8,34 +8,56 @@ import Leaderboard from './leaderboard';
 import GameOverBanner from './game-over-banner';
 import DailyNotFound from './daily-not-found';
 import GameSkeleton from './game-skeleton';
+import LoginPrompt from './login-prompt';
+import { useGameAuth } from './use-game-auth';
 import { GAME_CONFIG, BANNER_ZOOM_LEVELS } from '~/lib/game-config';
 import type { LeaderboardUser, BannerGuess } from '~/lib/game-types';
 import { Maximize2 } from 'lucide-react';
 import Image from 'next/image';
-import AnimeSearch from './anime-search';
+import AnimeSearch, { type AnimeSelection } from './anime-search';
+
+// Local guess type for unauthenticated users
+interface LocalGuess {
+	id: string;
+	animeId: number;
+	animeTitle: string;
+}
+
+type Guess = BannerGuess | LocalGuess;
 
 interface ZoomedInBannerProps {
 	gameWon: boolean;
 	setGameWon: (won: boolean) => void;
 	setGameFailed: (failed: boolean) => void;
-	searchedAnimeId?: string;
-	setSearchedAnimeId: (id: string | undefined) => void;
+	searchedAnime?: AnimeSelection;
+	setSearchedAnime: (selection: AnimeSelection | undefined) => void;
 }
 
 export default function ZoomedInBanner({
 	gameWon,
 	setGameWon,
 	setGameFailed,
-	searchedAnimeId,
-	setSearchedAnimeId,
+	searchedAnime,
+	setSearchedAnime,
 }: ZoomedInBannerProps) {
-	const [guesses, setGuesses] = useState<BannerGuess[]>([]);
+	const [guesses, setGuesses] = useState<Guess[]>([]);
 	const [isCopied, setIsCopied] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
 	const isProcessingRef = useRef(false);
 	const hasSubmittedLoss = useRef(false);
-	const processedAnimeRef = useRef<number | null>(null);
+	const guessesRef = useRef<Guess[]>([]);
+	const hasInitializedFromSession = useRef(false);
+	const localGuessIdCounter = useRef(0);
 	const utils = api.useUtils();
+
+	const {
+		isAuthenticated,
+		showLoginPrompt,
+		dismissLoginPrompt,
+		handleAuthError,
+		hasDeclinedAuth,
+		triggerLoginPrompt,
+	} = useGameAuth();
 
 	const { data: gameData, error: gameError } =
 		api.anime.getBannerAnswerAnime.useQuery(undefined, {
@@ -50,7 +72,7 @@ export default function ZoomedInBanner({
 	const { data: session } = api.anime.getBannerTodaysSession.useQuery(
 		undefined,
 		{
-			enabled: !!answerAnime,
+			enabled: !!answerAnime && isAuthenticated,
 			staleTime: 1000 * 60, // 1 minute
 		},
 	);
@@ -71,7 +93,10 @@ export default function ZoomedInBanner({
 
 	const addGuessMutation = api.anime.addBannerGuess.useMutation({
 		onError: (error) => {
-			toast.error(`Failed to save guess: ${error.message}`);
+			// handleAuthError returns true if it was an auth error (and handles showing prompt)
+			if (!handleAuthError(error)) {
+				toast.error(`Failed to save guess: ${error.message}`);
+			}
 		},
 	});
 
@@ -81,28 +106,29 @@ export default function ZoomedInBanner({
 			toast.success('Congratulations! You guessed it!');
 		},
 		onError: (error) => {
-			toast.error(`Failed to submit win: ${error.message}`);
+			// Silently ignore auth errors for win submission
+			if (!handleAuthError(error)) {
+				toast.error(`Failed to submit win: ${error.message}`);
+			}
 		},
 	});
 
 	const lossMutation = api.anime.submitBannerLoss.useMutation({
 		onError: (error) => {
-			toast.error(`Failed to submit loss: ${error.message}`);
+			// Silently ignore auth errors for loss submission
+			if (!handleAuthError(error)) {
+				toast.error(`Failed to submit loss: ${error.message}`);
+			}
 		},
 	});
 
-	const { data: searchedAnime } = api.anime.getById.useQuery(
-		{ id: parseInt(searchedAnimeId ?? '0') },
-		{
-			enabled: !!searchedAnimeId && !isGameOver,
-			staleTime: 1000 * 60 * 10, // 10 minutes - anime data rarely changes
-		},
-	);
-
-	// Load guesses from database on mount
+	// Load guesses from database on initial mount only (for authenticated users)
 	useEffect(() => {
-		if (session) {
+		// Only initialize from session once to prevent overwriting local state
+		if (session && !hasInitializedFromSession.current) {
+			hasInitializedFromSession.current = true;
 			setGuesses(session.guesses);
+			guessesRef.current = session.guesses;
 
 			const hasWinningGuess = session.guesses.some(
 				(guess: BannerGuess) => guess.animeId === answerAnime?.id,
@@ -124,6 +150,13 @@ export default function ZoomedInBanner({
 		}
 	}, [session, answerAnime, setGameWon, setGameFailed, lossMutation]);
 
+	// For unauthenticated users, stop loading once we have game data
+	useEffect(() => {
+		if (!isAuthenticated && answerAnime && isLoading) {
+			setIsLoading(false);
+		}
+	}, [isAuthenticated, answerAnime, isLoading]);
+
 	useEffect(() => {
 		if (hasAlreadyWonToday && !gameWon) setGameWon(true);
 		if (hasFailedToday) setGameFailed(true);
@@ -135,80 +168,120 @@ export default function ZoomedInBanner({
 		setGameFailed,
 	]);
 
-	const processGuess = useCallback(() => {
-		if (
-			isGameOver ||
-			!searchedAnime ||
-			!answerAnime ||
-			isLoading ||
-			isProcessingRef.current ||
-			addGuessMutation.isPending
-		)
-			return;
+	// Process guess directly when searchedAnime changes
+	const processGuess = useCallback(
+		(animeId: number, animeTitle: string) => {
+			if (
+				isGameOver ||
+				!answerAnime ||
+				isLoading ||
+				isProcessingRef.current ||
+				addGuessMutation.isPending
+			) {
+				return;
+			}
 
-		// Check if we've already processed this anime ID
-		if (processedAnimeRef.current === searchedAnime.id) {
-			return;
+			// For unauthenticated users who haven't declined auth yet, show login prompt
+			if (!isAuthenticated && !hasDeclinedAuth) {
+				triggerLoginPrompt();
+				setSearchedAnime(undefined);
+				return;
+			}
+
+			// Check for duplicate guess using ref (always has latest value)
+			if (guessesRef.current.some((g) => g.animeId === animeId)) {
+				toast.error('You already guessed this anime!');
+				setSearchedAnime(undefined);
+				return;
+			}
+
+			isProcessingRef.current = true;
+
+			// OPTIMISTIC UPDATE: Update UI immediately for snappy UX
+			localGuessIdCounter.current += 1;
+			const optimisticGuess: LocalGuess = {
+				id: `local-${localGuessIdCounter.current}`,
+				animeId,
+				animeTitle,
+			};
+
+			setGuesses((prevGuesses) => {
+				const newGuesses = [...prevGuesses, optimisticGuess];
+				guessesRef.current = newGuesses;
+				return newGuesses;
+			});
+
+			const newGuessCount = guessesRef.current.length;
+			const isCorrect = animeId === answerAnime.id;
+
+			// Handle win/loss immediately for responsive UX
+			if (isCorrect) {
+				setGameWon(true);
+			} else if (
+				newGuessCount >= GAME_CONFIG.BANNER.MAX_GUESSES &&
+				!hasSubmittedLoss.current
+			) {
+				setGameFailed(true);
+				hasSubmittedLoss.current = true;
+			}
+
+			// Clear search input immediately
+			setSearchedAnime(undefined);
+			isProcessingRef.current = false;
+
+			// For authenticated users, sync with server in background
+			if (isAuthenticated) {
+				addGuessMutation.mutate(
+					{ animeId },
+					{
+						onSuccess: () => {
+							// Server sync successful - optimistic update was correct
+						},
+						onError: () => {
+							// Could rollback here, but for games it's fine to keep local state
+							toast.error(
+								'Failed to save guess to server. Your progress may not be saved.',
+							);
+						},
+					},
+				);
+
+				// Submit win/loss to server in background
+				if (isCorrect) {
+					winMutation.mutate({ tries: newGuessCount });
+				} else if (
+					newGuessCount >= GAME_CONFIG.BANNER.MAX_GUESSES &&
+					hasSubmittedLoss.current
+				) {
+					lossMutation.mutate();
+				}
+			}
+		},
+		[
+			isGameOver,
+			answerAnime,
+			isLoading,
+			addGuessMutation,
+			setGameWon,
+			setGameFailed,
+			setSearchedAnime,
+			winMutation,
+			lossMutation,
+			isAuthenticated,
+			hasDeclinedAuth,
+			triggerLoginPrompt,
+		],
+	);
+
+	// Trigger guess processing when an anime is selected
+	useEffect(() => {
+		if (searchedAnime && !isProcessingRef.current) {
+			const animeId = parseInt(searchedAnime.id, 10);
+			if (!isNaN(animeId)) {
+				processGuess(animeId, searchedAnime.title);
+			}
 		}
-
-		// Mark as processed immediately to prevent duplicate toasts
-		processedAnimeRef.current = searchedAnime.id;
-
-		// Check for duplicate guess
-		if (guesses.some((g) => g.animeId === searchedAnime.id)) {
-			toast.error('You already guessed this anime!');
-			setSearchedAnimeId(undefined);
-			return;
-		}
-
-		isProcessingRef.current = true;
-
-		// Save guess to database
-		addGuessMutation.mutate(
-			{ animeId: searchedAnime.id },
-			{
-				onSuccess: (newGuess) => {
-					const newGuesses = [...guesses, newGuess];
-					setGuesses(newGuesses);
-
-					const isCorrect = searchedAnime.id === answerAnime.id;
-
-					if (isCorrect) {
-						setGameWon(true);
-						winMutation.mutate({ tries: newGuesses.length });
-					} else if (
-						newGuesses.length >= GAME_CONFIG.BANNER.MAX_GUESSES &&
-						!hasSubmittedLoss.current
-					) {
-						setGameFailed(true);
-						hasSubmittedLoss.current = true;
-						lossMutation.mutate();
-					}
-
-					// Reset search input after successful guess processing
-					setSearchedAnimeId(undefined);
-					isProcessingRef.current = false;
-				},
-				onError: () => {
-					setSearchedAnimeId(undefined);
-					isProcessingRef.current = false;
-					processedAnimeRef.current = null;
-				},
-			},
-		);
-	}, [
-		isGameOver,
-		searchedAnime,
-		answerAnime,
-		isLoading,
-		addGuessMutation,
-		guesses,
-		setGameWon,
-		setGameFailed,
-		setSearchedAnimeId,
-		winMutation,
-		lossMutation,
-	]);
+	}, [searchedAnime, processGuess]);
 
 	const handleShare = async () => {
 		if (!answerAnime) return;
@@ -243,18 +316,17 @@ export default function ZoomedInBanner({
 		}
 	};
 
-	useEffect(() => {
-		if (searchedAnime && !isProcessingRef.current) {
-			processGuess();
-		}
-	}, [searchedAnime, processGuess]);
-
-	// Reset processedAnimeRef when searchedAnimeId is cleared to allow re-selection
-	useEffect(() => {
-		if (!searchedAnimeId) {
-			processedAnimeRef.current = null;
-		}
-	}, [searchedAnimeId]);
+	// Show login prompt when auth is required (only if user hasn't dismissed it)
+	if (showLoginPrompt) {
+		return (
+			<LoginPrompt
+				variant="modal"
+				title="Login Required"
+				message="Log in to save your guesses and compete on the leaderboard. Or continue playing without saving."
+				onDismiss={dismissLoginPrompt}
+			/>
+		);
+	}
 
 	// Show error state if daily anime not found
 	if (gameError || (!answerAnime && !isLoading)) {
@@ -394,7 +466,7 @@ export default function ZoomedInBanner({
 
 							{/* Search Component */}
 							<AnimeSearch
-								onSelect={setSearchedAnimeId}
+								onSelect={setSearchedAnime}
 								disabled={isGameOver}
 							/>
 							{/* Recent Guesses */}

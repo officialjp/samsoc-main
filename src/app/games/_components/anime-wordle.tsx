@@ -8,6 +8,8 @@ import GameOverBanner from './game-over-banner';
 import DailyNotFound from './daily-not-found';
 import FieldCell from './field-cell';
 import GameSkeleton from './game-skeleton';
+import LoginPrompt from './login-prompt';
+import { useGameAuth } from './use-game-auth';
 import {
 	checkFieldMatch,
 	formatDisplayValue,
@@ -36,6 +38,15 @@ export default function AnimeWordle({
 	const lastProcessedIdRef = useRef<string | null>(null);
 	const utils = api.useUtils();
 
+	const {
+		isAuthenticated,
+		showLoginPrompt,
+		dismissLoginPrompt,
+		handleAuthError,
+		hasDeclinedAuth,
+		triggerLoginPrompt,
+	} = useGameAuth();
+
 	const { data: gameData, error: gameError } =
 		api.anime.getAnswerAnime.useQuery(undefined, {
 			staleTime: 1000 * 60 * 5, // 5 minutes
@@ -47,7 +58,7 @@ export default function AnimeWordle({
 	const hasFailedToday = gameData?.hasFailedToday;
 
 	const { data: session } = api.anime.getTodaysSession.useQuery(undefined, {
-		enabled: !!answerAnime,
+		enabled: !!answerAnime && isAuthenticated,
 		staleTime: 1000 * 60, // 1 minute
 	});
 
@@ -64,7 +75,10 @@ export default function AnimeWordle({
 
 	const addGuessMutation = api.anime.addGameGuess.useMutation({
 		onError: (error) => {
-			toast.error(`Failed to save guess: ${error.message}`);
+			// handleAuthError returns true if it was an auth error (and handles showing prompt if needed)
+			if (!handleAuthError(error)) {
+				toast.error(`Failed to save guess: ${error.message}`);
+			}
 		},
 	});
 
@@ -74,13 +88,19 @@ export default function AnimeWordle({
 			toast.success('Congratulations! You won!');
 		},
 		onError: (error) => {
-			toast.error(`Failed to submit win: ${error.message}`);
+			// Silently ignore auth errors for win submission
+			if (!handleAuthError(error)) {
+				toast.error(`Failed to submit win: ${error.message}`);
+			}
 		},
 	});
 
 	const lossMutation = api.anime.submitLoss.useMutation({
 		onError: (error) => {
-			toast.error(`Failed to submit loss: ${error.message}`);
+			// Silently ignore auth errors for loss submission
+			if (!handleAuthError(error)) {
+				toast.error(`Failed to submit loss: ${error.message}`);
+			}
 		},
 	});
 
@@ -120,6 +140,13 @@ export default function AnimeWordle({
 		}
 	}, [session, answerAnime, setGameWon, setGameFailed]);
 
+	// For unauthenticated users, stop loading once we have game data
+	useEffect(() => {
+		if (!isAuthenticated && answerAnime && isLoading) {
+			setIsLoading(false);
+		}
+	}, [isAuthenticated, answerAnime, isLoading]);
+
 	useEffect(() => {
 		if (hasAlreadyWonToday && !gameWon) setGameWon(true);
 		if (hasFailedToday) setGameFailed(true);
@@ -145,6 +172,12 @@ export default function AnimeWordle({
 		// Check if we've already processed this selection
 		const animeIdStr = String(searchedAnime.id);
 		if (lastProcessedIdRef.current === animeIdStr) {
+			return;
+		}
+
+		// For unauthenticated users who haven't declined auth yet, show login prompt
+		if (!isAuthenticated && !hasDeclinedAuth) {
+			triggerLoginPrompt();
 			return;
 		}
 
@@ -179,19 +212,24 @@ export default function AnimeWordle({
 		const newGuesses = [...guesses, guessData];
 		setGuesses(newGuesses);
 
-		// Save guess to database
-		addGuessMutation.mutate(
-			{ guessData },
-			{
-				onSuccess: () => {
-					isProcessingRef.current = false;
+		// Save guess to database (only for authenticated users)
+		if (isAuthenticated) {
+			addGuessMutation.mutate(
+				{ guessData },
+				{
+					onSuccess: () => {
+						isProcessingRef.current = false;
+					},
+					onError: () => {
+						isProcessingRef.current = false;
+						lastProcessedIdRef.current = null;
+					},
 				},
-				onError: () => {
-					isProcessingRef.current = false;
-					lastProcessedIdRef.current = null;
-				},
-			},
-		);
+			);
+		} else {
+			// For unauthenticated users, just mark processing as done
+			isProcessingRef.current = false;
+		}
 
 		const isCorrect =
 			formatDisplayValue(searchedAnime.title).toLowerCase().trim() ===
@@ -199,10 +237,16 @@ export default function AnimeWordle({
 
 		if (isCorrect) {
 			setGameWon(true);
-			winMutation.mutate({ tries: newGuesses.length });
+			// Only submit win for authenticated users
+			if (isAuthenticated) {
+				winMutation.mutate({ tries: newGuesses.length });
+			}
 		} else if (newGuesses.length >= GAME_CONFIG.WORDLE.MAX_GUESSES) {
 			setGameFailed(true);
-			lossMutation.mutate();
+			// Only submit loss for authenticated users
+			if (isAuthenticated) {
+				lossMutation.mutate();
+			}
 		}
 	}, [
 		isGameOver,
@@ -215,6 +259,9 @@ export default function AnimeWordle({
 		setGameFailed,
 		winMutation,
 		lossMutation,
+		isAuthenticated,
+		hasDeclinedAuth,
+		triggerLoginPrompt,
 	]);
 
 	const handleShare = async () => {
@@ -293,6 +340,18 @@ export default function AnimeWordle({
 		window.addEventListener('keydown', handleKeyPress);
 		return () => window.removeEventListener('keydown', handleKeyPress);
 	}, [isGameOver]);
+
+	// Show login prompt when auth is required (only if user hasn't dismissed it)
+	if (showLoginPrompt) {
+		return (
+			<LoginPrompt
+				variant="modal"
+				title="Login Required"
+				message="Log in to save your guesses and compete on the leaderboard. Or continue playing without saving."
+				onDismiss={dismissLoginPrompt}
+			/>
+		);
+	}
 
 	// Show error state if daily anime not found
 	if (gameError || (!answerAnime && !isLoading)) {
