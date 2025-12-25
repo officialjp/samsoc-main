@@ -39,13 +39,17 @@ const pageIndex: Record<string, PageData> = {
 };
 
 function getThreshold(name: string): number {
-	return Math.max(1, Math.floor(name.length / 4));
+	// More lenient threshold: allow ~1/3 of the word to be different
+	return Math.max(2, Math.ceil(name.length / 3));
 }
 
 export default function NotFound() {
 	const [pathName, setPathName] = useState<string | null>(null);
+	const [isClient, setIsClient] = useState(false);
 
 	useEffect(() => {
+		setIsClient(true);
+
 		const fullPath = window.location.pathname;
 
 		const normalizedPath = fullPath
@@ -65,8 +69,9 @@ export default function NotFound() {
 					const threshold = getThreshold(name);
 
 					return (
-						levenshtein(name, pathName) < threshold ||
-						name.includes(pathName)
+						levenshtein(name, pathName) <= threshold ||
+						name.includes(pathName) ||
+						pathName.includes(name)
 					);
 				})
 				.map(([name, data], index) => {
@@ -94,8 +99,43 @@ export default function NotFound() {
 				})
 		: null;
 
-	if (!pathName && typeof window === 'undefined') {
-		return null;
+	// Render a consistent initial state for both server and client to avoid hydration mismatch
+	if (!isClient) {
+		return (
+			<div className="flex min-h-screen flex-col w-full">
+				<SectionContainer
+					id="404"
+					className="w-full py-12 md:py-16 overflow-hidden"
+				>
+					<Image
+						src={Miku}
+						width={200}
+						height={200}
+						alt={'404 image'}
+						draggable={false}
+						className="mx-auto"
+					/>
+					<SectionHeading
+						badge="uh oh..."
+						title="404 Page Not Found"
+						description="The page you were looking for doesn't exist"
+						badgeColor="bg-purple-200"
+					/>
+					<div className="mt-8 text-center flex flex-col items-center">
+						<Button
+							asChild
+							className="hover:cursor-pointer bg-button2 hover:bg-button1"
+						>
+							<Link href="/" className="mb-2">
+								<span className="mr-2">🏠</span>
+								Home
+								<ChevronRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+							</Link>
+						</Button>
+					</div>
+				</SectionContainer>
+			</div>
+		);
 	}
 
 	if (links && links.length > 0) {
@@ -106,7 +146,7 @@ export default function NotFound() {
 					className="w-full py-12 md:py-16 overflow-hidden"
 				>
 					<Image
-						src={Miku.src}
+						src={Miku}
 						width={200}
 						height={200}
 						alt={'404 image'}
@@ -135,10 +175,11 @@ export default function NotFound() {
 				className="w-full py-12 md:py-16 overflow-hidden"
 			>
 				<Image
-					src={Miku.src}
+					src={Miku}
 					width={200}
 					height={200}
 					alt={'404 image'}
+					draggable={false}
 					className="mx-auto"
 				/>
 				<SectionHeading
