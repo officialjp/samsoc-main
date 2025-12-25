@@ -11,8 +11,13 @@ interface AnimeItem {
 
 type AnimeDataRaw = Record<string, string>;
 
+export interface AnimeSelection {
+	id: string;
+	title: string;
+}
+
 interface AnimeSearchProps {
-	onSelect: (id: string) => void;
+	onSelect: (selection: AnimeSelection) => void;
 	disabled?: boolean;
 }
 
@@ -68,7 +73,10 @@ export default function AnimeSearch({ onSelect, disabled }: AnimeSearchProps) {
 	}, []);
 
 	const handleSelect = (anime: AnimeItem): void => {
-		onSelect(anime.id);
+		onSelect({
+			id: anime.id,
+			title: anime.nameEn,
+		});
 	};
 
 	return (

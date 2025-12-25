@@ -8,6 +8,8 @@ import Leaderboard from './leaderboard';
 import GameOverBanner from './game-over-banner';
 import DailyNotFound from './daily-not-found';
 import GameSkeleton from './game-skeleton';
+import LoginPrompt from './login-prompt';
+import { useGameAuth } from './use-game-auth';
 import { HINT_LABELS, GAME_CONFIG } from '~/lib/game-config';
 import type { LeaderboardUser } from '~/lib/game-types';
 
@@ -30,6 +32,15 @@ export default function StudioGame({
 	const isProcessingRef = useRef(false);
 	const lastProcessedIdRef = useRef<string | null>(null);
 	const utils = api.useUtils();
+
+	const {
+		isAuthenticated,
+		showLoginPrompt,
+		dismissLoginPrompt,
+		handleAuthError,
+		hasDeclinedAuth,
+		triggerLoginPrompt,
+	} = useGameAuth();
 
 	const { data: gameData, error: gameError } =
 		api.studio.getAnswerStudio.useQuery(undefined, {
@@ -59,16 +70,22 @@ export default function StudioGame({
 	});
 
 	const { data: session } = api.studio.getTodaysSession.useQuery(undefined, {
-		enabled: !!gameData?.studio,
+		enabled: !!gameData?.studio && isAuthenticated,
 		staleTime: 1000 * 60, // 1 minute
 	});
 
 	const addGuessMutation = api.studio.addGameGuess.useMutation({
 		onError: (error) => {
-			toast.error(`Failed to save guess: ${error.message}`);
-			isProcessingRef.current = false;
-			// Revert the guess on error
-			setGuesses((prev) => prev.slice(0, -1));
+			// handleAuthError returns true if it was an auth error (and handles showing prompt if needed)
+			if (!handleAuthError(error)) {
+				toast.error(`Failed to save guess: ${error.message}`);
+				// Only revert guess for non-auth errors (auth errors mean unauthenticated play)
+				isProcessingRef.current = false;
+				setGuesses((prev) => prev.slice(0, -1));
+			} else {
+				// For auth errors, just reset processing flag (don't revert the guess)
+				isProcessingRef.current = false;
+			}
 		},
 		onSuccess: () => {
 			isProcessingRef.current = false;
@@ -81,13 +98,19 @@ export default function StudioGame({
 			toast.success('Congratulations! You won!');
 		},
 		onError: (error) => {
-			toast.error(`Failed to submit win: ${error.message}`);
+			// Silently ignore auth errors for win submission
+			if (!handleAuthError(error)) {
+				toast.error(`Failed to submit win: ${error.message}`);
+			}
 		},
 	});
 
 	const lossMutation = api.studio.submitLoss.useMutation({
 		onError: (error) => {
-			toast.error(`Failed to submit loss: ${error.message}`);
+			// Silently ignore auth errors for loss submission
+			if (!handleAuthError(error)) {
+				toast.error(`Failed to submit loss: ${error.message}`);
+			}
 		},
 	});
 
@@ -117,6 +140,13 @@ export default function StudioGame({
 		}
 	}, [session, answerStudio, setGameWon, setGameFailed]);
 
+	// For unauthenticated users, stop loading once we have game data
+	useEffect(() => {
+		if (!isAuthenticated && answerStudio && isLoading) {
+			setIsLoading(false);
+		}
+	}, [isAuthenticated, answerStudio, isLoading]);
+
 	const processGuess = useCallback(() => {
 		if (
 			isGameOver ||
@@ -137,6 +167,12 @@ export default function StudioGame({
 		const selected = allStudios.find((s) => s.id === selectedStudioId);
 		if (!selected) return;
 
+		// For unauthenticated users who haven't declined auth yet, show login prompt
+		if (!isAuthenticated && !hasDeclinedAuth) {
+			triggerLoginPrompt();
+			return;
+		}
+
 		// Check for duplicate guess
 		if (guesses.some((g) => g.studioName === selected.name)) {
 			// Mark as processed to prevent duplicate toasts
@@ -151,18 +187,29 @@ export default function StudioGame({
 		const newGuesses = [...guesses, { studioName: selected.name }];
 		setGuesses(newGuesses);
 
-		// Save guess to database
-		addGuessMutation.mutate({ studioName: selected.name });
+		// Save guess to database (only for authenticated users)
+		if (isAuthenticated) {
+			addGuessMutation.mutate({ studioName: selected.name });
+		} else {
+			// For unauthenticated users, just mark processing as done
+			isProcessingRef.current = false;
+		}
 
 		if (
 			selected.name.toLowerCase().trim() ===
 			answerStudio.name.toLowerCase().trim()
 		) {
 			setGameWon(true);
-			winMutation.mutate({ tries: newGuesses.length });
+			// Only submit win for authenticated users
+			if (isAuthenticated) {
+				winMutation.mutate({ tries: newGuesses.length });
+			}
 		} else if (newGuesses.length >= GAME_CONFIG.STUDIO.MAX_GUESSES) {
 			setGameFailed(true);
-			lossMutation.mutate();
+			// Only submit loss for authenticated users
+			if (isAuthenticated) {
+				lossMutation.mutate();
+			}
 		}
 	}, [
 		isGameOver,
@@ -176,6 +223,9 @@ export default function StudioGame({
 		setGameFailed,
 		winMutation,
 		lossMutation,
+		isAuthenticated,
+		hasDeclinedAuth,
+		triggerLoginPrompt,
 	]);
 
 	// Process guess when studio is selected
@@ -254,6 +304,18 @@ export default function StudioGame({
 			}
 		}
 	};
+
+	// Show login prompt when auth is required (only if user hasn't dismissed it)
+	if (showLoginPrompt) {
+		return (
+			<LoginPrompt
+				variant="modal"
+				title="Login Required"
+				message="Log in to save your guesses and compete on the leaderboard. Or continue playing without saving."
+				onDismiss={dismissLoginPrompt}
+			/>
+		);
+	}
 
 	// Show error state if daily studio not found
 	if (gameError || (!answerStudio && !isLoading)) {

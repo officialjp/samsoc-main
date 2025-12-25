@@ -16,7 +16,9 @@ import {
 import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
 import { Loader2, Save } from 'lucide-react';
-import AnimeSearch from '~/app/games/_components/anime-search';
+import AnimeSearch, {
+	type AnimeSelection,
+} from '~/app/games/_components/anime-search';
 import { useRouter } from 'next/navigation';
 import { useEffect, Suspense, useState } from 'react';
 import { toast } from 'sonner';
@@ -42,8 +44,8 @@ function BannerSchedulerContent() {
 
 	const scheduledDate = form.watch('scheduledDate');
 
-	const handleAnimeSelect = (id: string) => {
-		form.setValue('animeId', parseInt(id));
+	const handleAnimeSelect = (selection: AnimeSelection) => {
+		form.setValue('animeId', parseInt(selection.id));
 	};
 
 	// Check if the selected date already has an entry
