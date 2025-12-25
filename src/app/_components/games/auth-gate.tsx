@@ -1,6 +1,6 @@
 'use client';
 
-import { useSession, signIn } from 'next-auth/react';
+import { useSession, signIn } from '~/lib/auth-client';
 import { Loader2, Lock } from 'lucide-react';
 import type { ReactNode } from 'react';
 
@@ -22,10 +22,10 @@ export default function AuthGate({
 	loadingMessage = 'Loading Game State...',
 	isGameDataLoading = false,
 }: AuthGateProps) {
-	const { status } = useSession();
+	const { data: session, isPending } = useSession();
 
 	// Show loading state during session check or game data loading
-	if (status === 'loading' || (status === 'authenticated' && isGameDataLoading)) {
+	if (isPending || (session && isGameDataLoading)) {
 		return (
 			<div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
 				<Loader2 className="w-10 h-10 animate-spin text-blue-600" />
@@ -37,7 +37,7 @@ export default function AuthGate({
 	}
 
 	// Show login prompt for unauthenticated users
-	if (status === 'unauthenticated') {
+	if (!session) {
 		return (
 			<div className="flex flex-col items-center justify-center min-h-[60vh] p-6 text-center">
 				<div className="bg-white border-4 border-black p-8 rounded-3xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] max-w-md">
@@ -50,7 +50,9 @@ export default function AuthGate({
 						the leaderboard.
 					</p>
 					<button
-						onClick={() => void signIn()}
+						onClick={() =>
+							void signIn.social({ provider: 'discord' })
+						}
 						className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl border-2 hover:cursor-pointer border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-none transition-all"
 					>
 						LOG IN TO PLAY

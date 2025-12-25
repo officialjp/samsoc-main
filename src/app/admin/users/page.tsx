@@ -1,11 +1,14 @@
 // app/admin/users/page.tsx
-import { auth } from '~/server/auth';
+import { auth } from '~/lib/auth';
+import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { api } from '~/trpc/server';
 import { UpdateRoleButton } from '../../_components/admin/update-role-button';
 
 export default async function AdminUsersPage() {
-	const session = await auth();
+	const session = await auth.api.getSession({
+		headers: await headers(),
+	});
 
 	if (!session || session.user?.role !== 'admin') {
 		redirect('/unauthorized');

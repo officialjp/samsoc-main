@@ -1,52 +1,23 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { getToken } from 'next-auth/jwt';
-import { getAuthSecret } from '~/lib/auth-secret';
+import { getSessionCookie } from 'better-auth/cookies';
 
-export async function proxy(req: NextRequest) {
+export function proxy(request: NextRequest) {
+	const sessionCookie = getSessionCookie(request);
+
+	// Check for protected routes
 	const isProtectedPath =
-		req.nextUrl.pathname.startsWith('/dashboard') ||
-		req.nextUrl.pathname.startsWith('/admin');
+		request.nextUrl.pathname.startsWith('/dashboard') ||
+		request.nextUrl.pathname.startsWith('/admin');
 
-	if (!isProtectedPath) {
-		return NextResponse.next();
+	// If accessing protected route without session cookie, redirect to sign in
+	// Note: This only checks cookie existence, not validity
+	// Full validation should happen in the page/route handlers
+	if (isProtectedPath && !sessionCookie) {
+		return NextResponse.redirect(new URL('/', request.url));
 	}
 
-	// Get the secret from environment (shared utility ensures consistency)
-	const secretValue = getAuthSecret();
-
-	// Validate that AUTH_SECRET is available
-	if (!secretValue) {
-		console.error(
-			'AUTH_SECRET is not defined. Cannot verify authentication tokens.',
-		);
-		return NextResponse.redirect(new URL('/api/auth/signin', req.url));
-	}
-
-	try {
-		const token = await getToken({
-			req,
-			secret: secretValue,
-			cookieName:
-				process.env.NODE_ENV === 'production'
-					? '__Secure-authjs.session-token'
-					: 'authjs.session-token',
-		});
-
-		if (!token) {
-			return NextResponse.redirect(new URL('/api/auth/signin', req.url));
-		}
-
-		const userRole = token.role;
-		if (userRole !== 'admin') {
-			return NextResponse.redirect(new URL('/unauthorized', req.url));
-		}
-
-		return NextResponse.next();
-	} catch (error) {
-		console.error('Token verification error:', error);
-		return NextResponse.redirect(new URL('/api/auth/signin', req.url));
-	}
+	return NextResponse.next();
 }
 
 export const config = {
