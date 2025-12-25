@@ -7,7 +7,7 @@ import Image from 'next/image';
 import Logo from '../../../public/images/logo.webp';
 import { cn } from '~/lib/utils';
 import { usePathname } from 'next/navigation';
-import AccountButton from '~/components/shared/login-button';
+import AccountButton from '~/components/shared/account-button';
 import { useSession } from '~/lib/auth-client';
 import { SvgIcon } from '~/components/shared/svg-icon';
 

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Button } from '~/components/ui/button';
 import { SectionContainer } from '~/components/layout/section-container';
 import { SectionHeading } from '~/components/layout/section-heading';
-import DashButtons from './_components/dashboard-link-buttons';
+import DashboardNavigationButtons from './_components/dashboard-navigation-buttons';
 
 export default function Page() {
 	return (
@@ -15,7 +15,7 @@ export default function Page() {
 					description="Here is a collection of dashboards you can use to change the data displayed on the website!"
 				/>
 				<div className="flex items-center justify-center mx-auto max-w-7xl py-12 flex-col gap-6">
-					<DashButtons></DashButtons>
+					<DashboardNavigationButtons></DashboardNavigationButtons>
 					<p className="font-bold italic">
 						Ahem... Do not and I REPEAT do not, go to the admin
 						panel if you don&apos;t know what you&apos;re doing

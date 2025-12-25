@@ -1,7 +1,7 @@
 import EventAdd from './_components/event-add';
 import EventRemove from './_components/event-removal';
-import DashButtons from '../_components/dashboard-link-buttons';
-import DashboardTabArray from '../_components/dashboard-tab-array';
+import DashboardNavigationButtons from '../_components/dashboard-navigation-buttons';
+import DashboardTabs from '../_components/dashboard-tabs';
 import { SectionContainer } from '~/components/layout/section-container';
 import { SectionHeading } from '~/components/layout/section-heading';
 
@@ -27,8 +27,8 @@ export default function Page() {
 					badgeColor="bg-purple-200"
 				/>
 				<div className="flex items-center justify-center mx-auto max-w-7xl py-12 flex-col gap-6">
-					<DashButtons />
-					<DashboardTabArray tabData={calendarPageObj} />
+					<DashboardNavigationButtons />
+					<DashboardTabs tabData={calendarPageObj} />
 				</div>
 			</SectionContainer>
 		</div>

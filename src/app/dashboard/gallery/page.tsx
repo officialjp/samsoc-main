@@ -1,5 +1,5 @@
-import DashButtons from '../_components/dashboard-link-buttons';
-import DashboardTabArray from '../_components/dashboard-tab-array';
+import DashboardNavigationButtons from '../_components/dashboard-navigation-buttons';
+import DashboardTabs from '../_components/dashboard-tabs';
 import ImageAdd from './_components/image-add';
 import ImageRemove from './_components/image-removal';
 import { SectionContainer } from '~/components/layout/section-container';
@@ -27,8 +27,8 @@ export default function Page() {
 					badgeColor="bg-purple-200"
 				/>
 				<div className="flex items-center justify-center mx-auto max-w-7xl py-12 flex-col gap-6">
-					<DashButtons />
-					<DashboardTabArray tabData={galleryPageObj} />
+					<DashboardNavigationButtons />
+					<DashboardTabs tabData={galleryPageObj} />
 				</div>
 			</SectionContainer>
 		</div>

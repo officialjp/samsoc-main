@@ -7,11 +7,11 @@ interface DashboardTabs {
 	page: React.ReactElement;
 }
 
-interface DashboardTabArray {
+interface DashboardTabsProps {
 	tabData: DashboardTabs[];
 }
 
-export default function DashboardTabArray({ tabData }: DashboardTabArray) {
+export default function DashboardTabs({ tabData }: DashboardTabsProps) {
 	const navigationItems = tabData.map((tab) => ({
 		name: tab.name,
 		page: tab.page,

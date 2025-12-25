@@ -5,8 +5,8 @@ import CarouselRemove from './_components/carousel-removal';
 import { CommitteeMemberEditor } from './_components/committee-editor';
 import { AnimeCardEditor } from './_components/anime-card-editor';
 
-import DashboardTabArray from '../_components/dashboard-tab-array';
-import DashButtons from '../_components/dashboard-link-buttons';
+import DashboardTabs from '../_components/dashboard-tabs';
+import DashboardNavigationButtons from '../_components/dashboard-navigation-buttons';
 
 const carouselPageObj = [
 	{
@@ -38,8 +38,8 @@ export default function Page() {
 					badgeColor="bg-purple-200"
 				/>
 				<div className="flex items-center justify-center flex-col mx-auto max-w-7xl">
-					<DashButtons />
-					<DashboardTabArray tabData={carouselPageObj} />
+					<DashboardNavigationButtons />
+					<DashboardTabs tabData={carouselPageObj} />
 				</div>
 			</SectionContainer>
 		</div>

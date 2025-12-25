@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import StudioSearch from '../_components/studio-search';
 import StudioGame from '../_components/anime-studio';
-import { GameErrorBoundary } from '../_components/error-boundary';
+import { GameErrorBoundary } from '../_components/game-error-boundary';
 import AuthGate from '../_components/auth-gate';
 import { api } from '~/trpc/react';
 import GameHeader from '../_components/game-header';
