@@ -68,7 +68,7 @@ export default function Leaderboard({ users, gameType }: LeaderboardProps) {
 									{idx === 0 && '🥇 '}
 									{idx === 1 && '🥈 '}
 									{idx === 2 && '🥉 '}
-									{idx + 1}. {user.name ?? 'Anon'}
+									{user.name ?? 'Anon'}
 								</span>
 								<span className="text-[10px] text-gray-500 uppercase font-semibold">
 									{user.totalTries} tries • avg{' '}
