@@ -1,8 +1,8 @@
-import { SectionContainer } from '~/app/_components/section-container';
-import { SectionHeading } from '~/app/_components/section-heading';
+import { SectionContainer } from '~/components/layout/section-container';
+import { SectionHeading } from '~/components/layout/section-heading';
 import type { Metadata } from 'next';
 import { api } from '~/trpc/server';
-import { GallerySearch } from '../_components/gallery/gallery-search';
+import { GallerySearch } from './_components/gallery-search';
 
 export const metadata: Metadata = {
 	title: 'Surrey Anime and Manga Society - Gallery',

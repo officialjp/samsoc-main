@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import { Button } from '../_components/ui/button';
-import { SectionContainer } from '../_components/section-container';
-import { SectionHeading } from '../_components/section-heading';
-import DashButtons from '../_components/dashboard/dashboard-link-buttons';
+import { Button } from '~/components/ui/button';
+import { SectionContainer } from '~/components/layout/section-container';
+import { SectionHeading } from '~/components/layout/section-heading';
+import DashButtons from './_components/dashboard-link-buttons';
 
 export default function Page() {
 	return (

@@ -5,9 +5,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Miku from '../../public/miku.webp';
 import { useEffect, useState } from 'react';
-import { SectionContainer } from '~/app/_components/section-container';
-import { Button } from '~/app/_components/ui/button';
-import { SectionHeading } from '~/app/_components/section-heading';
+import { SectionContainer } from '~/components/layout/section-container';
+import { Button } from '~/components/ui/button';
+import { SectionHeading } from '~/components/layout/section-heading';
 import { ChevronRight } from 'lucide-react';
 
 type PageData = {

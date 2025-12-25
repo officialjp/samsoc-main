@@ -1,7 +1,7 @@
-import { SectionContainer } from '../_components/section-container';
+import { SectionContainer } from '~/components/layout/section-container';
 import Image from 'next/image';
-import { SectionHeading } from '../_components/section-heading';
-import { Button } from '../_components/ui/button';
+import { SectionHeading } from '~/components/layout/section-heading';
+import { Button } from '~/components/ui/button';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 

@@ -1,9 +1,9 @@
-import EventAdd from '~/app/_components/dashboard/calendar/event-add';
-import EventRemove from '~/app/_components/dashboard/calendar/event-removal';
-import DashButtons from '~/app/_components/dashboard/dashboard-link-buttons';
-import DashboardTabArray from '~/app/_components/dashboard/dashboard-tab-array';
-import { SectionContainer } from '~/app/_components/section-container';
-import { SectionHeading } from '~/app/_components/section-heading';
+import EventAdd from './_components/event-add';
+import EventRemove from './_components/event-removal';
+import DashButtons from '../_components/dashboard-link-buttons';
+import DashboardTabArray from '../_components/dashboard-tab-array';
+import { SectionContainer } from '~/components/layout/section-container';
+import { SectionHeading } from '~/components/layout/section-heading';
 
 const calendarPageObj = [
 	{

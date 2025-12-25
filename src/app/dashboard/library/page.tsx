@@ -1,10 +1,10 @@
-import DashButtons from '~/app/_components/dashboard/dashboard-link-buttons';
-import DashboardTabArray from '~/app/_components/dashboard/dashboard-tab-array';
-import ImageAdd from '~/app/_components/dashboard/library/library-add';
-import ImageRemove from '~/app/_components/dashboard/library/library-remove';
-import { MangaItemEditor } from '~/app/_components/dashboard/library/library-editor';
-import { SectionContainer } from '~/app/_components/section-container';
-import { SectionHeading } from '~/app/_components/section-heading';
+import DashButtons from '../_components/dashboard-link-buttons';
+import DashboardTabArray from '../_components/dashboard-tab-array';
+import ImageAdd from './_components/library-add';
+import ImageRemove from './_components/library-remove';
+import { MangaItemEditor } from './_components/library-editor';
+import { SectionContainer } from '~/components/layout/section-container';
+import { SectionHeading } from '~/components/layout/section-heading';
 
 const mangaPageObj = [
 	{

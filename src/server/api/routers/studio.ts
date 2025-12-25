@@ -12,8 +12,8 @@ import {
 	getGameStats,
 	hasWonToday,
 	GAME_TYPES,
-} from '~/server/api/helpers/gameStats';
-import type { GameStatsWithUser } from '~/server/api/helpers/gameStats';
+} from '~/server/api/helpers/game-stats';
+import type { GameStatsWithUser } from '~/server/api/helpers/game-stats';
 
 interface CharacterEntry {
 	name?: string;
@@ -516,11 +516,9 @@ export const studioRouter = createTRPCRouter({
 				where: { name: input.studioName },
 			});
 
-			if (!studio) {
-				studio = await ctx.db.studio.create({
-					data: { name: input.studioName },
-				});
-			}
+			studio ??= await ctx.db.studio.create({
+				data: { name: input.studioName },
+			});
 
 			// Use consolidated DailySchedule model
 			return ctx.db.dailySchedule.upsert({

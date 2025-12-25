@@ -1,7 +1,7 @@
-import { SectionContainer } from '~/app/_components/section-container';
-import { SectionHeading } from '~/app/_components/section-heading';
+import { SectionContainer } from '~/components/layout/section-container';
+import { SectionHeading } from '~/components/layout/section-heading';
 import { api } from '~/trpc/server';
-import { LibrarySearch } from '~/app/_components/library/library-search';
+import { LibrarySearch } from './_components/library-search';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
