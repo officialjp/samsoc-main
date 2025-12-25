@@ -1,6 +1,6 @@
-import { SectionContainer } from '~/app/_components/section-container';
-import { SectionHeading } from '~/app/_components/section-heading';
-import { EventTypeCard } from '~/app/_components/events/event-type-card';
+import { SectionContainer } from '~/components/layout/section-container';
+import { SectionHeading } from '~/components/layout/section-heading';
+import { EventTypeCard } from './_components/event-type-card';
 import ClubNight from '../../../public/images/clubnight.webp';
 import ComicCon from '../../../public/images/comiccon.webp';
 import Screenings from '../../../public/images/screenings.webp';

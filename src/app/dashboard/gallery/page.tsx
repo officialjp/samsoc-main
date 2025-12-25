@@ -1,9 +1,9 @@
-import DashButtons from '~/app/_components/dashboard/dashboard-link-buttons';
-import DashboardTabArray from '~/app/_components/dashboard/dashboard-tab-array';
-import ImageAdd from '~/app/_components/dashboard/gallery/image-add';
-import ImageRemove from '~/app/_components/dashboard/gallery/image-removal';
-import { SectionContainer } from '~/app/_components/section-container';
-import { SectionHeading } from '~/app/_components/section-heading';
+import DashButtons from '../_components/dashboard-link-buttons';
+import DashboardTabArray from '../_components/dashboard-tab-array';
+import ImageAdd from './_components/image-add';
+import ImageRemove from './_components/image-removal';
+import { SectionContainer } from '~/components/layout/section-container';
+import { SectionHeading } from '~/components/layout/section-heading';
 
 const galleryPageObj = [
 	{

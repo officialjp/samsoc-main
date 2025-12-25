@@ -10,8 +10,8 @@ import {
 	incrementWin,
 	getLeaderboard,
 	GAME_TYPES,
-} from '~/server/api/helpers/gameStats';
-import type { GameStatsWithUser } from '~/server/api/helpers/gameStats';
+} from '~/server/api/helpers/game-stats';
+import type { GameStatsWithUser } from '~/server/api/helpers/game-stats';
 
 /**
  * Return type for anime data used in wordle game

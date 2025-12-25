@@ -1,8 +1,8 @@
-import { SectionContainer } from '../_components/section-container';
-import { SectionHeading } from '../_components/section-heading';
+import { SectionContainer } from '~/components/layout/section-container';
+import { SectionHeading } from '~/components/layout/section-heading';
 import type { Metadata } from 'next';
 import { api } from '~/trpc/server';
-import { Calendar } from '../_components/calendar/calendar';
+import { Calendar } from './_components/calendar';
 import type { Event } from '@prisma/client';
 
 export const metadata: Metadata = {

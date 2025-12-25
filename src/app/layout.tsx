@@ -1,11 +1,11 @@
 import '~/styles/globals.css';
 import { type Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
-import { Footer } from './_components/footer';
-import { Header } from './_components/header';
+import { Footer } from '~/components/layout/footer';
+import { Header } from '~/components/layout/header';
 import { TRPCReactProvider } from '~/trpc/react';
 import { Toaster } from 'sonner';
-import { ErrorBoundary } from './_components/error-boundary';
+import { ErrorBoundary } from '~/components/shared/error-boundary';
 
 export const metadata: Metadata = {
 	title: 'Surrey Anime and Manga Society',

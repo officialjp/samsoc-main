@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import AnimeSearch from '~/app/_components/games/search-component';
-import AnimeWordle from '~/app/_components/games/anime-wordle';
-import { GameErrorBoundary } from '~/app/_components/games/error-boundary';
-import AuthGate from '~/app/_components/games/auth-gate';
+import AnimeWordle from '../_components/anime-wordle';
+import { GameErrorBoundary } from '../_components/error-boundary';
+import AuthGate from '../_components/auth-gate';
 import { api } from '~/trpc/react';
-import GameHeader from '~/app/_components/games/game-header';
+import GameHeader from '../_components/game-header';
+import AnimeSearch from '../_components/anime-search';
 
 export default function WordlePage() {
 	const [selectedAnimeId, setSelectedAnimeId] = useState<

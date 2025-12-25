@@ -1,11 +1,11 @@
-import { SectionContainer } from '~/app/_components/section-container';
-import { SectionHeading } from '~/app/_components/section-heading';
+import { SectionContainer } from '~/components/layout/section-container';
+import { SectionHeading } from '~/components/layout/section-heading';
 
-import DashboardTabArray from '~/app/_components/dashboard/dashboard-tab-array';
-import DashButtons from '~/app/_components/dashboard/dashboard-link-buttons';
-import AdminAnimeScheduler from '~/app/_components/dashboard/games/daily-anime';
-import AdminStudioScheduler from '~/app/_components/dashboard/games/daily-studio';
-import AdminBannerScheduler from '~/app/_components/dashboard/games/daily-banner';
+import DashboardTabArray from '../_components/dashboard-tab-array';
+import DashButtons from '../_components/dashboard-link-buttons';
+import AdminAnimeScheduler from './_components/daily-anime';
+import AdminStudioScheduler from './_components/daily-studio';
+import AdminBannerScheduler from './_components/daily-banner';
 
 const carouselPageObj = [
 	{

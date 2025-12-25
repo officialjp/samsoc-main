@@ -1,12 +1,12 @@
-import { SectionContainer } from '~/app/_components/section-container';
-import { SectionHeading } from '~/app/_components/section-heading';
-import CarouselForm from '~/app/_components/dashboard/landing/carousel-add';
-import CarouselRemove from '~/app/_components/dashboard/landing/carousel-removal';
-import { CommitteeMemberEditor } from '~/app/_components/dashboard/landing/committee-editor';
-import { AnimeCardEditor } from '~/app/_components/dashboard/landing/animecard-editor';
+import { SectionContainer } from '~/components/layout/section-container';
+import { SectionHeading } from '~/components/layout/section-heading';
+import CarouselForm from './_components/carousel-add';
+import CarouselRemove from './_components/carousel-removal';
+import { CommitteeMemberEditor } from './_components/committee-editor';
+import { AnimeCardEditor } from './_components/anime-card-editor';
 
-import DashboardTabArray from '~/app/_components/dashboard/dashboard-tab-array';
-import DashButtons from '~/app/_components/dashboard/dashboard-link-buttons';
+import DashboardTabArray from '../_components/dashboard-tab-array';
+import DashButtons from '../_components/dashboard-link-buttons';
 
 const carouselPageObj = [
 	{

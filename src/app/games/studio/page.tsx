@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import StudioSearch from '~/app/_components/games/studio-search';
-import StudioGame from '~/app/_components/games/anime-studio';
-import { GameErrorBoundary } from '~/app/_components/games/error-boundary';
-import AuthGate from '~/app/_components/games/auth-gate';
+import StudioSearch from '../_components/studio-search';
+import StudioGame from '../_components/anime-studio';
+import { GameErrorBoundary } from '../_components/error-boundary';
+import AuthGate from '../_components/auth-gate';
 import { api } from '~/trpc/react';
-import GameHeader from '~/app/_components/games/game-header';
+import GameHeader from '../_components/game-header';
 
 export default function StudioPage() {
 	const [selectedStudioId, setSelectedStudioId] = useState<

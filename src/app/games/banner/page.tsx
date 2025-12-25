@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import ZoomedInBanner from '~/app/_components/games/zoomed-in-banner';
-import { GameErrorBoundary } from '~/app/_components/games/error-boundary';
-import AuthGate from '~/app/_components/games/auth-gate';
+import ZoomedInBanner from '../_components/zoomed-in-banner';
+import { GameErrorBoundary } from '../_components/error-boundary';
+import AuthGate from '../_components/auth-gate';
 import { api } from '~/trpc/react';
-import GameHeader from '~/app/_components/games/game-header';
+import GameHeader from '../_components/game-header';
 
 function BannerContent() {
 	const [gameWon, setGameWon] = useState(false);
