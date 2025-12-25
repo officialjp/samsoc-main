@@ -10,19 +10,19 @@ import {
 	DialogTrigger,
 } from '../ui/dialog';
 
-interface Diag {
+interface InfoDialogProps {
 	description: string;
 	buttonName: string;
 	content: Array<string>;
 	title: string;
 }
 
-export default function DialogWithStickyFooter({
+export default function InfoDialog({
 	description,
 	buttonName,
 	content,
 	title,
-}: Diag) {
+}: InfoDialogProps) {
 	return (
 		<Dialog>
 			<DialogTrigger asChild>

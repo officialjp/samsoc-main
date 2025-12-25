@@ -2,7 +2,7 @@
 import { cn } from '~/lib/utils';
 import { InView } from 'react-intersection-observer';
 
-export default function ScrollViewCard({
+export default function ScrollAnimationWrapper({
 	children,
 	triggerOnce = true,
 	tag = 'div',

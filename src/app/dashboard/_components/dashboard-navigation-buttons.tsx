@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation';
 import GenericNavigation from './generic-navigation';
 
-export default function DashButtons() {
+export default function DashboardNavigationButtons() {
 	const pathname = usePathname();
 
 	const dashPages = [

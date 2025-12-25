@@ -18,16 +18,17 @@ interface ZoomedInBannerProps {
 	gameWon: boolean;
 	setGameWon: (won: boolean) => void;
 	setGameFailed: (failed: boolean) => void;
+	searchedAnimeId?: string;
+	setSearchedAnimeId: (id: string | undefined) => void;
 }
 
 export default function ZoomedInBanner({
 	gameWon,
 	setGameWon,
 	setGameFailed,
+	searchedAnimeId,
+	setSearchedAnimeId,
 }: ZoomedInBannerProps) {
-	const [searchedAnimeId, setSearchedAnimeId] = useState<
-		string | undefined
-	>();
 	const [guesses, setGuesses] = useState<BannerGuess[]>([]);
 	const [isCopied, setIsCopied] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
@@ -156,6 +157,7 @@ export default function ZoomedInBanner({
 		// Check for duplicate guess
 		if (guesses.some((g) => g.animeId === searchedAnime.id)) {
 			toast.error('You already guessed this anime!');
+			setSearchedAnimeId(undefined);
 			return;
 		}
 
@@ -183,9 +185,12 @@ export default function ZoomedInBanner({
 						lossMutation.mutate();
 					}
 
+					// Reset search input after successful guess processing
+					setSearchedAnimeId(undefined);
 					isProcessingRef.current = false;
 				},
 				onError: () => {
+					setSearchedAnimeId(undefined);
 					isProcessingRef.current = false;
 					processedAnimeRef.current = null;
 				},
@@ -200,6 +205,7 @@ export default function ZoomedInBanner({
 		guesses,
 		setGameWon,
 		setGameFailed,
+		setSearchedAnimeId,
 		winMutation,
 		lossMutation,
 	]);
@@ -387,7 +393,10 @@ export default function ZoomedInBanner({
 							</div>
 
 							{/* Search Component */}
-							<AnimeSearch onSelect={setSearchedAnimeId} />
+							<AnimeSearch
+								onSelect={setSearchedAnimeId}
+								disabled={isGameOver}
+							/>
 							{/* Recent Guesses */}
 							{guesses.length > 0 && (
 								<div className="space-y-4">

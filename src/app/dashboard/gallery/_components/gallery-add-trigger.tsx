@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import ImageRemove from './image-removal';
+import ImageAdd from './image-add';
 import { Button } from '~/components/ui/button';
 import { cn } from '~/lib/utils';
 
-export default function OpenImageRemove() {
+export default function GalleryAddTrigger() {
 	const [isOpen, setIsOpen] = useState(false);
 
 	const toggleForm = () => {
@@ -22,9 +22,9 @@ export default function OpenImageRemove() {
 				onClick={toggleForm}
 				className="bg-button2 hover:bg-button1 hover:cursor-pointer"
 			>
-				{isOpen ? 'Close' : 'Remove Image Item'}
+				{isOpen ? 'Close' : 'Add Image Item'}
 			</Button>
-			{isOpen && <ImageRemove />}
+			{isOpen && <ImageAdd />}
 		</div>
 	);
 }

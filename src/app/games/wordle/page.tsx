@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import AnimeWordle from '../_components/anime-wordle';
-import { GameErrorBoundary } from '../_components/error-boundary';
+import { GameErrorBoundary } from '../_components/game-error-boundary';
 import AuthGate from '../_components/auth-gate';
 import { api } from '~/trpc/react';
 import GameHeader from '../_components/game-header';
