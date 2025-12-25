@@ -4,7 +4,6 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import { Footer } from './_components/footer';
 import { Header } from './_components/header';
 import { TRPCReactProvider } from '~/trpc/react';
-import AuthProvider from './_components/auth-provider';
 import { Toaster } from 'sonner';
 import { ErrorBoundary } from './_components/error-boundary';
 
@@ -68,14 +67,12 @@ export default function RootLayout({
 				className={`${geistSans.variable} ${geistMono.variable} antialiased bg-linear-[-45deg,#fdcedf,#f8e8ee,#f9f5f6]`}
 			>
 				<ErrorBoundary>
-					<AuthProvider>
-						<div className="pt-20">
-							<Header />
-							<TRPCReactProvider>{children}</TRPCReactProvider>
-							<Footer />
-						</div>
-						<Toaster position="top-center" richColors />
-					</AuthProvider>
+					<div className="pt-20">
+						<Header />
+						<TRPCReactProvider>{children}</TRPCReactProvider>
+						<Footer />
+					</div>
+					<Toaster position="top-center" richColors />
 				</ErrorBoundary>
 			</body>
 		</html>

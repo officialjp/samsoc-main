@@ -8,7 +8,7 @@ import Logo from '../../../public/images/logo.webp';
 import { cn } from '~/lib/utils';
 import { usePathname } from 'next/navigation';
 import AccountButton from './login-btn';
-import { useSession } from 'next-auth/react';
+import { useSession } from '~/lib/auth-client';
 import { SvgIcon } from './util/svg-icon';
 
 const staticNavLinks = [
@@ -24,10 +24,10 @@ const adminLink = { href: '/dashboard', label: 'Dashboard' };
 export function Header() {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [isVisible, setIsVisible] = useState(true);
-	const { data: session } = useSession();
+	const { data: session, isPending } = useSession();
 	const pathname = usePathname();
 
-	const isAdmin = session?.user?.role === 'admin';
+	const isAdmin = !isPending && session?.user?.role === 'admin';
 	const finalNavLinks = [...staticNavLinks, ...(isAdmin ? [adminLink] : [])];
 
 	// Throttle scroll handler to improve performance

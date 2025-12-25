@@ -10,8 +10,9 @@
 import { initTRPC, TRPCError } from '@trpc/server';
 import superjson from 'superjson';
 import { ZodError } from 'zod';
+import { headers } from 'next/headers';
 
-import { auth } from '~/server/auth';
+import { auth } from '~/lib/auth';
 import { db } from '~/server/db';
 
 /**
@@ -27,7 +28,9 @@ import { db } from '~/server/db';
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-	const session = await auth();
+	const session = await auth.api.getSession({
+		headers: await headers(),
+	});
 
 	return {
 		db,
@@ -118,18 +121,48 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
  * If you want a query or mutation to ONLY be accessible to logged in users, use this. It verifies
  * the session is valid and guarantees `ctx.session.user` is not null.
  *
+ * Additionally, it verifies that the user exists in the database to prevent foreign key constraint
+ * violations when creating records that reference the user. This is necessary because session tokens
+ * can persist even after a user is deleted from the database.
+ *
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure
 	.use(timingMiddleware)
-	.use(({ ctx, next }) => {
+	.use(async ({ ctx, next }) => {
 		if (!ctx.session?.user) {
 			throw new TRPCError({ code: 'UNAUTHORIZED' });
 		}
+
+		// Verify the user actually exists in the database
+		// This prevents foreign key constraint violations when the session contains
+		// an ID for a user that no longer exists (e.g., deleted or failed creation)
+		const dbUser = await ctx.db.user.findUnique({
+			where: { id: ctx.session.user.id },
+			select: { id: true, role: true },
+		});
+
+		if (!dbUser) {
+			throw new TRPCError({
+				code: 'UNAUTHORIZED',
+				message:
+					'User account not found. Please sign out and sign in again.',
+			});
+		}
+
 		return next({
 			ctx: {
 				// infers the `session` as non-nullable
-				session: { ...ctx.session, user: ctx.session.user },
+				session: {
+					...ctx.session,
+					user: {
+						...ctx.session.user,
+						// Use the role from the database to ensure it's up-to-date
+						role: dbUser.role,
+					},
+				},
+				// Also provide the verified user for convenience
+				verifiedUser: dbUser,
 			},
 		});
 	});
