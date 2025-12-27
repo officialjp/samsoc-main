@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { api } from '~/trpc/react';
 import { toast } from 'sonner';
+import posthog from 'posthog-js';
 import Countdown from './countdown';
 import Leaderboard from './leaderboard';
 import GameOverBanner from './game-over-banner';
@@ -44,7 +45,7 @@ export default function StudioGame({
 
 	const { data: gameData, error: gameError } =
 		api.studio.getAnswerStudio.useQuery(undefined, {
-			staleTime: 1000 * 60 * 5, // 5 minutes
+			staleTime: 1000 * 60 * 5,
 			refetchOnWindowFocus: false,
 		});
 
@@ -56,18 +57,17 @@ export default function StudioGame({
 		!!gameData?.hasFailedToday ||
 		guesses.length >= GAME_CONFIG.STUDIO.MAX_GUESSES;
 
-	// Only fetch leaderboard when game is over
 	const { data: leaderboard = [] } = api.studio.getLeaderboard.useQuery(
 		undefined,
 		{
 			enabled: isGameOver,
-			staleTime: 1000 * 60 * 2, // 2 minutes
+			staleTime: 1000 * 60 * 2,
 		},
 	);
 
 	const { data: session } = api.studio.getTodaysSession.useQuery(undefined, {
 		enabled: !!gameData?.studio && isAuthenticated,
-		staleTime: 1000 * 60, // 1 minute
+		staleTime: 1000 * 60,
 	});
 
 	const addGuessMutation = api.studio.addGameGuess.useMutation({
@@ -103,37 +103,25 @@ export default function StudioGame({
 		},
 	});
 
-	// Load guesses from database on mount
 	useEffect(() => {
 		if (session) {
 			setGuesses(
 				session.guesses.map((g) => ({ studioName: g.studioName })),
 			);
-
 			const isWin = session.guesses.some(
 				(g) =>
 					g.studioName.toLowerCase().trim() ===
 					answerStudio?.name.toLowerCase().trim(),
 			);
-
-			const isLoss =
-				session.guesses.length >= GAME_CONFIG.STUDIO.MAX_GUESSES;
-
-			if (isWin) {
-				setGameWon(true);
-			} else if (isLoss) {
+			if (isWin) setGameWon(true);
+			else if (session.guesses.length >= GAME_CONFIG.STUDIO.MAX_GUESSES)
 				setGameFailed(true);
-			}
-
 			setIsLoading(false);
 		}
 	}, [session, answerStudio, setGameWon, setGameFailed]);
 
-	// For unauthenticated users, stop loading once we have game data
 	useEffect(() => {
-		if (!isAuthenticated && answerStudio && isLoading) {
-			setIsLoading(false);
-		}
+		if (!isAuthenticated && answerStudio && isLoading) setIsLoading(false);
 	}, [isAuthenticated, answerStudio, isLoading]);
 
 	const processGuess = useCallback(() => {
@@ -147,18 +135,11 @@ export default function StudioGame({
 		)
 			return;
 
-		// Check if we've already processed this selection ID
-		if (lastProcessedIdRef.current === selectedStudio.id) {
-			return;
-		}
-
-		// For unauthenticated users who haven't declined auth yet, show login prompt
+		if (lastProcessedIdRef.current === selectedStudio.id) return;
 		if (!isAuthenticated && !hasDeclinedAuth) {
 			triggerLoginPrompt();
 			return;
 		}
-
-		// Check for duplicate guess by name
 		if (guesses.some((g) => g.studioName === selectedStudio.name)) {
 			lastProcessedIdRef.current = selectedStudio.id;
 			toast.error('You already guessed this studio!');
@@ -168,29 +149,41 @@ export default function StudioGame({
 		isProcessingRef.current = true;
 		lastProcessedIdRef.current = selectedStudio.id;
 
+		// Track start on first guess
+		if (guesses.length === 0) {
+			posthog.capture('studio_game:started', {
+				is_authenticated: isAuthenticated,
+			});
+		}
+
 		const newGuesses = [...guesses, { studioName: selectedStudio.name }];
 		setGuesses(newGuesses);
 
-		// Save guess to database (only for authenticated users)
-		if (isAuthenticated) {
+		if (isAuthenticated)
 			addGuessMutation.mutate({ studioName: selectedStudio.name });
-		} else {
-			isProcessingRef.current = false;
-		}
+		else isProcessingRef.current = false;
 
-		if (
+		const isCorrect =
 			selectedStudio.name.toLowerCase().trim() ===
-			answerStudio.name.toLowerCase().trim()
-		) {
+			answerStudio.name.toLowerCase().trim();
+
+		if (isCorrect) {
 			setGameWon(true);
-			if (isAuthenticated) {
+			posthog.capture('studio_game:won', {
+				tries: newGuesses.length,
+				max_guesses: GAME_CONFIG.STUDIO.MAX_GUESSES,
+				is_authenticated: isAuthenticated,
+			});
+			if (isAuthenticated)
 				winMutation.mutate({ tries: newGuesses.length });
-			}
 		} else if (newGuesses.length >= GAME_CONFIG.STUDIO.MAX_GUESSES) {
 			setGameFailed(true);
-			if (isAuthenticated) {
-				lossMutation.mutate();
-			}
+			posthog.capture('studio_game:lost', {
+				tries: newGuesses.length,
+				max_guesses: GAME_CONFIG.STUDIO.MAX_GUESSES,
+				is_authenticated: isAuthenticated,
+			});
+			if (isAuthenticated) lossMutation.mutate();
 		}
 	}, [
 		isGameOver,
@@ -208,18 +201,12 @@ export default function StudioGame({
 		lossMutation,
 	]);
 
-	// Process guess when studio is selected
 	useEffect(() => {
-		if (selectedStudio && !isProcessingRef.current) {
-			processGuess();
-		}
+		if (selectedStudio && !isProcessingRef.current) processGuess();
 	}, [selectedStudio, processGuess]);
 
-	// Reset lastProcessedIdRef when selectedStudio changes to allow re-selection
 	useEffect(() => {
-		if (!selectedStudio) {
-			lastProcessedIdRef.current = null;
-		}
+		if (!selectedStudio) lastProcessedIdRef.current = null;
 	}, [selectedStudio]);
 
 	const getHintValue = (idx: number) => {
@@ -248,29 +235,31 @@ export default function StudioGame({
 
 	const handleShare = async () => {
 		if (!answerStudio) return;
+		posthog.capture('studio_game:shared', {
+			won: gameWon,
+			tries: guesses.length,
+		});
 
 		const emojiGrid = guesses
-			.map((guess) => {
-				const isCorrect =
-					guess.studioName.toLowerCase().trim() ===
-					answerStudio.name.toLowerCase().trim();
-				return isCorrect ? '🟩' : '🟥';
-			})
+			.map((g) =>
+				g.studioName.toLowerCase().trim() ===
+				answerStudio.name.toLowerCase().trim()
+					? '🟩'
+					: '🟥',
+			)
 			.join('');
-
 		const shareLink = 'https://samsoc.co.uk/games/studio';
 		const shareText = `Studio Guesser ${new Date().toLocaleDateString('en-GB')}\n${guesses.length}/${GAME_CONFIG.STUDIO.MAX_GUESSES}\n\n${emojiGrid}\n\nPlay here: ${shareLink}`;
 
 		if (navigator.share) {
 			try {
 				await navigator.share({
-					title: 'Studio Guesser Result',
+					title: 'Studio Result',
 					text: shareText,
 				});
 			} catch (err) {
-				if (err instanceof Error && err.name !== 'AbortError') {
-					console.error('Error sharing:', err);
-				}
+				if (err instanceof Error && err.name !== 'AbortError')
+					console.error(err);
 			}
 		} else {
 			try {
@@ -278,12 +267,12 @@ export default function StudioGame({
 				setIsCopied(true);
 				setTimeout(() => setIsCopied(false), 2000);
 			} catch (err) {
-				toast.error('Failed to copy to clipboard');
+				toast.error('Failed to copy');
 			}
 		}
 	};
 
-	if (showLoginPrompt) {
+	if (showLoginPrompt)
 		return (
 			<LoginPrompt
 				variant="modal"
@@ -292,12 +281,8 @@ export default function StudioGame({
 				onDismiss={dismissLoginPrompt}
 			/>
 		);
-	}
-
-	if (gameError || (!answerStudio && !isLoading)) {
+	if (gameError || (!answerStudio && !isLoading))
 		return <DailyNotFound gameType="studio" />;
-	}
-
 	if (!answerStudio || isLoading) return <GameSkeleton gameType="studio" />;
 
 	const leaderboardData: LeaderboardUser[] = leaderboard;
@@ -316,7 +301,6 @@ export default function StudioGame({
 							</span>
 						)}
 					</div>
-
 					{isGameOver && (
 						<div className="mb-8">
 							<GameOverBanner
@@ -324,22 +308,16 @@ export default function StudioGame({
 								answer={answerStudio.name}
 								tries={guesses.length}
 								onShare={handleShare}
-								shareButtonText="SHARE RESULTS"
 								isShareCopied={isCopied}
 								gameType="studio"
 							/>
 						</div>
 					)}
-
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						{HINT_LABELS.map((label, idx) => (
 							<div
 								key={idx}
-								className={`bg-white border-2 border-black rounded-2xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all ${
-									idx <= guesses.length || isGameOver
-										? 'opacity-100'
-										: 'opacity-40'
-								}`}
+								className={`bg-white border-2 border-black rounded-2xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all ${idx <= guesses.length || isGameOver ? 'opacity-100' : 'opacity-40'}`}
 								role="region"
 								aria-label={`Hint ${idx + 1}: ${label}`}
 							>
@@ -355,7 +333,6 @@ export default function StudioGame({
 						))}
 					</div>
 				</div>
-
 				{isGameOver && (
 					<aside
 						className="w-full lg:w-80"
