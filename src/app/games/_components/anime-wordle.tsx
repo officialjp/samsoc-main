@@ -166,9 +166,7 @@ export default function AnimeWordle({
 			return;
 
 		const animeIdStr = String(searchedAnime.id);
-		if (lastProcessedIdRef.current === animeIdStr) {
-			return;
-		}
+		if (lastProcessedIdRef.current === animeIdStr) return;
 
 		if (!isAuthenticated && !hasDeclinedAuth) {
 			triggerLoginPrompt();
@@ -201,14 +199,15 @@ export default function AnimeWordle({
 			{} as WordleGuessData,
 		);
 
-		const newGuesses = [...guesses, guessData];
-		setGuesses(newGuesses);
-
+		// Track first guess as game start
 		if (guesses.length === 0) {
 			posthog.capture('wordle_game:started', {
 				is_authenticated: isAuthenticated,
 			});
 		}
+
+		const newGuesses = [...guesses, guessData];
+		setGuesses(newGuesses);
 
 		if (isAuthenticated) {
 			addGuessMutation.mutate(
@@ -237,31 +236,26 @@ export default function AnimeWordle({
 				tries: newGuesses.length,
 				max_guesses: GAME_CONFIG.WORDLE.MAX_GUESSES,
 				is_authenticated: isAuthenticated,
-				answer_title: answerAnime.title,
 			});
-			if (isAuthenticated) {
+			if (isAuthenticated)
 				winMutation.mutate({ tries: newGuesses.length });
-			}
 		} else if (newGuesses.length >= GAME_CONFIG.WORDLE.MAX_GUESSES) {
 			setGameFailed(true);
 			posthog.capture('wordle_game:lost', {
 				tries: newGuesses.length,
 				max_guesses: GAME_CONFIG.WORDLE.MAX_GUESSES,
 				is_authenticated: isAuthenticated,
-				answer_title: answerAnime.title,
 			});
-			if (isAuthenticated) {
-				lossMutation.mutate();
-			}
+			if (isAuthenticated) lossMutation.mutate();
 		}
 	};
 
 	const handleShare = async () => {
 		if (!answerAnime) return;
-
 		posthog.capture('wordle_game:shared', {
 			won: gameWon,
 			tries: guesses.length,
+			max_guesses: GAME_CONFIG.WORDLE.MAX_GUESSES,
 		});
 
 		const emojiGrid = guesses
@@ -296,9 +290,8 @@ export default function AnimeWordle({
 					text: shareText,
 				});
 			} catch (err) {
-				if (err instanceof Error && err.name !== 'AbortError') {
-					console.error('Error sharing:', err);
-				}
+				if (err instanceof Error && err.name !== 'AbortError')
+					console.error(err);
 			}
 		} else {
 			try {
@@ -306,38 +299,30 @@ export default function AnimeWordle({
 				setIsCopied(true);
 				setTimeout(() => setIsCopied(false), 2000);
 			} catch (err) {
-				toast.error('Failed to copy to clipboard');
+				toast.error('Failed to copy');
 			}
 		}
 	};
 
 	useEffect(() => {
-		if (searchedAnime && !isProcessingRef.current) {
-			processGuess();
-		}
+		if (searchedAnime && !isProcessingRef.current) processGuess();
 	}, [searchedAnime, processGuess]);
 
 	useEffect(() => {
-		if (!searchedAnimeId) {
-			lastProcessedIdRef.current = null;
-		}
+		if (!searchedAnimeId) lastProcessedIdRef.current = null;
 	}, [searchedAnimeId]);
 
-	if (showLoginPrompt) {
+	if (showLoginPrompt)
 		return (
 			<LoginPrompt
 				variant="modal"
 				title="Login Required"
-				message="Log in to save your guesses and compete on the leaderboard."
+				message="Log in to save your guesses and compete on the leaderboard. Or continue playing without saving."
 				onDismiss={dismissLoginPrompt}
 			/>
 		);
-	}
-
-	if (gameError || (!answerAnime && !isLoading)) {
+	if (gameError || (!answerAnime && !isLoading))
 		return <DailyNotFound gameType="anime" />;
-	}
-
 	if (!answerAnime || isLoading) return <GameSkeleton gameType="wordle" />;
 
 	const leaderboardData: LeaderboardUser[] = leaderboard ?? [];
@@ -393,6 +378,7 @@ export default function AnimeWordle({
 															<div
 																key={key}
 																className={`h-2 rounded-full border border-black/10 ${getMatchResultForProgress(result)}`}
+																aria-label={`${key}: ${result}`}
 															/>
 														);
 													},
