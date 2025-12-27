@@ -1,4 +1,6 @@
 'use client';
+
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import GalleryFilter from './gallery-filter';
 import GalleryImage from './gallery-image';
@@ -15,70 +17,83 @@ interface GalleryImageData {
 	year: number;
 }
 
-interface GallerySearchProps {
-	initialItems: GalleryImageData[];
+interface FilterState {
+	category: string;
+	year: string;
 }
 
-const CATEGORIES = ['All', 'Events', 'Collaborations'] as const;
-const CURRENT_YEAR = new Date().getFullYear();
-const START_YEAR = 2022;
-const ITEMS_PER_PAGE = 15;
+interface GallerySearchProps {
+	initialItems: GalleryImageData[];
+	categories: readonly string[];
+	years: readonly string[];
+	currentPage: number;
+	totalPages: number;
+	totalCount: number;
+	initialFilters: FilterState;
+}
 
-const YEARS = [
-	'All',
-	...Array.from({ length: CURRENT_YEAR - START_YEAR + 1 }, (_, i) =>
-		String(START_YEAR + i),
-	),
-];
+export function GallerySearch({
+	initialItems,
+	categories,
+	years,
+	currentPage,
+	totalPages,
+	totalCount,
+	initialFilters,
+}: GallerySearchProps) {
+	const router = useRouter();
+	const [filters, setFilters] = useState<FilterState>(initialFilters);
 
-export function GallerySearch({ initialItems }: GallerySearchProps) {
-	const [activeCategory, setActiveCategory] = useState<string>('All');
-	const [activeYear, setActiveYear] = useState<string>('All');
-	const [currentPage, setCurrentPage] = useState(1);
+	const updateSearchParams = (newFilters: FilterState, newPage = 1) => {
+		const params = new URLSearchParams();
 
-	const filteredItems =
-		activeCategory === 'All' && activeYear === 'All'
-			? initialItems
-			: initialItems.filter((item) => {
-					const categoryMatch =
-						activeCategory === 'All' ||
-						item.category === activeCategory;
-					const yearMatch =
-						activeYear === 'All' ||
-						item.year === parseInt(activeYear);
-					return categoryMatch && yearMatch;
-				});
+		if (newPage > 1) {
+			params.set('page', newPage.toString());
+		}
 
-	const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-	const paginatedItems = filteredItems.slice(
-		startIndex,
-		startIndex + ITEMS_PER_PAGE,
-	);
+		if (newFilters.category !== 'All') {
+			params.set('category', newFilters.category);
+		}
 
-	const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
+		if (newFilters.year !== 'All') {
+			params.set('year', newFilters.year);
+		}
 
-	const hasActiveFilters = activeCategory !== 'All' || activeYear !== 'All';
+		const queryString = params.toString();
+		const url = queryString ? `/gallery?${queryString}` : '/gallery';
+
+		router.push(url, { scroll: false });
+	};
+
+	const hasActiveFilters =
+		filters.category !== 'All' || filters.year !== 'All';
 
 	const clearFilters = () => {
-		setActiveCategory('All');
-		setActiveYear('All');
-		setCurrentPage(1);
+		const newFilters = { category: 'All', year: 'All' };
+		setFilters(newFilters);
+		updateSearchParams(newFilters, 1);
 	};
 
 	const handleCategoryChange = (category: string) => {
-		setActiveCategory(category);
-		setCurrentPage(1);
+		const newFilters = { ...filters, category };
+		setFilters(newFilters);
+		updateSearchParams(newFilters, 1);
 	};
 
 	const handleYearChange = (year: string) => {
-		setActiveYear(year);
-		setCurrentPage(1);
+		const newFilters = { ...filters, year };
+		setFilters(newFilters);
+		updateSearchParams(newFilters, 1);
 	};
 
 	const handlePageChange = (newPage: number) => {
-		setCurrentPage(newPage);
+		updateSearchParams(filters, newPage);
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	};
+
+	const itemsPerPage = 15;
+	const startIndex = (currentPage - 1) * itemsPerPage;
+	const endIndex = startIndex + initialItems.length;
 
 	return (
 		<div className="space-y-8">
@@ -103,12 +118,12 @@ export function GallerySearch({ initialItems }: GallerySearchProps) {
 						</div>
 
 						<GalleryFilter
-							categories={CATEGORIES}
-							years={YEARS}
+							categories={categories}
+							years={years}
 							onCategoryChange={handleCategoryChange}
 							onYearChange={handleYearChange}
-							activeCategory={activeCategory}
-							activeYear={activeYear}
+							activeCategory={filters.category}
+							activeYear={filters.year}
 						/>
 
 						<div className="mt-8 border-t-2 border-gray-200 pt-6">
@@ -117,15 +132,18 @@ export function GallerySearch({ initialItems }: GallerySearchProps) {
 							</p>
 							<div className="flex flex-wrap gap-2">
 								<span className="rounded-2xl border border-pink-300 bg-pink-100 px-2 py-1 text-sm">
-									{activeCategory}
+									{filters.category}
 								</span>
 								<span className="rounded-2xl border border-cyan-300 bg-cyan-100 px-2 py-1 text-sm">
-									{activeYear}
+									{filters.year}
 								</span>
 							</div>
 							<p className="mt-4 text-sm font-medium text-gray-900">
-								{filteredItems.length} photo
-								{filteredItems.length !== 1 ? 's' : ''} found
+								{totalCount > 0
+									? `${startIndex + 1}-${Math.min(endIndex, totalCount)}`
+									: '0'}{' '}
+								of {totalCount} photo
+								{totalCount !== 1 ? 's' : ''}
 							</p>
 							<p className="text-sm text-gray-600">
 								Page {currentPage} of {totalPages}
@@ -135,9 +153,9 @@ export function GallerySearch({ initialItems }: GallerySearchProps) {
 				</aside>
 
 				<section>
-					{paginatedItems.length > 0 ? (
+					{initialItems.length > 0 ? (
 						<div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
-							{paginatedItems.map((item) => (
+							{initialItems.map((item) => (
 								<GalleryImage
 									key={item.id}
 									src={item.source}

@@ -1,6 +1,7 @@
 import '~/styles/globals.css';
 import { type Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { Suspense } from 'react';
 import { Footer } from '~/components/layout/footer';
 import { Header } from '~/components/layout/header';
 import { TRPCReactProvider } from '~/trpc/react';
@@ -69,7 +70,9 @@ export default function RootLayout({
 				<ErrorBoundary>
 					<div className="pt-20">
 						<Header />
-						<TRPCReactProvider>{children}</TRPCReactProvider>
+						<Suspense>
+							<TRPCReactProvider>{children}</TRPCReactProvider>
+						</Suspense>
 						<Footer />
 					</div>
 					<Toaster position="bottom-right" richColors closeButton />

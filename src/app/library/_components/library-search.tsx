@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import MangaCard from './manga-card';
 import LibraryFilters from './library-filters';
 import { Pagination } from '~/components/shared/pagination';
@@ -25,69 +26,71 @@ interface FilterState {
 interface LibrarySearchProps {
 	initialMangaData: MangaData[];
 	allGenres: readonly string[];
+	currentPage: number;
+	totalPages: number;
+	totalCount: number;
+	initialFilters: FilterState;
 }
-
-const ITEMS_PER_PAGE = 12;
 
 export function LibrarySearch({
 	initialMangaData,
 	allGenres,
+	currentPage,
+	totalPages,
+	totalCount,
+	initialFilters,
 }: LibrarySearchProps) {
-	const [filters, setFilters] = useState<FilterState>({
-		status: 'all',
-		genre: 'all',
-		search: '',
-	});
-	const [currentPage, setCurrentPage] = useState(1);
+	const router = useRouter();
+	const [filters, setFilters] = useState<FilterState>(initialFilters);
 
-	const filteredManga = initialMangaData.filter((manga) => {
-		if (filters.status !== 'all') {
-			const isBorrowed =
-				!!manga.borrowed_by && manga.borrowed_by !== 'NULL';
-			if (filters.status === 'available' && isBorrowed) return false;
-			if (filters.status === 'borrowed' && !isBorrowed) return false;
+	const updateSearchParams = (newFilters: FilterState, newPage = 1) => {
+		const params = new URLSearchParams();
+
+		if (newPage > 1) {
+			params.set('page', newPage.toString());
 		}
 
-		if (filters.genre !== 'all' && !manga.genres.includes(filters.genre)) {
-			return false;
+		if (newFilters.status !== 'all') {
+			params.set('status', newFilters.status);
 		}
 
-		if (filters.search) {
-			const searchLower = filters.search.toLowerCase();
-			return (
-				manga.title.toLowerCase().includes(searchLower) ||
-				manga.author.toLowerCase().includes(searchLower)
-			);
+		if (newFilters.genre !== 'all') {
+			params.set('genre', newFilters.genre);
 		}
 
-		return true;
-	});
+		if (newFilters.search) {
+			params.set('search', newFilters.search);
+		}
 
-	const totalPages = Math.ceil(filteredManga.length / ITEMS_PER_PAGE);
-	const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-	const paginatedManga = filteredManga.slice(
-		startIndex,
-		startIndex + ITEMS_PER_PAGE,
-	);
+		const queryString = params.toString();
+		const url = queryString ? `/library?${queryString}` : '/library';
 
-	useEffect(() => {
-		setCurrentPage(1);
-	}, [filters]);
+		router.push(url, { scroll: false });
+	};
+
+	const handleFilterChange = (newFilters: FilterState) => {
+		setFilters(newFilters);
+		updateSearchParams(newFilters, 1);
+	};
 
 	const handlePageChange = (page: number) => {
-		setCurrentPage(page);
+		updateSearchParams(filters, page);
 		document.getElementById('manga-results')?.scrollIntoView({
 			behavior: 'smooth',
 			block: 'start',
 		});
 	};
 
+	const itemsPerPage = 12;
+	const startIndex = (currentPage - 1) * itemsPerPage;
+	const endIndex = startIndex + initialMangaData.length;
+
 	return (
 		<div className="grid grid-cols-1 gap-8 lg:grid-cols-[300px_1fr]">
 			<aside className="h-fit lg:sticky lg:top-24">
 				<LibraryFilters
 					genres={allGenres}
-					onFilterChange={setFilters}
+					onFilterChange={handleFilterChange}
 					filters={filters}
 				/>
 				<div className="mt-6 rounded-2xl border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
@@ -104,15 +107,18 @@ export function LibrarySearch({
 			</aside>
 
 			<section id="manga-results">
-				{filteredManga.length > 0 ? (
+				{initialMangaData.length > 0 ? (
 					<>
 						<p className="mb-4 text-sm text-gray-500">
-							Showing {paginatedManga.length} of{' '}
-							{filteredManga.length} results
+							Showing{' '}
+							{totalCount > 0
+								? `${startIndex + 1}-${Math.min(endIndex, totalCount)}`
+								: '0'}{' '}
+							of {totalCount} results
 						</p>
 
 						<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
-							{paginatedManga.map((manga) => (
+							{initialMangaData.map((manga) => (
 								<MangaCard key={manga.id} manga={manga} />
 							))}
 						</div>

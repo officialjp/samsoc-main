@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { api } from '~/trpc/react';
 import { toast } from 'sonner';
 import Countdown from './countdown';
@@ -147,7 +147,7 @@ export default function StudioGame({
 		}
 	}, [isAuthenticated, answerStudio, isLoading]);
 
-	const processGuess = useCallback(() => {
+	const processGuess = () => {
 		if (
 			isGameOver ||
 			!selectedStudioId ||
@@ -211,22 +211,7 @@ export default function StudioGame({
 				lossMutation.mutate();
 			}
 		}
-	}, [
-		isGameOver,
-		selectedStudioId,
-		answerStudio,
-		allStudios,
-		isLoading,
-		addGuessMutation,
-		guesses,
-		setGameWon,
-		setGameFailed,
-		winMutation,
-		lossMutation,
-		isAuthenticated,
-		hasDeclinedAuth,
-		triggerLoginPrompt,
-	]);
+	};
 
 	// Process guess when studio is selected
 	useEffect(() => {

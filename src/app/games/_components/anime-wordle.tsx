@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { api } from '~/trpc/react';
 import { toast } from 'sonner';
 import Countdown from './countdown';
@@ -158,7 +158,7 @@ export default function AnimeWordle({
 		setGameFailed,
 	]);
 
-	const processGuess = useCallback(() => {
+	const processGuess = () => {
 		if (
 			isGameOver ||
 			!searchedAnime ||
@@ -248,21 +248,7 @@ export default function AnimeWordle({
 				lossMutation.mutate();
 			}
 		}
-	}, [
-		isGameOver,
-		searchedAnime,
-		answerAnime,
-		isLoading,
-		addGuessMutation,
-		guesses,
-		setGameWon,
-		setGameFailed,
-		winMutation,
-		lossMutation,
-		isAuthenticated,
-		hasDeclinedAuth,
-		triggerLoginPrompt,
-	]);
+	};
 
 	const handleShare = async () => {
 		if (!answerAnime) return;

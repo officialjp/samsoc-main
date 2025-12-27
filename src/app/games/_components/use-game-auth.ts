@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useSession } from '~/lib/auth-client';
 import { TRPCClientError } from '@trpc/client';
 
@@ -62,40 +62,37 @@ export function useGameAuth(): UseGameAuthResult {
 	const isAuthenticated = !isPending && !!session;
 	const isLoading = isPending;
 
-	const triggerLoginPrompt = useCallback(() => {
+	const triggerLoginPrompt = () => {
 		// Only show prompt if user hasn't already declined
 		if (!hasDeclinedAuth) {
 			setShowLoginPrompt(true);
 		}
-	}, [hasDeclinedAuth]);
+	};
 
-	const dismissLoginPrompt = useCallback(() => {
+	const dismissLoginPrompt = () => {
 		setShowLoginPrompt(false);
 		setHasDeclinedAuth(true);
-	}, []);
+	};
 
-	const isAuthError = useCallback((error: unknown): boolean => {
+	const isAuthError = (error: unknown): boolean => {
 		if (error instanceof TRPCClientError) {
 			const data = error.data as { code?: string } | undefined;
 			return data?.code === 'UNAUTHORIZED';
 		}
 		return false;
-	}, []);
+	};
 
-	const handleAuthError = useCallback(
-		(error: unknown): boolean => {
-			if (isAuthError(error)) {
-				// Only show prompt if user hasn't declined auth
-				if (!hasDeclinedAuth) {
-					setShowLoginPrompt(true);
-				}
-				// Return true to indicate this was an auth error (suppress other error handling)
-				return true;
+	const handleAuthError = (error: unknown): boolean => {
+		if (isAuthError(error)) {
+			// Only show prompt if user hasn't declined auth
+			if (!hasDeclinedAuth) {
+				setShowLoginPrompt(true);
 			}
-			return false;
-		},
-		[isAuthError, hasDeclinedAuth],
-	);
+			// Return true to indicate this was an auth error (suppress other error handling)
+			return true;
+		}
+		return false;
+	};
 
 	return {
 		isAuthenticated,

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import ZoomedInBanner from '../_components/zoomed-in-banner';
 import { GameErrorBoundary } from '../_components/game-error-boundary';
 import GameHeader from '../_components/game-header';
@@ -12,11 +12,10 @@ export default function BannerPage() {
 		AnimeSelection | undefined
 	>();
 
-	// Memoize setGameFailed to prevent unnecessary re-renders
-	const setGameFailed = useCallback((_failed: boolean) => {
+	const setGameFailed = (_failed: boolean) => {
 		// Banner game handles game-over state internally
 		void 0;
-	}, []);
+	};
 
 	return (
 		<GameErrorBoundary>
