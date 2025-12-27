@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { api } from '~/trpc/react';
 import { toast } from 'sonner';
 import Countdown from './countdown';
@@ -14,14 +14,14 @@ import { HINT_LABELS, GAME_CONFIG } from '~/lib/game-config';
 import type { LeaderboardUser } from '~/lib/game-types';
 
 interface StudioGameProps {
-	selectedStudioId: string | undefined;
+	selectedStudio: { id: string; name: string } | null;
 	gameWon: boolean;
 	setGameWon: (won: boolean) => void;
 	setGameFailed: (failed: boolean) => void;
 }
 
 export default function StudioGame({
-	selectedStudioId,
+	selectedStudio,
 	gameWon,
 	setGameWon,
 	setGameFailed,
@@ -65,10 +65,6 @@ export default function StudioGame({
 		},
 	);
 
-	const { data: allStudios } = api.studio.getAllStudios.useQuery(undefined, {
-		staleTime: 1000 * 60 * 30, // 30 minutes - studio list rarely changes
-	});
-
 	const { data: session } = api.studio.getTodaysSession.useQuery(undefined, {
 		enabled: !!gameData?.studio && isAuthenticated,
 		staleTime: 1000 * 60, // 1 minute
@@ -76,16 +72,11 @@ export default function StudioGame({
 
 	const addGuessMutation = api.studio.addGameGuess.useMutation({
 		onError: (error) => {
-			// handleAuthError returns true if it was an auth error (and handles showing prompt if needed)
 			if (!handleAuthError(error)) {
 				toast.error(`Failed to save guess: ${error.message}`);
-				// Only revert guess for non-auth errors (auth errors mean unauthenticated play)
-				isProcessingRef.current = false;
 				setGuesses((prev) => prev.slice(0, -1));
-			} else {
-				// For auth errors, just reset processing flag (don't revert the guess)
-				isProcessingRef.current = false;
 			}
+			isProcessingRef.current = false;
 		},
 		onSuccess: () => {
 			isProcessingRef.current = false;
@@ -98,7 +89,6 @@ export default function StudioGame({
 			toast.success('Congratulations! You won!');
 		},
 		onError: (error) => {
-			// Silently ignore auth errors for win submission
 			if (!handleAuthError(error)) {
 				toast.error(`Failed to submit win: ${error.message}`);
 			}
@@ -107,7 +97,6 @@ export default function StudioGame({
 
 	const lossMutation = api.studio.submitLoss.useMutation({
 		onError: (error) => {
-			// Silently ignore auth errors for loss submission
 			if (!handleAuthError(error)) {
 				toast.error(`Failed to submit loss: ${error.message}`);
 			}
@@ -147,25 +136,21 @@ export default function StudioGame({
 		}
 	}, [isAuthenticated, answerStudio, isLoading]);
 
-	const processGuess = () => {
+	const processGuess = useCallback(() => {
 		if (
 			isGameOver ||
-			!selectedStudioId ||
+			!selectedStudio ||
 			!answerStudio ||
-			!allStudios ||
 			isLoading ||
 			isProcessingRef.current ||
 			addGuessMutation.isPending
 		)
 			return;
 
-		// Check if we've already processed this selection
-		if (lastProcessedIdRef.current === selectedStudioId) {
+		// Check if we've already processed this selection ID
+		if (lastProcessedIdRef.current === selectedStudio.id) {
 			return;
 		}
-
-		const selected = allStudios.find((s) => s.id === selectedStudioId);
-		if (!selected) return;
 
 		// For unauthenticated users who haven't declined auth yet, show login prompt
 		if (!isAuthenticated && !hasDeclinedAuth) {
@@ -173,59 +158,69 @@ export default function StudioGame({
 			return;
 		}
 
-		// Check for duplicate guess
-		if (guesses.some((g) => g.studioName === selected.name)) {
-			// Mark as processed to prevent duplicate toasts
-			lastProcessedIdRef.current = selectedStudioId;
+		// Check for duplicate guess by name
+		if (guesses.some((g) => g.studioName === selectedStudio.name)) {
+			lastProcessedIdRef.current = selectedStudio.id;
 			toast.error('You already guessed this studio!');
 			return;
 		}
 
 		isProcessingRef.current = true;
-		lastProcessedIdRef.current = selectedStudioId;
+		lastProcessedIdRef.current = selectedStudio.id;
 
-		const newGuesses = [...guesses, { studioName: selected.name }];
+		const newGuesses = [...guesses, { studioName: selectedStudio.name }];
 		setGuesses(newGuesses);
 
 		// Save guess to database (only for authenticated users)
 		if (isAuthenticated) {
-			addGuessMutation.mutate({ studioName: selected.name });
+			addGuessMutation.mutate({ studioName: selectedStudio.name });
 		} else {
-			// For unauthenticated users, just mark processing as done
 			isProcessingRef.current = false;
 		}
 
 		if (
-			selected.name.toLowerCase().trim() ===
+			selectedStudio.name.toLowerCase().trim() ===
 			answerStudio.name.toLowerCase().trim()
 		) {
 			setGameWon(true);
-			// Only submit win for authenticated users
 			if (isAuthenticated) {
 				winMutation.mutate({ tries: newGuesses.length });
 			}
 		} else if (newGuesses.length >= GAME_CONFIG.STUDIO.MAX_GUESSES) {
 			setGameFailed(true);
-			// Only submit loss for authenticated users
 			if (isAuthenticated) {
 				lossMutation.mutate();
 			}
 		}
-	};
+	}, [
+		isGameOver,
+		selectedStudio,
+		answerStudio,
+		isLoading,
+		addGuessMutation,
+		isAuthenticated,
+		hasDeclinedAuth,
+		triggerLoginPrompt,
+		guesses,
+		setGameWon,
+		winMutation,
+		setGameFailed,
+		lossMutation,
+	]);
 
 	// Process guess when studio is selected
 	useEffect(() => {
-		if (selectedStudioId && !isProcessingRef.current) {
+		if (selectedStudio && !isProcessingRef.current) {
 			processGuess();
 		}
-	}, [selectedStudioId, processGuess]);
+	}, [selectedStudio, processGuess]);
 
-	// Reset lastProcessedIdRef when selectedStudioId changes to allow re-selection
+	// Reset lastProcessedIdRef when selectedStudio changes to allow re-selection
 	useEffect(() => {
-		if (!selectedStudioId) {
+		if (!selectedStudio) {
 			lastProcessedIdRef.current = null;
 		}
-	}, [selectedStudioId]);
+	}, [selectedStudio]);
 
 	const getHintValue = (idx: number) => {
 		if (!answerStudio) return '';
@@ -273,7 +268,6 @@ export default function StudioGame({
 					text: shareText,
 				});
 			} catch (err) {
-				// User cancelled or error occurred - ignore
 				if (err instanceof Error && err.name !== 'AbortError') {
 					console.error('Error sharing:', err);
 				}
@@ -285,12 +279,10 @@ export default function StudioGame({
 				setTimeout(() => setIsCopied(false), 2000);
 			} catch (err) {
 				toast.error('Failed to copy to clipboard');
-				console.error('Failed to copy:', err);
 			}
 		}
 	};
 
-	// Show login prompt when auth is required (only if user hasn't dismissed it)
 	if (showLoginPrompt) {
 		return (
 			<LoginPrompt
@@ -302,14 +294,12 @@ export default function StudioGame({
 		);
 	}
 
-	// Show error state if daily studio not found
 	if (gameError || (!answerStudio && !isLoading)) {
 		return <DailyNotFound gameType="studio" />;
 	}
 
 	if (!answerStudio || isLoading) return <GameSkeleton gameType="studio" />;
 
-	// Leaderboard data is already flattened from the router
 	const leaderboardData: LeaderboardUser[] = leaderboard;
 
 	return (

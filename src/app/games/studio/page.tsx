@@ -7,17 +7,19 @@ import { GameErrorBoundary } from '../_components/game-error-boundary';
 import GameHeader from '../_components/game-header';
 
 export default function StudioPage() {
-	const [selectedStudioId, setSelectedStudioId] = useState<
-		string | undefined
-	>();
+	// Track the full selection object from the updated Search component
+	const [selectedStudio, setSelectedStudio] = useState<{
+		id: string;
+		name: string;
+	} | null>(null);
 	const [gameWon, setGameWon] = useState(false);
 	const [gameFailed, setGameFailed] = useState(false);
 
 	const isGameOver = gameWon || gameFailed;
 
-	const handleSelect = (id: string) => {
-		if (!isGameOver && id !== selectedStudioId) {
-			setSelectedStudioId(id);
+	const handleSelect = (selection: { id: string; name: string }) => {
+		if (!isGameOver) {
+			setSelectedStudio(selection);
 		}
 	};
 
@@ -26,7 +28,7 @@ export default function StudioPage() {
 			<main className="min-h-screen py-12">
 				<GameHeader gameType="studio" />
 				{!isGameOver && (
-					<div className="mb-8">
+					<div className="mb-12">
 						<StudioSearch
 							onSelect={handleSelect}
 							disabled={false}
@@ -34,7 +36,7 @@ export default function StudioPage() {
 					</div>
 				)}
 				<StudioGame
-					selectedStudioId={selectedStudioId}
+					selectedStudio={selectedStudio}
 					gameWon={gameWon}
 					setGameWon={setGameWon}
 					setGameFailed={setGameFailed}
