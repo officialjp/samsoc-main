@@ -3,7 +3,7 @@ import { cn } from '~/lib/utils';
 
 interface GalleryFilterProps {
 	categories: readonly string[];
-	years: string[];
+	years: readonly string[];
 	onCategoryChange: (category: string) => void;
 	onYearChange: (year: string) => void;
 	activeCategory: string;

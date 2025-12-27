@@ -6,6 +6,8 @@ import './src/env.js';
 
 /** @type {import("next").NextConfig} */
 const config = {
+	reactCompiler: true,
+	cacheComponents: true,
 	images: {
 		remotePatterns: [
 			{

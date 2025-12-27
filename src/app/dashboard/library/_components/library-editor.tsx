@@ -414,7 +414,7 @@ export function MangaItemEditor() {
 	}, [manga, selectedMangaId]);
 
 	// Filter the manga list based on the search term
-	const filteredManga = React.useMemo(() => {
+	const filteredManga = (() => {
 		if (!manga) return [];
 		const lowerCaseSearchTerm = searchTerm.toLowerCase();
 
@@ -425,7 +425,7 @@ export function MangaItemEditor() {
 				m.author.toLowerCase().includes(lowerCaseSearchTerm) ||
 				String(m.volume).includes(lowerCaseSearchTerm),
 		);
-	}, [manga, searchTerm]);
+	})();
 
 	const handleValueChange = (value: string) => {
 		setSelectedMangaId(Number(value));
@@ -433,13 +433,13 @@ export function MangaItemEditor() {
 		setSearchTerm(''); // Clear search term
 	};
 
-	const selectedItemLabel = React.useMemo(() => {
+	const selectedItemLabel = (() => {
 		if (!manga || !selectedMangaId) return 'Select a manga item...';
 		const selectedItem = manga.find((item) => item.id === selectedMangaId);
 		if (!selectedItem) return 'Select a manga item...';
 
 		return `ID: ${selectedItem.id} VOL: ${selectedItem.volume} - "${selectedItem.title.substring(0, 30)}${selectedItem.title.length > 30 ? '...' : ''}"`;
-	}, [manga, selectedMangaId]);
+	})();
 
 	if (isFetching) {
 		return <p className="p-6">Loading mangas...</p>;

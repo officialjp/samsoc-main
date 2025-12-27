@@ -3,6 +3,8 @@ import { SectionHeading } from '~/components/layout/section-heading';
 import type { Metadata } from 'next';
 import { api } from '~/trpc/server';
 import { GallerySearch } from './_components/gallery-search';
+import { Suspense } from 'react';
+import GallerySkeleton from './_components/gallery-skeleton';
 
 export const metadata: Metadata = {
 	title: 'Surrey Anime and Manga Society - Gallery',
@@ -38,9 +40,78 @@ export const metadata: Metadata = {
 	},
 };
 
-export default async function GalleryPage() {
-	const imageResponse = await api.image.getGalleryData();
-	const imageData = imageResponse?.data ?? [];
+interface GalleryImageData {
+	id: number;
+	source: string;
+	thumbnailSource: string | null;
+	alt: string;
+	category: string;
+	year: number;
+}
+
+interface GalleryPageProps {
+	searchParams: Promise<{
+		page?: string;
+		category?: string;
+		year?: string;
+	}>;
+}
+
+const CATEGORIES = ['All', 'Events', 'Collaborations'] as const;
+const CURRENT_YEAR = new Date().getFullYear();
+const START_YEAR = 2022;
+
+const YEARS = [
+	'All',
+	...Array.from({ length: CURRENT_YEAR - START_YEAR + 1 }, (_, i) =>
+		String(START_YEAR + i),
+	),
+];
+
+async function GalleryContent({
+	searchParams,
+}: {
+	searchParams: {
+		page?: string;
+		category?: string;
+		year?: string;
+	};
+}) {
+	const page = Number(searchParams.page) || 1;
+	const category = searchParams.category ?? 'All';
+	const year = searchParams.year ?? 'All';
+
+	const ITEMS_PER_PAGE = 15;
+
+	// Fetch paginated data from the server
+	const galleryResponse = await api.image.getGalleryPaginated({
+		limit: ITEMS_PER_PAGE,
+		page,
+		category: category !== 'All' ? category : undefined,
+		year: year !== 'All' ? parseInt(year) : undefined,
+	});
+
+	const imageData: GalleryImageData[] = galleryResponse.items;
+	const totalPages = galleryResponse.totalPages;
+
+	return (
+		<GallerySearch
+			initialItems={imageData}
+			categories={CATEGORIES}
+			years={YEARS}
+			currentPage={page}
+			totalPages={totalPages}
+			totalCount={galleryResponse.totalCount}
+			initialFilters={{
+				category,
+				year,
+			}}
+		/>
+	);
+}
+
+export default async function GalleryPage(props: GalleryPageProps) {
+	const searchParams = await props.searchParams;
 
 	return (
 		<main className="min-h-screen w-full">
@@ -52,7 +123,9 @@ export default async function GalleryPage() {
 					badgeColor="bg-purple-200"
 					className="mb-12"
 				/>
-				<GallerySearch initialItems={imageData} />
+				<Suspense fallback={<GallerySkeleton />}>
+					<GalleryContent searchParams={searchParams} />
+				</Suspense>
 			</SectionContainer>
 		</main>
 	);

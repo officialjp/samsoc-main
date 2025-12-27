@@ -2,7 +2,9 @@ import { SectionContainer } from '~/components/layout/section-container';
 import { SectionHeading } from '~/components/layout/section-heading';
 import { api } from '~/trpc/server';
 import { LibrarySearch } from './_components/library-search';
+import LibrarySkeleton from './_components/library-skeleton';
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
 	title: 'Surrey Anime and Manga Society - Library',
@@ -57,6 +59,7 @@ interface MangaData {
 	volume: number;
 	genres: string[];
 }
+
 const ALL_GENRES = [
 	'Action',
 	'Adventure',
@@ -79,9 +82,43 @@ const ALL_GENRES = [
 	'Shoujo',
 ] as const;
 
-export default async function LibraryPage() {
-	const mangaResponse = await api.manga.getLibraryData();
-	const rawMangaData = (mangaResponse?.data ?? []) as MangaWithGenres[];
+interface LibraryPageProps {
+	searchParams: Promise<{
+		page?: string;
+		status?: string;
+		genre?: string;
+		search?: string;
+	}>;
+}
+
+async function LibraryContent({
+	searchParams,
+}: {
+	searchParams: {
+		page?: string;
+		status?: string;
+		genre?: string;
+		search?: string;
+	};
+}) {
+	const page = Number(searchParams.page) || 1;
+	const status =
+		(searchParams.status as 'all' | 'available' | 'borrowed') || 'all';
+	const genre = searchParams.genre ?? 'all';
+	const search = searchParams.search ?? '';
+
+	const ITEMS_PER_PAGE = 12;
+
+	// Fetch paginated data from the server
+	const mangaResponse = await api.manga.getLibraryPaginated({
+		limit: ITEMS_PER_PAGE,
+		page,
+		status,
+		genre: genre !== 'all' ? genre : undefined,
+		search: search || undefined,
+	});
+
+	const rawMangaData = mangaResponse.items as MangaWithGenres[];
 
 	const mangaData: MangaData[] = rawMangaData.map((manga) => ({
 		id: manga.id,
@@ -93,6 +130,27 @@ export default async function LibraryPage() {
 		genres: manga.genres.map((g) => g.name),
 	}));
 
+	const totalPages = mangaResponse.totalPages;
+
+	return (
+		<LibrarySearch
+			initialMangaData={mangaData}
+			allGenres={ALL_GENRES}
+			currentPage={page}
+			totalPages={totalPages}
+			totalCount={mangaResponse.totalCount}
+			initialFilters={{
+				status,
+				genre,
+				search,
+			}}
+		/>
+	);
+}
+
+export default async function LibraryPage(props: LibraryPageProps) {
+	const searchParams = await props.searchParams;
+
 	return (
 		<main className="min-h-screen w-full">
 			<SectionContainer>
@@ -103,10 +161,9 @@ export default async function LibraryPage() {
 					badgeColor="bg-purple-200"
 					className="mb-8"
 				/>
-				<LibrarySearch
-					initialMangaData={mangaData}
-					allGenres={ALL_GENRES}
-				/>
+				<Suspense fallback={<LibrarySkeleton />}>
+					<LibraryContent searchParams={searchParams} />
+				</Suspense>
 			</SectionContainer>
 		</main>
 	);

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
 import {
@@ -71,7 +71,7 @@ export default function GenericItemRemoval<T extends RemovalItem>({
 		}
 	}, [confirmingDelete]);
 
-	const filteredItems = useMemo(() => {
+	const filteredItems = (() => {
 		if (!items) return [];
 		if (!searchTerm) return items;
 
@@ -82,15 +82,15 @@ export default function GenericItemRemoval<T extends RemovalItem>({
 				String(field).toLowerCase().includes(lowerCaseSearchTerm),
 			),
 		);
-	}, [items, searchTerm, getSearchableFields]);
+	})();
 
-	const selectedItemLabel = useMemo(() => {
+	const selectedItemLabel = (() => {
 		if (!items || !selectedItemId) return 'Select item to delete...';
 		const selectedItem = items.find((item) => item.id === selectedItemId);
 		return selectedItem
 			? getItemLabel(selectedItem)
 			: 'Select item to delete...';
-	}, [items, selectedItemId, getItemLabel]);
+	})();
 
 	const isProtected = protectedIds.includes(selectedItemId ?? -1);
 

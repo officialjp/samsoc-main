@@ -99,6 +99,68 @@ export const imageRouter = createTRPCRouter({
 			total: images.length,
 		};
 	}),
+
+	/**
+	 * Paginated gallery query with filtering support.
+	 * Uses offset-based pagination for page number support.
+	 */
+	getGalleryPaginated: publicProcedure
+		.input(
+			z.object({
+				limit: z.number().min(1).max(100).default(15),
+				page: z.number().min(1).default(1),
+				category: z.string().optional(),
+				year: z.number().optional(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			const { limit, page, category, year } = input;
+
+			// Build where clause based on filters
+			const where: { category?: string; year?: number } = {};
+
+			// Category filter
+			if (category && category !== 'All') {
+				where.category = category;
+			}
+
+			// Year filter
+			if (year) {
+				where.year = year;
+			}
+
+			// Get total count for pagination metadata
+			const totalCount = await ctx.db.image.count({ where });
+
+			// Calculate offset for pagination
+			const skip = (page - 1) * limit;
+
+			// Fetch paginated data
+			const items = await ctx.db.image.findMany({
+				where,
+				select: {
+					id: true,
+					source: true,
+					thumbnailSource: true,
+					alt: true,
+					category: true,
+					year: true,
+				},
+				orderBy: { createdAt: 'desc' },
+				take: limit,
+				skip: skip,
+			});
+
+			const totalPages = Math.ceil(totalCount / limit);
+
+			return {
+				items,
+				totalCount,
+				totalPages,
+				currentPage: page,
+				hasMore: page < totalPages,
+			};
+		}),
 	deleteItem: adminProcedure
 		.input(z.object({ id: z.number().int().min(1) }))
 		.mutation(async ({ ctx, input }) => {

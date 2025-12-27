@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { ChangeEvent, KeyboardEvent } from 'react';
 import Fuse from 'fuse.js';
 import { Search, Loader2 } from 'lucide-react';
@@ -43,7 +43,7 @@ export default function SearchInput<T extends object>({
 	const inputRef = useRef<HTMLInputElement>(null);
 	const resultsRef = useRef<HTMLDivElement>(null);
 
-	const fuse = useMemo((): Fuse<T> | null => {
+	const fuse = ((): Fuse<T> | null => {
 		if (items.length === 0) return null;
 
 		return new Fuse(items, {
@@ -54,7 +54,7 @@ export default function SearchInput<T extends object>({
 			threshold,
 			minMatchCharLength,
 		});
-	}, [items, searchKeys, threshold, minMatchCharLength]);
+	})();
 
 	// Search logic with debouncing
 	useEffect(() => {
@@ -67,7 +67,9 @@ export default function SearchInput<T extends object>({
 
 		const timer = setTimeout(() => {
 			const searchResults = fuse.search(input);
-			setResults(searchResults.map((result) => result.item).slice(0, maxResults));
+			setResults(
+				searchResults.map((result) => result.item).slice(0, maxResults),
+			);
 			setIsOpen(true);
 			setFocusedIndex(-1);
 		}, debounceMs);
@@ -130,7 +132,8 @@ export default function SearchInput<T extends object>({
 		};
 
 		document.addEventListener('mousedown', handleClickOutside);
-		return () => document.removeEventListener('mousedown', handleClickOutside);
+		return () =>
+			document.removeEventListener('mousedown', handleClickOutside);
 	}, []);
 
 	return (
@@ -198,4 +201,3 @@ export default function SearchInput<T extends object>({
 		</div>
 	);
 }
-

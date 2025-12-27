@@ -132,6 +132,92 @@ export const mangaRouter = createTRPCRouter({
 
 		return { data: allManga };
 	}),
+
+	/**
+	 * Paginated query for library with server-side filtering.
+	 * Uses offset-based pagination for page number support.
+	 */
+	getLibraryPaginated: publicProcedure
+		.input(
+			z.object({
+				limit: z.number().min(1).max(100).default(12),
+				page: z.number().min(1).default(1),
+				status: z.enum(['all', 'available', 'borrowed']).default('all'),
+				genre: z.string().optional(),
+				search: z.string().optional(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			const { limit, page, status, genre, search } = input;
+
+			// Build where clause based on filters
+			const where: Prisma.MangaWhereInput = {};
+
+			// Status filter
+			if (status === 'available') {
+				where.OR = [{ borrowed_by: null }, { borrowed_by: 'NULL' }];
+			} else if (status === 'borrowed') {
+				where.AND = [
+					{ borrowed_by: { not: null } },
+					{ borrowed_by: { not: 'NULL' } },
+				];
+			}
+
+			// Genre filter
+			if (genre && genre !== 'all') {
+				where.genres = {
+					some: {
+						name: genre,
+					},
+				};
+			}
+
+			// Search filter (title or author)
+			if (search && search.trim() !== '') {
+				where.OR = [
+					{ title: { contains: search, mode: 'insensitive' } },
+					{ author: { contains: search, mode: 'insensitive' } },
+				];
+			}
+
+			// Get total count for pagination metadata
+			const totalCount = await ctx.db.manga.count({ where });
+
+			// Calculate offset for pagination
+			const skip = (page - 1) * limit;
+
+			// Fetch paginated data
+			const items = await ctx.db.manga.findMany({
+				where,
+				select: {
+					id: true,
+					title: true,
+					author: true,
+					volume: true,
+					borrowed_by: true,
+					source: true,
+					genres: {
+						select: {
+							id: true,
+							name: true,
+						},
+					},
+				},
+				orderBy: { id: 'asc' },
+				take: limit,
+				skip: skip,
+			});
+
+			const totalPages = Math.ceil(totalCount / limit);
+
+			return {
+				items,
+				totalCount,
+				totalPages,
+				currentPage: page,
+				hasMore: page < totalPages,
+			};
+		}),
 	deleteItem: adminProcedure
 		.input(z.object({ id: z.number().int().min(1) }))
 		.mutation(async ({ ctx, input }) => {

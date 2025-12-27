@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { api } from '~/trpc/react';
 import { toast } from 'sonner';
 import Countdown from './countdown';
@@ -169,109 +169,93 @@ export default function ZoomedInBanner({
 	]);
 
 	// Process guess directly when searchedAnime changes
-	const processGuess = useCallback(
-		(animeId: number, animeTitle: string) => {
-			if (
-				isGameOver ||
-				!answerAnime ||
-				isLoading ||
-				isProcessingRef.current ||
-				addGuessMutation.isPending
-			) {
-				return;
-			}
+	const processGuess = (animeId: number, animeTitle: string) => {
+		if (
+			isGameOver ||
+			!answerAnime ||
+			isLoading ||
+			isProcessingRef.current ||
+			addGuessMutation.isPending
+		) {
+			return;
+		}
 
-			// For unauthenticated users who haven't declined auth yet, show login prompt
-			if (!isAuthenticated && !hasDeclinedAuth) {
-				triggerLoginPrompt();
-				setSearchedAnime(undefined);
-				return;
-			}
+		// For unauthenticated users who haven't declined auth yet, show login prompt
+		if (!isAuthenticated && !hasDeclinedAuth) {
+			triggerLoginPrompt();
+			setSearchedAnime(undefined);
+			return;
+		}
 
-			// Check for duplicate guess using ref (always has latest value)
-			if (guessesRef.current.some((g) => g.animeId === animeId)) {
-				toast.error('You already guessed this anime!');
-				setSearchedAnime(undefined);
-				return;
-			}
+		// Check for duplicate guess using ref (always has latest value)
+		if (guessesRef.current.some((g) => g.animeId === animeId)) {
+			toast.error('You already guessed this anime!');
+			setSearchedAnime(undefined);
+			return;
+		}
 
-			isProcessingRef.current = true;
+		isProcessingRef.current = true;
 
-			// OPTIMISTIC UPDATE: Update UI immediately for snappy UX
-			localGuessIdCounter.current += 1;
-			const optimisticGuess: LocalGuess = {
-				id: `local-${localGuessIdCounter.current}`,
-				animeId,
-				animeTitle,
-			};
+		// OPTIMISTIC UPDATE: Update UI immediately for snappy UX
+		localGuessIdCounter.current += 1;
+		const optimisticGuess: LocalGuess = {
+			id: `local-${localGuessIdCounter.current}`,
+			animeId,
+			animeTitle,
+		};
 
-			setGuesses((prevGuesses) => {
-				const newGuesses = [...prevGuesses, optimisticGuess];
-				guessesRef.current = newGuesses;
-				return newGuesses;
-			});
+		setGuesses((prevGuesses) => {
+			const newGuesses = [...prevGuesses, optimisticGuess];
+			guessesRef.current = newGuesses;
+			return newGuesses;
+		});
 
-			const newGuessCount = guessesRef.current.length;
-			const isCorrect = animeId === answerAnime.id;
+		const newGuessCount = guessesRef.current.length;
+		const isCorrect = animeId === answerAnime.id;
 
-			// Handle win/loss immediately for responsive UX
+		// Handle win/loss immediately for responsive UX
+		if (isCorrect) {
+			setGameWon(true);
+		} else if (
+			newGuessCount >= GAME_CONFIG.BANNER.MAX_GUESSES &&
+			!hasSubmittedLoss.current
+		) {
+			setGameFailed(true);
+			hasSubmittedLoss.current = true;
+		}
+
+		// Clear search input immediately
+		setSearchedAnime(undefined);
+		isProcessingRef.current = false;
+
+		// For authenticated users, sync with server in background
+		if (isAuthenticated) {
+			addGuessMutation.mutate(
+				{ animeId },
+				{
+					onSuccess: () => {
+						// Server sync successful - optimistic update was correct
+					},
+					onError: () => {
+						// Could rollback here, but for games it's fine to keep local state
+						toast.error(
+							'Failed to save guess to server. Your progress may not be saved.',
+						);
+					},
+				},
+			);
+
+			// Submit win/loss to server in background
 			if (isCorrect) {
-				setGameWon(true);
+				winMutation.mutate({ tries: newGuessCount });
 			} else if (
 				newGuessCount >= GAME_CONFIG.BANNER.MAX_GUESSES &&
-				!hasSubmittedLoss.current
+				hasSubmittedLoss.current
 			) {
-				setGameFailed(true);
-				hasSubmittedLoss.current = true;
+				lossMutation.mutate();
 			}
-
-			// Clear search input immediately
-			setSearchedAnime(undefined);
-			isProcessingRef.current = false;
-
-			// For authenticated users, sync with server in background
-			if (isAuthenticated) {
-				addGuessMutation.mutate(
-					{ animeId },
-					{
-						onSuccess: () => {
-							// Server sync successful - optimistic update was correct
-						},
-						onError: () => {
-							// Could rollback here, but for games it's fine to keep local state
-							toast.error(
-								'Failed to save guess to server. Your progress may not be saved.',
-							);
-						},
-					},
-				);
-
-				// Submit win/loss to server in background
-				if (isCorrect) {
-					winMutation.mutate({ tries: newGuessCount });
-				} else if (
-					newGuessCount >= GAME_CONFIG.BANNER.MAX_GUESSES &&
-					hasSubmittedLoss.current
-				) {
-					lossMutation.mutate();
-				}
-			}
-		},
-		[
-			isGameOver,
-			answerAnime,
-			isLoading,
-			addGuessMutation,
-			setGameWon,
-			setGameFailed,
-			setSearchedAnime,
-			winMutation,
-			lossMutation,
-			isAuthenticated,
-			hasDeclinedAuth,
-			triggerLoginPrompt,
-		],
-	);
+		}
+	};
 
 	// Trigger guess processing when an anime is selected
 	useEffect(() => {
