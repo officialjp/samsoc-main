@@ -7,20 +7,41 @@ import { CalendarDays } from './calendar-days';
 import { CalendarCells } from './calendar-cells';
 import type { Event } from '@prisma/client';
 import { MobileCalendarView } from './mobile-calendar-view';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface CalendarProps {
 	events: Event[];
+	initialYear: number;
+	initialMonth: number;
 }
 
-export function Calendar({ events }: CalendarProps) {
-	const [currentMonth, setCurrentMonth] = useState(new Date());
-	const [selectedDate, setSelectedDate] = useState(new Date());
+export function Calendar({ events, initialYear, initialMonth }: CalendarProps) {
+	const router = useRouter();
+	const searchParams = useSearchParams();
+	const [currentMonth, setCurrentMonth] = useState(
+		new Date(initialYear, initialMonth),
+	);
+	const [selectedDate, setSelectedDate] = useState(
+		new Date(initialYear, initialMonth),
+	);
+
+	const updateUrlParams = (year: number, month: number) => {
+		const params = new URLSearchParams(searchParams);
+		params.set('year', year.toString());
+		params.set('month', month.toString());
+		router.push(`/calendar?${params.toString()}`);
+	};
+
 	const prevMonth = () => {
-		setCurrentMonth((prev) => subMonths(prev, 1));
+		const newMonth = subMonths(currentMonth, 1);
+		setCurrentMonth(newMonth);
+		updateUrlParams(newMonth.getFullYear(), newMonth.getMonth());
 	};
 
 	const nextMonth = () => {
-		setCurrentMonth((prev) => addMonths(prev, 1));
+		const newMonth = addMonths(currentMonth, 1);
+		setCurrentMonth(newMonth);
+		updateUrlParams(newMonth.getFullYear(), newMonth.getMonth());
 	};
 
 	const onDateClick = (day: Date) => {
@@ -31,26 +52,11 @@ export function Calendar({ events }: CalendarProps) {
 		const now = new Date();
 		setCurrentMonth(now);
 		setSelectedDate(now);
+		updateUrlParams(now.getFullYear(), now.getMonth());
 	};
 
-	const monthStart = new Date(
-		currentMonth.getFullYear(),
-		currentMonth.getMonth(),
-		1,
-	);
-	const monthEnd = new Date(
-		currentMonth.getFullYear(),
-		currentMonth.getMonth() + 1,
-		0,
-	);
-
-	const filtered = events.filter((event) => {
-		const eventDate = new Date(event.date);
-		return eventDate >= monthStart && eventDate <= monthEnd;
-	});
-
 	const groupedEvents: Record<string, Event[]> = {};
-	for (const event of filtered) {
+	for (const event of events) {
 		const dateKey = format(new Date(event.date), 'yyyy-MM-dd');
 		groupedEvents[dateKey] ??= [];
 		groupedEvents[dateKey].push(event);

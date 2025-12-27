@@ -8,6 +8,7 @@ import { AnimeSection } from './_components/anime-section';
 import { CommitteeSection } from './_components/committee-section';
 import HeroCarousel from './_components/hero-carousel';
 import MarqueeSection from './_components/marquee-section';
+import HomeSkeleton from './_components/home-skeleton';
 import { Check, Library, UserPlus } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 import Image from 'next/image';
@@ -46,10 +47,11 @@ function LibraryStats() {
 	);
 }
 
-async function CarouselSection() {
+async function HomeContent() {
 	let carouselData: Awaited<
 		ReturnType<typeof api.carousel.getFullData>
 	>['data'] = [];
+
 	try {
 		const carouselResult = await api.carousel.getFullData();
 		carouselData = carouselResult.data ?? [];
@@ -58,28 +60,14 @@ async function CarouselSection() {
 	}
 
 	return (
-		<HeroCarousel
-			slides={carouselData}
-			options={CAROUSEL_OPTIONS}
-			useSocials={true}
-		/>
-	);
-}
-
-function CarouselSkeleton() {
-	return (
-		<div className="mx-auto aspect-9/16 w-full max-w-[min(1200px,calc(100%-20px))] animate-pulse rounded-2xl bg-gray-200 md:aspect-video md:rounded-4xl" />
-	);
-}
-
-export default function Home() {
-	return (
 		<main className="flex min-h-screen w-full flex-col">
 			<section className="flex w-full flex-col items-center justify-center pb-3 pt-0 md:pt-3 lg:pt-[3vh]">
 				<div className="container w-full max-w-full px-0 md:px-6 lg:px-8">
-					<Suspense fallback={<CarouselSkeleton />}>
-						<CarouselSection />
-					</Suspense>
+					<HeroCarousel
+						slides={carouselData}
+						options={CAROUSEL_OPTIONS}
+						useSocials={true}
+					/>
 				</div>
 				<MarqueeSection />
 			</section>
@@ -226,5 +214,13 @@ export default function Home() {
 				</ScrollAnimationWrapper>
 			</SectionContainer>
 		</main>
+	);
+}
+
+export default function Home() {
+	return (
+		<Suspense fallback={<HomeSkeleton />}>
+			<HomeContent />
+		</Suspense>
 	);
 }
