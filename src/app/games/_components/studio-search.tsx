@@ -4,12 +4,12 @@ import { api } from '~/trpc/react';
 import SearchInput from './search-input';
 
 interface StudioItem {
-	id: string; // This is the studio name string
+	id: string; // The ID from TRPC (which was stringified from Int)
 	name: string;
 }
 
 interface StudioSearchProps {
-	onSelect: (studioId: string) => void;
+	onSelect: (selection: StudioItem) => void;
 	disabled?: boolean;
 }
 
@@ -17,19 +17,17 @@ export default function StudioSearch({
 	onSelect,
 	disabled,
 }: StudioSearchProps) {
-	// Fetch unique studios from our refactored tRPC call
-	const { data: studioData, isLoading, error } =
-		api.studio.getAllStudios.useQuery();
-
-	const handleSelect = (studio: StudioItem): void => {
-		onSelect(studio.id); // Passes the studio name string up
-	};
+	const {
+		data: studioData,
+		isLoading,
+		error,
+	} = api.studio.getAllStudios.useQuery();
 
 	return (
 		<SearchInput
 			items={studioData ?? []}
 			searchKeys={[{ name: 'name' }]}
-			onSelect={handleSelect}
+			onSelect={onSelect}
 			placeholder="Search for a studio (e.g. Mappa, Madhouse)..."
 			disabled={disabled}
 			loading={isLoading}

@@ -17,12 +17,13 @@ import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
 import { Loader2, Save } from 'lucide-react';
 import StudioSearch from '~/app/games/_components/studio-search';
-import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 const adminSchema = z.object({
-	studioName: z.string().min(1, 'Please search and select a studio'),
+	studioId: z.number().int().min(1, 'Please search and select a studio'),
+	studioName: z.string().min(1, 'Studio selection is required'),
 	scheduledDate: z.string(),
 });
 
@@ -30,22 +31,19 @@ function StudioSchedulerContent() {
 	const utils = api.useUtils();
 	const router = useRouter();
 	const pathname = usePathname();
-	const searchParams = useSearchParams();
 	const [dateHasEntry, setDateHasEntry] = useState(false);
-
-	const queryStudioName = searchParams.get('studioName');
 
 	const form = useForm<z.infer<typeof adminSchema>>({
 		resolver: zodResolver(adminSchema),
 		defaultValues: {
-			studioName: queryStudioName ?? '',
+			studioId: 0,
+			studioName: '',
 			scheduledDate: new Date().toISOString().split('T')[0],
 		},
 	});
 
 	const scheduledDate = form.watch('scheduledDate');
 
-	// Check if the selected date already has an entry
 	const { data: dateCheckResult } = api.studio.checkDateScheduled.useQuery(
 		{ date: new Date(scheduledDate + 'T00:00:00Z') },
 		{ enabled: !!scheduledDate },
@@ -59,9 +57,9 @@ function StudioSchedulerContent() {
 		onSuccess: () => {
 			toast.success('Daily studio scheduled successfully!');
 			void utils.studio.getAnswerStudio.invalidate();
-			// Clear URL and Reset form
 			router.push(pathname);
 			form.reset({
+				studioId: 0,
 				studioName: '',
 				scheduledDate: new Date().toISOString().split('T')[0],
 			});
@@ -71,13 +69,9 @@ function StudioSchedulerContent() {
 		},
 	});
 
-	// Handle selection from the Search Component
-	const handleStudioSelect = (name: string) => {
-		form.setValue('studioName', name);
-		// Optional: Sync to URL so refreshes don't lose the selection
-		const params = new URLSearchParams(searchParams);
-		params.set('studioName', name);
-		router.replace(`${pathname}?${params.toString()}`);
+	const handleStudioSelect = (selection: { id: string; name: string }) => {
+		form.setValue('studioId', parseInt(selection.id));
+		form.setValue('studioName', selection.name);
 	};
 
 	async function onSubmit(values: z.infer<typeof adminSchema>) {
@@ -86,13 +80,13 @@ function StudioSchedulerContent() {
 			return;
 		}
 		await scheduleMutation.mutateAsync({
-			studioName: values.studioName,
+			studioId: values.studioId,
 			date: new Date(values.scheduledDate),
 		});
 	}
 
 	const isPending = !!scheduleMutation.isPending;
-	const isDisabled = isPending || !form.watch('studioName') || dateHasEntry;
+	const isDisabled = isPending || !form.watch('studioId') || dateHasEntry;
 
 	return (
 		<div className="max-w-2xl mx-auto p-6">
@@ -104,17 +98,7 @@ function StudioSchedulerContent() {
 					<h3 className="text-lg font-semibold border-b pb-2">
 						Studio Scheduler
 					</h3>
-
-					<div className="bg-blue-50 border border-blue-200 p-3 rounded-lg text-sm">
-						<p className="text-blue-800">
-							Search for a production studio below. The selection
-							will update the field below.
-						</p>
-					</div>
-
-					{/* Pass the handler to the search component */}
 					<StudioSearch onSelect={handleStudioSelect} />
-
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 						<FormField
 							control={form.control}
@@ -126,7 +110,6 @@ function StudioSchedulerContent() {
 										<Input
 											readOnly
 											{...field}
-											placeholder="Select a studio above..."
 											className="bg-gray-100"
 										/>
 									</FormControl>
@@ -134,7 +117,6 @@ function StudioSchedulerContent() {
 								</FormItem>
 							)}
 						/>
-
 						<FormField
 							control={form.control}
 							name="scheduledDate"
@@ -154,8 +136,7 @@ function StudioSchedulerContent() {
 									</FormControl>
 									{dateHasEntry && (
 										<FormDescription className="text-red-600 font-medium">
-											This date already has a scheduled
-											studio
+											Already scheduled
 										</FormDescription>
 									)}
 									<FormMessage />
@@ -163,17 +144,14 @@ function StudioSchedulerContent() {
 							)}
 						/>
 					</div>
-
 					<div className="mt-4 flex justify-end">
 						<Button type="submit" disabled={isDisabled}>
 							{isPending ? (
-								'Scheduling...'
+								<Loader2 className="w-4 h-4 mr-2 animate-spin" />
 							) : (
-								<>
-									<Save className="w-4 h-4 mr-2" />
-									Save Studio Daily
-								</>
+								<Save className="w-4 h-4 mr-2" />
 							)}
+							Save Studio Daily
 						</Button>
 					</div>
 				</form>
@@ -184,16 +162,7 @@ function StudioSchedulerContent() {
 
 export default function AdminStudioScheduler() {
 	return (
-		<Suspense
-			fallback={
-				<div className="flex flex-col items-center justify-center p-12 border rounded-lg shadow-md bg-white max-w-2xl mx-auto">
-					<Loader2 className="w-10 h-10 animate-spin text-blue-600 mb-4" />
-					<p className="font-semibold text-center">
-						Loading Studio Tools...
-					</p>
-				</div>
-			}
-		>
+		<Suspense fallback={<Loader2 className="animate-spin" />}>
 			<StudioSchedulerContent />
 		</Suspense>
 	);

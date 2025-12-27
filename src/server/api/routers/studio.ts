@@ -13,28 +13,12 @@ import {
 	hasWonToday,
 	GAME_TYPES,
 } from '~/server/api/helpers/game-stats';
-import type { GameStatsWithUser } from '~/server/api/helpers/game-stats';
 
 interface CharacterEntry {
 	name?: string;
 	role?: string;
 }
 
-/**
- * Anime with included genre relations for studio queries
- */
-interface AnimeWithGenres {
-	id: number;
-	title: string;
-	score: number | null;
-	releasedYear: number | null;
-	characters: unknown;
-	animeGenres: Array<{ genre: { name: string } }>;
-}
-
-/**
- * Studio data returned from API
- */
 interface StudioData {
 	id: string;
 	name: string;
@@ -46,9 +30,6 @@ interface StudioData {
 	animeList: string[];
 }
 
-/**
- * Leaderboard entry returned from API
- */
 interface LeaderboardEntry {
 	id: string;
 	name: string | null;
@@ -59,17 +40,17 @@ interface LeaderboardEntry {
 
 /**
  * Gets midnight UTC for the current London calendar date.
- * This ensures consistent date values across all queries and mutations.
+ * Consistent across queries and mutations.
  */
-function getLondonMidnightUTC(): Date {
-	const now = new Date();
+function getLondonMidnightUTC(inputDate?: Date): Date {
+	const now = inputDate ?? new Date();
 	const formatter = new Intl.DateTimeFormat('en-CA', {
 		timeZone: 'Europe/London',
 		year: 'numeric',
 		month: '2-digit',
 		day: '2-digit',
 	});
-	const londonDateStr = formatter.format(now); // "2025-12-20"
+	const londonDateStr = formatter.format(now);
 	const [year, month, day] = londonDateStr.split('-').map(Number) as [
 		number,
 		number,
@@ -82,7 +63,6 @@ export const studioRouter = createTRPCRouter({
 	getAnswerStudio: publicProcedure.query(async ({ ctx }) => {
 		const today = getLondonMidnightUTC();
 
-		// Use consolidated DailySchedule model
 		const schedule = await ctx.db.dailySchedule.findUnique({
 			where: {
 				date_gameType: {
@@ -104,14 +84,11 @@ export const studioRouter = createTRPCRouter({
 		}
 
 		const targetStudio = schedule.studio;
-		const targetStudioId = targetStudio.id;
-		const targetStudioName = targetStudio.name;
 
-		// Query animes using normalized junction table
-		const studioAnimes: AnimeWithGenres[] = await ctx.db.anime.findMany({
+		const studioAnimes = await ctx.db.anime.findMany({
 			where: {
 				animeStudios: {
-					some: { studioId: targetStudioId },
+					some: { studioId: targetStudio.id },
 				},
 			},
 			orderBy: { score: 'desc' },
@@ -141,16 +118,12 @@ export const studioRouter = createTRPCRouter({
 		const recognizableSourcePool =
 			highRatedAnime.length > 0 ? highRatedAnime : studioAnimes;
 
-		// --- GENRE AGGREGATION ---
-		// Use normalized data from animeGenres junction table
 		const genreMap = studioAnimes.reduce(
 			(acc, a) => {
-				if (a.animeGenres && a.animeGenres.length > 0) {
-					a.animeGenres.forEach((ag) => {
-						const genre = ag.genre.name;
-						if (genre) acc[genre] = (acc[genre] ?? 0) + 1;
-					});
-				}
+				a.animeGenres.forEach((ag) => {
+					const genre = ag.genre.name;
+					acc[genre] = (acc[genre] ?? 0) + 1;
+				});
 				return acc;
 			},
 			{} as Record<string, number>,
@@ -168,11 +141,12 @@ export const studioRouter = createTRPCRouter({
 			.map((a) => a.releasedYear)
 			.filter((y): y is number => y !== null);
 
-		// Characters Logic
 		const characterList: string[] = [];
 		for (const anime of recognizableSourcePool) {
 			if (characterList.length >= 10) break;
-			const characters = anime.characters as CharacterEntry[] | null;
+			const characters = anime.characters as unknown as
+				| CharacterEntry[]
+				| null;
 			if (Array.isArray(characters) && characters.length > 0) {
 				const charData = characters[0];
 				if (charData?.name) {
@@ -185,21 +159,9 @@ export const studioRouter = createTRPCRouter({
 			}
 		}
 
-		for (let i = characterList.length - 1; i > 0; i--) {
-			const j = Math.floor(Math.random() * (i + 1));
-			[characterList[i], characterList[j]] = [
-				characterList[j]!,
-				characterList[i]!,
-			];
-		}
-
-		const animeList = recognizableSourcePool
-			.slice(0, 5)
-			.map((a) => a.title);
-
 		const studio: StudioData = {
-			id: targetStudioId.toString(),
-			name: targetStudioName,
+			id: targetStudio.id.toString(),
+			name: targetStudio.name,
 			avgRating:
 				validScores.length > 0
 					? validScores.reduce((a, b) => a + b, 0) /
@@ -208,8 +170,8 @@ export const studioRouter = createTRPCRouter({
 			firstAnimeYear: validYears.length > 0 ? Math.min(...validYears) : 0,
 			lastAnimeYear: validYears.length > 0 ? Math.max(...validYears) : 0,
 			topGenres,
-			characters: characterList,
-			animeList,
+			characters: characterList.sort(() => Math.random() - 0.5),
+			animeList: recognizableSourcePool.slice(0, 5).map((a) => a.title),
 		};
 
 		let hasWonTodayFlag = false;
@@ -223,12 +185,11 @@ export const studioRouter = createTRPCRouter({
 			);
 			hasWonTodayFlag = hasWonToday(stats);
 
-			// Check session for failed status using consolidated GameSession model
 			const session = await ctx.db.gameSession.findUnique({
 				where: {
 					userId_date_gameType: {
 						userId: ctx.session.user.id,
-						date: getLondonMidnightUTC(),
+						date: today,
 						gameType: GAME_TYPES.STUDIO,
 					},
 				},
@@ -243,47 +204,21 @@ export const studioRouter = createTRPCRouter({
 		};
 	}),
 
-	getAllStudios: publicProcedure.query(
-		async ({ ctx }): Promise<{ id: string; name: string }[]> => {
-			const studios = await ctx.db.studio.findMany({
-				orderBy: { name: 'asc' },
-				select: { id: true, name: true },
-			});
-
-			return studios.map((s) => ({
-				id: s.id.toString(),
-				name: s.name,
-			}));
-		},
-	),
-
-	recordGuess: protectedProcedure.mutation(async ({ ctx }) => {
-		const today = getLondonMidnightUTC();
-		// Use consolidated GameSession model
-		const session = await ctx.db.gameSession.findUnique({
-			where: {
-				userId_date_gameType: {
-					userId: ctx.session.user.id,
-					date: today,
-					gameType: GAME_TYPES.STUDIO,
-				},
-			},
+	getAllStudios: publicProcedure.query(async ({ ctx }) => {
+		const studios = await ctx.db.studio.findMany({
+			orderBy: { name: 'asc' },
+			select: { id: true, name: true },
 		});
 
-		if (!session) {
-			throw new TRPCError({
-				code: 'NOT_FOUND',
-				message: 'Game session not found',
-			});
-		}
-
-		return { success: true };
+		return studios.map((s) => ({
+			id: s.id.toString(),
+			name: s.name,
+		}));
 	}),
 
 	getTodaysSession: protectedProcedure.query(async ({ ctx }) => {
 		const today = getLondonMidnightUTC();
 
-		// Use consolidated GameSession model
 		let session = await ctx.db.gameSession.findUnique({
 			where: {
 				userId_date_gameType: {
@@ -296,7 +231,6 @@ export const studioRouter = createTRPCRouter({
 		});
 
 		if (!session) {
-			// Use consolidated DailySchedule model
 			const dailySchedule = await ctx.db.dailySchedule.findUnique({
 				where: {
 					date_gameType: {
@@ -314,8 +248,6 @@ export const studioRouter = createTRPCRouter({
 				});
 			}
 
-			// Create session using consolidated GameSession model
-			// targetId stores the studio name for studio game
 			session = await ctx.db.gameSession.create({
 				data: {
 					userId: ctx.session.user.id,
@@ -327,9 +259,7 @@ export const studioRouter = createTRPCRouter({
 			});
 		}
 
-		// Transform guesses to match expected format
-		// guessData for studio contains { studioName: string }
-		const transformedSession = {
+		return {
 			...session,
 			studioId: session.targetId,
 			guesses: session.guesses.map((guess) => {
@@ -342,8 +272,6 @@ export const studioRouter = createTRPCRouter({
 				};
 			}),
 		};
-
-		return transformedSession;
 	}),
 
 	addGameGuess: protectedProcedure
@@ -351,8 +279,7 @@ export const studioRouter = createTRPCRouter({
 		.mutation(async ({ ctx, input }) => {
 			const today = getLondonMidnightUTC();
 
-			// Use consolidated GameSession model
-			let session = await ctx.db.gameSession.findUnique({
+			const session = await ctx.db.gameSession.findUnique({
 				where: {
 					userId_date_gameType: {
 						userId: ctx.session.user.id,
@@ -363,35 +290,12 @@ export const studioRouter = createTRPCRouter({
 			});
 
 			if (!session) {
-				// Use consolidated DailySchedule model
-				const dailySchedule = await ctx.db.dailySchedule.findUnique({
-					where: {
-						date_gameType: {
-							date: today,
-							gameType: GAME_TYPES.STUDIO,
-						},
-					},
-					include: { studio: true },
-				});
-
-				if (!dailySchedule || !dailySchedule.studio) {
-					throw new TRPCError({
-						code: 'NOT_FOUND',
-						message: 'No studio scheduled for today',
-					});
-				}
-
-				session = await ctx.db.gameSession.create({
-					data: {
-						userId: ctx.session.user.id,
-						gameType: GAME_TYPES.STUDIO,
-						date: today,
-						targetId: dailySchedule.studio.name,
-					},
+				throw new TRPCError({
+					code: 'PRECONDITION_FAILED',
+					message: 'Session not found',
 				});
 			}
 
-			// Use consolidated GameGuess model with guessData containing studioName
 			const guess = await ctx.db.gameGuess.create({
 				data: {
 					sessionId: session.id,
@@ -399,7 +303,6 @@ export const studioRouter = createTRPCRouter({
 				},
 			});
 
-			// Return in expected format
 			return {
 				id: guess.id,
 				sessionId: guess.sessionId,
@@ -413,7 +316,6 @@ export const studioRouter = createTRPCRouter({
 		.mutation(async ({ ctx, input }) => {
 			const today = getLondonMidnightUTC();
 
-			// Use consolidated GameSession model
 			await ctx.db.gameSession.update({
 				where: {
 					userId_date_gameType: {
@@ -438,7 +340,6 @@ export const studioRouter = createTRPCRouter({
 	submitLoss: protectedProcedure.mutation(async ({ ctx }) => {
 		const today = getLondonMidnightUTC();
 
-		// Use consolidated GameSession model
 		return ctx.db.gameSession.update({
 			where: {
 				userId_date_gameType: {
@@ -458,7 +359,7 @@ export const studioRouter = createTRPCRouter({
 				GAME_TYPES.STUDIO,
 				10,
 			);
-			return leaderboard.map((stat: GameStatsWithUser) => ({
+			return leaderboard.map((stat) => ({
 				id: stat.user.id,
 				name: stat.user.name,
 				image: stat.user.image,
@@ -471,19 +372,8 @@ export const studioRouter = createTRPCRouter({
 	checkDateScheduled: adminProcedure
 		.input(z.object({ date: z.date() }))
 		.query(async ({ ctx, input }) => {
-			const targetDate = new Date(
-				Date.UTC(
-					input.date.getUTCFullYear(),
-					input.date.getUTCMonth(),
-					input.date.getUTCDate(),
-					0,
-					0,
-					0,
-					0,
-				),
-			);
+			const targetDate = getLondonMidnightUTC(input.date);
 
-			// Use consolidated DailySchedule model
 			const schedule = await ctx.db.dailySchedule.findUnique({
 				where: {
 					date_gameType: {
@@ -497,30 +387,10 @@ export const studioRouter = createTRPCRouter({
 		}),
 
 	scheduleDaily: adminProcedure
-		.input(z.object({ studioName: z.string(), date: z.date() }))
+		.input(z.object({ studioId: z.number(), date: z.date() }))
 		.mutation(async ({ ctx, input }) => {
-			const targetDate = new Date(
-				Date.UTC(
-					input.date.getUTCFullYear(),
-					input.date.getUTCMonth(),
-					input.date.getUTCDate(),
-					0,
-					0,
-					0,
-					0,
-				),
-			);
+			const targetDate = getLondonMidnightUTC(input.date);
 
-			// Find or create the studio
-			let studio = await ctx.db.studio.findUnique({
-				where: { name: input.studioName },
-			});
-
-			studio ??= await ctx.db.studio.create({
-				data: { name: input.studioName },
-			});
-
-			// Use consolidated DailySchedule model
 			return ctx.db.dailySchedule.upsert({
 				where: {
 					date_gameType: {
@@ -528,11 +398,11 @@ export const studioRouter = createTRPCRouter({
 						gameType: GAME_TYPES.STUDIO,
 					},
 				},
-				update: { studioId: studio.id },
+				update: { studioId: input.studioId },
 				create: {
 					date: targetDate,
 					gameType: GAME_TYPES.STUDIO,
-					studioId: studio.id,
+					studioId: input.studioId,
 				},
 			});
 		}),
