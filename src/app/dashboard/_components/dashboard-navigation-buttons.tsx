@@ -12,6 +12,8 @@ export default function DashboardNavigationButtons() {
 		{ name: 'Landing Dashboard', href: '/dashboard/landing' },
 		{ name: 'Library Dashboard', href: '/dashboard/library' },
 		{ name: 'Games Dashboard', href: '/dashboard/games' },
+		{ name: 'Anime Stats', href: '/dashboard/stats/anime' },
+		{ name: 'General Stats', href: '/dashboard/stats/general' },
 	];
 
 	return (

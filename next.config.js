@@ -45,6 +45,19 @@ const config = {
 	},
 	// Required to support PostHog trailing slash API requests
 	skipTrailingSlashRedirect: true,
+	async headers() {
+		return [
+			{
+				source: '/dashboard/stats/(.*)',
+				headers: [
+					{
+						key: 'Content-Security-Policy',
+						value: "frame-src 'self' https://eu.posthog.com;",
+					},
+				],
+			},
+		];
+	},
 };
 
 export default config;
