@@ -1,8 +1,8 @@
 'use client';
-
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { api } from '~/trpc/react';
 import { toast } from 'sonner';
+import posthog from 'posthog-js';
 import Countdown from './countdown';
 import Leaderboard from './leaderboard';
 import GameOverBanner from './game-over-banner';
@@ -44,7 +44,7 @@ export default function StudioGame({
 
 	const { data: gameData, error: gameError } =
 		api.studio.getAnswerStudio.useQuery(undefined, {
-			staleTime: 1000 * 60 * 5, // 5 minutes
+			staleTime: 1000 * 60 * 5,
 			refetchOnWindowFocus: false,
 		});
 
@@ -56,18 +56,17 @@ export default function StudioGame({
 		!!gameData?.hasFailedToday ||
 		guesses.length >= GAME_CONFIG.STUDIO.MAX_GUESSES;
 
-	// Only fetch leaderboard when game is over
 	const { data: leaderboard = [] } = api.studio.getLeaderboard.useQuery(
 		undefined,
 		{
 			enabled: isGameOver,
-			staleTime: 1000 * 60 * 2, // 2 minutes
+			staleTime: 1000 * 60 * 2,
 		},
 	);
 
 	const { data: session } = api.studio.getTodaysSession.useQuery(undefined, {
 		enabled: !!gameData?.studio && isAuthenticated,
-		staleTime: 1000 * 60, // 1 minute
+		staleTime: 1000 * 60,
 	});
 
 	const addGuessMutation = api.studio.addGameGuess.useMutation({
@@ -103,7 +102,6 @@ export default function StudioGame({
 		},
 	});
 
-	// Load guesses from database on mount
 	useEffect(() => {
 		if (session) {
 			setGuesses(
@@ -129,7 +127,6 @@ export default function StudioGame({
 		}
 	}, [session, answerStudio, setGameWon, setGameFailed]);
 
-	// For unauthenticated users, stop loading once we have game data
 	useEffect(() => {
 		if (!isAuthenticated && answerStudio && isLoading) {
 			setIsLoading(false);
@@ -147,18 +144,15 @@ export default function StudioGame({
 		)
 			return;
 
-		// Check if we've already processed this selection ID
 		if (lastProcessedIdRef.current === selectedStudio.id) {
 			return;
 		}
 
-		// For unauthenticated users who haven't declined auth yet, show login prompt
 		if (!isAuthenticated && !hasDeclinedAuth) {
 			triggerLoginPrompt();
 			return;
 		}
 
-		// Check for duplicate guess by name
 		if (guesses.some((g) => g.studioName === selectedStudio.name)) {
 			lastProcessedIdRef.current = selectedStudio.id;
 			toast.error('You already guessed this studio!');
@@ -171,23 +165,41 @@ export default function StudioGame({
 		const newGuesses = [...guesses, { studioName: selectedStudio.name }];
 		setGuesses(newGuesses);
 
-		// Save guess to database (only for authenticated users)
+		if (guesses.length === 0) {
+			posthog.capture('studio_game:started', {
+				is_authenticated: isAuthenticated,
+			});
+		}
+
 		if (isAuthenticated) {
 			addGuessMutation.mutate({ studioName: selectedStudio.name });
 		} else {
 			isProcessingRef.current = false;
 		}
 
-		if (
+		const isCorrect =
 			selectedStudio.name.toLowerCase().trim() ===
-			answerStudio.name.toLowerCase().trim()
-		) {
+			answerStudio.name.toLowerCase().trim();
+
+		if (isCorrect) {
 			setGameWon(true);
+			posthog.capture('studio_game:won', {
+				tries: newGuesses.length,
+				max_guesses: GAME_CONFIG.STUDIO.MAX_GUESSES,
+				is_authenticated: isAuthenticated,
+				answer_name: answerStudio.name,
+			});
 			if (isAuthenticated) {
 				winMutation.mutate({ tries: newGuesses.length });
 			}
 		} else if (newGuesses.length >= GAME_CONFIG.STUDIO.MAX_GUESSES) {
 			setGameFailed(true);
+			posthog.capture('studio_game:lost', {
+				tries: newGuesses.length,
+				max_guesses: GAME_CONFIG.STUDIO.MAX_GUESSES,
+				is_authenticated: isAuthenticated,
+				answer_name: answerStudio.name,
+			});
 			if (isAuthenticated) {
 				lossMutation.mutate();
 			}
@@ -208,14 +220,12 @@ export default function StudioGame({
 		lossMutation,
 	]);
 
-	// Process guess when studio is selected
 	useEffect(() => {
 		if (selectedStudio && !isProcessingRef.current) {
 			processGuess();
 		}
 	}, [selectedStudio, processGuess]);
 
-	// Reset lastProcessedIdRef when selectedStudio changes to allow re-selection
 	useEffect(() => {
 		if (!selectedStudio) {
 			lastProcessedIdRef.current = null;
@@ -248,6 +258,11 @@ export default function StudioGame({
 
 	const handleShare = async () => {
 		if (!answerStudio) return;
+
+		posthog.capture('studio_game:shared', {
+			won: gameWon,
+			tries: guesses.length,
+		});
 
 		const emojiGrid = guesses
 			.map((guess) => {
@@ -288,7 +303,7 @@ export default function StudioGame({
 			<LoginPrompt
 				variant="modal"
 				title="Login Required"
-				message="Log in to save your guesses and compete on the leaderboard. Or continue playing without saving."
+				message="Log in to save your guesses."
 				onDismiss={dismissLoginPrompt}
 			/>
 		);
@@ -316,7 +331,6 @@ export default function StudioGame({
 							</span>
 						)}
 					</div>
-
 					{isGameOver && (
 						<div className="mb-8">
 							<GameOverBanner
@@ -330,7 +344,6 @@ export default function StudioGame({
 							/>
 						</div>
 					)}
-
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						{HINT_LABELS.map((label, idx) => (
 							<div
@@ -340,8 +353,6 @@ export default function StudioGame({
 										? 'opacity-100'
 										: 'opacity-40'
 								}`}
-								role="region"
-								aria-label={`Hint ${idx + 1}: ${label}`}
 							>
 								<p className="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">
 									{label}
@@ -355,12 +366,8 @@ export default function StudioGame({
 						))}
 					</div>
 				</div>
-
 				{isGameOver && (
-					<aside
-						className="w-full lg:w-80"
-						aria-label="Game leaderboard"
-					>
+					<aside className="w-full lg:w-80">
 						<Leaderboard
 							users={leaderboardData}
 							gameType="studio"

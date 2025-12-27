@@ -50,7 +50,7 @@ export default function AnimeWordle({
 
 	const { data: gameData, error: gameError } =
 		api.anime.getAnswerAnime.useQuery(undefined, {
-			staleTime: 1000 * 60 * 5, // 5 minutes
+			staleTime: 1000 * 60 * 5,
 			refetchOnWindowFocus: false,
 		});
 
@@ -60,7 +60,7 @@ export default function AnimeWordle({
 
 	const { data: session } = api.anime.getTodaysSession.useQuery(undefined, {
 		enabled: !!answerAnime && isAuthenticated,
-		staleTime: 1000 * 60, // 1 minute
+		staleTime: 1000 * 60,
 	});
 
 	const isGameOver =
@@ -71,12 +71,11 @@ export default function AnimeWordle({
 
 	const { data: leaderboard } = api.anime.getLeaderboard.useQuery(undefined, {
 		enabled: isGameOver,
-		staleTime: 1000 * 60 * 2, // 2 minutes
+		staleTime: 1000 * 60 * 2,
 	});
 
 	const addGuessMutation = api.anime.addGameGuess.useMutation({
 		onError: (error) => {
-			// handleAuthError returns true if it was an auth error (and handles showing prompt if needed)
 			if (!handleAuthError(error)) {
 				toast.error(`Failed to save guess: ${error.message}`);
 			}
@@ -89,7 +88,6 @@ export default function AnimeWordle({
 			toast.success('Congratulations! You won!');
 		},
 		onError: (error) => {
-			// Silently ignore auth errors for win submission
 			if (!handleAuthError(error)) {
 				toast.error(`Failed to submit win: ${error.message}`);
 			}
@@ -98,7 +96,6 @@ export default function AnimeWordle({
 
 	const lossMutation = api.anime.submitLoss.useMutation({
 		onError: (error) => {
-			// Silently ignore auth errors for loss submission
 			if (!handleAuthError(error)) {
 				toast.error(`Failed to submit loss: ${error.message}`);
 			}
@@ -109,11 +106,10 @@ export default function AnimeWordle({
 		{ id: parseInt(searchedAnimeId ?? '0') },
 		{
 			enabled: !!searchedAnimeId && !isGameOver,
-			staleTime: 1000 * 60 * 10, // 10 minutes - anime data rarely changes
+			staleTime: 1000 * 60 * 10,
 		},
 	);
 
-	// Load guesses from database on mount
 	useEffect(() => {
 		if (session) {
 			const loadedGuesses = session.guesses.map((g) => {
@@ -141,7 +137,6 @@ export default function AnimeWordle({
 		}
 	}, [session, answerAnime, setGameWon, setGameFailed]);
 
-	// For unauthenticated users, stop loading once we have game data
 	useEffect(() => {
 		if (!isAuthenticated && answerAnime && isLoading) {
 			setIsLoading(false);
@@ -170,19 +165,16 @@ export default function AnimeWordle({
 		)
 			return;
 
-		// Check if we've already processed this selection
 		const animeIdStr = String(searchedAnime.id);
 		if (lastProcessedIdRef.current === animeIdStr) {
 			return;
 		}
 
-		// For unauthenticated users who haven't declined auth yet, show login prompt
 		if (!isAuthenticated && !hasDeclinedAuth) {
 			triggerLoginPrompt();
 			return;
 		}
 
-		// Check for duplicate guess
 		const guessTitle = formatDisplayValue(searchedAnime.title)
 			.toLowerCase()
 			.trim();
@@ -193,7 +185,6 @@ export default function AnimeWordle({
 					guessTitle,
 			)
 		) {
-			// Mark as processed to prevent duplicate toasts
 			lastProcessedIdRef.current = animeIdStr;
 			toast.error('You already guessed this anime!');
 			return;
@@ -213,15 +204,12 @@ export default function AnimeWordle({
 		const newGuesses = [...guesses, guessData];
 		setGuesses(newGuesses);
 
-		// Track first guess as game start
 		if (guesses.length === 0) {
-			posthog.capture('game_started', {
-				game_type: 'wordle',
+			posthog.capture('wordle_game:started', {
 				is_authenticated: isAuthenticated,
 			});
 		}
 
-		// Save guess to database (only for authenticated users)
 		if (isAuthenticated) {
 			addGuessMutation.mutate(
 				{ guessData },
@@ -236,7 +224,6 @@ export default function AnimeWordle({
 				},
 			);
 		} else {
-			// For unauthenticated users, just mark processing as done
 			isProcessingRef.current = false;
 		}
 
@@ -246,25 +233,23 @@ export default function AnimeWordle({
 
 		if (isCorrect) {
 			setGameWon(true);
-			posthog.capture('game_won', {
-				game_type: 'wordle',
+			posthog.capture('wordle_game:won', {
 				tries: newGuesses.length,
 				max_guesses: GAME_CONFIG.WORDLE.MAX_GUESSES,
 				is_authenticated: isAuthenticated,
+				answer_title: answerAnime.title,
 			});
-			// Only submit win for authenticated users
 			if (isAuthenticated) {
 				winMutation.mutate({ tries: newGuesses.length });
 			}
 		} else if (newGuesses.length >= GAME_CONFIG.WORDLE.MAX_GUESSES) {
 			setGameFailed(true);
-			posthog.capture('game_lost', {
-				game_type: 'wordle',
+			posthog.capture('wordle_game:lost', {
 				tries: newGuesses.length,
 				max_guesses: GAME_CONFIG.WORDLE.MAX_GUESSES,
 				is_authenticated: isAuthenticated,
+				answer_title: answerAnime.title,
 			});
-			// Only submit loss for authenticated users
 			if (isAuthenticated) {
 				lossMutation.mutate();
 			}
@@ -274,11 +259,9 @@ export default function AnimeWordle({
 	const handleShare = async () => {
 		if (!answerAnime) return;
 
-		posthog.capture('game_result_shared', {
-			game_type: 'wordle',
+		posthog.capture('wordle_game:shared', {
 			won: gameWon,
 			tries: guesses.length,
-			max_guesses: GAME_CONFIG.WORDLE.MAX_GUESSES,
 		});
 
 		const emojiGrid = guesses
@@ -313,7 +296,6 @@ export default function AnimeWordle({
 					text: shareText,
 				});
 			} catch (err) {
-				// User cancelled or error occurred - ignore
 				if (err instanceof Error && err.name !== 'AbortError') {
 					console.error('Error sharing:', err);
 				}
@@ -325,7 +307,6 @@ export default function AnimeWordle({
 				setTimeout(() => setIsCopied(false), 2000);
 			} catch (err) {
 				toast.error('Failed to copy to clipboard');
-				console.error('Failed to copy:', err);
 			}
 		}
 	};
@@ -336,45 +317,29 @@ export default function AnimeWordle({
 		}
 	}, [searchedAnime, processGuess]);
 
-	// Reset lastProcessedIdRef when searchedAnimeId changes to allow re-selection
 	useEffect(() => {
 		if (!searchedAnimeId) {
 			lastProcessedIdRef.current = null;
 		}
 	}, [searchedAnimeId]);
 
-	// Keyboard shortcuts
-	useEffect(() => {
-		const handleKeyPress = (e: KeyboardEvent) => {
-			if (e.key === 'Escape' && isGameOver) {
-				// Could add functionality to close modals or reset
-			}
-		};
-
-		window.addEventListener('keydown', handleKeyPress);
-		return () => window.removeEventListener('keydown', handleKeyPress);
-	}, [isGameOver]);
-
-	// Show login prompt when auth is required (only if user hasn't dismissed it)
 	if (showLoginPrompt) {
 		return (
 			<LoginPrompt
 				variant="modal"
 				title="Login Required"
-				message="Log in to save your guesses and compete on the leaderboard. Or continue playing without saving."
+				message="Log in to save your guesses and compete on the leaderboard."
 				onDismiss={dismissLoginPrompt}
 			/>
 		);
 	}
 
-	// Show error state if daily anime not found
 	if (gameError || (!answerAnime && !isLoading)) {
 		return <DailyNotFound gameType="anime" />;
 	}
 
 	if (!answerAnime || isLoading) return <GameSkeleton gameType="wordle" />;
 
-	// Leaderboard data is already flattened from the router
 	const leaderboardData: LeaderboardUser[] = leaderboard ?? [];
 
 	return (
@@ -402,7 +367,6 @@ export default function AnimeWordle({
 								isShareCopied={isCopied}
 								gameType="wordle"
 							/>
-
 							<div className="space-y-6">
 								<h3 className="font-bold text-gray-900 uppercase tracking-widest text-sm border-b-2 border-black pb-2">
 									Your Journey
@@ -429,7 +393,6 @@ export default function AnimeWordle({
 															<div
 																key={key}
 																className={`h-2 rounded-full border border-black/10 ${getMatchResultForProgress(result)}`}
-																aria-label={`${key}: ${result}`}
 															/>
 														);
 													},
@@ -485,7 +448,6 @@ export default function AnimeWordle({
 						</div>
 					)}
 				</div>
-
 				{isGameOver && (
 					<div className="w-full lg:w-80">
 						<Leaderboard

@@ -1,8 +1,8 @@
 'use client';
-
 import { useState, useEffect, useRef } from 'react';
 import { api } from '~/trpc/react';
 import { toast } from 'sonner';
+import posthog from 'posthog-js';
 import Countdown from './countdown';
 import Leaderboard from './leaderboard';
 import GameOverBanner from './game-over-banner';
@@ -16,7 +16,6 @@ import { Maximize2 } from 'lucide-react';
 import Image from 'next/image';
 import AnimeSearch, { type AnimeSelection } from './anime-search';
 
-// Local guess type for unauthenticated users
 interface LocalGuess {
 	id: string;
 	animeId: number;
@@ -61,7 +60,7 @@ export default function ZoomedInBanner({
 
 	const { data: gameData, error: gameError } =
 		api.anime.getBannerAnswerAnime.useQuery(undefined, {
-			staleTime: 1000 * 60 * 5, // 5 minutes
+			staleTime: 1000 * 60 * 5,
 			refetchOnWindowFocus: false,
 		});
 
@@ -73,7 +72,7 @@ export default function ZoomedInBanner({
 		undefined,
 		{
 			enabled: !!answerAnime && isAuthenticated,
-			staleTime: 1000 * 60, // 1 minute
+			staleTime: 1000 * 60,
 		},
 	);
 
@@ -87,13 +86,12 @@ export default function ZoomedInBanner({
 		undefined,
 		{
 			enabled: isGameOver,
-			staleTime: 1000 * 60 * 2, // 2 minutes
+			staleTime: 1000 * 60 * 2,
 		},
 	);
 
 	const addGuessMutation = api.anime.addBannerGuess.useMutation({
 		onError: (error) => {
-			// handleAuthError returns true if it was an auth error (and handles showing prompt)
 			if (!handleAuthError(error)) {
 				toast.error(`Failed to save guess: ${error.message}`);
 			}
@@ -106,7 +104,6 @@ export default function ZoomedInBanner({
 			toast.success('Congratulations! You guessed it!');
 		},
 		onError: (error) => {
-			// Silently ignore auth errors for win submission
 			if (!handleAuthError(error)) {
 				toast.error(`Failed to submit win: ${error.message}`);
 			}
@@ -115,16 +112,13 @@ export default function ZoomedInBanner({
 
 	const lossMutation = api.anime.submitBannerLoss.useMutation({
 		onError: (error) => {
-			// Silently ignore auth errors for loss submission
 			if (!handleAuthError(error)) {
 				toast.error(`Failed to submit loss: ${error.message}`);
 			}
 		},
 	});
 
-	// Load guesses from database on initial mount only (for authenticated users)
 	useEffect(() => {
-		// Only initialize from session once to prevent overwriting local state
 		if (session && !hasInitializedFromSession.current) {
 			hasInitializedFromSession.current = true;
 			setGuesses(session.guesses);
@@ -150,7 +144,6 @@ export default function ZoomedInBanner({
 		}
 	}, [session, answerAnime, setGameWon, setGameFailed, lossMutation]);
 
-	// For unauthenticated users, stop loading once we have game data
 	useEffect(() => {
 		if (!isAuthenticated && answerAnime && isLoading) {
 			setIsLoading(false);
@@ -168,7 +161,6 @@ export default function ZoomedInBanner({
 		setGameFailed,
 	]);
 
-	// Process guess directly when searchedAnime changes
 	const processGuess = (animeId: number, animeTitle: string) => {
 		if (
 			isGameOver ||
@@ -180,14 +172,12 @@ export default function ZoomedInBanner({
 			return;
 		}
 
-		// For unauthenticated users who haven't declined auth yet, show login prompt
 		if (!isAuthenticated && !hasDeclinedAuth) {
 			triggerLoginPrompt();
 			setSearchedAnime(undefined);
 			return;
 		}
 
-		// Check for duplicate guess using ref (always has latest value)
 		if (guessesRef.current.some((g) => g.animeId === animeId)) {
 			toast.error('You already guessed this anime!');
 			setSearchedAnime(undefined);
@@ -196,7 +186,12 @@ export default function ZoomedInBanner({
 
 		isProcessingRef.current = true;
 
-		// OPTIMISTIC UPDATE: Update UI immediately for snappy UX
+		if (guessesRef.current.length === 0) {
+			posthog.capture('banner_game:started', {
+				is_authenticated: isAuthenticated,
+			});
+		}
+
 		localGuessIdCounter.current += 1;
 		const optimisticGuess: LocalGuess = {
 			id: `local-${localGuessIdCounter.current}`,
@@ -213,39 +208,33 @@ export default function ZoomedInBanner({
 		const newGuessCount = guessesRef.current.length;
 		const isCorrect = animeId === answerAnime.id;
 
-		// Handle win/loss immediately for responsive UX
 		if (isCorrect) {
 			setGameWon(true);
+			posthog.capture('banner_game:won', {
+				tries: newGuessCount,
+				max_guesses: GAME_CONFIG.BANNER.MAX_GUESSES,
+				is_authenticated: isAuthenticated,
+				answer_title: answerAnime.title,
+			});
 		} else if (
 			newGuessCount >= GAME_CONFIG.BANNER.MAX_GUESSES &&
 			!hasSubmittedLoss.current
 		) {
 			setGameFailed(true);
 			hasSubmittedLoss.current = true;
+			posthog.capture('banner_game:lost', {
+				tries: newGuessCount,
+				max_guesses: GAME_CONFIG.BANNER.MAX_GUESSES,
+				is_authenticated: isAuthenticated,
+				answer_title: answerAnime.title,
+			});
 		}
 
-		// Clear search input immediately
 		setSearchedAnime(undefined);
 		isProcessingRef.current = false;
 
-		// For authenticated users, sync with server in background
 		if (isAuthenticated) {
-			addGuessMutation.mutate(
-				{ animeId },
-				{
-					onSuccess: () => {
-						// Server sync successful - optimistic update was correct
-					},
-					onError: () => {
-						// Could rollback here, but for games it's fine to keep local state
-						toast.error(
-							'Failed to save guess to server. Your progress may not be saved.',
-						);
-					},
-				},
-			);
-
-			// Submit win/loss to server in background
+			addGuessMutation.mutate({ animeId });
 			if (isCorrect) {
 				winMutation.mutate({ tries: newGuessCount });
 			} else if (
@@ -257,7 +246,6 @@ export default function ZoomedInBanner({
 		}
 	};
 
-	// Trigger guess processing when an anime is selected
 	useEffect(() => {
 		if (searchedAnime && !isProcessingRef.current) {
 			const animeId = parseInt(searchedAnime.id, 10);
@@ -265,10 +253,15 @@ export default function ZoomedInBanner({
 				processGuess(animeId, searchedAnime.title);
 			}
 		}
-	}, [searchedAnime, processGuess]);
+	}, [searchedAnime]);
 
 	const handleShare = async () => {
 		if (!answerAnime) return;
+
+		posthog.capture('banner_game:shared', {
+			won: gameWon,
+			tries: guesses.length,
+		});
 
 		const shareLink = 'https://samsoc.co.uk/games/banner';
 		const emojiGrid = guesses
@@ -295,24 +288,21 @@ export default function ZoomedInBanner({
 				setTimeout(() => setIsCopied(false), 2000);
 			} catch (err) {
 				toast.error('Failed to copy to clipboard');
-				console.error('Failed to copy:', err);
 			}
 		}
 	};
 
-	// Show login prompt when auth is required (only if user hasn't dismissed it)
 	if (showLoginPrompt) {
 		return (
 			<LoginPrompt
 				variant="modal"
 				title="Login Required"
-				message="Log in to save your guesses and compete on the leaderboard. Or continue playing without saving."
+				message="Log in to save your guesses."
 				onDismiss={dismissLoginPrompt}
 			/>
 		);
 	}
 
-	// Show error state if daily anime not found
 	if (gameError || (!answerAnime && !isLoading)) {
 		return <DailyNotFound gameType="banner" />;
 	}
@@ -324,8 +314,6 @@ export default function ZoomedInBanner({
 		BANNER_ZOOM_LEVELS.length - 1,
 	);
 	const zoomPercentage = BANNER_ZOOM_LEVELS[currentZoomLevel] ?? 1;
-
-	// Leaderboard data is already flattened from the router
 	const leaderboardData: LeaderboardUser[] = leaderboard ?? [];
 
 	return (
@@ -342,7 +330,6 @@ export default function ZoomedInBanner({
 							</span>
 						)}
 					</div>
-
 					{isGameOver ? (
 						<div className="space-y-8">
 							<GameOverBanner
@@ -353,7 +340,6 @@ export default function ZoomedInBanner({
 								isShareCopied={isCopied}
 								gameType="banner"
 							/>
-
 							<div className="space-y-6">
 								<h3 className="font-bold text-gray-900 uppercase tracking-widest text-sm border-b-2 border-black pb-2">
 									Your Guesses
@@ -367,7 +353,6 @@ export default function ZoomedInBanner({
 													? 'bg-green-50'
 													: 'bg-gray-50'
 											}`}
-											role="listitem"
 										>
 											<div className="flex items-center justify-between">
 												<div>
@@ -378,12 +363,6 @@ export default function ZoomedInBanner({
 														{guess.animeTitle}
 													</div>
 												</div>
-												{guess.animeId ===
-													answerAnime.id && (
-													<span className="text-green-600 text-lg">
-														✓
-													</span>
-												)}
 											</div>
 										</div>
 									))}
@@ -392,7 +371,6 @@ export default function ZoomedInBanner({
 						</div>
 					) : (
 						<div className="space-y-6">
-							{/* Zoomed Image Display */}
 							<div className="border-2 border-black rounded-2xl bg-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] max-w-xs mx-auto">
 								<div
 									className="relative w-full aspect-3/4 bg-gray-900 rounded-lg overflow-hidden flex items-center justify-center"
@@ -402,42 +380,34 @@ export default function ZoomedInBanner({
 										<div className="absolute inset-0 flex items-center justify-center overflow-hidden">
 											<Image
 												src={answerAnime.image}
-												alt="Zoomed anime banner"
+												alt="Zoomed banner"
 												fill
 												className="object-cover"
 												style={{
 													transform: `scale(${1 / zoomPercentage})`,
-													transformOrigin:
-														'center center',
+													transformOrigin: 'center',
 												}}
 												sizes="320px"
 												priority
 											/>
 										</div>
 									) : (
-										<div className="text-gray-400 text-center">
-											<Maximize2 className="w-12 h-12 mx-auto mb-2" />
-											<p>No image available</p>
+										<div className="text-gray-400">
+											<Maximize2 className="mx-auto" />
 										</div>
 									)}
 								</div>
-								<div className="mt-3 text-xs font-bold text-gray-300 uppercase tracking-tighter text-center">
-									Zoom Level:{' '}
-									{Math.round(zoomPercentage * 100)}%
-								</div>
 							</div>
-
-							{/* Zoom Indicator */}
 							<div className="border-2 border-black rounded-xl bg-white p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
 								<div className="space-y-2">
-									<div className="text-xs font-bold uppercase text-gray-600 tracking-tighter">
+									<div className="text-xs font-bold uppercase text-gray-600">
 										Image Clarity Progress
 									</div>
 									<div className="flex gap-2">
 										{BANNER_ZOOM_LEVELS.map((_, idx) => (
 											<div
 												key={idx}
-												className={`flex-1 h-2 rounded-full border border-black/20 transition-colors ${
+												className={`flex-1 h-2 rounded-full border border-black/20 ${
 													idx <= currentZoomLevel
 														? 'bg-blue-500'
 														: 'bg-gray-200'
@@ -447,43 +417,13 @@ export default function ZoomedInBanner({
 									</div>
 								</div>
 							</div>
-
-							{/* Search Component */}
 							<AnimeSearch
 								onSelect={setSearchedAnime}
 								disabled={isGameOver}
 							/>
-							{/* Recent Guesses */}
-							{guesses.length > 0 && (
-								<div className="space-y-4">
-									<h3 className="font-bold text-gray-900 uppercase tracking-widest text-sm border-b-2 border-black pb-2">
-										Recent Guesses
-									</h3>
-									<div className="space-y-2" role="list">
-										{[...guesses]
-											.reverse()
-											.map((guess, idx) => (
-												<div
-													key={guess.id}
-													className="border-2 border-black rounded-lg bg-gray-50 p-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-													role="listitem"
-												>
-													<div className="text-xs font-bold uppercase text-gray-500 mb-1">
-														Guess #
-														{guesses.length - idx}
-													</div>
-													<div className="text-sm font-semibold text-gray-900">
-														{guess.animeTitle}
-													</div>
-												</div>
-											))}
-									</div>
-								</div>
-							)}
 						</div>
 					)}
 				</div>
-
 				{isGameOver && (
 					<div className="w-full lg:w-80">
 						<Leaderboard
