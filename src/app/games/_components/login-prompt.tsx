@@ -2,6 +2,7 @@
 
 import { signIn } from '~/lib/auth-client';
 import { Lock } from 'lucide-react';
+import posthog from 'posthog-js';
 
 interface LoginPromptProps {
 	/** The message to display to the user */
@@ -25,7 +26,18 @@ export default function LoginPrompt({
 	onDismiss,
 }: LoginPromptProps) {
 	const handleLogin = () => {
+		posthog.capture('login_initiated', {
+			provider: 'discord',
+			prompt_variant: variant,
+		});
 		void signIn.social({ provider: 'discord' });
+	};
+
+	const handleSkipLogin = () => {
+		posthog.capture('login_skipped', {
+			prompt_variant: variant,
+		});
+		onDismiss?.();
 	};
 
 	const content = (
@@ -45,7 +57,7 @@ export default function LoginPrompt({
 			</button>
 			{variant === 'modal' && onDismiss && (
 				<button
-					onClick={onDismiss}
+					onClick={handleSkipLogin}
 					className="w-full mt-3 bg-gray-100 text-gray-700 font-bold py-3 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-none transition-all"
 				>
 					CONTINUE WITHOUT LOGIN

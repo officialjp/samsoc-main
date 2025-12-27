@@ -1,10 +1,42 @@
 'use client';
 
+import { useRef } from 'react';
 import { useSession, signIn, signOut } from '~/lib/auth-client';
 import Image from 'next/image';
+import posthog from 'posthog-js';
 
 export default function AccountButton() {
 	const { data: session, isPending } = useSession();
+	const hasIdentifiedRef = useRef(false);
+
+	// Identify user with PostHog when session is available
+	if (session?.user && !hasIdentifiedRef.current) {
+		hasIdentifiedRef.current = true;
+		posthog.identify(session.user.id, {
+			email: session.user.email,
+			name: session.user.name,
+		});
+	}
+
+	// Reset when user logs out
+	if (!session && !isPending && hasIdentifiedRef.current) {
+		hasIdentifiedRef.current = false;
+		posthog.reset();
+	}
+
+	const handleSignOut = () => {
+		posthog.capture('user_logged_out');
+		posthog.reset();
+		void signOut();
+	};
+
+	const handleSignIn = () => {
+		posthog.capture('login_initiated', {
+			provider: 'discord',
+			prompt_variant: 'header',
+		});
+		void signIn.social({ provider: 'discord' });
+	};
 
 	if (isPending) {
 		return (
@@ -19,7 +51,7 @@ export default function AccountButton() {
 			<div className="flex flex-row justify-center items-center gap-2">
 				<button
 					className="bg-button2 hover:bg-button1 text-white py-1 px-4 rounded-3xl text-nowrap hover:cursor-pointer"
-					onClick={() => void signOut()}
+					onClick={handleSignOut}
 				>
 					Sign out
 				</button>
@@ -41,7 +73,7 @@ export default function AccountButton() {
 			<p>Not signed in?</p>
 			<button
 				className="bg-button2 hover:bg-button1 text-white py-1 px-4 rounded-3xl hover:cursor-pointer"
-				onClick={() => void signIn.social({ provider: 'discord' })}
+				onClick={handleSignIn}
 			>
 				Sign in
 			</button>

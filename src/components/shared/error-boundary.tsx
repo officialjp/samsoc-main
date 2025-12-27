@@ -2,6 +2,7 @@
 
 import { Component, type ReactNode } from 'react';
 import { AlertTriangle } from 'lucide-react';
+import posthog from 'posthog-js';
 import { Button } from '../ui/button';
 
 interface ErrorBoundaryProps {
@@ -29,6 +30,17 @@ export class ErrorBoundary extends Component<
 
 	componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
 		console.error('ErrorBoundary caught an error:', error, errorInfo);
+
+		// Track error with PostHog
+		posthog.capture('error_boundary_triggered', {
+			error_message: error.message,
+			error_name: error.name,
+			error_stack: error.stack,
+			component_stack: errorInfo.componentStack,
+		});
+
+		// Also capture as exception for PostHog error tracking
+		posthog.captureException(error);
 	}
 
 	handleReset = () => {

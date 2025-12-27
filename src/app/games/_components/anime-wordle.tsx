@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { api } from '~/trpc/react';
 import { toast } from 'sonner';
+import posthog from 'posthog-js';
 import Countdown from './countdown';
 import Leaderboard from './leaderboard';
 import GameOverBanner from './game-over-banner';
@@ -212,6 +213,14 @@ export default function AnimeWordle({
 		const newGuesses = [...guesses, guessData];
 		setGuesses(newGuesses);
 
+		// Track first guess as game start
+		if (guesses.length === 0) {
+			posthog.capture('game_started', {
+				game_type: 'wordle',
+				is_authenticated: isAuthenticated,
+			});
+		}
+
 		// Save guess to database (only for authenticated users)
 		if (isAuthenticated) {
 			addGuessMutation.mutate(
@@ -237,12 +246,24 @@ export default function AnimeWordle({
 
 		if (isCorrect) {
 			setGameWon(true);
+			posthog.capture('game_won', {
+				game_type: 'wordle',
+				tries: newGuesses.length,
+				max_guesses: GAME_CONFIG.WORDLE.MAX_GUESSES,
+				is_authenticated: isAuthenticated,
+			});
 			// Only submit win for authenticated users
 			if (isAuthenticated) {
 				winMutation.mutate({ tries: newGuesses.length });
 			}
 		} else if (newGuesses.length >= GAME_CONFIG.WORDLE.MAX_GUESSES) {
 			setGameFailed(true);
+			posthog.capture('game_lost', {
+				game_type: 'wordle',
+				tries: newGuesses.length,
+				max_guesses: GAME_CONFIG.WORDLE.MAX_GUESSES,
+				is_authenticated: isAuthenticated,
+			});
 			// Only submit loss for authenticated users
 			if (isAuthenticated) {
 				lossMutation.mutate();
@@ -252,6 +273,13 @@ export default function AnimeWordle({
 
 	const handleShare = async () => {
 		if (!answerAnime) return;
+
+		posthog.capture('game_result_shared', {
+			game_type: 'wordle',
+			won: gameWon,
+			tries: guesses.length,
+			max_guesses: GAME_CONFIG.WORDLE.MAX_GUESSES,
+		});
 
 		const emojiGrid = guesses
 			.map((guess) => {
