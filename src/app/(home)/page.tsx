@@ -14,6 +14,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import LibraryPhoto from '../../../public/images/sam_manga.webp';
 import { FEATURES, FREE_FEATURES, PAID_FEATURES } from '~/lib/constants';
+import ScrollAnimationWrapper from '~/components/shared/scroll-animation-wrapper';
 
 const LIBRARY_STATS = [
 	'250+ manga volumes',
@@ -84,21 +85,28 @@ export default function Home() {
 			</section>
 
 			<SectionContainer id="about">
-				<SectionHeading
-					badge="ABOUT US"
-					title="What We're All About"
-					description="We're a society for all people that love or are interested in anime and manga."
-					badgeColor="bg-purple-200"
-				/>
+				<ScrollAnimationWrapper variant="fadeInUp">
+					<SectionHeading
+						badge="ABOUT US"
+						title="What We're All About"
+						description="We're a society for all people that love or are interested in anime and manga."
+						badgeColor="bg-purple-200"
+					/>
+				</ScrollAnimationWrapper>
 				<div className="mx-auto grid max-w-7xl items-center gap-6 py-12 lg:grid-cols-3 lg:gap-12">
-					{FEATURES.map((feature) => (
-						<FeatureCard
+					{FEATURES.map((feature, index) => (
+						<ScrollAnimationWrapper
 							key={feature.title}
-							icon={feature.icon}
-							title={feature.title}
-							description={feature.description}
-							color={feature.color}
-						/>
+							variant="fadeInUp"
+							delay={index * 100}
+						>
+							<FeatureCard
+								icon={feature.icon}
+								title={feature.title}
+								description={feature.description}
+								color={feature.color}
+							/>
+						</ScrollAnimationWrapper>
 					))}
 				</div>
 			</SectionContainer>
@@ -107,33 +115,43 @@ export default function Home() {
 				id="now-streaming"
 				className="w-full overflow-hidden py-12 md:py-16"
 			>
-				<AnimeSection />
+				<ScrollAnimationWrapper variant="fadeInUp">
+					<AnimeSection />
+				</ScrollAnimationWrapper>
 			</SectionContainer>
 
 			<SectionContainer id="library">
-				<SectionHeading
-					badge="MANGA LIBRARY"
-					title="Dive Into Our Manga Collection"
-					description="With hundreds of volumes across various genres, there's something for every anime fan!"
-					badgeColor="bg-purple-200"
-				/>
+				<ScrollAnimationWrapper variant="fadeInUp">
+					<SectionHeading
+						badge="MANGA LIBRARY"
+						title="Dive Into Our Manga Collection"
+						description="With hundreds of volumes across various genres, there's something for every anime fan!"
+						badgeColor="bg-purple-200"
+					/>
+				</ScrollAnimationWrapper>
 				<div className="mx-auto flex max-w-7xl flex-col items-center justify-center py-12">
-					<div className="relative">
-						<div className="h-[180px] w-[320px] overflow-hidden rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:h-[300px] md:w-[540px] lg:h-[450px] lg:w-[800px]">
-							<Image
-								src={LibraryPhoto}
-								height={450}
-								width={800}
-								draggable={false}
-								alt="SAMSoc manga library collection"
-								className="aspect-video object-cover"
-								placeholder="blur"
-								sizes="(max-width: 768px) 320px, (max-width: 1024px) 540px, 800px"
-							/>
+					<ScrollAnimationWrapper variant="fadeInScale" delay={100}>
+						<div className="relative">
+							<div className="h-[180px] w-[320px] overflow-hidden rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:h-[300px] md:w-[540px] lg:h-[450px] lg:w-[800px]">
+								<Image
+									src={LibraryPhoto}
+									height={450}
+									width={800}
+									draggable={false}
+									alt="SAMSoc manga library collection"
+									className="aspect-video object-cover"
+									placeholder="blur"
+									sizes="(max-width: 768px) 320px, (max-width: 1024px) 540px, 800px"
+								/>
+							</div>
+							<LibraryStats />
 						</div>
-						<LibraryStats />
-					</div>
-					<div className="pt-32 text-center">
+					</ScrollAnimationWrapper>
+					<ScrollAnimationWrapper
+						variant="fadeInUp"
+						delay={200}
+						className="pt-32 text-center"
+					>
 						<Button
 							asChild
 							className="border-2 border-black bg-button2 text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer hover:bg-button1"
@@ -143,41 +161,59 @@ export default function Home() {
 								View Full Library
 							</Link>
 						</Button>
-					</div>
+					</ScrollAnimationWrapper>
 				</div>
 			</SectionContainer>
 
 			<SectionContainer id="committee">
-				<CommitteeSection />
+				<ScrollAnimationWrapper variant="fadeInUp">
+					<CommitteeSection />
+				</ScrollAnimationWrapper>
 			</SectionContainer>
 
 			<SectionContainer id="join">
-				<SectionHeading
-					badge="MEMBERSHIP"
-					title="Get Your Membership Here"
-					badgeColor="bg-purple-200"
-					description="Here you can look at all the benefits you can get from one of our memberships!"
-				/>
+				<ScrollAnimationWrapper variant="fadeInUp">
+					<SectionHeading
+						badge="MEMBERSHIP"
+						title="Get Your Membership Here"
+						badgeColor="bg-purple-200"
+						description="Here you can look at all the benefits you can get from one of our memberships!"
+					/>
+				</ScrollAnimationWrapper>
 				<div className="flex items-center justify-center py-8">
 					<div className="grid w-full gap-8 md:grid-cols-2 lg:w-4xl">
-						<MembershipCard
-							title="Free"
-							color="bg-membership2"
-							price="£0"
-							flavorText="Your gateway into the SAMSoC community"
-							features={FREE_FEATURES}
-						/>
-						<MembershipCard
-							title="Premium"
-							color="bg-membership1"
-							price="£2"
-							flavorText="Satiate your manga reading hunger"
-							features={PAID_FEATURES}
-							recommended={true}
-						/>
+						<ScrollAnimationWrapper
+							variant="fadeInLeft"
+							delay={100}
+						>
+							<MembershipCard
+								title="Free"
+								color="bg-membership2"
+								price="£0"
+								flavorText="Your gateway into the SAMSoC community"
+								features={FREE_FEATURES}
+							/>
+						</ScrollAnimationWrapper>
+						<ScrollAnimationWrapper
+							variant="fadeInRight"
+							delay={100}
+						>
+							<MembershipCard
+								title="Premium"
+								color="bg-membership1"
+								price="£2"
+								flavorText="Satiate your manga reading hunger"
+								features={PAID_FEATURES}
+								recommended={true}
+							/>
+						</ScrollAnimationWrapper>
 					</div>
 				</div>
-				<div className="text-center">
+				<ScrollAnimationWrapper
+					variant="fadeInUp"
+					delay={200}
+					className="text-center"
+				>
 					<Button
 						asChild
 						className="border-2 border-black bg-button2 text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer hover:bg-button1"
@@ -187,7 +223,7 @@ export default function Home() {
 							View Sign-Up Page
 						</Link>
 					</Button>
-				</div>
+				</ScrollAnimationWrapper>
 			</SectionContainer>
 		</main>
 	);

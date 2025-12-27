@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { api } from '~/trpc/server';
 import { Calendar } from './_components/calendar';
 import type { Event } from '@prisma/client';
+import ScrollAnimationWrapper from '~/components/shared/scroll-animation-wrapper';
 
 export const metadata: Metadata = {
 	title: 'Surrey Anime and Manga Society',
@@ -102,17 +103,23 @@ export default async function CalendarPage() {
 		<div className="flex min-h-screen flex-col w-full">
 			<main className="flex-1">
 				<SectionContainer>
-					<SectionHeading
-						badge="SCHEDULE"
-						title="Event Calendar"
-						description="Browse our upcoming events and regular anime screenings. Click on any event for more details!"
-						badgeColor="bg-purple-200"
-						className="mb-12"
-					/>
-					<div>
-						<Calendar events={allEvents} />
+					<ScrollAnimationWrapper variant="fadeInUp">
+						<SectionHeading
+							badge="SCHEDULE"
+							title="Event Calendar"
+							description="Browse our upcoming events and regular anime screenings. Click on any event for more details!"
+							badgeColor="bg-purple-200"
+							className="mb-12"
+						/>
+					</ScrollAnimationWrapper>
+					<ScrollAnimationWrapper variant="fadeIn" delay={100}>
+						<div>
+							<Calendar events={allEvents} />
+						</div>
+					</ScrollAnimationWrapper>
+					<ScrollAnimationWrapper variant="fadeInUp" delay={200}>
 						<EventColorGuide />
-					</div>
+					</ScrollAnimationWrapper>
 				</SectionContainer>
 			</main>
 		</div>
