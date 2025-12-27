@@ -5,6 +5,7 @@ import { LibrarySearch } from './_components/library-search';
 import LibrarySkeleton from './_components/library-skeleton';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
+import ScrollAnimationWrapper from '~/components/shared/scroll-animation-wrapper';
 
 export const metadata: Metadata = {
 	title: 'Surrey Anime and Manga Society - Library',
@@ -154,16 +155,20 @@ export default async function LibraryPage(props: LibraryPageProps) {
 	return (
 		<main className="min-h-screen w-full">
 			<SectionContainer>
-				<SectionHeading
-					badge="MANGA"
-					title="Our Library"
-					description="Browse our collection of manga available to borrow. Paid members can check out up to 3 volumes at a time for up to 2 weeks."
-					badgeColor="bg-purple-200"
-					className="mb-8"
-				/>
-				<Suspense fallback={<LibrarySkeleton />}>
-					<LibraryContent searchParams={searchParams} />
-				</Suspense>
+				<ScrollAnimationWrapper variant="fadeInUp">
+					<SectionHeading
+						badge="MANGA"
+						title="Our Library"
+						description="Browse our collection of manga available to borrow. Paid members can check out up to 3 volumes at a time for up to 2 weeks."
+						badgeColor="bg-purple-200"
+						className="mb-8"
+					/>
+				</ScrollAnimationWrapper>
+				<ScrollAnimationWrapper variant="fadeIn" delay={100}>
+					<Suspense fallback={<LibrarySkeleton />}>
+						<LibraryContent searchParams={searchParams} />
+					</Suspense>
+				</ScrollAnimationWrapper>
 			</SectionContainer>
 		</main>
 	);

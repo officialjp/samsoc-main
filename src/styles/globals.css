@@ -310,3 +310,52 @@
 	}
 }
 
+/* Scroll Animation Wrapper Styles */
+.SAManimController {
+	opacity: 0;
+	transition: none;
+}
+
+.SAManimController.SAMactive[data-animation='fadeInUp'] {
+	animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+	animation-delay: var(--animation-delay, 0ms);
+}
+
+.SAManimController.SAMactive[data-animation='fadeIn'] {
+	animation: fadeIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+	animation-delay: var(--animation-delay, 0ms);
+}
+
+.SAManimController.SAMactive[data-animation='fadeInRight'] {
+	animation: fadeInRight 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+	animation-delay: var(--animation-delay, 0ms);
+}
+
+.SAManimController.SAMactive[data-animation='fadeInLeft'] {
+	animation: fadeInLeft 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+	animation-delay: var(--animation-delay, 0ms);
+}
+
+.SAManimController.SAMactive[data-animation='fadeInRotate'] {
+	animation: fadeInRotate 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+	animation-delay: var(--animation-delay, 0ms);
+}
+
+.SAManimController.SAMactive[data-animation='fadeInRotate3'] {
+	animation: fadeInRotate3 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+	animation-delay: var(--animation-delay, 0ms);
+}
+
+.SAManimController.SAMactive[data-animation='fadeInScale'] {
+	animation: fadeInScale 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+	animation-delay: var(--animation-delay, 0ms);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+	.SAManimController {
+		opacity: 1 !important;
+		animation: none !important;
+		transform: none !important;
+	}
+}

@@ -5,6 +5,7 @@ import ClubNight from '../../../public/images/clubnight.webp';
 import ComicCon from '../../../public/images/comiccon.webp';
 import Screenings from '../../../public/images/screenings.webp';
 import Collabs from '../../../public/images/collabs.webp';
+import ScrollAnimationWrapper from '~/components/shared/scroll-animation-wrapper';
 
 import type { Metadata } from 'next';
 import type { StaticImageData } from 'next/image';
@@ -100,26 +101,33 @@ export default function EventsPage() {
 		<div className="flex min-h-screen flex-col w-full">
 			<main className="flex-1">
 				<SectionContainer>
-					<SectionHeading
-						badge="ACTIVITIES"
-						title="Our Events"
-						description="Discover the wide range of events we host throughout the academic year. From weekly screenings to special collaborations, there's something for every anime enthusiast!"
-						badgeColor="bg-purple-200"
-						className="mb-12"
-					/>
+					<ScrollAnimationWrapper variant="fadeInUp">
+						<SectionHeading
+							badge="ACTIVITIES"
+							title="Our Events"
+							description="Discover the wide range of events we host throughout the academic year. From weekly screenings to special collaborations, there's something for every anime enthusiast!"
+							badgeColor="bg-purple-200"
+							className="mb-12"
+						/>
+					</ScrollAnimationWrapper>
 
 					<div className="space-y-8">
 						{eventTypes.map((event, index) => (
-							<EventTypeCard
-								className={``}
+							<ScrollAnimationWrapper
 								key={index}
-								title={event.title}
-								description={event.description}
-								frequency={event.frequency}
-								image={event.image.src}
-								color={event.color}
-								examples={event.examples}
-							/>
+								variant="fadeInUp"
+								delay={index * 100}
+							>
+								<EventTypeCard
+									className={``}
+									title={event.title}
+									description={event.description}
+									frequency={event.frequency}
+									image={event.image.src}
+									color={event.color}
+									examples={event.examples}
+								/>
+							</ScrollAnimationWrapper>
 						))}
 					</div>
 				</SectionContainer>

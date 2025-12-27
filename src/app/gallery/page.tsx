@@ -5,6 +5,7 @@ import { api } from '~/trpc/server';
 import { GallerySearch } from './_components/gallery-search';
 import { Suspense } from 'react';
 import GallerySkeleton from './_components/gallery-skeleton';
+import ScrollAnimationWrapper from '~/components/shared/scroll-animation-wrapper';
 
 export const metadata: Metadata = {
 	title: 'Surrey Anime and Manga Society - Gallery',
@@ -116,16 +117,20 @@ export default async function GalleryPage(props: GalleryPageProps) {
 	return (
 		<main className="min-h-screen w-full">
 			<SectionContainer>
-				<SectionHeading
-					badge="MEMORIES"
-					title="Photo Gallery"
-					description="Browse through our collection of photos from events, weekly sessions, and collaborations over the years."
-					badgeColor="bg-purple-200"
-					className="mb-12"
-				/>
-				<Suspense fallback={<GallerySkeleton />}>
-					<GalleryContent searchParams={searchParams} />
-				</Suspense>
+				<ScrollAnimationWrapper variant="fadeInUp">
+					<SectionHeading
+						badge="MEMORIES"
+						title="Photo Gallery"
+						description="Browse through our collection of photos from events, weekly sessions, and collaborations over the years."
+						badgeColor="bg-purple-200"
+						className="mb-12"
+					/>
+				</ScrollAnimationWrapper>
+				<ScrollAnimationWrapper variant="fadeIn" delay={100}>
+					<Suspense fallback={<GallerySkeleton />}>
+						<GalleryContent searchParams={searchParams} />
+					</Suspense>
+				</ScrollAnimationWrapper>
 			</SectionContainer>
 		</main>
 	);
