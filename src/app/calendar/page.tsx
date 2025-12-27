@@ -5,21 +5,40 @@ import { api } from '~/trpc/server';
 import { Calendar } from './_components/calendar';
 import type { Event } from '@prisma/client';
 import ScrollAnimationWrapper from '~/components/shared/scroll-animation-wrapper';
+import { Suspense } from 'react';
+import CalendarSkeleton from './_components/calendar-skeleton';
 
 export const metadata: Metadata = {
-	title: 'Surrey Anime and Manga Society',
+	title: 'Surrey Anime and Manga Society - Calendar',
 	description:
 		'Browse our upcoming events and regular anime screenings. Click on any event for more details!',
 	openGraph: {
-		title: 'Surrey Anime and Manga Society',
+		title: 'Surrey Anime and Manga Society - Calendar',
 		description:
 			'Browse our upcoming events and regular anime screenings. Click on any event for more details!',
+		images: [
+			{
+				url: '/opengraph-image',
+				width: 1200,
+				height: 630,
+				alt: 'Surrey Anime and Manga Society - Calendar',
+			},
+		],
+		type: 'website',
 	},
 	twitter: {
-		card: 'summary',
-		title: 'Surrey Anime and Manga Society',
+		card: 'summary_large_image',
+		title: 'Surrey Anime and Manga Society - Calendar',
 		description:
 			'Browse our upcoming events and regular anime screenings. Click on any event for more details!',
+		images: ['/opengraph-image'],
+	},
+	alternates: {
+		canonical: '/calendar',
+	},
+	robots: {
+		index: true,
+		follow: true,
 	},
 };
 
@@ -49,55 +68,42 @@ function EventColorGuide() {
 	);
 }
 
-function generateWeeklySessions(regularSessions: Event[]): Event[] {
-	const sessions: Event[] = [];
-
-	for (const session of regularSessions) {
-		const sessionCount = session.session_count ?? 0;
-		if (sessionCount === 0) continue;
-
-		let currentDate = new Date(session.date);
-
-		sessions.push({
-			id: session.id,
-			title: 'Voting Session',
-			description:
-				'Sit down with us and vote on which 3 animes we will be watching this semester!',
-			location: session.location,
-			date: new Date(currentDate),
-			color: 'bg-purple-200',
-			is_regular_session: true,
-			session_count: null,
-		});
-
-		for (let i = 1; i < sessionCount; i++) {
-			currentDate = new Date(
-				currentDate.getTime() + 7 * 24 * 60 * 60 * 1000,
-			);
-			sessions.push({
-				id: session.id,
-				title: session.title,
-				description: session.description,
-				location: session.location,
-				date: new Date(currentDate),
-				color: 'bg-purple-200',
-				is_regular_session: true,
-				session_count: null,
-			});
-		}
-	}
-
-	return sessions;
+interface CalendarPageProps {
+	searchParams: Promise<{
+		year?: string;
+		month?: string;
+	}>;
 }
 
-export default async function CalendarPage() {
-	const [eventData, regularSessions] = await Promise.all([
-		api.event.getSpecialEvents(),
-		api.event.getRegularSessions(),
-	]);
+async function CalendarContent({
+	searchParams,
+}: {
+	searchParams: {
+		year?: string;
+		month?: string;
+	};
+}) {
+	const now = new Date();
+	const year = searchParams.year
+		? Number(searchParams.year)
+		: now.getFullYear();
+	const month = searchParams.month
+		? Number(searchParams.month)
+		: now.getMonth();
 
-	const weeklySessions = generateWeeklySessions(regularSessions);
-	const allEvents = [...eventData, ...weeklySessions] as Event[];
+	// Fetch events for the specific month
+	const eventsResponse = await api.event.getEventsPaginated({
+		year,
+		month,
+	});
+
+	const events = eventsResponse.events as Event[];
+
+	return <Calendar events={events} initialYear={year} initialMonth={month} />;
+}
+
+export default async function CalendarPage(props: CalendarPageProps) {
+	const searchParams = await props.searchParams;
 
 	return (
 		<div className="flex min-h-screen flex-col w-full">
@@ -113,9 +119,9 @@ export default async function CalendarPage() {
 						/>
 					</ScrollAnimationWrapper>
 					<ScrollAnimationWrapper variant="fadeIn" delay={100}>
-						<div>
-							<Calendar events={allEvents} />
-						</div>
+						<Suspense fallback={<CalendarSkeleton />}>
+							<CalendarContent searchParams={searchParams} />
+						</Suspense>
 					</ScrollAnimationWrapper>
 					<ScrollAnimationWrapper variant="fadeInUp" delay={200}>
 						<EventColorGuide />

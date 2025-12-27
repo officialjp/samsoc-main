@@ -53,12 +53,14 @@ export default function GallerySkeleton() {
 				{/* Main content skeleton */}
 				<section>
 					<div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
-						{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map((i) => (
+						{[
+							1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+						].map((i) => (
 							<div
 								key={i}
 								className="group relative overflow-hidden rounded-2xl border-2 border-gray-200 bg-gray-100 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)]"
 							>
-								<div className="aspect-[4/3] w-full animate-pulse bg-gray-200" />
+								<div className="aspect-4/3 w-full animate-pulse bg-gray-200" />
 							</div>
 						))}
 					</div>

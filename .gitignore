@@ -37,6 +37,7 @@ yarn-error.log*
 .env
 .cursorrules
 .env*.local
+.rules
 
 # vercel
 .vercel
