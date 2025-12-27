@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
 import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
+import posthog from 'posthog-js';
 import Logo from '../../../public/images/logo.webp';
 import { cn } from '~/lib/utils';
 import { usePathname } from 'next/navigation';
@@ -192,11 +193,24 @@ function SocialIcon({
 	src: string;
 	color: string;
 }) {
+	const handleClick = () => {
+		const platform = href.includes('discord')
+			? 'discord'
+			: href.includes('instagram')
+				? 'instagram'
+				: 'unknown';
+		posthog.capture('social_link_clicked', {
+			platform,
+			destination_url: href,
+		});
+	};
+
 	return (
 		<Link
 			href={href}
 			target="_blank"
 			className="transition-transform hover:scale-110"
+			onClick={handleClick}
 		>
 			<SvgIcon
 				src={src}

@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import posthog from 'posthog-js';
 import MangaCard from './manga-card';
 import LibraryFilters from './library-filters';
 import { Pagination } from '~/components/shared/pagination';
@@ -71,6 +72,12 @@ export function LibrarySearch({
 	const handleFilterChange = (newFilters: FilterState) => {
 		setFilters(newFilters);
 		updateSearchParams(newFilters, 1);
+
+		posthog.capture('library_searched', {
+			search_query: newFilters.search || null,
+			status_filter: newFilters.status,
+			genre_filter: newFilters.genre,
+		});
 	};
 
 	const handlePageChange = (page: number) => {

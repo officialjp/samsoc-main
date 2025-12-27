@@ -9,10 +9,11 @@ import { CommitteeSection } from './_components/committee-section';
 import HeroCarousel from './_components/hero-carousel';
 import MarqueeSection from './_components/marquee-section';
 import HomeSkeleton from './_components/home-skeleton';
-import { Check, Library, UserPlus } from 'lucide-react';
+import { Check, Library } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
+import { MembershipSignupButton } from './_components/membership-signup-button';
 import LibraryPhoto from '../../../public/images/sam_manga.webp';
 import { FEATURES, FREE_FEATURES, PAID_FEATURES } from '~/lib/constants';
 import ScrollAnimationWrapper from '~/components/shared/scroll-animation-wrapper';
@@ -202,15 +203,7 @@ async function HomeContent() {
 					delay={200}
 					className="text-center"
 				>
-					<Button
-						asChild
-						className="border-2 border-black bg-button2 text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer hover:bg-button1"
-					>
-						<Link href="https://surreyunion.org/your-activity/clubs-and-societies-a-z/anime-manga-society">
-							<UserPlus className="mr-2 h-4 w-4" />
-							View Sign-Up Page
-						</Link>
-					</Button>
+					<MembershipSignupButton />
 				</ScrollAnimationWrapper>
 			</SectionContainer>
 		</main>

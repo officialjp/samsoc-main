@@ -21,12 +21,12 @@ export default function DailyNotFound({ gameType }: DailyNotFoundProps) {
 					NO DAILY {gameType.toUpperCase()} SET
 				</h2>
 				<p className="text-gray-700 mb-4 font-medium">
-					The daily {gameNames[gameType]} hasn&apos;t been scheduled for
-					today yet.
+					The daily {gameNames[gameType]} hasn&apos;t been scheduled
+					for today yet.
 				</p>
 				<p className="text-sm text-gray-600">
-					Check back later or contact an admin to schedule today&apos;s
-					challenge!
+					Check back later or contact an admin to schedule
+					today&apos;s challenge!
 				</p>
 			</div>
 		</div>
