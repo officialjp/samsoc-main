@@ -13,12 +13,6 @@ export default function GameSkeleton({
 		<div className="max-w-7xl mx-auto p-4 md:p-8">
 			<div className="flex flex-col lg:flex-row gap-8">
 				<div className="flex-1">
-					{/* Header skeleton */}
-					<div className="mb-8">
-						<div className="h-12 w-64 bg-gray-200 rounded-lg animate-pulse mb-3" />
-						<div className="h-5 w-40 bg-gray-100 rounded animate-pulse" />
-					</div>
-
 					{/* Content skeleton based on game type */}
 					{gameType === 'wordle' && (
 						<div className="space-y-4">
