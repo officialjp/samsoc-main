@@ -11,9 +11,9 @@ import DailyNotFound from './daily-not-found';
 import GameSkeleton from './game-skeleton';
 import LoginPrompt from './login-prompt';
 import { useGameAuth } from './use-game-auth';
-import { GAME_CONFIG, BANNER_ZOOM_LEVELS } from '~/lib/game-config';
+import { GAME_CONFIG, REVEAL_SIZES } from '~/lib/game-config';
 import type { LeaderboardUser, BannerGuess } from '~/lib/game-types';
-import { Maximize2 } from 'lucide-react';
+import { Maximize2, Eye } from 'lucide-react';
 import Image from 'next/image';
 import AnimeSearch, { type AnimeSelection } from './anime-search';
 
@@ -281,11 +281,9 @@ export default function ZoomedInBanner({
 		return <DailyNotFound gameType="banner" />;
 	if (!answerAnime || isLoading) return <GameSkeleton gameType="banner" />;
 
-	const currentZoomLevel = Math.min(
-		guesses.length,
-		BANNER_ZOOM_LEVELS.length - 1,
-	);
-	const zoomPercentage = BANNER_ZOOM_LEVELS[currentZoomLevel] ?? 1;
+	// Visibility Index mapping
+	const revealIndex = isGameOver ? 6 : guesses.length;
+	const revealSize = REVEAL_SIZES[revealIndex] ?? 100;
 	const leaderboardData: LeaderboardUser[] = leaderboard ?? [];
 
 	return (
@@ -305,6 +303,20 @@ export default function ZoomedInBanner({
 
 					{isGameOver ? (
 						<div className="space-y-8">
+							<div className="w-full max-w-xs mx-auto rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden bg-black p-2">
+								<div className="relative w-full aspect-3/4 bg-gray-900 rounded-xl overflow-hidden">
+									<Image
+										src={answerAnime.image!}
+										alt="Final Answer"
+										fill
+										className="object-cover"
+										sizes="400px"
+										draggable={false}
+										priority
+									/>
+								</div>
+							</div>
+
 							<GameOverBanner
 								won={gameWon || !!hasAlreadyWonToday}
 								answer={answerAnime.title}
@@ -321,21 +333,21 @@ export default function ZoomedInBanner({
 									{guesses.map((guess, idx) => (
 										<div
 											key={guess.id}
-											className={`border-2 border-black rounded-lg p-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${guess.animeId === answerAnime.id ? 'bg-green-50' : 'bg-gray-50'}`}
+											className={`border-2 border-black rounded-xl p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${guess.animeId === answerAnime.id ? 'bg-green-50' : 'bg-white'}`}
 											role="listitem"
 										>
 											<div className="flex items-center justify-between">
 												<div>
-													<div className="text-xs font-bold uppercase text-gray-500 mb-1">
+													<div className="text-[10px] font-bold uppercase text-gray-400 mb-1">
 														Guess #{idx + 1}
 													</div>
-													<div className="text-sm font-semibold text-gray-900">
+													<div className="text-sm font-bold text-gray-900">
 														{guess.animeTitle}
 													</div>
 												</div>
 												{guess.animeId ===
 													answerAnime.id && (
-													<span className="text-green-600 text-lg">
+													<span className="text-green-600 font-black">
 														✓
 													</span>
 												)}
@@ -347,60 +359,83 @@ export default function ZoomedInBanner({
 						</div>
 					) : (
 						<div className="space-y-6">
-							<div className="border-2 border-black rounded-2xl bg-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] max-w-xs mx-auto">
-								<div
-									className="relative w-full aspect-3/4 bg-gray-900 rounded-lg overflow-hidden flex items-center justify-center"
-									style={{ maxHeight: '400px' }}
-								>
+							<div className="w-full max-w-xs mx-auto rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden bg-black p-2">
+								<div className="relative w-full aspect-3/4 bg-gray-900 rounded-xl overflow-hidden">
 									{answerAnime.image ? (
-										<div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+										<div className="absolute inset-0">
 											<Image
 												src={answerAnime.image}
-												alt="Zoomed anime banner"
+												alt="Revealing anime banner"
 												fill
-												className="object-cover"
+												className="object-cover transition-all duration-700 ease-in-out"
 												style={{
-													transform: `scale(${1 / zoomPercentage})`,
-													transformOrigin:
-														'center center',
+													maskImage:
+														'radial-gradient(circle, black 100%, transparent 100%)',
+													maskRepeat: 'no-repeat',
+													maskPosition: 'center',
+													maskSize: `${revealSize}% ${revealSize}%`,
+													WebkitMaskImage:
+														'radial-gradient(circle, black 100%, transparent 100%)',
+													WebkitMaskRepeat:
+														'no-repeat',
+													WebkitMaskPosition:
+														'center',
+													WebkitMaskSize: `${revealSize}% ${revealSize}%`,
 												}}
-												sizes="320px"
+												draggable={false}
+												sizes="400px"
 												priority
 											/>
 										</div>
 									) : (
-										<div className="text-gray-400 text-center">
-											<Maximize2 className="w-12 h-12 mx-auto mb-2" />
-											<p>No image available</p>
+										<div className="flex flex-col items-center justify-center h-full text-gray-500">
+											<Maximize2 className="w-12 h-12 mb-2" />
+											<p className="text-xs font-black uppercase">
+												No image
+											</p>
 										</div>
 									)}
 								</div>
-								<div className="mt-3 text-xs font-bold text-gray-300 uppercase tracking-tighter text-center">
-									Zoom Level:{' '}
-									{Math.round(zoomPercentage * 100)}%
+								<div className="p-3 text-center bg-black">
+									<div className="flex items-center justify-center gap-2 mb-1">
+										<Eye className="w-3 h-3 text-blue-400" />
+										<div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+											Visibility
+										</div>
+									</div>
+									<div className="text-lg font-black text-white">
+										{revealSize}%
+									</div>
 								</div>
 							</div>
-							<div className="border-2 border-black rounded-xl bg-white p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-								<div className="space-y-2">
+
+							<div className="border-2 border-black rounded-2xl bg-white p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+								<div className="space-y-3">
 									<div className="text-xs font-bold uppercase text-gray-600 tracking-tighter">
-										Image Clarity Progress
+										Reveal Progress
 									</div>
-									<div className="flex gap-2">
-										{BANNER_ZOOM_LEVELS.map((_, idx) => (
+									<div className="flex gap-1.5">
+										{REVEAL_SIZES.map((_, idx) => (
 											<div
 												key={idx}
-												className={`flex-1 h-2 rounded-full border border-black/20 transition-colors ${idx <= currentZoomLevel ? 'bg-blue-500' : 'bg-gray-200'}`}
+												className={`flex-1 h-3 rounded-full border-2 border-black transition-all ${
+													idx <= guesses.length
+														? 'bg-blue-400 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
+														: 'bg-gray-100'
+												}`}
 											/>
 										))}
 									</div>
 								</div>
 							</div>
+
 							<AnimeSearch
 								onSelect={setSearchedAnime}
 								disabled={isGameOver}
 							/>
+
 							{guesses.length > 0 && (
-								<div className="space-y-4">
+								<div className="space-y-4 pt-4">
 									<h3 className="font-bold text-gray-900 uppercase tracking-widest text-sm border-b-2 border-black pb-2">
 										Recent Guesses
 									</h3>
@@ -410,14 +445,14 @@ export default function ZoomedInBanner({
 											.map((g, idx) => (
 												<div
 													key={g.id}
-													className="border-2 border-black rounded-lg bg-gray-50 p-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+													className="border-2 border-black rounded-xl bg-white p-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
 													role="listitem"
 												>
-													<div className="text-xs font-bold uppercase text-gray-500 mb-1">
+													<div className="text-[10px] font-bold uppercase text-gray-400 mb-0.5">
 														Guess #
 														{guesses.length - idx}
 													</div>
-													<div className="text-sm font-semibold text-gray-900">
+													<div className="text-sm font-bold text-gray-900">
 														{g.animeTitle}
 													</div>
 												</div>
