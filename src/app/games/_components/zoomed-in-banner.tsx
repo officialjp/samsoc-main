@@ -310,7 +310,8 @@ export default function ZoomedInBanner({
 										alt="Final Answer"
 										fill
 										className="object-cover"
-										sizes="400px"
+										width={400}
+										height={300}
 										draggable={false}
 										priority
 									/>
@@ -383,7 +384,8 @@ export default function ZoomedInBanner({
 													WebkitMaskSize: `${revealSize}% ${revealSize}%`,
 												}}
 												draggable={false}
-												sizes="400px"
+												width={400}
+												height={300}
 												priority
 											/>
 										</div>
