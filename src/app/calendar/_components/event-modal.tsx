@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { format } from 'date-fns';
 import { X } from 'lucide-react';
-import posthog from 'posthog-js';
+import { captureEvent } from '~/lib/posthog-client';
 import { cn } from '~/lib/utils';
 import type { Event } from 'generated/prisma/client';
 
@@ -18,7 +18,7 @@ export function EventModal({ event, onClose }: EventModalProps) {
 	// Track event view on modal open (using ref to ensure single tracking)
 	if (!hasTrackedRef.current) {
 		hasTrackedRef.current = true;
-		posthog.capture('calendar_event_viewed', {
+		captureEvent('calendar_event_viewed', {
 			event_title: event.title,
 			event_date: event.date.toISOString(),
 			event_location: event.location,

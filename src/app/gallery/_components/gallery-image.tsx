@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { X } from 'lucide-react';
-import posthog from 'posthog-js';
+import { captureEvent } from '~/lib/posthog-client';
 
 interface GalleryImageProps {
 	src: string;
@@ -19,7 +19,7 @@ export default function GalleryImage({
 
 	const openModal = () => {
 		setIsOpen(true);
-		posthog.capture('gallery_image_viewed', {
+		captureEvent('gallery_image_viewed', {
 			image_alt: alt,
 		});
 	};

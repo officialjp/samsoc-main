@@ -1,5 +1,0 @@
-fix the prisma implementation cuz that shit is a lil broken cuz of prisma 7
-
-The resource https://samsoc.com (example) was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. fix this <-----
-
-check posthog implementation because it looks broken?

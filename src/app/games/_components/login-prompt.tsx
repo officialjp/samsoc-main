@@ -2,7 +2,7 @@
 
 import { signIn } from '~/lib/auth-client';
 import { Lock } from 'lucide-react';
-import posthog from 'posthog-js';
+import { captureEvent } from '~/lib/posthog-client';
 
 interface LoginPromptProps {
 	/** The message to display to the user */
@@ -26,7 +26,7 @@ export default function LoginPrompt({
 	onDismiss,
 }: LoginPromptProps) {
 	const handleLogin = () => {
-		posthog.capture('login_initiated', {
+		captureEvent('login_initiated', {
 			provider: 'discord',
 			prompt_variant: variant,
 		});
@@ -34,7 +34,7 @@ export default function LoginPrompt({
 	};
 
 	const handleSkipLogin = () => {
-		posthog.capture('login_skipped', {
+		captureEvent('login_skipped', {
 			prompt_variant: variant,
 		});
 		onDismiss?.();

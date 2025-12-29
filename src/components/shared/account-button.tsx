@@ -3,7 +3,11 @@
 import { useRef } from 'react';
 import { useSession, signIn, signOut } from '~/lib/auth-client';
 import Image from 'next/image';
-import posthog from 'posthog-js';
+import {
+	captureEvent,
+	identifyUser,
+	resetPostHog,
+} from '~/lib/posthog-client';
 
 export default function AccountButton() {
 	const { data: session, isPending } = useSession();
@@ -12,7 +16,7 @@ export default function AccountButton() {
 	// Identify user with PostHog when session is available
 	if (session?.user && !hasIdentifiedRef.current) {
 		hasIdentifiedRef.current = true;
-		posthog.identify(session.user.id, {
+		identifyUser(session.user.id, {
 			email: session.user.email,
 			name: session.user.name,
 		});
@@ -21,17 +25,17 @@ export default function AccountButton() {
 	// Reset when user logs out
 	if (!session && !isPending && hasIdentifiedRef.current) {
 		hasIdentifiedRef.current = false;
-		posthog.reset();
+		resetPostHog();
 	}
 
 	const handleSignOut = () => {
-		posthog.capture('user_logged_out');
-		posthog.reset();
+		captureEvent('user_logged_out');
+		resetPostHog();
 		void signOut();
 	};
 
 	const handleSignIn = () => {
-		posthog.capture('login_initiated', {
+		captureEvent('login_initiated', {
 			provider: 'discord',
 			prompt_variant: 'header',
 		});

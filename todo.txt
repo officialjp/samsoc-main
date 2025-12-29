@@ -1,6 +1,0 @@
-- inView -> rework
-- remove all "inView" components and fix
-
-make sam-chan integration
-
-make logo have colour highlights to make it look cool for specific holidays and events
