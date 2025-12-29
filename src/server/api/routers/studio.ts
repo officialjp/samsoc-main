@@ -38,10 +38,6 @@ interface LeaderboardEntry {
 	totalTries: number;
 }
 
-/**
- * Gets midnight UTC for the current London calendar date.
- * Consistent across queries and mutations.
- */
 function getLondonMidnightUTC(inputDate?: Date): Date {
 	const now = inputDate ?? new Date();
 	const formatter = new Intl.DateTimeFormat('en-CA', {
@@ -120,9 +116,15 @@ export const studioRouter = createTRPCRouter({
 
 		const genreMap = studioAnimes.reduce(
 			(acc, a) => {
-				a.animeGenres.forEach((ag) => {
-					const genre = ag.genre.name;
-					acc[genre] = (acc[genre] ?? 0) + 1;
+				const anime = a as unknown as {
+					animeGenres: { genre: { name: string } }[];
+				};
+
+				anime.animeGenres?.forEach((ag) => {
+					const genreName = ag.genre?.name;
+					if (genreName) {
+						acc[genreName] = (acc[genreName] ?? 0) + 1;
+					}
 				});
 				return acc;
 			},
