@@ -4,7 +4,7 @@ import type { EmblaOptionsType } from 'embla-carousel';
 import { DotButton, useDotButton } from './hero-carousel-button';
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
-import type { Carousel } from '@prisma/client';
+import type { Carousel } from 'generated/prisma/client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { SvgIcon } from '~/components/shared/svg-icon';

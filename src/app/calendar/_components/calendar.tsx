@@ -5,7 +5,7 @@ import { addMonths, subMonths, format } from 'date-fns';
 import { CalendarHeader } from './calendar-header';
 import { CalendarDays } from './calendar-days';
 import { CalendarCells } from './calendar-cells';
-import type { Event } from '@prisma/client';
+import type { Event } from 'generated/prisma/client';
 import { MobileCalendarView } from './mobile-calendar-view';
 import { useRouter, useSearchParams } from 'next/navigation';
 

@@ -7,7 +7,7 @@ import { TRPCError } from '@trpc/server';
 import * as z from 'zod';
 import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { R2_BUCKET, R2_PUBLIC_URL, r2Client } from '~/server/r2-client';
-import { type Prisma } from '@prisma/client';
+import { type Prisma } from 'generated/prisma/client';
 
 const fileUploadSchema = z.object({
 	base64: z.string().startsWith('data:'),

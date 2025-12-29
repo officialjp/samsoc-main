@@ -32,7 +32,7 @@ import {
 	DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
 
-import type { AnimeCard } from '@prisma/client';
+import type { AnimeCard } from 'generated/prisma/client';
 
 const animeCardFormSchema = z.object({
 	id: z.number(),

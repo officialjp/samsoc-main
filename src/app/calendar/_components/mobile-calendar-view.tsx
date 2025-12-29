@@ -12,7 +12,7 @@ import {
 } from 'date-fns';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from '~/lib/utils';
-import type { Event } from '@prisma/client';
+import type { Event } from 'generated/prisma/client';
 import { EventModal } from './event-modal';
 
 interface MobileCalendarViewProps {

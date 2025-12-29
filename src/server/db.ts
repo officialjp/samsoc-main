@@ -1,18 +1,24 @@
-// server/db.ts
 import { env } from '~/env';
-import { PrismaClient } from '@prisma/client';
 import { withAccelerate } from '@prisma/extension-accelerate';
+// Path: relative from 'server/db.ts' to root 'generated/prisma'
+import { PrismaClient } from 'generated/prisma/client';
 
-const createPrismaClient = () =>
-	new PrismaClient({
+const createPrismaClient = () => {
+	return new PrismaClient({
+		// Required for Prisma 7 + Accelerate
+		accelerateUrl: env.DATABASE_URL,
 		log:
 			env.NODE_ENV === 'development'
 				? ['query', 'error', 'warn']
 				: ['error'],
 	}).$extends(withAccelerate());
+};
+
+// Properly type the extended client for the global object
+type PrismaClientWithAccelerate = ReturnType<typeof createPrismaClient>;
 
 const globalForPrisma = globalThis as unknown as {
-	prisma: ReturnType<typeof createPrismaClient> | undefined;
+	prisma: PrismaClientWithAccelerate | undefined;
 };
 
 export const db = globalForPrisma.prisma ?? createPrismaClient();

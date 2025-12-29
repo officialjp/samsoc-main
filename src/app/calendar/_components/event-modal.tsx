@@ -5,7 +5,7 @@ import { format } from 'date-fns';
 import { X } from 'lucide-react';
 import posthog from 'posthog-js';
 import { cn } from '~/lib/utils';
-import type { Event } from '@prisma/client';
+import type { Event } from 'generated/prisma/client';
 
 interface EventModalProps {
 	event: Event;
