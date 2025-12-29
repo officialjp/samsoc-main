@@ -3,7 +3,7 @@ import { SectionHeading } from '~/components/layout/section-heading';
 import type { Metadata } from 'next';
 import { api } from '~/trpc/server';
 import { Calendar } from './_components/calendar';
-import type { Event } from '@prisma/client';
+import type { Event } from 'generated/prisma/client';
 import ScrollAnimationWrapper from '~/components/shared/scroll-animation-wrapper';
 import { Suspense } from 'react';
 import CalendarSkeleton from './_components/calendar-skeleton';

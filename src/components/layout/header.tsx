@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
 import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
-import posthog from 'posthog-js';
+import { captureEvent } from '~/lib/posthog-client';
 import Logo from '../../../public/images/logo.webp';
 import { cn } from '~/lib/utils';
 import { usePathname } from 'next/navigation';
@@ -199,7 +199,7 @@ function SocialIcon({
 			: href.includes('instagram')
 				? 'instagram'
 				: 'unknown';
-		posthog.capture('social_link_clicked', {
+		captureEvent('social_link_clicked', {
 			platform,
 			destination_url: href,
 		});

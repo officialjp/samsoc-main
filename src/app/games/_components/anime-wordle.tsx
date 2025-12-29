@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { api } from '~/trpc/react';
 import { toast } from 'sonner';
-import posthog from 'posthog-js';
+import { captureEvent } from '~/lib/posthog-client';
 import Countdown from './countdown';
 import Leaderboard from './leaderboard';
 import GameOverBanner from './game-over-banner';
@@ -201,7 +201,7 @@ export default function AnimeWordle({
 
 		// Track first guess as game start
 		if (guesses.length === 0) {
-			posthog.capture('wordle_game:started', {
+			captureEvent('wordle_game:started', {
 				is_authenticated: isAuthenticated,
 			});
 		}
@@ -232,7 +232,7 @@ export default function AnimeWordle({
 
 		if (isCorrect) {
 			setGameWon(true);
-			posthog.capture('wordle_game:won', {
+			captureEvent('wordle_game:won', {
 				tries: newGuesses.length,
 				max_guesses: GAME_CONFIG.WORDLE.MAX_GUESSES,
 				is_authenticated: isAuthenticated,
@@ -241,7 +241,7 @@ export default function AnimeWordle({
 				winMutation.mutate({ tries: newGuesses.length });
 		} else if (newGuesses.length >= GAME_CONFIG.WORDLE.MAX_GUESSES) {
 			setGameFailed(true);
-			posthog.capture('wordle_game:lost', {
+			captureEvent('wordle_game:lost', {
 				tries: newGuesses.length,
 				max_guesses: GAME_CONFIG.WORDLE.MAX_GUESSES,
 				is_authenticated: isAuthenticated,
@@ -252,7 +252,7 @@ export default function AnimeWordle({
 
 	const handleShare = async () => {
 		if (!answerAnime) return;
-		posthog.capture('wordle_game:shared', {
+		captureEvent('wordle_game:shared', {
 			won: gameWon,
 			tries: guesses.length,
 			max_guesses: GAME_CONFIG.WORDLE.MAX_GUESSES,

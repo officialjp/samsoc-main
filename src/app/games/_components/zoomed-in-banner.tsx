@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { api } from '~/trpc/react';
 import { toast } from 'sonner';
-import posthog from 'posthog-js';
+import { captureEvent } from '~/lib/posthog-client';
 import Countdown from './countdown';
 import Leaderboard from './leaderboard';
 import GameOverBanner from './game-over-banner';
@@ -179,7 +179,7 @@ export default function ZoomedInBanner({
 		isProcessingRef.current = true;
 
 		if (guessesRef.current.length === 0) {
-			posthog.capture('banner_game:started', {
+			captureEvent('banner_game:started', {
 				is_authenticated: isAuthenticated,
 			});
 		}
@@ -201,7 +201,7 @@ export default function ZoomedInBanner({
 
 		if (isCorrect) {
 			setGameWon(true);
-			posthog.capture('banner_game:won', {
+			captureEvent('banner_game:won', {
 				tries: newCount,
 				max_guesses: GAME_CONFIG.BANNER.MAX_GUESSES,
 				is_authenticated: isAuthenticated,
@@ -212,7 +212,7 @@ export default function ZoomedInBanner({
 		) {
 			setGameFailed(true);
 			hasSubmittedLoss.current = true;
-			posthog.capture('banner_game:lost', {
+			captureEvent('banner_game:lost', {
 				tries: newCount,
 				max_guesses: GAME_CONFIG.BANNER.MAX_GUESSES,
 				is_authenticated: isAuthenticated,
@@ -242,7 +242,7 @@ export default function ZoomedInBanner({
 
 	const handleShare = async () => {
 		if (!answerAnime) return;
-		posthog.capture('banner_game:shared', {
+		captureEvent('banner_game:shared', {
 			won: gameWon,
 			tries: guesses.length,
 		});

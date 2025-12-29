@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import posthog from 'posthog-js';
+import { captureEvent } from '~/lib/posthog-client';
 import MangaCard from './manga-card';
 import LibraryFilters from './library-filters';
 import { Pagination } from '~/components/shared/pagination';
@@ -73,7 +73,7 @@ export function LibrarySearch({
 		setFilters(newFilters);
 		updateSearchParams(newFilters, 1);
 
-		posthog.capture('library_searched', {
+		captureEvent('library_searched', {
 			search_query: newFilters.search || null,
 			status_filter: newFilters.status,
 			genre_filter: newFilters.genre,

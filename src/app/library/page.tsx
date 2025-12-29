@@ -6,6 +6,7 @@ import LibrarySkeleton from './_components/library-skeleton';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import ScrollAnimationWrapper from '~/components/shared/scroll-animation-wrapper';
+import type { GetLibraryPaginatedItemResult } from '~/server/api/routers/manga';
 
 export const metadata: Metadata = {
 	title: 'Surrey Anime and Manga Society - Library',
@@ -40,16 +41,6 @@ export const metadata: Metadata = {
 		follow: true,
 	},
 };
-
-interface MangaWithGenres {
-	id: number;
-	title: string;
-	author: string;
-	volume: number;
-	borrowed_by: string | null;
-	source: string;
-	genres: Array<{ id: number; name: string }>;
-}
 
 interface MangaData {
 	id: number;
@@ -119,9 +110,7 @@ async function LibraryContent({
 		search: search || undefined,
 	});
 
-	const rawMangaData = mangaResponse.items as MangaWithGenres[];
-
-	const mangaData: MangaData[] = rawMangaData.map((manga) => ({
+	const mangaData: MangaData[] = mangaResponse.items.map((manga) => ({
 		id: manga.id,
 		title: manga.title,
 		author: manga.author,

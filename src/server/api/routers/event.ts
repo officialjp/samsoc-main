@@ -5,7 +5,7 @@ import {
 } from '~/server/api/trpc';
 import { TRPCError } from '@trpc/server';
 import * as z from 'zod';
-import { Prisma } from '@prisma/client';
+import { Prisma } from 'generated/prisma/client';
 import { startOfMonth, endOfMonth } from 'date-fns';
 
 const createItemInputSchema = z.object({

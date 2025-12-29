@@ -7,7 +7,7 @@ import { TRPCError } from '@trpc/server';
 import * as z from 'zod';
 import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { R2_BUCKET, R2_PUBLIC_URL, r2Client } from '~/server/r2-client';
-import { type Prisma } from '@prisma/client';
+import { type Prisma } from 'generated/prisma/client';
 
 const fileUploadSchema = z.object({
 	base64: z.string().startsWith('data:'),
@@ -92,6 +92,72 @@ const getKeyFromUrl = (url: string): string | null => {
 	return url.substring(R2_PUBLIC_URL.length + 1);
 };
 
+// Type helpers for manga queries with nested genres
+const getLibraryDataSelect = {
+	id: true,
+	title: true,
+	author: true,
+	volume: true,
+	borrowed_by: true,
+	source: true,
+	genres: {
+		select: {
+			id: true,
+			name: true,
+		},
+	},
+} as const satisfies Prisma.MangaSelect;
+
+const getLibraryPaginatedSelect = {
+	id: true,
+	title: true,
+	author: true,
+	volume: true,
+	borrowed_by: true,
+	source: true,
+	genres: {
+		select: {
+			id: true,
+			name: true,
+		},
+	},
+} as const satisfies Prisma.MangaSelect;
+
+// Extract return types
+export type GetLibraryDataResult = Prisma.MangaGetPayload<{
+	select: {
+		id: true;
+		title: true;
+		author: true;
+		volume: true;
+		borrowed_by: true;
+		source: true;
+		genres: {
+			select: {
+				id: true;
+				name: true;
+			};
+		};
+	};
+}>[];
+
+export type GetLibraryPaginatedItemResult = Prisma.MangaGetPayload<{
+	select: {
+		id: true;
+		title: true;
+		author: true;
+		volume: true;
+		borrowed_by: true;
+		source: true;
+		genres: {
+			select: {
+				id: true;
+				name: true;
+			};
+		};
+	};
+}>;
+
 export const mangaRouter = createTRPCRouter({
 	getAllItems: publicProcedure.query(async ({ ctx }) => {
 		return ctx.db.manga.findMany({
@@ -113,24 +179,11 @@ export const mangaRouter = createTRPCRouter({
 	 */
 	getLibraryData: publicProcedure.query(async ({ ctx }) => {
 		const allManga = await ctx.db.manga.findMany({
-			select: {
-				id: true,
-				title: true,
-				author: true,
-				volume: true,
-				borrowed_by: true,
-				source: true,
-				genres: {
-					select: {
-						id: true,
-						name: true,
-					},
-				},
-			},
+			select: getLibraryDataSelect,
 			orderBy: { id: 'asc' },
 		});
 
-		return { data: allManga };
+		return { data: allManga as GetLibraryDataResult };
 	}),
 
 	/**
@@ -147,7 +200,13 @@ export const mangaRouter = createTRPCRouter({
 				search: z.string().optional(),
 			}),
 		)
-		.query(async ({ ctx, input }) => {
+		.query(async ({ ctx, input }): Promise<{
+			items: GetLibraryPaginatedItemResult[];
+			totalCount: number;
+			totalPages: number;
+			currentPage: number;
+			hasMore: boolean;
+		}> => {
 			const { limit, page, status, genre, search } = input;
 
 			// Build where clause based on filters
@@ -187,26 +246,13 @@ export const mangaRouter = createTRPCRouter({
 			const skip = (page - 1) * limit;
 
 			// Fetch paginated data
-			const items = await ctx.db.manga.findMany({
+			const items = (await ctx.db.manga.findMany({
 				where,
-				select: {
-					id: true,
-					title: true,
-					author: true,
-					volume: true,
-					borrowed_by: true,
-					source: true,
-					genres: {
-						select: {
-							id: true,
-							name: true,
-						},
-					},
-				},
+				select: getLibraryPaginatedSelect,
 				orderBy: { id: 'asc' },
 				take: limit,
 				skip: skip,
-			});
+			})) as GetLibraryPaginatedItemResult[];
 
 			const totalPages = Math.ceil(totalCount / limit);
 

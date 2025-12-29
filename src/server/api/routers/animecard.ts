@@ -6,7 +6,7 @@ import {
 import { TRPCError } from '@trpc/server';
 import * as z from 'zod';
 import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
-import { type Prisma } from '@prisma/client';
+import { type Prisma } from 'generated/prisma/client';
 import { r2Client, R2_BUCKET, R2_PUBLIC_URL } from '~/server/r2-client';
 const fileUploadSchema = z.object({
 	base64: z.string().startsWith('data:'),
@@ -99,6 +99,44 @@ const updateAnimeCardInputSchema = z.object({
 	newImage: fileUploadSchema.optional(),
 });
 
+// Type helper for getPublicCards query
+const getPublicCardsSelect = {
+	id: true,
+	title: true,
+	episode: true,
+	total_episodes: true,
+	mal_link: true,
+	show_type: true,
+	studio: true,
+	source: true,
+	genres: {
+		select: {
+			id: true,
+			name: true,
+		},
+	},
+} satisfies Prisma.AnimeCardSelect;
+
+// Extract the return type
+export type GetPublicCardsResult = Prisma.AnimeCardGetPayload<{
+	select: {
+		id: true;
+		title: true;
+		episode: true;
+		total_episodes: true;
+		mal_link: true;
+		show_type: true;
+		studio: true;
+		source: true;
+		genres: {
+			select: {
+				id: true;
+				name: true;
+			};
+		};
+	};
+}>[];
+
 export const animeCardsRouter = createTRPCRouter({
 	getAllCards: publicProcedure.query(async ({ ctx }) => {
 		return ctx.db.animeCard.findMany({
@@ -110,27 +148,15 @@ export const animeCardsRouter = createTRPCRouter({
 	 * Optimized query for landing page - includes genres and only necessary fields
 	 * Used by public-facing pages for better LCP/FCP
 	 */
-	getPublicCards: publicProcedure.query(async ({ ctx }) => {
-		return ctx.db.animeCard.findMany({
-			select: {
-				id: true,
-				title: true,
-				episode: true,
-				total_episodes: true,
-				mal_link: true,
-				show_type: true,
-				studio: true,
-				source: true,
-				genres: {
-					select: {
-						id: true,
-						name: true,
-					},
-				},
-			},
-			orderBy: { id: 'asc' },
-		});
-	}),
+	getPublicCards: publicProcedure.query(
+		async ({ ctx }): Promise<GetPublicCardsResult> => {
+			const result = await ctx.db.animeCard.findMany({
+				select: getPublicCardsSelect,
+				orderBy: { id: 'asc' },
+			});
+			return result as GetPublicCardsResult;
+		},
+	),
 
 	updateCard: adminProcedure
 		.input(updateAnimeCardInputSchema)

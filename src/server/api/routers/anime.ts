@@ -12,6 +12,7 @@ import {
 	GAME_TYPES,
 } from '~/server/api/helpers/game-stats';
 import type { GameStatsWithUser } from '~/server/api/helpers/game-stats';
+import type { Prisma } from 'generated/prisma/client';
 
 /**
  * Return type for anime data used in wordle game
@@ -361,7 +362,7 @@ export const animeRouter = createTRPCRouter({
 			const guess = await ctx.db.gameGuess.create({
 				data: {
 					sessionId: session.id,
-					guessData: input.guessData,
+					guessData: input.guessData as Prisma.InputJsonValue,
 				},
 			});
 

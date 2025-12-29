@@ -3,7 +3,7 @@ import nextPlugin from '@next/eslint-plugin-next';
 
 export default tseslint.config(
 	{
-		ignores: ['.next'],
+		ignores: ['.next', 'generated', 'node_modules'],
 	},
 	{
 		...nextPlugin.configs['core-web-vitals'],

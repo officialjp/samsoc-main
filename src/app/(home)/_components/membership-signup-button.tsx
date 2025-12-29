@@ -2,12 +2,12 @@
 
 import Link from 'next/link';
 import { UserPlus } from 'lucide-react';
-import posthog from 'posthog-js';
+import { captureEvent } from '~/lib/posthog-client';
 import { Button } from '~/components/ui/button';
 
 export function MembershipSignupButton() {
 	const handleClick = () => {
-		posthog.capture('membership_signup_clicked', {
+		captureEvent('membership_signup_clicked', {
 			destination_url:
 				'https://surreyunion.org/your-activity/clubs-and-societies-a-z/anime-manga-society',
 		});

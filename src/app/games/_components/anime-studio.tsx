@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { api } from '~/trpc/react';
 import { toast } from 'sonner';
-import posthog from 'posthog-js';
+import { captureEvent } from '~/lib/posthog-client';
 import Countdown from './countdown';
 import Leaderboard from './leaderboard';
 import GameOverBanner from './game-over-banner';
@@ -151,7 +151,7 @@ export default function StudioGame({
 
 		// Track start on first guess
 		if (guesses.length === 0) {
-			posthog.capture('studio_game:started', {
+			captureEvent('studio_game:started', {
 				is_authenticated: isAuthenticated,
 			});
 		}
@@ -169,7 +169,7 @@ export default function StudioGame({
 
 		if (isCorrect) {
 			setGameWon(true);
-			posthog.capture('studio_game:won', {
+			captureEvent('studio_game:won', {
 				tries: newGuesses.length,
 				max_guesses: GAME_CONFIG.STUDIO.MAX_GUESSES,
 				is_authenticated: isAuthenticated,
@@ -178,7 +178,7 @@ export default function StudioGame({
 				winMutation.mutate({ tries: newGuesses.length });
 		} else if (newGuesses.length >= GAME_CONFIG.STUDIO.MAX_GUESSES) {
 			setGameFailed(true);
-			posthog.capture('studio_game:lost', {
+			captureEvent('studio_game:lost', {
 				tries: newGuesses.length,
 				max_guesses: GAME_CONFIG.STUDIO.MAX_GUESSES,
 				is_authenticated: isAuthenticated,
@@ -235,7 +235,7 @@ export default function StudioGame({
 
 	const handleShare = async () => {
 		if (!answerStudio) return;
-		posthog.capture('studio_game:shared', {
+		captureEvent('studio_game:shared', {
 			won: gameWon,
 			tries: guesses.length,
 		});

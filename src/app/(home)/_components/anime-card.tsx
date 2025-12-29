@@ -9,26 +9,10 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from '~/components/ui/tooltip';
-
-interface Genre {
-	id: number;
-	name: string;
-}
-
-interface AnimeCardData {
-	id: number;
-	title: string;
-	episode: string;
-	source: string;
-	mal_link: string;
-	total_episodes: number;
-	show_type: string;
-	studio: string;
-	genres: Genre[];
-}
+import type { GetPublicCardsResult } from '~/server/api/routers/animecard';
 
 interface AnimeCardProps {
-	animes: AnimeCardData[];
+	animes: GetPublicCardsResult;
 }
 
 const CARD_POSITIONS = ['left-card', 'center-card', 'right-card'] as const;
