@@ -9,27 +9,28 @@ import { Toaster } from 'sonner';
 import { ErrorBoundary } from '~/components/shared/error-boundary';
 
 export const metadata: Metadata = {
-	title: 'Surrey Anime and Manga Society',
-	description: 'Website for the anime society in the University of Surrey',
+	title: 'Surrey Anime and Manga Society - Join Our Community',
+	description:
+		'Join the Surrey Anime and Manga Society at University of Surrey! Discover weekly screenings, exciting events, and interactive games.',
 	openGraph: {
-		title: 'Surrey Anime and Manga Society',
+		title: 'Surrey Anime and Manga Society - Join Our Community',
 		description:
-			'Website for the anime society in the University of Surrey',
+			'Join the Surrey Anime and Manga Society at University of Surrey! Discover weekly screenings, exciting events, interactive games, and connect with fellow anime enthusiasts.',
 		images: [
 			{
 				url: '/opengraph-image',
 				width: 1200,
 				height: 630,
-				alt: 'Surrey Anime and Manga Society',
+				alt: 'Surrey Anime and Manga Society - Join Our Community',
 			},
 		],
 		type: 'website',
 	},
 	twitter: {
 		card: 'summary_large_image',
-		title: 'Surrey Anime and Manga Society',
+		title: 'Surrey Anime and Manga Society - Join Our Community',
 		description:
-			'Website for the anime society in the University of Surrey',
+			'Join the Surrey Anime and Manga Society at University of Surrey! Discover weekly screenings, exciting events, interactive games, and connect with fellow anime enthusiasts.',
 		images: ['/opengraph-image'],
 	},
 	alternates: {
