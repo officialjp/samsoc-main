@@ -75,7 +75,13 @@ export function generateImageMetadata() {
 	];
 }
 
-export default function Icon({ size }: { size: Size }) {
+export default function Icon({ size }: { size?: Size }) {
+	// SVG viewBox is 1995x1997, aspect ratio ≈ 0.999
+	// Calculate 75% of the container size to maintain aspect ratio
+	// Default to 120x120 if size is not provided
+	const containerSize = size?.width ?? 120;
+	const svgSize = Math.floor(containerSize * 0.75);
+	
 	return new ImageResponse(
 		(
 			<div
@@ -91,19 +97,15 @@ export default function Icon({ size }: { size: Size }) {
 			>
 				<svg
 					style={{
-						position: 'relative',
-						width: '75%',
-						height: '75%',
+						width: `${svgSize}px`,
+						height: `${svgSize}px`,
 					}}
-					version="1.0"
-					xmlns="http://www.w3.org/2000/svg"
-					width="1995.000000pt"
-					height="1997.000000pt"
-					viewBox="0 0 1995.000000 1997.000000"
+					viewBox="0 0 1995 1997"
 					preserveAspectRatio="xMidYMid meet"
+					xmlns="http://www.w3.org/2000/svg"
 				>
 					<g
-						transform="translate(0.000000,1997.000000) scale(0.100000,-0.100000)"
+						transform="translate(0,1997) scale(0.1,-0.1)"
 						fill="#c01a21"
 						stroke="none"
 					>
@@ -153,6 +155,6 @@ m-6046 -546 c-7 -104 -285 -5480 -285 -5516 l0 -22 -882 2 -883 3 -3 2813 -2
 				</svg>
 			</div>
 		),
-		{ ...size },
+		size ? { ...size } : { width: 120, height: 120 },
 	);
 }

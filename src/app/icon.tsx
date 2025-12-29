@@ -7,6 +7,11 @@ export const size = {
 export const contentType = 'image/png';
 
 export default function Icon() {
+	// SVG viewBox is 1995x1997, aspect ratio ≈ 0.999
+	// For a 32x32 square, we want to fit the SVG maintaining aspect ratio
+	// Since viewBox is almost square, we can use the full size
+	const iconSize = 32;
+	
 	return new ImageResponse(
 		(
 			<div
@@ -23,19 +28,15 @@ export default function Icon() {
 			>
 				<svg
 					style={{
-						position: 'relative',
-						width: '100%',
-						height: '100%',
+						width: `${iconSize}px`,
+						height: `${iconSize}px`,
 					}}
-					version="1.0"
-					xmlns="http://www.w3.org/2000/svg"
-					width="1995.000000pt"
-					height="1997.000000pt"
-					viewBox="0 0 1995.000000 1997.000000"
+					viewBox="0 0 1995 1997"
 					preserveAspectRatio="xMidYMid meet"
+					xmlns="http://www.w3.org/2000/svg"
 				>
 					<g
-						transform="translate(0.000000,1997.000000) scale(0.100000,-0.100000)"
+						transform="translate(0,1997) scale(0.1,-0.1)"
 						fill="#c01a21"
 						stroke="none"
 					>
