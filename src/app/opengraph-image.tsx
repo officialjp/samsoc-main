@@ -90,9 +90,22 @@ export default function Image() {
 						fontSize: '28px',
 						fontWeight: '600',
 						boxShadow: '0 4px 12px rgba(192, 26, 33, 0.3)',
+						gap: '12px',
 					}}
 				>
-					Explore Events, Games & More →
+					<span>Explore Events, Games & More</span>
+					<svg
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						strokeWidth="3"
+						strokeLinecap="round"
+						strokeLinejoin="round"
+					>
+						<path d="M5 12h14M12 5l7 7-7 7" />
+					</svg>
 				</div>
 			</div>
 		),
