@@ -15,7 +15,7 @@ import { GAME_CONFIG, REVEAL_SIZES } from '~/lib/game-config';
 import type { LeaderboardUser, BannerGuess } from '~/lib/game-types';
 import { Maximize2, Eye } from 'lucide-react';
 import Image from 'next/image';
-import AnimeSearch, { type AnimeSelection } from './anime-search';
+import type { AnimeSelection } from './anime-search';
 
 interface LocalGuess {
 	id: string;
@@ -31,6 +31,7 @@ interface ZoomedInBannerProps {
 	setGameFailed: (failed: boolean) => void;
 	searchedAnime?: AnimeSelection;
 	setSearchedAnime: (selection: AnimeSelection | undefined) => void;
+	onLoadingChange?: (isLoading: boolean) => void;
 }
 
 export default function ZoomedInBanner({
@@ -39,6 +40,7 @@ export default function ZoomedInBanner({
 	setGameFailed,
 	searchedAnime,
 	setSearchedAnime,
+	onLoadingChange,
 }: ZoomedInBannerProps) {
 	const [guesses, setGuesses] = useState<Guess[]>([]);
 	const [isCopied, setIsCopied] = useState(false);
@@ -144,6 +146,10 @@ export default function ZoomedInBanner({
 	useEffect(() => {
 		if (!isAuthenticated && answerAnime && isLoading) setIsLoading(false);
 	}, [isAuthenticated, answerAnime, isLoading]);
+
+	useEffect(() => {
+		onLoadingChange?.(isLoading);
+	}, [isLoading, onLoadingChange]);
 
 	useEffect(() => {
 		if (hasAlreadyWonToday && !gameWon) setGameWon(true);
@@ -430,11 +436,6 @@ export default function ZoomedInBanner({
 									</div>
 								</div>
 							</div>
-
-							<AnimeSearch
-								onSelect={setSearchedAnime}
-								disabled={isGameOver}
-							/>
 
 							{guesses.length > 0 && (
 								<div className="space-y-4 pt-4">

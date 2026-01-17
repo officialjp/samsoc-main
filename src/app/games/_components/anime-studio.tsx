@@ -19,6 +19,7 @@ interface StudioGameProps {
 	gameWon: boolean;
 	setGameWon: (won: boolean) => void;
 	setGameFailed: (failed: boolean) => void;
+	onLoadingChange?: (isLoading: boolean) => void;
 }
 
 export default function StudioGame({
@@ -26,6 +27,7 @@ export default function StudioGame({
 	gameWon,
 	setGameWon,
 	setGameFailed,
+	onLoadingChange,
 }: StudioGameProps) {
 	const [guesses, setGuesses] = useState<{ studioName: string }[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
@@ -123,6 +125,10 @@ export default function StudioGame({
 	useEffect(() => {
 		if (!isAuthenticated && answerStudio && isLoading) setIsLoading(false);
 	}, [isAuthenticated, answerStudio, isLoading]);
+
+	useEffect(() => {
+		onLoadingChange?.(isLoading);
+	}, [isLoading, onLoadingChange]);
 
 	const processGuess = useCallback(() => {
 		if (

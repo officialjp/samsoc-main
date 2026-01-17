@@ -12,6 +12,7 @@ export default function WordlePage() {
 	>();
 	const [gameWon, setGameWon] = useState(false);
 	const [gameFailed, setGameFailed] = useState(false);
+	const [isGameLoading, setIsGameLoading] = useState(true);
 
 	const isGameOver = gameWon || gameFailed;
 
@@ -25,7 +26,7 @@ export default function WordlePage() {
 		<GameErrorBoundary>
 			<main className="min-h-screen">
 				<GameHeader gameType="wordle" />
-				{!isGameOver && (
+				{!isGameLoading && !isGameOver && (
 					<AnimeSearch onSelect={handleSelect} disabled={false} />
 				)}
 				<AnimeWordle
@@ -33,6 +34,7 @@ export default function WordlePage() {
 					gameWon={gameWon}
 					setGameWon={setGameWon}
 					setGameFailed={setGameFailed}
+					onLoadingChange={setIsGameLoading}
 				/>
 			</main>
 		</GameErrorBoundary>

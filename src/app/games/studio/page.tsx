@@ -14,6 +14,7 @@ export default function StudioPage() {
 	} | null>(null);
 	const [gameWon, setGameWon] = useState(false);
 	const [gameFailed, setGameFailed] = useState(false);
+	const [isGameLoading, setIsGameLoading] = useState(true);
 
 	const isGameOver = gameWon || gameFailed;
 
@@ -27,7 +28,7 @@ export default function StudioPage() {
 		<GameErrorBoundary>
 			<main className="min-h-screen py-12">
 				<GameHeader gameType="studio" />
-				{!isGameOver && (
+				{!isGameLoading && !isGameOver && (
 					<div className="mb-12">
 						<StudioSearch
 							onSelect={handleSelect}
@@ -40,6 +41,7 @@ export default function StudioPage() {
 					gameWon={gameWon}
 					setGameWon={setGameWon}
 					setGameFailed={setGameFailed}
+					onLoadingChange={setIsGameLoading}
 				/>
 			</main>
 		</GameErrorBoundary>

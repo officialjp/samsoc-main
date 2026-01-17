@@ -24,6 +24,7 @@ interface AnimeWordleProps {
 	gameWon: boolean;
 	setGameWon: (won: boolean) => void;
 	setGameFailed: (failed: boolean) => void;
+	onLoadingChange?: (isLoading: boolean) => void;
 }
 
 export default function AnimeWordle({
@@ -31,6 +32,7 @@ export default function AnimeWordle({
 	gameWon,
 	setGameWon,
 	setGameFailed,
+	onLoadingChange,
 }: AnimeWordleProps) {
 	const [guesses, setGuesses] = useState<WordleGuessData[]>([]);
 	const [isCopied, setIsCopied] = useState(false);
@@ -142,6 +144,10 @@ export default function AnimeWordle({
 			setIsLoading(false);
 		}
 	}, [isAuthenticated, answerAnime, isLoading]);
+
+	useEffect(() => {
+		onLoadingChange?.(isLoading);
+	}, [isLoading, onLoadingChange]);
 
 	useEffect(() => {
 		if (hasAlreadyWonToday && !gameWon) setGameWon(true);
