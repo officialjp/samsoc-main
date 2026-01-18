@@ -13,6 +13,7 @@ import {
 	hasWonToday,
 	GAME_TYPES,
 } from '~/server/api/helpers/game-stats';
+import { CACHE_STRATEGIES } from '~/server/api/helpers/cache';
 
 interface CharacterEntry {
 	name?: string;
@@ -69,6 +70,7 @@ export const studioRouter = createTRPCRouter({
 			include: {
 				studio: true,
 			},
+			cacheStrategy: CACHE_STRATEGIES.DAILY,
 		});
 
 		if (!schedule || !schedule.studio) {
@@ -98,6 +100,7 @@ export const studioRouter = createTRPCRouter({
 					select: { genre: { select: { name: true } } },
 				},
 			},
+			cacheStrategy: CACHE_STRATEGIES.DAILY,
 		});
 
 		if (studioAnimes.length === 0) {
@@ -210,6 +213,7 @@ export const studioRouter = createTRPCRouter({
 		const studios = await ctx.db.studio.findMany({
 			orderBy: { name: 'asc' },
 			select: { id: true, name: true },
+			cacheStrategy: CACHE_STRATEGIES.REFERENCE,
 		});
 
 		return studios.map((s) => ({

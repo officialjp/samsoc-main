@@ -8,6 +8,7 @@ import * as z from 'zod';
 import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { R2_BUCKET, R2_PUBLIC_URL, r2Client } from '~/server/r2-client';
 import { type Prisma } from 'generated/prisma/client';
+import { CACHE_STRATEGIES } from '~/server/api/helpers/cache';
 
 const fileUploadSchema = z.object({
 	base64: z.string().startsWith('data:'),
@@ -170,6 +171,7 @@ export const mangaRouter = createTRPCRouter({
 				source: true,
 			},
 			orderBy: { id: 'asc' },
+			cacheStrategy: CACHE_STRATEGIES.MODERATE,
 		});
 	}),
 
@@ -181,6 +183,7 @@ export const mangaRouter = createTRPCRouter({
 		const allManga = await ctx.db.manga.findMany({
 			select: getLibraryDataSelect,
 			orderBy: { id: 'asc' },
+			cacheStrategy: CACHE_STRATEGIES.MODERATE,
 		});
 
 		return { data: allManga as GetLibraryDataResult };
@@ -200,70 +203,79 @@ export const mangaRouter = createTRPCRouter({
 				search: z.string().optional(),
 			}),
 		)
-		.query(async ({ ctx, input }): Promise<{
-			items: GetLibraryPaginatedItemResult[];
-			totalCount: number;
-			totalPages: number;
-			currentPage: number;
-			hasMore: boolean;
-		}> => {
-			const { limit, page, status, genre, search } = input;
+		.query(
+			async ({
+				ctx,
+				input,
+			}): Promise<{
+				items: GetLibraryPaginatedItemResult[];
+				totalCount: number;
+				totalPages: number;
+				currentPage: number;
+				hasMore: boolean;
+			}> => {
+				const { limit, page, status, genre, search } = input;
 
-			// Build where clause based on filters
-			const where: Prisma.MangaWhereInput = {};
+				// Build where clause based on filters
+				const where: Prisma.MangaWhereInput = {};
 
-			// Status filter
-			if (status === 'available') {
-				where.OR = [{ borrowed_by: null }, { borrowed_by: 'NULL' }];
-			} else if (status === 'borrowed') {
-				where.AND = [
-					{ borrowed_by: { not: null } },
-					{ borrowed_by: { not: 'NULL' } },
-				];
-			}
+				// Status filter
+				if (status === 'available') {
+					where.OR = [{ borrowed_by: null }, { borrowed_by: 'NULL' }];
+				} else if (status === 'borrowed') {
+					where.AND = [
+						{ borrowed_by: { not: null } },
+						{ borrowed_by: { not: 'NULL' } },
+					];
+				}
 
-			// Genre filter
-			if (genre && genre !== 'all') {
-				where.genres = {
-					some: {
-						name: genre,
-					},
+				// Genre filter
+				if (genre && genre !== 'all') {
+					where.genres = {
+						some: {
+							name: genre,
+						},
+					};
+				}
+
+				// Search filter (title or author)
+				if (search && search.trim() !== '') {
+					where.OR = [
+						{ title: { contains: search, mode: 'insensitive' } },
+						{ author: { contains: search, mode: 'insensitive' } },
+					];
+				}
+
+				// Get total count for pagination metadata
+				const totalCount = await ctx.db.manga.count({
+					where,
+					cacheStrategy: CACHE_STRATEGIES.MODERATE,
+				});
+
+				// Calculate offset for pagination
+				const skip = (page - 1) * limit;
+
+				// Fetch paginated data
+				const items = (await ctx.db.manga.findMany({
+					where,
+					select: getLibraryPaginatedSelect,
+					orderBy: { id: 'asc' },
+					take: limit,
+					skip: skip,
+					cacheStrategy: CACHE_STRATEGIES.MODERATE,
+				})) as GetLibraryPaginatedItemResult[];
+
+				const totalPages = Math.ceil(totalCount / limit);
+
+				return {
+					items,
+					totalCount,
+					totalPages,
+					currentPage: page,
+					hasMore: page < totalPages,
 				};
-			}
-
-			// Search filter (title or author)
-			if (search && search.trim() !== '') {
-				where.OR = [
-					{ title: { contains: search, mode: 'insensitive' } },
-					{ author: { contains: search, mode: 'insensitive' } },
-				];
-			}
-
-			// Get total count for pagination metadata
-			const totalCount = await ctx.db.manga.count({ where });
-
-			// Calculate offset for pagination
-			const skip = (page - 1) * limit;
-
-			// Fetch paginated data
-			const items = (await ctx.db.manga.findMany({
-				where,
-				select: getLibraryPaginatedSelect,
-				orderBy: { id: 'asc' },
-				take: limit,
-				skip: skip,
-			})) as GetLibraryPaginatedItemResult[];
-
-			const totalPages = Math.ceil(totalCount / limit);
-
-			return {
-				items,
-				totalCount,
-				totalPages,
-				currentPage: page,
-				hasMore: page < totalPages,
-			};
-		}),
+			},
+		),
 	deleteItem: adminProcedure
 		.input(z.object({ id: z.number().int().min(1) }))
 		.mutation(async ({ ctx, input }) => {

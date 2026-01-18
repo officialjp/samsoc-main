@@ -7,6 +7,7 @@ import { TRPCError } from '@trpc/server';
 import * as z from 'zod';
 import { Prisma } from 'generated/prisma/client';
 import { startOfMonth, endOfMonth } from 'date-fns';
+import { CACHE_STRATEGIES } from '~/server/api/helpers/cache';
 
 const createItemInputSchema = z.object({
 	title: z.string().nonempty(),
@@ -28,6 +29,7 @@ export const eventRouter = createTRPCRouter({
 				id: true,
 				title: true,
 			},
+			cacheStrategy: CACHE_STRATEGIES.MODERATE,
 		});
 	}),
 
@@ -44,6 +46,7 @@ export const eventRouter = createTRPCRouter({
 				is_regular_session: true,
 				session_count: true,
 			},
+			cacheStrategy: CACHE_STRATEGIES.MODERATE,
 		});
 	}),
 
@@ -60,6 +63,7 @@ export const eventRouter = createTRPCRouter({
 				is_regular_session: true,
 				session_count: true,
 			},
+			cacheStrategy: CACHE_STRATEGIES.MODERATE,
 		});
 	}),
 
@@ -100,6 +104,7 @@ export const eventRouter = createTRPCRouter({
 					is_regular_session: true,
 					session_count: true,
 				},
+				cacheStrategy: CACHE_STRATEGIES.MODERATE,
 			});
 
 			// Fetch regular sessions that could generate events in this month
@@ -122,6 +127,7 @@ export const eventRouter = createTRPCRouter({
 					is_regular_session: true,
 					session_count: true,
 				},
+				cacheStrategy: CACHE_STRATEGIES.MODERATE,
 			});
 
 			// Generate weekly sessions and filter for current month

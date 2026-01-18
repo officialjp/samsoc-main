@@ -7,6 +7,7 @@ import { TRPCError } from '@trpc/server';
 import * as z from 'zod';
 import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { R2_BUCKET, R2_PUBLIC_URL, r2Client } from '~/server/r2-client';
+import { CACHE_STRATEGIES } from '~/server/api/helpers/cache';
 
 const fileUploadSchema = z.object({
 	base64: z.string().startsWith('data:'),
@@ -74,6 +75,7 @@ export const carouselRouter = createTRPCRouter({
 				order: true,
 			},
 			orderBy: { order: 'asc' },
+			cacheStrategy: CACHE_STRATEGIES.CAROUSEL,
 		});
 	}),
 
@@ -91,6 +93,7 @@ export const carouselRouter = createTRPCRouter({
 				desktopSource: true,
 			},
 			orderBy: { order: 'asc' },
+			cacheStrategy: CACHE_STRATEGIES.CAROUSEL,
 		});
 		return { data: allImages };
 	}),

@@ -7,6 +7,7 @@ import { TRPCError } from '@trpc/server';
 import * as z from 'zod';
 import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { R2_BUCKET, R2_PUBLIC_URL, r2Client } from '~/server/r2-client';
+import { CACHE_STRATEGIES } from '~/server/api/helpers/cache';
 
 const fileUploadSchema = z.object({
 	base64: z.string().startsWith('data:'),
@@ -74,6 +75,7 @@ export const imageRouter = createTRPCRouter({
 				alt: true,
 			},
 			orderBy: { id: 'asc' },
+			cacheStrategy: CACHE_STRATEGIES.MODERATE,
 		});
 	}),
 
@@ -92,6 +94,7 @@ export const imageRouter = createTRPCRouter({
 				year: true,
 			},
 			orderBy: { createdAt: 'desc' },
+			cacheStrategy: CACHE_STRATEGIES.MODERATE,
 		});
 
 		return {
@@ -130,7 +133,10 @@ export const imageRouter = createTRPCRouter({
 			}
 
 			// Get total count for pagination metadata
-			const totalCount = await ctx.db.image.count({ where });
+			const totalCount = await ctx.db.image.count({
+				where,
+				cacheStrategy: CACHE_STRATEGIES.MODERATE,
+			});
 
 			// Calculate offset for pagination
 			const skip = (page - 1) * limit;
@@ -149,6 +155,7 @@ export const imageRouter = createTRPCRouter({
 				orderBy: { createdAt: 'desc' },
 				take: limit,
 				skip: skip,
+				cacheStrategy: CACHE_STRATEGIES.MODERATE,
 			});
 
 			const totalPages = Math.ceil(totalCount / limit);
