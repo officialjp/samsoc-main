@@ -7,6 +7,7 @@ import { TRPCError } from '@trpc/server';
 import * as z from 'zod';
 import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { R2_BUCKET, r2Client, R2_PUBLIC_URL } from '~/server/r2-client';
+import { CACHE_STRATEGIES } from '~/server/api/helpers/cache';
 
 const fileUploadSchema = z.object({
 	base64: z.string().startsWith('data:'),
@@ -84,6 +85,7 @@ export const committeeRouter = createTRPCRouter({
 	getAllMembers: publicProcedure.query(async ({ ctx }) => {
 		return ctx.db.committee.findMany({
 			orderBy: { id: 'asc' },
+			cacheStrategy: CACHE_STRATEGIES.STATIC,
 		});
 	}),
 
@@ -100,6 +102,7 @@ export const committeeRouter = createTRPCRouter({
 				source: true,
 			},
 			orderBy: { id: 'asc' },
+			cacheStrategy: CACHE_STRATEGIES.STATIC,
 		});
 	}),
 

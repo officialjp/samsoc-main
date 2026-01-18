@@ -13,6 +13,7 @@ import {
 } from '~/server/api/helpers/game-stats';
 import type { GameStatsWithUser } from '~/server/api/helpers/game-stats';
 import type { Prisma } from 'generated/prisma/client';
+import { CACHE_STRATEGIES } from '~/server/api/helpers/cache';
 
 /**
  * Return type for anime data used in wordle game
@@ -120,6 +121,7 @@ export const animeRouter = createTRPCRouter({
 						select: { studio: { select: { name: true } } },
 					},
 				},
+				cacheStrategy: CACHE_STRATEGIES.REFERENCE,
 			});
 
 			if (!anime) return null;
@@ -170,6 +172,7 @@ export const animeRouter = createTRPCRouter({
 					},
 				},
 			},
+			cacheStrategy: CACHE_STRATEGIES.DAILY,
 		});
 
 		let anime: AnimeWordleData | null = null;
@@ -545,6 +548,7 @@ export const animeRouter = createTRPCRouter({
 					},
 				},
 			},
+			cacheStrategy: CACHE_STRATEGIES.DAILY,
 		});
 
 		const anime = schedule?.anime ?? null;

@@ -3,6 +3,8 @@
  * Provides utilities for managing user game stats across all game types
  */
 
+import { CACHE_STRATEGIES } from '~/server/api/helpers/cache';
+
 /**
  * Supported game types
  */
@@ -207,6 +209,7 @@ export async function getLeaderboard(
 				},
 			},
 		},
+		cacheStrategy: CACHE_STRATEGIES.DYNAMIC,
 	});
 
 	return results as GameStatsWithUser[];
