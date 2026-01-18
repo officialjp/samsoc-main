@@ -28,6 +28,10 @@ interface AnimeWordleData {
 	studios: string | null;
 	source: string | null;
 	score: number | null;
+	// Hint-related fields
+	description: string | null;
+	characters: unknown;
+	image: string | null;
 }
 
 /**
@@ -160,6 +164,9 @@ export const animeRouter = createTRPCRouter({
 						releasedSeason: true,
 						source: true,
 						score: true,
+						description: true,
+						characters: true,
+						image: true,
 						animeGenres: {
 							select: { genre: { select: { name: true } } },
 						},
@@ -189,6 +196,9 @@ export const animeRouter = createTRPCRouter({
 				studios: normalizedStudiosToString(a.animeStudios),
 				source: a.source,
 				score: a.score,
+				description: a.description,
+				characters: a.characters,
+				image: a.image,
 			};
 		} else {
 			// Fallback to anime with ID 1 for development
@@ -201,6 +211,9 @@ export const animeRouter = createTRPCRouter({
 					releasedSeason: true,
 					source: true,
 					score: true,
+					description: true,
+					characters: true,
+					image: true,
 					animeGenres: {
 						select: { genre: { select: { name: true } } },
 					},
@@ -224,6 +237,9 @@ export const animeRouter = createTRPCRouter({
 					studios: normalizedStudiosToString(fallback.animeStudios),
 					source: fallback.source,
 					score: fallback.score,
+					description: fallback.description,
+					characters: fallback.characters,
+					image: fallback.image,
 				};
 			}
 		}

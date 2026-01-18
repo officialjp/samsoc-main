@@ -17,7 +17,11 @@ import {
 	getMatchResultForProgress,
 } from './game-utils';
 import { DISPLAY_FIELDS, GAME_CONFIG } from '~/lib/game-config';
-import type { WordleGuessData, LeaderboardUser } from '~/lib/game-types';
+import type {
+	WordleGuessData,
+	LeaderboardUser,
+	WordleHintData,
+} from '~/lib/game-types';
 
 interface AnimeWordleProps {
 	searchedAnimeId: string | undefined;
@@ -25,6 +29,8 @@ interface AnimeWordleProps {
 	setGameWon: (won: boolean) => void;
 	setGameFailed: (failed: boolean) => void;
 	onLoadingChange?: (isLoading: boolean) => void;
+	onGuessCountChange?: (count: number) => void;
+	onHintDataChange?: (data: WordleHintData | null) => void;
 }
 
 export default function AnimeWordle({
@@ -33,6 +39,8 @@ export default function AnimeWordle({
 	setGameWon,
 	setGameFailed,
 	onLoadingChange,
+	onGuessCountChange,
+	onHintDataChange,
 }: AnimeWordleProps) {
 	const [guesses, setGuesses] = useState<WordleGuessData[]>([]);
 	const [isCopied, setIsCopied] = useState(false);
@@ -148,6 +156,27 @@ export default function AnimeWordle({
 	useEffect(() => {
 		onLoadingChange?.(isLoading);
 	}, [isLoading, onLoadingChange]);
+
+	// Propagate guess count to parent for hints
+	useEffect(() => {
+		onGuessCountChange?.(guesses.length);
+	}, [guesses.length, onGuessCountChange]);
+
+	// Propagate hint data to parent
+	useEffect(() => {
+		if (answerAnime) {
+			onHintDataChange?.({
+				title: answerAnime.title ?? null,
+				description: answerAnime.description ?? null,
+				characters: Array.isArray(answerAnime.characters)
+					? answerAnime.characters
+					: null,
+				image: answerAnime.image ?? null,
+			});
+		} else {
+			onHintDataChange?.(null);
+		}
+	}, [answerAnime, onHintDataChange]);
 
 	useEffect(() => {
 		if (hasAlreadyWonToday && !gameWon) setGameWon(true);

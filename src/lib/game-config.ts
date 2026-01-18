@@ -5,7 +5,7 @@
 
 export const GAME_CONFIG = {
 	WORDLE: {
-		MAX_GUESSES: 12,
+		MAX_GUESSES: 16,
 		NAME: 'Anime Wordle',
 	} as const,
 	STUDIO: {
@@ -42,3 +42,17 @@ export const DISPLAY_FIELDS = [
 export type DisplayFieldKey = (typeof DISPLAY_FIELDS)[number]['key'];
 
 export const ARRAY_FIELDS: DisplayFieldKey[] = ['genres', 'themes', 'studios'];
+
+/**
+ * Wordle hint system configuration
+ * Hints unlock progressively in multiples of 4 guesses
+ */
+export const WORDLE_HINT_CONFIG = {
+	DESCRIPTION_THRESHOLD: 4, // Show description at 4 guesses
+	CHARACTERS_THRESHOLD: 8, // Show characters at 8 guesses
+	BLURRED_IMAGE_THRESHOLD: 12, // Show blurred image at 12 guesses
+	UNBLURRED_IMAGE_THRESHOLD: 16, // Show unblurred image at 16 guesses (game over)
+	CHARACTER_COUNT: 3, // Number of characters to display
+	BLUR_AMOUNT: 20, // CSS blur pixels for blurred state
+	DESCRIPTION_PREVIEW_LENGTH: 100, // Characters to show before collapse
+} as const;
