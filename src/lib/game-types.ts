@@ -159,6 +159,24 @@ export interface GameAnswerData<T> {
 }
 
 /**
+ * Character entry structure from database
+ */
+export interface CharacterEntry {
+	name: string;
+	role?: string;
+}
+
+/**
+ * Wordle hint data for progressive hints
+ */
+export interface WordleHintData {
+	title: string | null;
+	description: string | null;
+	characters: CharacterEntry[] | null;
+	image: string | null;
+}
+
+/**
  * Answer anime for wordle game
  */
 export interface WordleAnswerAnime {
@@ -171,6 +189,10 @@ export interface WordleAnswerAnime {
 	studios: string | null;
 	source: string | null;
 	score: number | null;
+	// Hint-related fields
+	description?: string | null;
+	characters?: CharacterEntry[] | null;
+	image?: string | null;
 }
 
 /**

@@ -1,4 +1,4 @@
-import type { MatchResult } from '~/lib/game-types';
+import type { MatchResult, CharacterEntry } from '~/lib/game-types';
 import type { DisplayFieldKey } from '~/lib/game-config';
 import { ARRAY_FIELDS } from '~/lib/game-config';
 
@@ -170,4 +170,16 @@ export function getMatchResultForProgress(result: MatchResult): string {
 		default:
 			return 'bg-red-400';
 	}
+}
+
+/**
+ * Parse characters from JSON field and return specified count of names
+ */
+export function getCharacterNames(characters: unknown, count = 3): string[] {
+	if (!characters || !Array.isArray(characters)) return [];
+
+	return characters
+		.slice(0, count)
+		.map((char: CharacterEntry) => char.name)
+		.filter((name): name is string => typeof name === 'string');
 }
