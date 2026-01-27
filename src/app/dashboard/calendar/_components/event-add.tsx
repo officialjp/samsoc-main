@@ -19,7 +19,7 @@ import { useState } from 'react';
 import { Save } from 'lucide-react';
 import { toast } from 'sonner';
 
-const color = ['bg-pink-200', 'bg-blue-200'] as const;
+const color = ['bg-pink-200', 'bg-cyan-200', 'bg-purple-200', 'bg-yellow-200', 'bg-green-200'] as const;
 
 const eventSchema = z.object({
 	title: z.string().min(1, {
