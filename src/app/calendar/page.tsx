@@ -8,6 +8,9 @@ import ScrollAnimationWrapper from '~/components/shared/scroll-animation-wrapper
 import { Suspense } from 'react';
 import CalendarSkeleton from './_components/calendar-skeleton';
 
+// Revalidate this page every 60 seconds to ensure content updates are reflected
+export const revalidate = 60;
+
 export const metadata: Metadata = {
 	title: 'Surrey Anime and Manga Society - Calendar',
 	description:

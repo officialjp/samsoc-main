@@ -11,10 +11,12 @@ interface MangaItem {
 }
 
 export default function MangaRemove() {
+	const utils = api.useUtils();
 	const { data: items, isLoading } = api.manga.getAllItems.useQuery();
 
 	const deleteMutation = api.manga.deleteItem.useMutation({
 		onSuccess: (_, variables) => {
+			void utils.manga.getAllItems.invalidate();
 			toast.success(
 				`Item ID ${variables.id} successfully deleted (R2 files cleaned up).`,
 			);
