@@ -1,11 +1,10 @@
 'use client';
 
-import { UploadIcon } from 'lucide-react';
+import { UploadIcon, FileImage, X } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { createContext, useContext } from 'react';
 import type { DropEvent, DropzoneOptions, FileRejection } from 'react-dropzone';
 import { useDropzone } from 'react-dropzone';
-import { Button } from '~/components/ui/button';
 import { cn } from '~/lib/utils';
 
 type DropzoneContextType = {
@@ -81,20 +80,23 @@ export const Dropzone = ({
 			key={JSON.stringify(src)}
 			value={{ src, accept, maxSize, minSize, maxFiles }}
 		>
-			<Button
+			<button
+				type="button"
 				className={cn(
-					'relative h-auto w-full flex-col overflow-hidden p-8',
-					isDragActive && 'outline-none ring-1 ring-ring',
+					'relative w-full flex flex-col items-center justify-center p-8 rounded-xl border-2 border-dashed border-black bg-gray-50 transition-all cursor-pointer',
+					'hover:bg-gray-100 hover:border-solid',
+					isDragActive &&
+						'bg-purple-50 border-solid border-purple-600 shadow-[4px_4px_0px_0px_rgba(147,51,234,0.3)]',
+					disabled &&
+						'opacity-50 cursor-not-allowed hover:bg-gray-50',
 					className,
 				)}
 				disabled={disabled}
-				type="button"
-				variant="outline"
 				{...getRootProps()}
 			>
 				<input {...getInputProps()} disabled={disabled} />
 				{children}
-			</Button>
+			</button>
 		</DropzoneContext.Provider>
 	);
 };
@@ -122,7 +124,7 @@ export const DropzoneContent = ({
 }: DropzoneContentProps) => {
 	const { src } = useDropzoneContext();
 
-	if (!src) {
+	if (!src || src.length === 0) {
 		return null;
 	}
 
@@ -133,27 +135,39 @@ export const DropzoneContent = ({
 	return (
 		<div
 			className={cn(
-				'flex flex-col items-center justify-center',
+				'flex flex-col items-center justify-center gap-3',
 				className,
 			)}
 		>
-			<div className="flex size-8 items-center justify-center rounded-md bg-muted text-black">
-				<UploadIcon size={16} />
+			<div className="w-12 h-12 bg-green-100 border-2 border-black rounded-xl flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+				<FileImage className="w-6 h-6 text-green-700" />
 			</div>
-			<p className="my-2 w-full truncate font-medium text-sm">
-				{src.length > maxLabelItems
-					? `${new Intl.ListFormat('en').format(
+			<div className="text-center">
+				<p className="font-bold text-gray-900 text-sm mb-1">
+					{src.length === 1
+						? src[0]?.name
+						: `${src.length} files selected`}
+				</p>
+				{src.length > 1 && src.length <= maxLabelItems && (
+					<p className="text-xs text-gray-600">
+						{new Intl.ListFormat('en').format(
+							src.map((file) => file.name),
+						)}
+					</p>
+				)}
+				{src.length > maxLabelItems && (
+					<p className="text-xs text-gray-600">
+						{new Intl.ListFormat('en').format(
 							src
 								.slice(0, maxLabelItems)
 								.map((file) => file.name),
-						)} and ${src.length - maxLabelItems} more`
-					: new Intl.ListFormat('en').format(
-							src.map((file) => file.name),
-						)}
-			</p>
-			<p className="w-full text-wrap text-black text-xs">
-				Drag and drop or click to replace <br /> Accepts image/avif
-				between 1.00KB and 10.00MB
+						)}{' '}
+						and {src.length - maxLabelItems} more
+					</p>
+				)}
+			</div>
+			<p className="text-xs text-gray-500 font-medium">
+				Click or drag to replace
 			</p>
 		</div>
 	);
@@ -170,7 +184,7 @@ export const DropzoneEmptyState = ({
 }: DropzoneEmptyStateProps) => {
 	const { src, accept, maxSize, minSize, maxFiles } = useDropzoneContext();
 
-	if (src) {
+	if (src && src.length > 0) {
 		return null;
 	}
 
@@ -196,21 +210,26 @@ export const DropzoneEmptyState = ({
 	return (
 		<div
 			className={cn(
-				'flex flex-col items-center justify-center',
+				'flex flex-col items-center justify-center gap-3',
 				className,
 			)}
 		>
-			<div className="flex size-8 items-center justify-center rounded-md bg-muted text-black">
-				<UploadIcon size={16} />
+			<div className="w-12 h-12 bg-purple-100 border-2 border-black rounded-xl flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+				<UploadIcon className="w-6 h-6 text-purple-700" />
 			</div>
-			<p className="my-2 w-full truncate text-wrap font-medium text-sm">
-				Upload {maxFiles === 1 ? 'a file' : 'files'}
-			</p>
-			<p className="w-full truncate text-wrap text-black text-xs">
-				Drag and drop or click to upload
-			</p>
+			<div className="text-center">
+				<p className="font-bold text-gray-900 text-sm mb-1">
+					Upload{' '}
+					{maxFiles === 1 ? 'a file' : `up to ${maxFiles} files`}
+				</p>
+				<p className="text-xs text-gray-600">
+					Drag and drop or click to browse
+				</p>
+			</div>
 			{caption && (
-				<p className="text-wrap text-black text-xs">{caption}.</p>
+				<p className="text-xs text-gray-500 bg-gray-100 px-3 py-1.5 rounded-full border border-gray-200 font-medium">
+					{caption}
+				</p>
 			)}
 		</div>
 	);

@@ -11,19 +11,18 @@ import {
 	ChevronDown,
 	BookOpen,
 	Search,
+	Pencil,
 } from 'lucide-react';
 import Image from 'next/image';
 
 import { api } from '~/trpc/react';
+import { cn } from '~/lib/utils';
 
-import { Button } from '~/components/ui/button';
 import {
 	Dropzone,
 	DropzoneContent,
 	DropzoneEmptyState,
 } from '~/components/ui/dropzone';
-import { Input } from '~/components/ui/input';
-import { Label } from '~/components/ui/label';
 import {
 	Form,
 	FormControl,
@@ -41,6 +40,17 @@ import {
 	DropdownMenuRadioGroup,
 	DropdownMenuRadioItem,
 } from '~/components/ui/dropdown-menu';
+import {
+	DashboardCard,
+	DashboardCardHeader,
+	DashboardCardContent,
+	DashboardCardFooter,
+} from '../../_components/dashboard-card';
+import { DashboardInput } from '../../_components/dashboard-form';
+import {
+	DashboardAlert,
+	DashboardEmptyState,
+} from '../../_components/dashboard-alert';
 
 interface MangaItem {
 	id: number;
@@ -80,7 +90,7 @@ const ImagePreview = ({
 	if (!src) return null;
 
 	return (
-		<div className="relative h-48 w-32 shrink-0 overflow-hidden rounded-2xl border-2 border-border">
+		<div className="relative h-48 w-32 shrink-0 overflow-hidden rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
 			<Image
 				src={src}
 				alt="Manga Image Preview"
@@ -128,7 +138,7 @@ const MangaEditorRow: React.FC<MangaEditorRowProps> = ({
 				volume: updatedManga.volume,
 				borrowed_by: updatedManga.borrowed_by ?? undefined,
 				currentSource: updatedManga.source,
-				newImage: undefined, // Clears the file input
+				newImage: undefined,
 			});
 		},
 	});
@@ -149,16 +159,13 @@ const MangaEditorRow: React.FC<MangaEditorRowProps> = ({
 		const newBorrowedBy = data.borrowed_by;
 
 		const borrowed_by =
-			newBorrowedBy !== currentBorrowedBy
-				? newBorrowedBy // string | undefined
-				: undefined; // Omit if not changed
+			newBorrowedBy !== currentBorrowedBy ? newBorrowedBy : undefined;
 
 		let newImagePayload:
 			| { base64: string; fileName: string; mimeType: string }
 			| undefined = undefined;
 
 		const executeMutation = (imagePayload?: typeof newImagePayload) => {
-			// Only mutate if *any* field has changed (including the image)
 			if (
 				isTitleChanged ||
 				isAuthorChanged ||
@@ -203,12 +210,14 @@ const MangaEditorRow: React.FC<MangaEditorRowProps> = ({
 		<Form {...form}>
 			<form
 				onSubmit={form.handleSubmit(onSubmit)}
-				className="flex flex-col gap-4 rounded-2xl border-2 border-border bg-main p-6 shadow-shadow"
+				className="border-2 border-black rounded-2xl bg-white p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
 			>
-				<div className="flex items-start gap-6">
-					<div className="flex w-full max-w-xs flex-col gap-2 shrink-0">
-						<Label>Manga Image</Label>
-						<div className="grow flex justify-center">
+				<div className="flex flex-col lg:flex-row items-start gap-6">
+					<div className="flex w-full lg:w-auto lg:max-w-xs flex-col gap-4 shrink-0">
+						<label className="text-sm font-bold text-gray-900">
+							Manga Image
+						</label>
+						<div className="flex justify-center">
 							<ImagePreview
 								file={newImageFile}
 								url={manga.source}
@@ -219,10 +228,9 @@ const MangaEditorRow: React.FC<MangaEditorRowProps> = ({
 							control={form.control}
 							name="newImage"
 							render={({ field }) => (
-								<FormItem className="mt-2">
+								<FormItem>
 									<FormControl>
 										<Dropzone
-											className="bg-white"
 											accept={{
 												'image/avif': ['.avif'],
 											}}
@@ -243,15 +251,12 @@ const MangaEditorRow: React.FC<MangaEditorRowProps> = ({
 											<DropzoneEmptyState />
 										</Dropzone>
 									</FormControl>
-									<FormMessage />
+									<FormMessage className="text-xs text-red-600 font-medium" />
 								</FormItem>
 							)}
 						/>
 						{newImageFile && (
-							<Button
-								variant="outline"
-								size="sm"
-								className="w-full"
+							<button
 								type="button"
 								onClick={() =>
 									form.setValue(
@@ -262,28 +267,31 @@ const MangaEditorRow: React.FC<MangaEditorRowProps> = ({
 										},
 									)
 								}
+								className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold border-2 border-black rounded-xl bg-gray-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all"
 							>
-								<XCircle className="size-4 mr-2" />
+								<XCircle className="w-4 h-4" />
 								Remove Image
-							</Button>
+							</button>
 						)}
 					</div>
 
-					<div className="flex grow flex-col gap-4">
+					<div className="flex-1 w-full space-y-4">
 						<FormField
 							control={form.control}
 							name="title"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Title</FormLabel>
+									<FormLabel className="text-sm font-bold text-gray-900">
+										Title
+									</FormLabel>
 									<FormControl>
-										<Input
+										<DashboardInput
 											placeholder="Enter manga title"
 											disabled={isPending}
 											{...field}
 										/>
 									</FormControl>
-									<FormMessage />
+									<FormMessage className="text-xs text-red-600 font-medium" />
 								</FormItem>
 							)}
 						/>
@@ -292,15 +300,17 @@ const MangaEditorRow: React.FC<MangaEditorRowProps> = ({
 							name="author"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Author</FormLabel>
+									<FormLabel className="text-sm font-bold text-gray-900">
+										Author
+									</FormLabel>
 									<FormControl>
-										<Input
+										<DashboardInput
 											placeholder="Enter manga author"
 											disabled={isPending}
 											{...field}
 										/>
 									</FormControl>
-									<FormMessage />
+									<FormMessage className="text-xs text-red-600 font-medium" />
 								</FormItem>
 							)}
 						/>
@@ -309,13 +319,14 @@ const MangaEditorRow: React.FC<MangaEditorRowProps> = ({
 							name="volume"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Volume</FormLabel>
+									<FormLabel className="text-sm font-bold text-gray-900">
+										Volume
+									</FormLabel>
 									<FormControl>
-										<Input
+										<DashboardInput
 											type="number"
 											placeholder="Enter manga volume"
 											disabled={isPending}
-											{...field}
 											value={field.value ?? ''}
 											onChange={(e) => {
 												const value = e.target.value;
@@ -333,7 +344,7 @@ const MangaEditorRow: React.FC<MangaEditorRowProps> = ({
 											}}
 										/>
 									</FormControl>
-									<FormMessage />
+									<FormMessage className="text-xs text-red-600 font-medium" />
 								</FormItem>
 							)}
 						/>
@@ -342,57 +353,74 @@ const MangaEditorRow: React.FC<MangaEditorRowProps> = ({
 							name="borrowed_by"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Borrowed By</FormLabel>
+									<FormLabel className="text-sm font-bold text-gray-900">
+										Borrowed By
+									</FormLabel>
 									<FormControl>
-										<Input
+										<DashboardInput
 											placeholder="Enter borrower (can be empty)"
 											disabled={isPending}
 											{...field}
 										/>
 									</FormControl>
-									<FormMessage />
+									<FormMessage className="text-xs text-red-600 font-medium" />
 								</FormItem>
 							)}
 						/>
 					</div>
 				</div>
 
-				<div className="mt-4 flex justify-end">
-					<Button
+				<div className="mt-6 pt-4 border-t-2 border-black flex flex-col sm:flex-row items-center justify-between gap-4">
+					{updateMangaMutation.isError && (
+						<DashboardAlert
+							type="error"
+							message={updateMangaMutation.error.message}
+							className="flex-1"
+						/>
+					)}
+					<div className="flex-1" />
+					<button
 						type="submit"
 						disabled={!isFormDirty || isPending}
-						variant="default"
+						className={cn(
+							'inline-flex items-center justify-center gap-2 px-6 py-3 font-bold border-2 border-black rounded-xl transition-all',
+							'shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]',
+							'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] disabled:hover:translate-x-0 disabled:hover:translate-y-0',
+							updateMangaMutation.isSuccess
+								? 'bg-green-200 hover:bg-green-300'
+								: 'bg-blue-200 hover:bg-blue-300',
+							'hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]',
+						)}
 					>
-						{isPending && (
-							<Loader2 className="mr-2 size-4 animate-spin" />
+						{isPending ? (
+							<>
+								<Loader2 className="w-4 h-4 animate-spin" />
+								<span>Saving...</span>
+							</>
+						) : updateMangaMutation.isSuccess ? (
+							<>
+								<Save className="w-4 h-4" />
+								<span>Saved!</span>
+							</>
+						) : (
+							<>
+								<Save className="w-4 h-4" />
+								<span>Save Changes</span>
+							</>
 						)}
-						{updateMangaMutation.isSuccess
-							? 'Saved!'
-							: 'Save Changes'}
-						{!isPending && !updateMangaMutation.isSuccess && (
-							<Save className="ml-2 size-4" />
-						)}
-					</Button>
+					</button>
 				</div>
-				{updateMangaMutation.isError && (
-					<p className="mt-2 text-sm text-red-500">
-						Error: {updateMangaMutation.error.message}
-					</p>
-				)}
 			</form>
 		</Form>
 	);
 };
 
-// --- START OF UPDATED COMPONENT ---
-
 export function MangaItemEditor() {
 	const [selectedMangaId, setSelectedMangaId] = React.useState<number | null>(
 		null,
 	);
-	// State for search term
 	const [searchTerm, setSearchTerm] = React.useState('');
-	const [isDropdownOpen, setIsDropdownOpen] = React.useState(false); // State to control open/close
+	const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
 	const utils = api.useUtils();
 
 	const {
@@ -413,7 +441,6 @@ export function MangaItemEditor() {
 		}
 	}, [manga, selectedMangaId]);
 
-	// Filter the manga list based on the search term
 	const filteredManga = (() => {
 		if (!manga) return [];
 		const lowerCaseSearchTerm = searchTerm.toLowerCase();
@@ -429,8 +456,8 @@ export function MangaItemEditor() {
 
 	const handleValueChange = (value: string) => {
 		setSelectedMangaId(Number(value));
-		setIsDropdownOpen(false); // Close dropdown on selection
-		setSearchTerm(''); // Clear search term
+		setIsDropdownOpen(false);
+		setSearchTerm('');
 	};
 
 	const selectedItemLabel = (() => {
@@ -442,115 +469,160 @@ export function MangaItemEditor() {
 	})();
 
 	if (isFetching) {
-		return <p className="p-6">Loading mangas...</p>;
+		return (
+			<DashboardCard>
+				<div className="flex items-center justify-center py-12">
+					<div className="flex items-center gap-3 text-gray-600">
+						<Loader2 className="h-6 w-6 animate-spin" />
+						<span className="font-semibold">Loading mangas...</span>
+					</div>
+				</div>
+			</DashboardCard>
+		);
 	}
 
 	if (isError) {
-		return <p className="p-6 text-red-500">Failed to load mangas.</p>;
+		return (
+			<DashboardCard>
+				<DashboardAlert
+					type="error"
+					title="Error"
+					message="Failed to load mangas. Please try again."
+				/>
+			</DashboardCard>
+		);
 	}
 
 	if (!manga || manga.length === 0) {
-		return <p className="p-6">No mangas found to edit.</p>;
+		return (
+			<DashboardCard>
+				<DashboardEmptyState
+					icon={<BookOpen className="w-12 h-12" />}
+					title="No mangas found"
+					description="Add some manga entries first before editing."
+				/>
+			</DashboardCard>
+		);
 	}
 
 	return (
-		<div className="space-y-4 p-6 border rounded-lg shadow-md bg-white">
-			<h3 className="text-lg font-semibold border-b pb-2">
+		<DashboardCard>
+			<DashboardCardHeader icon={<Pencil className="w-5 h-5" />}>
 				Edit Manga Item
-			</h3>
-			<div className="flex items-center gap-4">
-				<Label htmlFor="manga-select" className="shrink-0">
-					Select Manga:
-				</Label>
-				<DropdownMenu
-					open={isDropdownOpen}
-					onOpenChange={setIsDropdownOpen}
-				>
-					<DropdownMenuTrigger asChild>
-						<Button
-							variant="outline"
-							id="manga-select"
-							className="min-w-[280px] justify-between grow"
-						>
-							<span className="truncate pr-4">
-								{selectedItemLabel}
-							</span>
-							<ChevronDown
-								className={`ml-2 size-4 opacity-70 transition-transform ${isDropdownOpen ? 'rotate-180' : 'rotate-0'}`}
-							/>
-						</Button>
-					</DropdownMenuTrigger>
-
-					<DropdownMenuContent className="w-[80%] min-w-[320px] max-w-lg">
-						<DropdownMenuLabel className="p-3">
-							Select an Item to Edit
-						</DropdownMenuLabel>
-						<DropdownMenuSeparator className="m-0" />
-
-						<div className="p-3">
-							<div className="relative">
-								<Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-gray-400" />
-								<Input
-									placeholder="Search by ID, Title, Author, or Volume..."
-									value={searchTerm}
-									onChange={(e) =>
-										setSearchTerm(e.target.value)
-									}
-									className="pl-9"
-									// Prevent dropdown from closing when typing
-									onKeyDown={(e) => e.stopPropagation()}
-									autoFocus={true}
-								/>
-							</div>
-						</div>
-						<DropdownMenuSeparator className="m-0" />
-
-						<div className="max-h-60 overflow-y-auto">
-							<DropdownMenuRadioGroup
-								value={
-									selectedMangaId
-										? String(selectedMangaId)
-										: ''
-								}
-								onValueChange={handleValueChange}
-							>
-								{filteredManga.length > 0 ? (
-									filteredManga.map((manga) => {
-										const itemLabel = `ID: ${manga.id} VOL: ${manga.volume} - ${manga.title.substring(0, 40)}${manga.title.length > 40 ? '...' : ''}`;
-
-										return (
-											<DropdownMenuRadioItem
-												key={manga.id}
-												value={String(manga.id)}
-												className="whitespace-normal h-auto py-3 pr-8"
-											>
-												<BookOpen className="mr-2 size-4 shrink-0" />
-												{itemLabel}
-											</DropdownMenuRadioItem>
-										);
-									})
-								) : (
-									<DropdownMenuLabel className="p-3 text-gray-500 font-normal">
-										No results found.
-									</DropdownMenuLabel>
+			</DashboardCardHeader>
+			<DashboardCardContent className="space-y-6">
+				<div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+					<label
+						htmlFor="manga-select"
+						className="text-sm font-bold text-gray-900 shrink-0"
+					>
+						Select Manga:
+					</label>
+					<DropdownMenu
+						open={isDropdownOpen}
+						onOpenChange={setIsDropdownOpen}
+					>
+						<DropdownMenuTrigger asChild>
+							<button
+								id="manga-select"
+								className={cn(
+									'flex-1 w-full flex items-center justify-between px-4 py-3 text-left font-semibold border-2 border-black rounded-xl bg-white transition-all',
+									'shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]',
+									'hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5',
+									'focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2',
 								)}
-							</DropdownMenuRadioGroup>
-						</div>
-					</DropdownMenuContent>
-				</DropdownMenu>
-			</div>
+							>
+								<span
+									className={cn(
+										'truncate pr-4',
+										selectedMangaId
+											? 'text-gray-900'
+											: 'text-gray-500',
+									)}
+								>
+									{selectedItemLabel}
+								</span>
+								<ChevronDown
+									className={cn(
+										'w-5 h-5 text-gray-500 transition-transform flex-shrink-0',
+										isDropdownOpen && 'rotate-180',
+									)}
+								/>
+							</button>
+						</DropdownMenuTrigger>
 
-			{selectedManga ? (
-				<MangaEditorRow
-					key={selectedManga.id}
-					manga={selectedManga}
-					onSuccess={refetch}
-				/>
-			) : (
-				<p className="p-4 text-base font-base">
-					Please select a manga item to begin editing their details.
-				</p>
-			)}
-		</div>
+						<DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)] border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-2">
+							<DropdownMenuLabel className="px-2 py-2 font-bold text-sm">
+								Select an Item to Edit
+							</DropdownMenuLabel>
+							<DropdownMenuSeparator className="bg-gray-200 h-0.5" />
+
+							<div className="p-2">
+								<div className="relative">
+									<Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+									<input
+										placeholder="Search by ID, Title, Author, or Volume..."
+										value={searchTerm}
+										onChange={(e) =>
+											setSearchTerm(e.target.value)
+										}
+										className="w-full pl-9 pr-4 py-2.5 rounded-lg bg-gray-50 text-gray-900 border-2 border-gray-200 font-medium text-sm focus:outline-none focus:border-black transition-colors"
+										onKeyDown={(e) => e.stopPropagation()}
+										autoFocus={true}
+									/>
+								</div>
+							</div>
+							<DropdownMenuSeparator className="bg-gray-200 h-0.5" />
+
+							<div className="max-h-60 overflow-y-auto">
+								<DropdownMenuRadioGroup
+									value={
+										selectedMangaId
+											? String(selectedMangaId)
+											: ''
+									}
+									onValueChange={handleValueChange}
+								>
+									{filteredManga.length > 0 ? (
+										filteredManga.map((manga) => {
+											const itemLabel = `ID: ${manga.id} VOL: ${manga.volume} - ${manga.title.substring(0, 40)}${manga.title.length > 40 ? '...' : ''}`;
+
+											return (
+												<DropdownMenuRadioItem
+													key={manga.id}
+													value={String(manga.id)}
+													className="rounded-lg font-medium py-2.5 cursor-pointer"
+												>
+													<BookOpen className="mr-2 w-4 h-4 shrink-0" />
+													{itemLabel}
+												</DropdownMenuRadioItem>
+											);
+										})
+									) : (
+										<DropdownMenuLabel className="p-3 text-gray-500 font-normal text-center">
+											No results found.
+										</DropdownMenuLabel>
+									)}
+								</DropdownMenuRadioGroup>
+							</div>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				</div>
+
+				{selectedManga ? (
+					<MangaEditorRow
+						key={selectedManga.id}
+						manga={selectedManga}
+						onSuccess={refetch}
+					/>
+				) : (
+					<DashboardEmptyState
+						icon={<BookOpen className="w-10 h-10" />}
+						title="Select a manga"
+						description="Please select a manga item to begin editing their details."
+					/>
+				)}
+			</DashboardCardContent>
+		</DashboardCard>
 	);
 }

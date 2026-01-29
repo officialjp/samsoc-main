@@ -13,8 +13,10 @@ interface CarouselItem {
 export default function CarouselRemove() {
 	const { data: items, isLoading } = api.carousel.getAllItems.useQuery();
 
+	const utils = api.useUtils();
 	const deleteMutation = api.carousel.deleteItem.useMutation({
 		onSuccess: (_, variables) => {
+			void utils.carousel.getAllItems.invalidate();
 			toast.success(
 				`Item ID ${variables.id} successfully deleted (R2 files cleaned up).`,
 			);

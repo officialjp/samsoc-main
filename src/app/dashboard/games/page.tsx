@@ -7,7 +7,7 @@ import AdminAnimeScheduler from './_components/daily-anime';
 import AdminStudioScheduler from './_components/daily-studio';
 import AdminBannerScheduler from './_components/daily-banner';
 
-const carouselPageObj = [
+const gamesPageObj = [
 	{
 		name: 'Change Daily Anime',
 		page: <AdminAnimeScheduler />,
@@ -24,19 +24,19 @@ const carouselPageObj = [
 
 export default function Page() {
 	return (
-		<div>
-			<SectionContainer>
-				<SectionHeading
-					badge="DASHBOARD"
-					title="Games Page Dashboard"
-					description="This is the dashboard for the games page of the website"
-					badgeColor="bg-purple-200"
-				/>
-				<div className="flex items-center justify-center flex-col mx-auto max-w-7xl">
-					<DashboardNavigationButtons />
-					<DashboardTabs tabData={carouselPageObj} />
+		<SectionContainer>
+			<SectionHeading
+				badge="DASHBOARD"
+				title="Games Page Dashboard"
+				description="This is the dashboard for the games page of the website"
+				badgeColor="bg-purple-200"
+			/>
+			<div className="flex flex-col items-center gap-8 mx-auto max-w-7xl py-12 px-4">
+				<DashboardNavigationButtons />
+				<div className="w-full">
+					<DashboardTabs tabData={gamesPageObj} />
 				</div>
-			</SectionContainer>
-		</div>
+			</div>
+		</SectionContainer>
 	);
 }

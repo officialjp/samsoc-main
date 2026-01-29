@@ -4,19 +4,17 @@ import * as React from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Loader2, Save, XCircle, ChevronDown, User } from 'lucide-react';
+import { Loader2, Save, XCircle, ChevronDown, User, Users } from 'lucide-react';
 import Image from 'next/image';
 
 import { api } from '~/trpc/react';
+import { cn } from '~/lib/utils';
 
-import { Button } from '~/components/ui/button';
 import {
 	Dropzone,
 	DropzoneContent,
 	DropzoneEmptyState,
 } from '~/components/ui/dropzone';
-import { Input } from '~/components/ui/input';
-import { Label } from '~/components/ui/label';
 import {
 	Form,
 	FormControl,
@@ -31,6 +29,16 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
+import {
+	DashboardCard,
+	DashboardCardHeader,
+	DashboardCardContent,
+} from '../../_components/dashboard-card';
+import { DashboardInput } from '../../_components/dashboard-form';
+import {
+	DashboardAlert,
+	DashboardEmptyState,
+} from '../../_components/dashboard-alert';
 
 interface CommitteeMember {
 	id: number;
@@ -65,7 +73,7 @@ const ImagePreview = ({
 	if (!src) return null;
 
 	return (
-		<div className="relative size-30 overflow-hidden rounded-2xl border-2 border-border bg-white">
+		<div className="relative w-28 h-28 overflow-hidden rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] bg-white">
 			<Image
 				src={src}
 				alt="Member Image Preview"
@@ -88,7 +96,6 @@ const MemberEditorRow: React.FC<MemberEditorRowProps> = ({
 }) => {
 	const form = useForm<MemberFormValues>({
 		resolver: zodResolver(memberFormSchema),
-		// NOTE: defaultValues is now guaranteed to match the current member due to the 'key' prop on the parent
 		defaultValues: {
 			id: member.id,
 			name: member.name,
@@ -105,7 +112,6 @@ const MemberEditorRow: React.FC<MemberEditorRowProps> = ({
 	const updateMemberMutation = api.committee.updateMember.useMutation({
 		onSuccess: (updatedMember) => {
 			onSuccess();
-			// Reset the form with the new, updated data from the server
 			form.reset({
 				id: updatedMember.id,
 				name: updatedMember.name,
@@ -156,12 +162,14 @@ const MemberEditorRow: React.FC<MemberEditorRowProps> = ({
 		<Form {...form}>
 			<form
 				onSubmit={form.handleSubmit(onSubmit)}
-				className="flex flex-col gap-4 rounded-2xl border-2 border-border bg-main p-6 shadow-shadow"
+				className="border-2 border-black rounded-2xl bg-white p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
 			>
-				<div className="flex items-start flex-wrap gap-6">
-					<div className="flex w-full flex-col grow gap-2 shrink-0">
-						<Label>Member Image</Label>
-						<div className="grow flex justify-center">
+				<div className="flex flex-col lg:flex-row items-start gap-6">
+					<div className="flex w-full lg:w-auto flex-col gap-4 shrink-0">
+						<label className="text-sm font-bold text-gray-900">
+							Member Image
+						</label>
+						<div className="flex justify-center">
 							<ImagePreview
 								file={newImageFile}
 								url={member.source}
@@ -172,10 +180,9 @@ const MemberEditorRow: React.FC<MemberEditorRowProps> = ({
 							control={form.control}
 							name="newImage"
 							render={({ field }) => (
-								<FormItem className="mt-2">
+								<FormItem>
 									<FormControl>
 										<Dropzone
-											className="bg-white"
 											accept={{
 												'image/avif': ['.avif'],
 											}}
@@ -196,43 +203,43 @@ const MemberEditorRow: React.FC<MemberEditorRowProps> = ({
 											<DropzoneEmptyState />
 										</Dropzone>
 									</FormControl>
-									<FormMessage />
+									<FormMessage className="text-xs text-red-600 font-medium" />
 								</FormItem>
 							)}
 						/>
 						{newImageFile && (
-							<Button
-								variant="outline"
-								size="sm"
-								className="w-full"
+							<button
 								type="button"
 								onClick={() =>
 									form.setValue('newImage', undefined, {
 										shouldDirty: true,
 									})
 								}
+								className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold border-2 border-black rounded-xl bg-gray-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all"
 							>
-								<XCircle className="size-4" />
+								<XCircle className="w-4 h-4" />
 								Remove Image
-							</Button>
+							</button>
 						)}
 					</div>
 
-					<div className="flex grow flex-col gap-4">
+					<div className="flex-1 w-full space-y-4">
 						<FormField
 							control={form.control}
 							name="name"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Name</FormLabel>
+									<FormLabel className="text-sm font-bold text-gray-900">
+										Name
+									</FormLabel>
 									<FormControl>
-										<Input
+										<DashboardInput
 											placeholder="Enter full name"
 											disabled={isPending}
 											{...field}
 										/>
 									</FormControl>
-									<FormMessage />
+									<FormMessage className="text-xs text-red-600 font-medium" />
 								</FormItem>
 							)}
 						/>
@@ -241,41 +248,63 @@ const MemberEditorRow: React.FC<MemberEditorRowProps> = ({
 							name="role"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Role</FormLabel>
+									<FormLabel className="text-sm font-bold text-gray-900">
+										Role
+									</FormLabel>
 									<FormControl>
-										<Input
+										<DashboardInput
 											placeholder="Enter role/position"
 											disabled={isPending}
 											{...field}
 										/>
 									</FormControl>
-									<FormMessage />
+									<FormMessage className="text-xs text-red-600 font-medium" />
 								</FormItem>
 							)}
 						/>
 					</div>
 				</div>
 
-				<div className="mt-4 flex justify-end">
-					<Button
+				<div className="mt-6 pt-4 border-t-2 border-black flex flex-col sm:flex-row items-center justify-between gap-4">
+					{updateMemberMutation.isError && (
+						<DashboardAlert
+							type="error"
+							message={updateMemberMutation.error.message}
+							className="flex-1"
+						/>
+					)}
+					<div className="flex-1" />
+					<button
 						type="submit"
 						disabled={!isFormDirty || isPending}
-						variant="default"
-					>
-						{isPending && <Loader2 className="animate-spin" />}
-						{updateMemberMutation.isSuccess
-							? 'Saved!'
-							: 'Save Changes'}
-						{!isPending && !updateMemberMutation.isSuccess && (
-							<Save />
+						className={cn(
+							'inline-flex items-center justify-center gap-2 px-6 py-3 font-bold border-2 border-black rounded-xl transition-all',
+							'shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]',
+							'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] disabled:hover:translate-x-0 disabled:hover:translate-y-0',
+							updateMemberMutation.isSuccess
+								? 'bg-green-200 hover:bg-green-300'
+								: 'bg-blue-200 hover:bg-blue-300',
+							'hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]',
 						)}
-					</Button>
+					>
+						{isPending ? (
+							<>
+								<Loader2 className="w-4 h-4 animate-spin" />
+								<span>Saving...</span>
+							</>
+						) : updateMemberMutation.isSuccess ? (
+							<>
+								<Save className="w-4 h-4" />
+								<span>Saved!</span>
+							</>
+						) : (
+							<>
+								<Save className="w-4 h-4" />
+								<span>Save Changes</span>
+							</>
+						)}
+					</button>
 				</div>
-				{updateMemberMutation.isError && (
-					<p className="mt-2 text-sm text-red-500">
-						Error: {updateMemberMutation.error.message}
-					</p>
-				)}
 			</form>
 		</Form>
 	);
@@ -307,69 +336,108 @@ export function CommitteeMemberEditor() {
 	}, [members, selectedMemberId]);
 
 	if (isFetching) {
-		return <p className="p-6">Loading committee members...</p>;
+		return (
+			<DashboardCard>
+				<div className="flex items-center justify-center py-12">
+					<div className="flex items-center gap-3 text-gray-600">
+						<Loader2 className="h-6 w-6 animate-spin" />
+						<span className="font-semibold">
+							Loading committee members...
+						</span>
+					</div>
+				</div>
+			</DashboardCard>
+		);
 	}
 
 	if (isError) {
 		return (
-			<p className="p-6 text-red-500">
-				Failed to load committee members.
-			</p>
+			<DashboardCard>
+				<DashboardAlert
+					type="error"
+					title="Error"
+					message="Failed to load committee members. Please try again."
+				/>
+			</DashboardCard>
 		);
 	}
 
 	if (!members || members.length === 0) {
-		return <p className="p-6">No committee members found to edit.</p>;
+		return (
+			<DashboardCard>
+				<DashboardEmptyState
+					icon={<Users className="w-12 h-12" />}
+					title="No committee members found"
+					description="There are no committee members to edit."
+				/>
+			</DashboardCard>
+		);
 	}
 
 	return (
-		<div className="space-y-4 flex-col p-6 border rounded-2xl shadow-md bg-white">
-			<h3 className="text-lg font-semibold border-b pb-2">
+		<DashboardCard>
+			<DashboardCardHeader icon={<Users className="w-5 h-5" />}>
 				Edit Committee Members
-			</h3>
-
-			<div className="flex items-center gap-4">
-				<Label htmlFor="member-select">Select Member:</Label>
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button
-							variant="outline"
-							id="member-select"
-							className="min-w-[200px] justify-between"
-						>
-							{selectedMember
-								? selectedMember.name
-								: 'Select a Member'}
-							<ChevronDown className="ml-2 size-4 opacity-50" />
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent className="w-[200px]">
-						{members.map((member) => (
-							<DropdownMenuItem
-								key={member.id}
-								onClick={() => setSelectedMemberId(member.id)}
-								disabled={member.id === selectedMemberId}
+			</DashboardCardHeader>
+			<DashboardCardContent className="space-y-6">
+				<div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+					<label
+						htmlFor="member-select"
+						className="text-sm font-bold text-gray-900 shrink-0"
+					>
+						Select Member:
+					</label>
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<button
+								id="member-select"
+								className={cn(
+									'flex-1 w-full flex items-center justify-between px-4 py-3 text-left font-semibold border-2 border-black rounded-xl bg-white transition-all',
+									'shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]',
+									'hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5',
+									'focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2',
+								)}
 							>
-								<User className="mr-2 size-4" />
-								{member.name}
-							</DropdownMenuItem>
-						))}
-					</DropdownMenuContent>
-				</DropdownMenu>
-			</div>
+								<span className="truncate pr-4 text-gray-900">
+									{selectedMember
+										? selectedMember.name
+										: 'Select a Member'}
+								</span>
+								<ChevronDown className="w-5 h-5 text-gray-500 flex-shrink-0" />
+							</button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)] border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-2">
+							{members.map((member) => (
+								<DropdownMenuItem
+									key={member.id}
+									onClick={() =>
+										setSelectedMemberId(member.id)
+									}
+									disabled={member.id === selectedMemberId}
+									className="rounded-lg font-medium py-2.5 cursor-pointer"
+								>
+									<User className="mr-2 w-4 h-4" />
+									{member.name}
+								</DropdownMenuItem>
+							))}
+						</DropdownMenuContent>
+					</DropdownMenu>
+				</div>
 
-			{selectedMember ? (
-				<MemberEditorRow
-					key={selectedMember.id}
-					member={selectedMember}
-					onSuccess={refetch}
-				/>
-			) : (
-				<p className="p-4 text-base font-base">
-					Please select a committee member to begin editing their
-					details.
-				</p>
-			)}
-		</div>
+				{selectedMember ? (
+					<MemberEditorRow
+						key={selectedMember.id}
+						member={selectedMember}
+						onSuccess={refetch}
+					/>
+				) : (
+					<DashboardEmptyState
+						icon={<User className="w-10 h-10" />}
+						title="Select a member"
+						description="Please select a committee member to begin editing their details."
+					/>
+				)}
+			</DashboardCardContent>
+		</DashboardCard>
 	);
 }

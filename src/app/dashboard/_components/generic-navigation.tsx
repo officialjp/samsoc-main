@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { cn } from '~/lib/utils';
-import { Button } from '~/components/ui/button';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -10,23 +9,20 @@ export interface NavigationItem {
 	name: string;
 	href?: string;
 	page?: React.ReactElement;
+	icon?: React.ReactNode;
 }
 
 export interface GenericNavigationProps {
 	items: NavigationItem[];
 	mode?: 'tabs' | 'links';
 	headerClassName?: string;
-	activeButtonClassName?: string;
-	inactiveButtonClassName?: string;
 	currentPath?: string;
 }
 
 export default function GenericNavigation({
 	items,
 	mode = 'tabs',
-	headerClassName = 'flex gap-3 mb-5 flex-wrap',
-	activeButtonClassName = 'bg-purple-200',
-	inactiveButtonClassName = '',
+	headerClassName,
 	currentPath,
 }: GenericNavigationProps) {
 	const pathname = usePathname();
@@ -37,46 +33,71 @@ export default function GenericNavigation({
 		const currentPageName = pathToCheck.split('/').pop();
 
 		return (
-			<div className={headerClassName}>
+			<nav
+				className={cn(
+					'flex gap-2 flex-wrap justify-center',
+					headerClassName,
+				)}
+				aria-label="Section navigation"
+			>
 				{items
 					.filter((item) => {
 						if (!item.href) return false;
 						const itemPageName = item.href.split('/').pop();
 						return itemPageName !== currentPageName;
 					})
-					.map(({ name, href }, index) => (
-						<Button
-							key={name + index}
-							asChild
-							className="hover:cursor-pointer bg-button2 hover:bg-button1 cursor-pointer grow"
+					.map(({ name, href, icon }) => (
+						<Link
+							key={name + href}
+							href={href ?? '#'}
+							className="inline-flex items-center gap-2 px-4 py-2 text-sm font-bold border-2 border-black rounded-full bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-50 transition-all"
 						>
-							<Link href={href ?? '#'}>{name}</Link>
-						</Button>
+							{icon}
+							<span>{name}</span>
+						</Link>
 					))}
-			</div>
+			</nav>
 		);
 	}
 
-	// Tab-based navigation
+	// Tab-based navigation with neubrutalist design
 	return (
-		<div>
-			<header className={headerClassName}>
-				{items.map(({ name }, index) => (
-					<Button
-						className={cn(
-							'cursor-pointer grow',
-							index === pageIndex
-								? activeButtonClassName
-								: inactiveButtonClassName,
-						)}
-						key={name + index}
-						onClick={() => setPageIndex(index)}
-					>
-						{name}
-					</Button>
-				))}
-			</header>
-			<section>{items[pageIndex]?.page}</section>
+		<div className="w-full">
+			<div
+				className={cn('flex gap-2 mb-6 flex-wrap', headerClassName)}
+				role="tablist"
+				aria-label="Dashboard sections"
+			>
+				{items.map(({ name, icon }, index) => {
+					const isActive = index === pageIndex;
+
+					return (
+						<button
+							key={name + index}
+							onClick={() => setPageIndex(index)}
+							role="tab"
+							aria-selected={isActive}
+							aria-controls={`tabpanel-${index}`}
+							className={cn(
+								'flex-1 min-w-[120px] inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-bold border-2 border-black rounded-xl transition-all cursor-pointer',
+								isActive
+									? 'bg-purple-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+									: 'bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-50',
+							)}
+						>
+							{icon}
+							<span>{name}</span>
+						</button>
+					);
+				})}
+			</div>
+			<section
+				id={`tabpanel-${pageIndex}`}
+				role="tabpanel"
+				aria-labelledby={`tab-${pageIndex}`}
+			>
+				{items[pageIndex]?.page}
+			</section>
 		</div>
 	);
 }

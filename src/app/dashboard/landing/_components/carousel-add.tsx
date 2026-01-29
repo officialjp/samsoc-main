@@ -10,16 +10,21 @@ import {
 	FormLabel,
 	FormMessage,
 } from '~/components/ui/form';
-import { Input } from '~/components/ui/input';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { Button } from '~/components/ui/button';
 import { FormDropzone } from '../../_components/form-dropzone';
 import { useState } from 'react';
 import { fileToBase64 } from '~/lib/utils';
-import { Save } from 'lucide-react';
+import { Plus, Loader2, Layers } from 'lucide-react';
 import { toast } from 'sonner';
+import {
+	DashboardCard,
+	DashboardCardHeader,
+	DashboardCardContent,
+	DashboardCardFooter,
+} from '../../_components/dashboard-card';
+import { DashboardInput } from '../../_components/dashboard-form';
 
 const formSchema = z.object({
 	alt: z.string().min(1, {
@@ -31,6 +36,7 @@ const formSchema = z.object({
 
 export default function CarouselForm() {
 	const createItem = api.carousel.createItem.useMutation();
+	const utils = api.useUtils();
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -66,6 +72,7 @@ export default function CarouselForm() {
 			};
 
 			await createItem.mutateAsync(input);
+			void utils.carousel.getAllItems.invalidate();
 
 			toast.success(
 				'Carousel item created and images uploaded successfully!',
@@ -84,90 +91,112 @@ export default function CarouselForm() {
 
 	return (
 		<Form {...form}>
-			<form
-				onSubmit={form.handleSubmit(onSubmit)}
-				className="space-y-4 flex-col p-6 border rounded-lg shadow-md bg-white"
-			>
-				<h3 className="text-lg font-semibold border-b pb-2">
-					Adding Carousel Item
-				</h3>
+			<DashboardCard>
+				<form onSubmit={form.handleSubmit(onSubmit)}>
+					<DashboardCardHeader icon={<Layers className="w-5 h-5" />}>
+						Add Carousel Item
+					</DashboardCardHeader>
+					<DashboardCardContent className="space-y-5">
+						<FormField
+							control={form.control}
+							name="alt"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel className="text-sm font-bold text-gray-900">
+										Description
+									</FormLabel>
+									<FormControl>
+										<DashboardInput
+											placeholder="Enter carousel description..."
+											{...field}
+										/>
+									</FormControl>
+									<FormDescription className="text-xs text-gray-500">
+										A brief description of the carousel
+										item.
+									</FormDescription>
+									<FormMessage className="text-xs text-red-600 font-medium" />
+								</FormItem>
+							)}
+						/>
 
-				<FormField
-					control={form.control}
-					name="alt"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Description</FormLabel>
-							<FormControl>
-								<Input {...field} />
-							</FormControl>
-							<FormDescription>
-								A brief description of the carousel item.
-							</FormDescription>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-				<FormField
-					control={form.control}
-					name="mobileImage"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Mobile Image</FormLabel>
-							<FormControl>
-								<FormDropzone
-									field={field}
-									options={{
-										maxFiles: 1,
-										accept: {
-											'image/avif': ['.avif'],
-										},
-									}}
-								/>
-							</FormControl>
-							<FormDescription>
-								Upload the image for mobile devices.
-							</FormDescription>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-				<FormField
-					control={form.control}
-					name="pcImage"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>PC Image</FormLabel>
-							<FormControl>
-								<FormDropzone
-									field={field}
-									options={{
-										maxFiles: 1,
-										accept: {
-											'image/avif': ['.avif'],
-										},
-									}}
-								/>
-							</FormControl>
-							<FormDescription>
-								Upload the image for desktop devices.
-							</FormDescription>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-				<div className="mt-4 flex justify-end">
-					<Button type="submit" disabled={isSubmitting}>
-						{isSubmitting ? (
-							'Uploading & Creating...'
-						) : (
-							<>
-								Save Changes <Save />
-							</>
-						)}
-					</Button>
-				</div>
-			</form>
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+							<FormField
+								control={form.control}
+								name="mobileImage"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel className="text-sm font-bold text-gray-900">
+											Mobile Image
+										</FormLabel>
+										<FormControl>
+											<FormDropzone
+												field={field}
+												options={{
+													maxFiles: 1,
+													accept: {
+														'image/avif': ['.avif'],
+													},
+												}}
+											/>
+										</FormControl>
+										<FormDescription className="text-xs text-gray-500">
+											Upload the image for mobile devices.
+										</FormDescription>
+										<FormMessage className="text-xs text-red-600 font-medium" />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="pcImage"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel className="text-sm font-bold text-gray-900">
+											Desktop Image
+										</FormLabel>
+										<FormControl>
+											<FormDropzone
+												field={field}
+												options={{
+													maxFiles: 1,
+													accept: {
+														'image/avif': ['.avif'],
+													},
+												}}
+											/>
+										</FormControl>
+										<FormDescription className="text-xs text-gray-500">
+											Upload the image for desktop
+											devices.
+										</FormDescription>
+										<FormMessage className="text-xs text-red-600 font-medium" />
+									</FormItem>
+								)}
+							/>
+						</div>
+					</DashboardCardContent>
+					<DashboardCardFooter>
+						<button
+							type="submit"
+							disabled={isSubmitting}
+							className="inline-flex items-center justify-center gap-2 px-6 py-3 font-bold border-2 border-black rounded-xl transition-all bg-green-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:bg-green-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] disabled:hover:translate-x-0 disabled:hover:translate-y-0"
+						>
+							{isSubmitting ? (
+								<>
+									<Loader2 className="h-4 w-4 animate-spin" />
+									<span>Uploading...</span>
+								</>
+							) : (
+								<>
+									<Plus className="h-4 w-4" />
+									<span>Add Carousel Item</span>
+								</>
+							)}
+						</button>
+					</DashboardCardFooter>
+				</form>
+			</DashboardCard>
 		</Form>
 	);
 }

@@ -2,6 +2,7 @@
 
 import { api } from '~/trpc/react';
 import GenericItemRemoval from '../../_components/generic-item-removal';
+import { toast } from 'sonner';
 
 interface ImageItem {
 	id: number;
@@ -11,12 +12,16 @@ interface ImageItem {
 export default function ImageRemove() {
 	const { data: items, isLoading } = api.image.getAllItems.useQuery();
 
+	const utils = api.useUtils();
 	const deleteMutation = api.image.deleteItem.useMutation({
-		onSuccess: () => {
-			// Success handled by generic component
+		onSuccess: (_, variables) => {
+			void utils.image.getAllItems.invalidate();
+			toast.success(
+				`Image ID ${variables.id} successfully deleted (R2 files cleaned up).`,
+			);
 		},
 		onError: (error) => {
-			console.error('Deletion failed:', error.message);
+			toast.error(`Deletion failed: ${error.message}`);
 		},
 	});
 

@@ -14,14 +14,18 @@ import {
 	FormLabel,
 	FormMessage,
 } from '~/components/ui/form';
-import { Input } from '~/components/ui/input';
-import { Button } from '~/components/ui/button';
-import { Loader2, Save } from 'lucide-react';
+import { Loader2, Save, Calendar, Sparkles, Info } from 'lucide-react';
 import AnimeSearch, {
 	type AnimeSelection,
 } from '~/app/games/_components/anime-search';
 import { useRouter } from 'next/navigation';
 import { useEffect, Suspense, useState } from 'react';
+import {
+	DashboardCard,
+	DashboardCardHeader,
+	DashboardCardContent,
+} from '../../_components/dashboard-card';
+import { DashboardInput } from '../../_components/dashboard-form';
 
 const adminSchema = z.object({
 	animeId: z.number().int().min(1, 'Please search and select an anime'),
@@ -89,90 +93,108 @@ function SchedulerContent() {
 	const isDisabled = isPending || !form.watch('animeId') || dateHasEntry;
 
 	return (
-		<div className="max-w-2xl mx-auto p-6">
-			<Form {...form}>
-				<form
-					onSubmit={form.handleSubmit(onSubmit)}
-					className="space-y-4 p-6 border rounded-lg shadow-md bg-white"
-				>
-					<h3 className="text-lg font-semibold border-b pb-2">
-						Anime Scheduler
-					</h3>
-
-					<div className="bg-blue-50 border border-blue-200 p-3 rounded-lg text-sm">
-						<p className="text-blue-800">
-							Search for an anime below. Its ID will be captured
-							automatically.
-						</p>
+		<DashboardCard>
+			<DashboardCardHeader>
+				<div className="flex items-center gap-3">
+					<div className="flex size-10 items-center justify-center rounded-xl border-2 border-black bg-purple-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+						<Sparkles className="size-5" />
 					</div>
+					<h3 className="text-xl font-bold">Anime Scheduler</h3>
+				</div>
+			</DashboardCardHeader>
 
-					{/* Anime search component */}
-					<AnimeSearch onSelect={handleAnimeSelect} />
+			<DashboardCardContent>
+				<Form {...form}>
+					<form
+						onSubmit={form.handleSubmit(onSubmit)}
+						className="space-y-6"
+					>
+						{/* Info box */}
+						<div className="flex items-start gap-3 rounded-xl border-2 border-blue-400 bg-blue-50 p-4">
+							<Info className="size-5 shrink-0 text-blue-600 mt-0.5" />
+							<p className="text-sm text-blue-800 font-medium">
+								Search for an anime below. Its ID will be
+								captured automatically.
+							</p>
+						</div>
 
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-						<FormField
-							control={form.control}
-							name="animeId"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Selected ID</FormLabel>
-									<FormControl>
-										<Input
-											type="number"
-											readOnly
-											{...field}
-											className="bg-gray-100"
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+						{/* Anime search component */}
+						<div className="rounded-xl border-2 border-black/20 bg-gray-50 p-4">
+							<AnimeSearch onSelect={handleAnimeSelect} />
+						</div>
 
-						<FormField
-							control={form.control}
-							name="scheduledDate"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Release Date</FormLabel>
-									<FormControl>
-										<Input
-											type="date"
-											{...field}
-											className={
-												dateHasEntry
-													? 'border-red-500 bg-red-50'
-													: ''
-											}
-										/>
-									</FormControl>
-									{dateHasEntry && (
-										<FormDescription className="text-red-600 font-medium">
-											This date already has a scheduled
-											anime
-										</FormDescription>
-									)}
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-					</div>
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+							<FormField
+								control={form.control}
+								name="animeId"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel className="font-bold">
+											Selected ID
+										</FormLabel>
+										<FormControl>
+											<DashboardInput
+												type="number"
+												readOnly
+												{...field}
+												className="bg-gray-100"
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 
-					<div className="mt-4 flex justify-end">
-						<Button type="submit" disabled={isDisabled}>
-							{isPending ? (
-								'Saving...'
-							) : (
-								<>
-									<Save className="w-4 h-4 mr-2" />
-									Save Schedule
-								</>
-							)}
-						</Button>
-					</div>
-				</form>
-			</Form>
-		</div>
+							<FormField
+								control={form.control}
+								name="scheduledDate"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel className="font-bold flex items-center gap-2">
+											<Calendar className="size-4" />
+											Release Date
+										</FormLabel>
+										<FormControl>
+											<DashboardInput
+												type="date"
+												{...field}
+												className={
+													dateHasEntry
+														? 'border-red-500 bg-red-50'
+														: ''
+												}
+											/>
+										</FormControl>
+										{dateHasEntry && (
+											<FormDescription className="text-red-600 font-medium">
+												This date already has a
+												scheduled anime
+											</FormDescription>
+										)}
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
+
+						<div className="flex justify-end pt-4 border-t-2 border-black/10">
+							<button
+								type="submit"
+								disabled={isDisabled}
+								className="flex items-center gap-2 rounded-xl border-2 border-black bg-green-200 px-6 py-3 font-bold shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+							>
+								{isPending ? (
+									<Loader2 className="size-4 animate-spin" />
+								) : (
+									<Save className="size-4" />
+								)}
+								Save Schedule
+							</button>
+						</div>
+					</form>
+				</Form>
+			</DashboardCardContent>
+		</DashboardCard>
 	);
 }
 
@@ -181,12 +203,16 @@ export default function AdminAnimeScheduler() {
 	return (
 		<Suspense
 			fallback={
-				<div className="flex flex-col items-center justify-center p-12 border rounded-lg shadow-md bg-white max-w-2xl mx-auto">
-					<Loader2 className="w-10 h-10 animate-spin text-blue-600 mb-4" />
-					<p className="font-semibold text-center">
-						Loading Admin Tools...
-					</p>
-				</div>
+				<DashboardCard>
+					<DashboardCardContent>
+						<div className="flex flex-col items-center justify-center py-12">
+							<Loader2 className="size-10 animate-spin text-purple-600 mb-4" />
+							<p className="font-bold text-center">
+								Loading Admin Tools...
+							</p>
+						</div>
+					</DashboardCardContent>
+				</DashboardCard>
 			}
 		>
 			<SchedulerContent />

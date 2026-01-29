@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Button } from '~/components/ui/button';
-import { Input } from '~/components/ui/input';
+import { cn } from '~/lib/utils';
 import {
 	DropdownMenu,
 	DropdownMenuTrigger,
@@ -12,7 +11,19 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuLabel,
 } from '~/components/ui/dropdown-menu';
-import { Loader2, Trash2, ChevronRight, Search } from 'lucide-react';
+import {
+	Loader2,
+	Trash2,
+	ChevronDown,
+	Search,
+	PackageOpen,
+} from 'lucide-react';
+import {
+	DashboardCard,
+	DashboardCardHeader,
+	DashboardCardContent,
+} from './dashboard-card';
+import { DashboardAlert, DashboardEmptyState } from './dashboard-alert';
 
 export interface RemovalItem {
 	id: number;
@@ -150,145 +161,165 @@ export default function GenericItemRemoval<T extends RemovalItem>({
 			: 'Delete Selected';
 
 	return (
-		<div className="space-y-4 p-6 border rounded-lg shadow-md bg-white">
-			<h3 className="text-xl font-bold border-b pb-2 flex items-center">
-				<Trash2 className="mr-2 h-5 w-5" />
+		<DashboardCard>
+			<DashboardCardHeader icon={<Trash2 className="w-5 h-5" />}>
 				{title}
-			</h3>
+			</DashboardCardHeader>
 
-			{statusMessage && (
-				<div
-					className={`text-sm p-3 rounded-lg border transition-all duration-300
-						${statusMessage.type === 'success' ? 'text-green-700 bg-green-100 border-green-300' : ''}
-						${statusMessage.type === 'error' ? 'text-red-700 bg-red-100 border-red-300' : ''}
-						${statusMessage.type === 'warning' ? 'text-yellow-700 bg-yellow-100 border-yellow-300' : ''}
-					`}
-				>
-					<span className="font-semibold">
-						{statusMessage.type.charAt(0).toUpperCase() +
-							statusMessage.type.slice(1)}
-						:
-					</span>{' '}
-					{statusMessage.message}
-				</div>
-			)}
+			<DashboardCardContent>
+				{statusMessage && (
+					<DashboardAlert
+						type={statusMessage.type}
+						message={statusMessage.message}
+						onDismiss={() => setStatusMessage(null)}
+					/>
+				)}
 
-			{isLoading && (
-				<div className="flex items-center justify-center py-4 text-gray-500">
-					<Loader2 className="mr-2 h-5 w-5 animate-spin" />
-					Loading items...
-				</div>
-			)}
-
-			{!isLoading && items && (
-				<div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-					<div className="grow relative">
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<Button
-									variant="outline"
-									disabled={
-										isSubmitting || items.length === 0
-									}
-									className="w-full justify-between hover:border-red-300"
-								>
-									{selectedItemLabel}
-									<ChevronRight className="h-4 w-4 opacity-50 rotate-90 shrink-0 ml-2" />
-								</Button>
-							</DropdownMenuTrigger>
-
-							<DropdownMenuContent className="sm:w-80 p-1">
-								<div className="p-1 relative">
-									<Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-									<Input
-										placeholder={searchPlaceholder}
-										className="w-full pl-9 h-9"
-										value={searchTerm}
-										onChange={(
-											e: React.ChangeEvent<HTMLInputElement>,
-										) => setSearchTerm(e.target.value)}
-									/>
-								</div>
-								<DropdownMenuSeparator />
-
-								<div className="max-h-72 overflow-y-auto">
-									<DropdownMenuRadioGroup
-										value={
-											selectedItemId
-												? String(selectedItemId)
-												: ''
-										}
-										onValueChange={handleValueChange}
-									>
-										{filteredItems.length === 0 ? (
-											<DropdownMenuLabel className="text-gray-500 italic px-2 py-1">
-												{searchTerm
-													? 'No matching items found.'
-													: 'No items available.'}
-											</DropdownMenuLabel>
-										) : (
-											filteredItems.map((item: T) => (
-												<DropdownMenuRadioItem
-													key={item.id}
-													value={String(item.id)}
-													disabled={protectedIds.includes(
-														item.id,
-													)}
-												>
-													{getItemLabel(item)}
-												</DropdownMenuRadioItem>
-											))
-										)}
-									</DropdownMenuRadioGroup>
-								</div>
-
-								{items.length > filteredItems.length && (
-									<>
-										<DropdownMenuSeparator />
-										<DropdownMenuLabel className="text-xs text-gray-500 px-2 py-1">
-											Showing {filteredItems.length} of{' '}
-											{items.length} total items.
-										</DropdownMenuLabel>
-									</>
-								)}
-							</DropdownMenuContent>
-						</DropdownMenu>
+				{isLoading && (
+					<div className="flex items-center justify-center py-8">
+						<div className="flex items-center gap-3 text-gray-600">
+							<Loader2 className="h-6 w-6 animate-spin" />
+							<span className="font-semibold">
+								Loading items...
+							</span>
+						</div>
 					</div>
+				)}
 
-					<Button
-						onClick={handleDelete}
-						disabled={
-							!selectedItemId || isSubmitting || isProtected
-						}
-						className={`w-full sm:w-auto flex items-center transition-all ${
-							useWarningMessage && confirmingDelete
-								? 'bg-red-700 hover:bg-red-800'
-								: ''
-						}`}
-					>
-						{isSubmitting ? (
-							<>
-								<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-								Deleting...
-							</>
-						) : (
-							<>
-								<Trash2 className="mr-2 h-4 w-4" />
-								{buttonText}
-							</>
-						)}
-					</Button>
-				</div>
-			)}
+				{!isLoading && items && items.length === 0 && (
+					<DashboardEmptyState
+						icon={<PackageOpen className="w-12 h-12" />}
+						title="No items available"
+						description="There are no items to delete at this time."
+					/>
+				)}
 
-			{selectedItemId && isProtected && (
-				<p className="text-red-500 text-sm mt-2">
-					<span className="font-bold">
-						Item ID {selectedItemId} is protected
-					</span>
-					{protectedMessage}
-				</p>
-			)}
-		</div>
+				{!isLoading && items && items.length > 0 && (
+					<div className="flex flex-col sm:flex-row items-stretch gap-3">
+						<div className="flex-1">
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<button
+										disabled={
+											isSubmitting || items.length === 0
+										}
+										className={cn(
+											'w-full flex items-center justify-between px-4 py-3 text-left font-semibold border-2 border-black rounded-xl bg-white transition-all',
+											'shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]',
+											'hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5',
+											'focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2',
+											'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] disabled:hover:translate-x-0 disabled:hover:translate-y-0',
+										)}
+									>
+										<span
+											className={cn(
+												selectedItemId
+													? 'text-gray-900'
+													: 'text-gray-500',
+											)}
+										>
+											{selectedItemLabel}
+										</span>
+										<ChevronDown className="h-5 w-5 text-gray-500 flex-shrink-0" />
+									</button>
+								</DropdownMenuTrigger>
+
+								<DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)] border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-2">
+									<div className="relative mb-2">
+										<Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+										<input
+											placeholder={searchPlaceholder}
+											className="w-full pl-9 pr-4 py-2.5 rounded-lg bg-gray-50 text-gray-900 border-2 border-gray-200 font-medium text-sm focus:outline-none focus:border-black transition-colors"
+											value={searchTerm}
+											onChange={(
+												e: React.ChangeEvent<HTMLInputElement>,
+											) => setSearchTerm(e.target.value)}
+										/>
+									</div>
+									<DropdownMenuSeparator className="bg-gray-200 h-0.5" />
+
+									<div className="max-h-64 overflow-y-auto">
+										<DropdownMenuRadioGroup
+											value={
+												selectedItemId
+													? String(selectedItemId)
+													: ''
+											}
+											onValueChange={handleValueChange}
+										>
+											{filteredItems.length === 0 ? (
+												<DropdownMenuLabel className="text-gray-500 italic px-2 py-3 text-center">
+													{searchTerm
+														? 'No matching items found.'
+														: 'No items available.'}
+												</DropdownMenuLabel>
+											) : (
+												filteredItems.map((item: T) => (
+													<DropdownMenuRadioItem
+														key={item.id}
+														value={String(item.id)}
+														disabled={protectedIds.includes(
+															item.id,
+														)}
+														className="rounded-lg font-medium py-2.5 cursor-pointer"
+													>
+														{getItemLabel(item)}
+													</DropdownMenuRadioItem>
+												))
+											)}
+										</DropdownMenuRadioGroup>
+									</div>
+
+									{items.length > filteredItems.length && (
+										<>
+											<DropdownMenuSeparator className="bg-gray-200 h-0.5" />
+											<DropdownMenuLabel className="text-xs text-gray-500 px-2 py-1.5 font-medium">
+												Showing {filteredItems.length}{' '}
+												of {items.length} items
+											</DropdownMenuLabel>
+										</>
+									)}
+								</DropdownMenuContent>
+							</DropdownMenu>
+						</div>
+
+						<button
+							onClick={handleDelete}
+							disabled={
+								!selectedItemId || isSubmitting || isProtected
+							}
+							className={cn(
+								'inline-flex items-center justify-center gap-2 px-6 py-3 font-bold border-2 border-black rounded-xl transition-all',
+								'shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]',
+								'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] disabled:hover:translate-x-0 disabled:hover:translate-y-0',
+								useWarningMessage && confirmingDelete
+									? 'bg-red-600 text-white hover:bg-red-700 hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
+									: 'bg-red-100 text-red-700 hover:bg-red-200 hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]',
+							)}
+						>
+							{isSubmitting ? (
+								<>
+									<Loader2 className="h-4 w-4 animate-spin" />
+									<span>Deleting...</span>
+								</>
+							) : (
+								<>
+									<Trash2 className="h-4 w-4" />
+									<span>{buttonText}</span>
+								</>
+							)}
+						</button>
+					</div>
+				)}
+
+				{selectedItemId && isProtected && (
+					<DashboardAlert
+						type="warning"
+						title="Protected Item"
+						message={`Item ID ${selectedItemId} is protected${protectedMessage}`}
+					/>
+				)}
+			</DashboardCardContent>
+		</DashboardCard>
 	);
 }

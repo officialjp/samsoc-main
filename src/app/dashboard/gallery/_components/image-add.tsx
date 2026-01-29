@@ -10,16 +10,26 @@ import {
 	FormLabel,
 	FormMessage,
 } from '~/components/ui/form';
-import { Input } from '~/components/ui/input';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { Button } from '~/components/ui/button';
 import { useState } from 'react';
-import { fileToBase64 } from '~/lib/utils';
-import { Save } from 'lucide-react';
+import { fileToBase64, cn } from '~/lib/utils';
+import { Plus, Loader2, Image as ImageIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { FormDropzone } from '../../_components/form-dropzone';
+import {
+	DashboardCard,
+	DashboardCardHeader,
+	DashboardCardContent,
+	DashboardCardFooter,
+} from '../../_components/dashboard-card';
+import { DashboardInput } from '../../_components/dashboard-form';
+
+const categoryOptions = [
+	{ value: 'Events', label: 'Events' },
+	{ value: 'Collaborations', label: 'Collaborations' },
+] as const;
 
 const category = ['Events', 'Collaborations'] as const;
 
@@ -37,12 +47,13 @@ const formSchema = z.object({
 
 export default function ImageAdd() {
 	const createItem = api.image.createItem.useMutation();
+	const utils = api.useUtils();
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			year: 0,
+			year: new Date().getFullYear(),
 			category: 'Events',
 			alt: '',
 			sourceImage: [],
@@ -77,6 +88,7 @@ export default function ImageAdd() {
 			};
 
 			await createItem.mutateAsync(input);
+			void utils.image.getAllItems.invalidate();
 
 			toast.success(
 				'Image item created and images uploaded successfully!',
@@ -95,122 +107,187 @@ export default function ImageAdd() {
 
 	return (
 		<Form {...form}>
-			<form
-				onSubmit={form.handleSubmit(onSubmit)}
-				className="space-y-4 p-6 border rounded-lg shadow-md bg-white"
-			>
-				<h3 className="text-lg font-semibold border-b pb-2">
-					Adding Image Item
-				</h3>
-				<FormField
-					control={form.control}
-					name="alt"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Description</FormLabel>
-							<FormControl>
-								<Input {...field} />
-							</FormControl>
-							<FormDescription>
-								A brief description of the carousel item.
-							</FormDescription>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-				<FormField
-					control={form.control}
-					name="sourceImage"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Display Image</FormLabel>
-							<FormControl>
-								<FormDropzone
-									field={field}
-									options={{
-										maxFiles: 1,
-										accept: {
-											'image/avif': ['.avif'],
-										},
-									}}
-								/>
-							</FormControl>
-							<FormDescription>
-								Upload the image for inside the component.
-							</FormDescription>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-				<FormField
-					control={form.control}
-					name="thumbnailImage"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Thumbnail Image</FormLabel>
-							<FormControl>
-								<FormDropzone
-									field={field}
-									options={{
-										maxFiles: 1,
-										accept: {
-											'image/avif': ['.avif'],
-										},
-									}}
-								/>
-							</FormControl>
-							<FormDescription>
-								Upload the image for the thumbnail.
-							</FormDescription>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-				<FormField
-					control={form.control}
-					name="category"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Category</FormLabel>
-							<FormControl>
-								<Input {...field} />
-							</FormControl>
-							<FormDescription>
-								The category of the image.
-							</FormDescription>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-				<FormField
-					control={form.control}
-					name="year"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Year</FormLabel>
-							<FormControl>
-								<Input type="number" {...field} />
-							</FormControl>
-							<FormDescription>
-								The year the image was taken.
-							</FormDescription>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
+			<DashboardCard>
+				<form onSubmit={form.handleSubmit(onSubmit)}>
+					<DashboardCardHeader
+						icon={<ImageIcon className="w-5 h-5" />}
+					>
+						Add Gallery Image
+					</DashboardCardHeader>
+					<DashboardCardContent className="space-y-5">
+						<FormField
+							control={form.control}
+							name="alt"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel className="text-sm font-bold text-gray-900">
+										Description
+									</FormLabel>
+									<FormControl>
+										<DashboardInput
+											placeholder="Enter image description..."
+											{...field}
+										/>
+									</FormControl>
+									<FormDescription className="text-xs text-gray-500">
+										A brief description of the image.
+									</FormDescription>
+									<FormMessage className="text-xs text-red-600 font-medium" />
+								</FormItem>
+							)}
+						/>
 
-				<div className="mt-4 flex justify-end">
-					<Button type="submit" disabled={isSubmitting}>
-						{isSubmitting ? (
-							'Uploading & Creating...'
-						) : (
-							<>
-								Save Changes <Save />
-							</>
-						)}
-					</Button>
-				</div>
-			</form>
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+							<FormField
+								control={form.control}
+								name="sourceImage"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel className="text-sm font-bold text-gray-900">
+											Full Image
+										</FormLabel>
+										<FormControl>
+											<FormDropzone
+												field={field}
+												options={{
+													maxFiles: 1,
+													accept: {
+														'image/avif': ['.avif'],
+													},
+												}}
+											/>
+										</FormControl>
+										<FormDescription className="text-xs text-gray-500">
+											Upload the full-size image.
+										</FormDescription>
+										<FormMessage className="text-xs text-red-600 font-medium" />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="thumbnailImage"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel className="text-sm font-bold text-gray-900">
+											Thumbnail Image
+										</FormLabel>
+										<FormControl>
+											<FormDropzone
+												field={field}
+												options={{
+													maxFiles: 1,
+													accept: {
+														'image/avif': ['.avif'],
+													},
+												}}
+											/>
+										</FormControl>
+										<FormDescription className="text-xs text-gray-500">
+											Upload the thumbnail image.
+										</FormDescription>
+										<FormMessage className="text-xs text-red-600 font-medium" />
+									</FormItem>
+								)}
+							/>
+						</div>
+
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+							<FormField
+								control={form.control}
+								name="category"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel className="text-sm font-bold text-gray-900">
+											Category
+										</FormLabel>
+										<FormControl>
+											<div className="flex gap-2">
+												{categoryOptions.map(
+													(option) => (
+														<button
+															key={option.value}
+															type="button"
+															onClick={() =>
+																field.onChange(
+																	option.value,
+																)
+															}
+															className={cn(
+																'flex-1 px-4 py-3 rounded-xl border-2 border-black font-bold text-sm transition-all',
+																'shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]',
+																field.value ===
+																	option.value
+																	? 'bg-purple-200 translate-x-0.5 translate-y-0.5 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
+																	: 'bg-white hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]',
+															)}
+														>
+															{option.label}
+														</button>
+													),
+												)}
+											</div>
+										</FormControl>
+										<FormDescription className="text-xs text-gray-500">
+											The category of the image.
+										</FormDescription>
+										<FormMessage className="text-xs text-red-600 font-medium" />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="year"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel className="text-sm font-bold text-gray-900">
+											Year
+										</FormLabel>
+										<FormControl>
+											<DashboardInput
+												type="number"
+												min={2000}
+												max={2100}
+												{...field}
+												onChange={(e) =>
+													field.onChange(
+														parseInt(
+															e.target.value,
+														) || 0,
+													)
+												}
+											/>
+										</FormControl>
+										<FormDescription className="text-xs text-gray-500">
+											The year the image was taken.
+										</FormDescription>
+										<FormMessage className="text-xs text-red-600 font-medium" />
+									</FormItem>
+								)}
+							/>
+						</div>
+					</DashboardCardContent>
+					<DashboardCardFooter>
+						<button
+							type="submit"
+							disabled={isSubmitting}
+							className="inline-flex items-center justify-center gap-2 px-6 py-3 font-bold border-2 border-black rounded-xl transition-all bg-green-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:bg-green-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] disabled:hover:translate-x-0 disabled:hover:translate-y-0"
+						>
+							{isSubmitting ? (
+								<>
+									<Loader2 className="h-4 w-4 animate-spin" />
+									<span>Uploading...</span>
+								</>
+							) : (
+								<>
+									<Plus className="h-4 w-4" />
+									<span>Add Image</span>
+								</>
+							)}
+						</button>
+					</DashboardCardFooter>
+				</form>
+			</DashboardCard>
 		</Form>
 	);
 }

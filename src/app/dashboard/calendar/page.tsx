@@ -18,19 +18,19 @@ const calendarPageObj = [
 
 export default function Page() {
 	return (
-		<div>
-			<SectionContainer>
-				<SectionHeading
-					badge="DASHBOARD"
-					title="Calendar Page Dashboard"
-					description="This is the dashboard for the calendar page of the website"
-					badgeColor="bg-purple-200"
-				/>
-				<div className="flex items-center justify-center mx-auto max-w-7xl py-12 flex-col gap-6">
-					<DashboardNavigationButtons />
+		<SectionContainer>
+			<SectionHeading
+				badge="DASHBOARD"
+				title="Calendar Page Dashboard"
+				description="This is the dashboard for the calendar page of the website"
+				badgeColor="bg-purple-200"
+			/>
+			<div className="flex flex-col items-center gap-8 mx-auto max-w-7xl py-12 px-4">
+				<DashboardNavigationButtons />
+				<div className="w-full">
 					<DashboardTabs tabData={calendarPageObj} />
 				</div>
-			</SectionContainer>
-		</div>
+			</div>
+		</SectionContainer>
 	);
 }

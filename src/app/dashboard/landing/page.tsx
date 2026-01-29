@@ -29,19 +29,19 @@ const carouselPageObj = [
 
 export default function Page() {
 	return (
-		<div>
-			<SectionContainer>
-				<SectionHeading
-					badge="DASHBOARD"
-					title="Landing Page Dashboard"
-					description="This is the dashboard for the landing page of the website"
-					badgeColor="bg-purple-200"
-				/>
-				<div className="flex items-center justify-center flex-col mx-auto max-w-7xl">
-					<DashboardNavigationButtons />
+		<SectionContainer>
+			<SectionHeading
+				badge="DASHBOARD"
+				title="Landing Page Dashboard"
+				description="This is the dashboard for the landing page of the website"
+				badgeColor="bg-purple-200"
+			/>
+			<div className="flex flex-col items-center gap-8 mx-auto max-w-7xl py-12 px-4">
+				<DashboardNavigationButtons />
+				<div className="w-full">
 					<DashboardTabs tabData={carouselPageObj} />
 				</div>
-			</SectionContainer>
-		</div>
+			</div>
+		</SectionContainer>
 	);
 }
