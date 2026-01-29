@@ -7,9 +7,6 @@ import { Suspense } from 'react';
 import GallerySkeleton from './_components/gallery-skeleton';
 import ScrollAnimationWrapper from '~/components/shared/scroll-animation-wrapper';
 
-// Revalidate this page every 60 seconds to ensure content updates are reflected
-export const revalidate = 60;
-
 export const metadata: Metadata = {
 	title: 'Surrey Anime and Manga Society - Gallery',
 	description:

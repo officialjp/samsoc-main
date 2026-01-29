@@ -1,6 +1,7 @@
 'use client';
 
 import { api } from '~/trpc/react';
+import { revalidateLibraryPage } from '~/server/actions/revalidate';
 import GenericItemRemoval from '../../_components/generic-item-removal';
 import { toast } from 'sonner';
 
@@ -17,6 +18,7 @@ export default function MangaRemove() {
 	const deleteMutation = api.manga.deleteItem.useMutation({
 		onSuccess: (_, variables) => {
 			void utils.manga.getAllItems.invalidate();
+			void revalidateLibraryPage();
 			toast.success(
 				`Item ID ${variables.id} successfully deleted (R2 files cleaned up).`,
 			);

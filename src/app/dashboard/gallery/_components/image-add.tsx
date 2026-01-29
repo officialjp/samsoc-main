@@ -1,6 +1,7 @@
 'use client';
 
 import { api } from '~/trpc/react';
+import { revalidateGalleryPage } from '~/server/actions/revalidate';
 import {
 	Form,
 	FormControl,
@@ -89,6 +90,7 @@ export default function ImageAdd() {
 
 			await createItem.mutateAsync(input);
 			void utils.image.getAllItems.invalidate();
+			void revalidateGalleryPage();
 
 			toast.success(
 				'Image item created and images uploaded successfully!',

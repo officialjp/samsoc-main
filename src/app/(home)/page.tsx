@@ -1,8 +1,5 @@
 import { Suspense } from 'react';
 import { api } from '~/trpc/server';
-
-// Revalidate this page every 60 seconds to ensure content updates are reflected
-export const revalidate = 60;
 import { SectionContainer } from '~/components/layout/section-container';
 import { SectionHeading } from '~/components/layout/section-heading';
 import { FeatureCard } from './_components/feature-card';

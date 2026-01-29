@@ -1,6 +1,7 @@
 'use client';
 
 import { api } from '~/trpc/react';
+import { revalidateCalendarPage } from '~/server/actions/revalidate';
 import GenericItemRemoval from '../../_components/generic-item-removal';
 import { toast } from 'sonner';
 
@@ -17,6 +18,7 @@ export default function EventRemove() {
 	const deleteMutation = api.event.deleteItem.useMutation({
 		onSuccess: () => {
 			void utils.event.getAllItems.invalidate();
+			void revalidateCalendarPage();
 			toast.success('Event deleted successfully.');
 		},
 		onError: (error) => {

@@ -8,6 +8,7 @@ import { Loader2, Save, XCircle, ChevronDown, User, Users } from 'lucide-react';
 import Image from 'next/image';
 
 import { api } from '~/trpc/react';
+import { revalidateHomePage } from '~/server/actions/revalidate';
 import { cn } from '~/lib/utils';
 
 import {
@@ -112,6 +113,7 @@ const MemberEditorRow: React.FC<MemberEditorRowProps> = ({
 	const updateMemberMutation = api.committee.updateMember.useMutation({
 		onSuccess: (updatedMember) => {
 			onSuccess();
+			void revalidateHomePage();
 			form.reset({
 				id: updatedMember.id,
 				name: updatedMember.name,

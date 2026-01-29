@@ -8,9 +8,6 @@ import { Suspense } from 'react';
 import ScrollAnimationWrapper from '~/components/shared/scroll-animation-wrapper';
 import type { GetLibraryPaginatedItemResult } from '~/server/api/routers/manga';
 
-// Revalidate this page every 60 seconds to ensure content updates are reflected
-export const revalidate = 60;
-
 export const metadata: Metadata = {
 	title: 'Surrey Anime and Manga Society - Library',
 	description:
