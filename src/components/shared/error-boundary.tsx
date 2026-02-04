@@ -75,13 +75,7 @@ export class ErrorBoundary extends Component<
 									</pre>
 								</details>
 							)}
-						<div className="flex gap-4">
-							<Button
-								onClick={this.handleReset}
-								className="border-2 border-black bg-button2 text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-button1"
-							>
-								Try again
-							</Button>
+						<div className="flex gap-4 justify-center items-center w-full">
 							<Button
 								onClick={() => window.location.reload()}
 								className="border-2 border-black bg-button2 text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-button1"
