@@ -440,7 +440,6 @@ export function AnimeCardEditor() {
   const [selectedCardId, setSelectedCardId] = React.useState<number | null>(
     null,
   );
-  const utils = api.useUtils();
 
   const {
     data: cards,
