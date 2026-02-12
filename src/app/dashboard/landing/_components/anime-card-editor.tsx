@@ -4,24 +4,12 @@ import * as React from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import {
-	Loader2,
-	Save,
-	XCircle,
-	ChevronDown,
-	Sparkles,
-	Tv,
-} from 'lucide-react';
+import { Loader2, Save, ChevronDown, Sparkles, Tv } from 'lucide-react';
 import Image from 'next/image';
 
 import { cn } from '~/lib/utils';
 import { api } from '~/trpc/react';
 
-import {
-	Dropzone,
-	DropzoneContent,
-	DropzoneEmptyState,
-} from '~/components/ui/dropzone';
 import { Label } from '~/components/ui/label';
 import {
 	Form,
@@ -51,39 +39,36 @@ const animeCardFormSchema = z.object({
 	id: z.number(),
 	title: z.string().min(1, 'Title is required.'),
 	episode: z.string().min(1, 'Episode is required.'),
-	mal_link: z.string().nonempty('MAL image link is required'),
+	mal_link: z.string().nonempty('MAL page link is required'),
 	total_episodes: z.coerce.number(),
 	show_type: z.string().nonempty('Show Type is required'),
-	source: z.string().nonempty('Source is required'),
+	source: z
+		.string()
+		.url('Must be a valid URL')
+		.nonempty('Image source URL is required'),
 	studio: z.string().nonempty('Studio is required'),
-	newImage: z
-		.custom<File>((val) => val instanceof File || val === undefined, {
-			message: 'Image must be a valid file.',
-		})
-		.optional(),
 });
 
 type AnimeCardFormValues = z.infer<typeof animeCardFormSchema>;
 
-const ImagePreview = ({
-	file,
-	url,
-}: {
-	file: File | undefined;
-	url: string | null | undefined;
-}) => {
-	const src = file ? URL.createObjectURL(file) : url;
+const ImagePreview = ({ url }: { url: string | undefined }) => {
+	if (!url) return null;
 
-	if (!src) return null;
+	// Only render if it looks like a valid URL
+	try {
+		new URL(url);
+	} catch {
+		return null;
+	}
 
 	return (
 		<div className="relative h-96 shrink-0 overflow-hidden rounded-2xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
 			<Image
-				src={src}
+				src={url}
 				alt="Card Image Preview"
 				fill
 				style={{ objectFit: 'cover' }}
-				unoptimized={!!file}
+				unoptimized
 			/>
 		</div>
 	);
@@ -106,13 +91,12 @@ const MemberEditorRow: React.FC<CardEditorRowProps> = ({ card, onSuccess }) => {
 			show_type: card.show_type,
 			source: card.source,
 			studio: card.studio,
-			newImage: undefined,
 		},
 		mode: 'onChange',
 	});
 
-	const newImageFile = useWatch({ control: form.control, name: 'newImage' });
-	const isFormDirty = form.formState.isDirty || !!newImageFile;
+	const sourceValue = useWatch({ control: form.control, name: 'source' });
+	const isFormDirty = form.formState.isDirty;
 
 	const updateCardMutation = api.animecard.updateCard.useMutation({
 		onSuccess: (updatedCard) => {
@@ -126,7 +110,6 @@ const MemberEditorRow: React.FC<CardEditorRowProps> = ({ card, onSuccess }) => {
 				show_type: updatedCard.show_type,
 				source: updatedCard.source,
 				studio: updatedCard.studio,
-				newImage: undefined,
 			});
 		},
 	});
@@ -134,73 +117,36 @@ const MemberEditorRow: React.FC<CardEditorRowProps> = ({ card, onSuccess }) => {
 	const onSubmit = (data: AnimeCardFormValues) => {
 		if (!isFormDirty) return;
 
-		if (data.newImage) {
-			const file = data.newImage;
-			const reader = new FileReader();
+		const title = data.title !== card.title ? data.title : undefined;
+		const episode =
+			data.episode !== card.episode ? data.episode : undefined;
+		const mal_link =
+			data.mal_link !== card.mal_link ? data.mal_link : undefined;
+		const total_episodes = data.total_episodes;
+		const show_type =
+			data.show_type !== card.show_type ? data.show_type : undefined;
+		const source = data.source !== card.source ? data.source : undefined;
+		const studio = data.studio !== card.studio ? data.studio : undefined;
 
-			reader.onloadend = () => {
-				if (typeof reader.result === 'string') {
-					const newImagePayload = {
-						base64: reader.result,
-						fileName: file.name,
-						mimeType: file.type,
-					};
-
-					updateCardMutation.mutate({
-						id: data.id,
-						title:
-							data.title !== card.title ? data.title : undefined,
-						episode:
-							data.episode !== card.episode
-								? data.episode
-								: undefined,
-						mal_link:
-							data.mal_link !== card.mal_link
-								? data.mal_link
-								: undefined,
-						total_episodes: data.total_episodes,
-						show_type:
-							data.show_type !== card.show_type
-								? data.show_type
-								: undefined,
-						studio:
-							data.studio !== card.studio
-								? data.studio
-								: undefined,
-						newImage: newImagePayload,
-					});
-				}
-			};
-			reader.readAsDataURL(file);
-		} else {
-			const title = data.title !== card.title ? data.title : undefined;
-			const episode =
-				data.episode !== card.episode ? data.episode : undefined;
-			const mal_link =
-				data.mal_link !== card.mal_link ? data.mal_link : undefined;
-			const total_episodes = data.total_episodes;
-			const show_type =
-				data.show_type !== card.show_type ? data.show_type : undefined;
-			const studio =
-				data.studio !== card.studio ? data.studio : undefined;
-			if (
-				title ||
-				episode ||
-				mal_link ||
-				total_episodes ||
-				show_type ||
-				studio
-			) {
-				updateCardMutation.mutate({
-					id: data.id,
-					title,
-					episode,
-					mal_link,
-					total_episodes,
-					show_type,
-					studio,
-				});
-			}
+		if (
+			title ||
+			episode ||
+			mal_link ||
+			total_episodes ||
+			show_type ||
+			source ||
+			studio
+		) {
+			updateCardMutation.mutate({
+				id: data.id,
+				title,
+				episode,
+				mal_link,
+				total_episodes,
+				show_type,
+				source,
+				studio,
+			});
 		}
 	};
 
@@ -215,55 +161,9 @@ const MemberEditorRow: React.FC<CardEditorRowProps> = ({ card, onSuccess }) => {
 				<div className="flex flex-col lg:flex-row items-start gap-6">
 					<div className="flex w-full lg:max-w-xs flex-col gap-3 shrink-0">
 						<Label className="text-base font-bold">
-							Card Image
+							Card Image Preview
 						</Label>
-						<ImagePreview file={newImageFile} url={card.source} />
-
-						<FormField
-							control={form.control}
-							name="newImage"
-							render={({ field }) => (
-								<FormItem className="mt-2">
-									<FormControl>
-										<Dropzone
-											accept={{
-												'image/avif': ['.avif'],
-											}}
-											maxSize={1024 * 1024 * 10}
-											minSize={1024}
-											maxFiles={1}
-											onDrop={(acceptedFiles) => {
-												field.onChange(
-													acceptedFiles[0],
-												);
-											}}
-											src={
-												field.value ? [field.value] : []
-											}
-											disabled={isPending}
-										>
-											<DropzoneContent />
-											<DropzoneEmptyState />
-										</Dropzone>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						{newImageFile && (
-							<button
-								type="button"
-								onClick={() =>
-									form.setValue('newImage', undefined, {
-										shouldDirty: true,
-									})
-								}
-								className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-black bg-red-100 px-4 py-2 font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:bg-red-200 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
-							>
-								<XCircle className="size-4" />
-								Remove Image
-							</button>
-						)}
+						<ImagePreview url={sourceValue} />
 					</div>
 
 					<div className="flex grow flex-col gap-4 w-full">
@@ -309,15 +209,34 @@ const MemberEditorRow: React.FC<CardEditorRowProps> = ({ card, onSuccess }) => {
 						</div>
 						<FormField
 							control={form.control}
+							name="source"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel className="font-bold">
+										Image Source (MAL Image URL)
+									</FormLabel>
+									<FormControl>
+										<DashboardInput
+											placeholder="Paste the MyAnimeList image URL"
+											disabled={isPending}
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
 							name="mal_link"
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel className="font-bold">
-										MAL Link
+										MAL Page Link
 									</FormLabel>
 									<FormControl>
 										<DashboardInput
-											placeholder="Enter the MAL image link for the anime"
+											placeholder="Enter the MyAnimeList page link"
 											disabled={isPending}
 											{...field}
 										/>
@@ -385,25 +304,6 @@ const MemberEditorRow: React.FC<CardEditorRowProps> = ({ card, onSuccess }) => {
 								)}
 							/>
 						</div>
-						<FormField
-							control={form.control}
-							name="source"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel className="font-bold">
-										MAL Image Link
-									</FormLabel>
-									<FormControl>
-										<DashboardInput
-											placeholder="Optionally enter the MAL image link if you don't have the image file"
-											disabled={isPending}
-											{...field}
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
 					</div>
 				</div>
 
