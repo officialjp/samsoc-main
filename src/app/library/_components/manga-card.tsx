@@ -20,7 +20,7 @@ export default function MangaCard({ manga }: MangaCardProps) {
 
 	return (
 		<article className="flex flex-row items-center rounded-2xl border-2 border-black bg-white p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-			<div className="relative mr-4 h-48 w-32 shrink-0 border-2 border-black">
+			<div className="relative mr-4 h-48 w-32 shrink-0 border-2 border-black rounded-lg overflow-hidden">
 				<Image
 					src={manga.source}
 					alt={`${manga.title} Volume ${manga.volume} cover`}
@@ -45,7 +45,7 @@ export default function MangaCard({ manga }: MangaCardProps) {
 						{manga.genres.map((genre) => (
 							<span
 								key={genre}
-								className="rounded-full border border-gray-300 bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-900"
+								className="rounded-full border-2 border-black bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-900"
 							>
 								{genre}
 							</span>

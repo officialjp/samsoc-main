@@ -40,10 +40,10 @@ export default function GalleryFilter({
 							key={category}
 							onClick={() => handleCategoryClick(category)}
 							className={cn(
-								'border-2 border-black hover:cursor-pointer',
+								'border-2 border-black rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer transition-all',
 								activeCategory === category
 									? 'bg-pink-500 text-white hover:bg-pink-600'
-									: 'bg-white text-black hover:bg-gray-100',
+									: 'bg-white text-black hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-50',
 							)}
 							aria-pressed={activeCategory === category}
 						>
@@ -65,10 +65,10 @@ export default function GalleryFilter({
 							key={year}
 							onClick={() => handleYearClick(year)}
 							className={cn(
-								'border-2 border-black hover:cursor-pointer',
+								'border-2 border-black rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer transition-all',
 								activeYear === year
 									? 'bg-cyan-500 text-white hover:bg-cyan-600'
-									: 'bg-white text-black hover:bg-gray-100',
+									: 'bg-white text-black hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-50',
 							)}
 							aria-pressed={activeYear === year}
 						>

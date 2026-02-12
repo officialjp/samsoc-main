@@ -34,7 +34,7 @@ export function CalendarHeader({
 				<Button
 					onClick={onPrevMonth}
 					variant="outline"
-					className="bg-about1 border-2 border-black rounded-2xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer h-9 w-9 p-0 md:h-10 md:w-10 md:px-4 md:py-2"
+					className="bg-about1 border-2 border-black rounded-2xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all h-9 w-9 p-0 md:h-10 md:w-10 md:px-4 md:py-2"
 					aria-label="Previous month"
 				>
 					<ChevronLeft className="h-4 w-4 md:h-5 md:w-5" />
@@ -42,7 +42,7 @@ export function CalendarHeader({
 				<Button
 					onClick={onNextMonth}
 					variant="outline"
-					className="bg-about1 border-2 border-black rounded-2xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer h-9 w-9 p-0 md:h-10 md:w-10 md:px-4 md:py-2"
+					className="bg-about1 border-2 border-black rounded-2xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all h-9 w-9 p-0 md:h-10 md:w-10 md:px-4 md:py-2"
 					aria-label="Next month"
 				>
 					<ChevronRight className="h-4 w-4 md:h-5 md:w-5" />
@@ -56,7 +56,7 @@ export function CalendarHeader({
 
 			<Button
 				onClick={onCurrentMonth}
-				className="bg-pink-300 hover:bg-pink-400 text-black border-2 rounded-2xl border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer h-9 px-3 text-sm md:h-10 md:px-4 md:py-2 md:text-base"
+				className="bg-pink-300 hover:bg-pink-400 text-black border-2 rounded-2xl border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all h-9 px-3 text-sm md:h-10 md:px-4 md:py-2 md:text-base"
 			>
 				Today
 			</Button>

@@ -78,7 +78,7 @@ export default function GalleryImage({
 						onClick={(e) => e.stopPropagation()}
 					>
 						<button
-							className="absolute -right-4 -top-4 rounded-full border-2 border-black bg-pink-500 p-1 text-white transition-colors hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+							className="absolute -right-4 -top-4 rounded-full border-2 border-black bg-pink-500 p-1 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
 							onClick={closeModal}
 							aria-label="Close modal"
 							type="button"

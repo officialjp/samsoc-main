@@ -25,12 +25,12 @@ export function FeatureCard({
 			)}
 		>
 			<div className="flex lg:flex-col flex-row items-center justify-center gap-2">
-				<div className="bg-white p-2 lg:p-4 rounded-full border-2 border-black">
+				<div className="bg-white p-2 lg:p-4 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
 					<Icon className="h-5 w-5 lg:h-10 lg:w-10" />
 				</div>
 				<h3 className="text-xl font-bold">{title}</h3>
 			</div>
-			<p className="text-center text-text1">{description}</p>
+			<p className="text-center text-gray-600">{description}</p>
 		</div>
 	);
 }
