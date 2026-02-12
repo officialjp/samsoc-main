@@ -82,7 +82,7 @@ const updateMemberInputSchema = z.object({
 });
 
 export const committeeRouter = createTRPCRouter({
-	getAllMembers: publicProcedure.query(async ({ ctx }) => {
+	getAllMembers: adminProcedure.query(async ({ ctx }) => {
 		return ctx.db.committee.findMany({
 			orderBy: { id: 'asc' },
 			cacheStrategy: CACHE_STRATEGIES.STATIC,

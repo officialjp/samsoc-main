@@ -455,56 +455,32 @@ export const animeRouter = createTRPCRouter({
 			});
 		}),
 
-	recordGuess: protectedProcedure.mutation(async ({ ctx }) => {
-		// Session is created in getTodaysSession, so we just need to verify it exists
-		const today = getLondonMidnightUTC();
-		const session = await ctx.db.gameSession.findUnique({
-			where: {
-				userId_date_gameType: {
-					userId: ctx.session.user.id,
-					date: today,
-					gameType: GAME_TYPES.WORDLE,
-				},
-			},
-		});
-
-		if (!session) {
-			throw new TRPCError({
-				code: 'NOT_FOUND',
-				message: 'Game session not found',
-			});
-		}
-
-		// The guess is added in addGuess mutation
-		return { success: true };
-	}),
-
 	submitWin: protectedProcedure
 		.input(z.object({ tries: z.number() }))
 		.mutation(async ({ ctx, input }) => {
 			const today = getLondonMidnightUTC();
 
-			// Update session to mark as won using consolidated model
-			await ctx.db.gameSession.update({
-				where: {
-					userId_date_gameType: {
-						userId: ctx.session.user.id,
-						date: today,
-						gameType: GAME_TYPES.WORDLE,
+			// Update session and user stats in parallel
+			await Promise.all([
+				ctx.db.gameSession.update({
+					where: {
+						userId_date_gameType: {
+							userId: ctx.session.user.id,
+							date: today,
+							gameType: GAME_TYPES.WORDLE,
+						},
 					},
-				},
-				data: {
-					won: true,
-				},
-			});
-
-			// Update user stats
-			await incrementWin(
-				ctx.db,
-				ctx.session.user.id,
-				GAME_TYPES.WORDLE,
-				input.tries,
-			);
+					data: {
+						won: true,
+					},
+				}),
+				incrementWin(
+					ctx.db,
+					ctx.session.user.id,
+					GAME_TYPES.WORDLE,
+					input.tries,
+				),
+			]);
 
 			return { success: true };
 		}),
@@ -652,29 +628,31 @@ export const animeRouter = createTRPCRouter({
 			});
 		}
 
-		// Fetch anime titles for all guesses
+		// Batch-fetch anime titles for all guesses to avoid N+1 queries
 		// GuessData for banner contains { animeId: number }
-		const guessesWithTitles = await Promise.all(
-			session.guesses.map(async (guess) => {
-				const guessData = guess.guessData as { animeId?: number };
-				const animeId = guessData?.animeId;
-				let animeTitle = 'Unknown';
+		const animeIds = session.guesses
+			.map((g) => (g.guessData as { animeId?: number })?.animeId)
+			.filter((id): id is number => id != null);
 
-				if (animeId) {
-					const anime = await ctx.db.anime.findUnique({
-						where: { id: animeId },
-						select: { title: true },
-					});
-					animeTitle = anime?.title ?? 'Unknown';
-				}
+		const uniqueAnimeIds = [...new Set(animeIds)];
+		const animes =
+			uniqueAnimeIds.length > 0
+				? await ctx.db.anime.findMany({
+						where: { id: { in: uniqueAnimeIds } },
+						select: { id: true, title: true },
+					})
+				: [];
+		const animeTitleMap = new Map(animes.map((a) => [a.id, a.title]));
 
-				return {
-					...guess,
-					animeId: animeId ?? 0,
-					animeTitle,
-				};
-			}),
-		);
+		const guessesWithTitles = session.guesses.map((guess) => {
+			const guessData = guess.guessData as { animeId?: number };
+			const animeId = guessData?.animeId ?? 0;
+			return {
+				...guess,
+				animeId,
+				animeTitle: animeTitleMap.get(animeId) ?? 'Unknown',
+			};
+		});
 
 		return {
 			...session,
@@ -725,19 +703,19 @@ export const animeRouter = createTRPCRouter({
 				});
 			}
 
-			// Fetch the anime title
-			const anime = await ctx.db.anime.findUnique({
-				where: { id: input.animeId },
-				select: { title: true },
-			});
-
-			// Use consolidated GameGuess model with guessData containing animeId
-			const guess = await ctx.db.gameGuess.create({
-				data: {
-					sessionId: session.id,
-					guessData: { animeId: input.animeId },
-				},
-			});
+			// Fetch anime title and create guess in parallel
+			const [anime, guess] = await Promise.all([
+				ctx.db.anime.findUnique({
+					where: { id: input.animeId },
+					select: { title: true },
+				}) as unknown as Promise<{ title: string } | null>,
+				ctx.db.gameGuess.create({
+					data: {
+						sessionId: session.id,
+						guessData: { animeId: input.animeId },
+					},
+				}),
+			]);
 
 			// Return guess with anime title
 			return {
@@ -747,55 +725,32 @@ export const animeRouter = createTRPCRouter({
 			};
 		}),
 
-	recordBannerGuess: protectedProcedure.mutation(async ({ ctx }) => {
-		// Session is created in getBannerTodaysSession, so we just need to verify it exists
-		const today = getLondonMidnightUTC();
-		const session = await ctx.db.gameSession.findUnique({
-			where: {
-				userId_date_gameType: {
-					userId: ctx.session.user.id,
-					date: today,
-					gameType: GAME_TYPES.BANNER,
-				},
-			},
-		});
-
-		if (!session) {
-			throw new TRPCError({
-				code: 'NOT_FOUND',
-				message: 'Game session not found',
-			});
-		}
-
-		// The guess is added in addBannerGuess mutation
-		return { success: true };
-	}),
-
 	submitBannerWin: protectedProcedure
 		.input(z.object({ tries: z.number() }))
 		.mutation(async ({ ctx, input }) => {
 			const today = getLondonMidnightUTC();
 
-			// Use consolidated GameSession model
-			await ctx.db.gameSession.update({
-				where: {
-					userId_date_gameType: {
-						userId: ctx.session.user.id,
-						date: today,
-						gameType: GAME_TYPES.BANNER,
+			// Update session and user stats in parallel
+			await Promise.all([
+				ctx.db.gameSession.update({
+					where: {
+						userId_date_gameType: {
+							userId: ctx.session.user.id,
+							date: today,
+							gameType: GAME_TYPES.BANNER,
+						},
 					},
-				},
-				data: {
-					won: true,
-				},
-			});
-
-			await incrementWin(
-				ctx.db,
-				ctx.session.user.id,
-				GAME_TYPES.BANNER,
-				input.tries,
-			);
+					data: {
+						won: true,
+					},
+				}),
+				incrementWin(
+					ctx.db,
+					ctx.session.user.id,
+					GAME_TYPES.BANNER,
+					input.tries,
+				),
+			]);
 
 			return { success: true };
 		}),

@@ -1,7 +1,6 @@
 'use client';
 
 import { api } from '~/trpc/react';
-import { revalidateCalendarPage } from '~/server/actions/revalidate';
 import {
 	Form,
 	FormControl,
@@ -62,7 +61,6 @@ export default function EventAdd() {
 	const createItem = api.event.createItem.useMutation({
 		onSuccess: () => {
 			void utils.event.getAllItems.invalidate();
-			void revalidateCalendarPage();
 			toast.success('Event created successfully');
 			form.reset();
 		},

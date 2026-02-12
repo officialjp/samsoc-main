@@ -68,7 +68,7 @@ const getKeyFromUrl = (url: string): string | null => {
 };
 
 export const imageRouter = createTRPCRouter({
-	getAllItems: publicProcedure.query(async ({ ctx }) => {
+	getAllItems: adminProcedure.query(async ({ ctx }) => {
 		return ctx.db.image.findMany({
 			select: {
 				id: true,
@@ -77,30 +77,6 @@ export const imageRouter = createTRPCRouter({
 			orderBy: { id: 'asc' },
 			cacheStrategy: CACHE_STRATEGIES.MODERATE,
 		});
-	}),
-
-	/**
-	 * Optimized query for the public gallery page.
-	 * Only fetches fields needed for display to improve LCP/FCP.
-	 */
-	getGalleryData: publicProcedure.query(async ({ ctx }) => {
-		const images = await ctx.db.image.findMany({
-			select: {
-				id: true,
-				source: true,
-				thumbnailSource: true,
-				alt: true,
-				category: true,
-				year: true,
-			},
-			orderBy: { createdAt: 'desc' },
-			cacheStrategy: CACHE_STRATEGIES.MODERATE,
-		});
-
-		return {
-			data: images,
-			total: images.length,
-		};
 	}),
 
 	/**
@@ -132,31 +108,31 @@ export const imageRouter = createTRPCRouter({
 				where.year = year;
 			}
 
-			// Get total count for pagination metadata
-			const totalCount = await ctx.db.image.count({
-				where,
-				cacheStrategy: CACHE_STRATEGIES.MODERATE,
-			});
-
 			// Calculate offset for pagination
 			const skip = (page - 1) * limit;
 
-			// Fetch paginated data
-			const items = await ctx.db.image.findMany({
-				where,
-				select: {
-					id: true,
-					source: true,
-					thumbnailSource: true,
-					alt: true,
-					category: true,
-					year: true,
-				},
-				orderBy: { createdAt: 'desc' },
-				take: limit,
-				skip: skip,
-				cacheStrategy: CACHE_STRATEGIES.MODERATE,
-			});
+			// Fetch total count and paginated data in parallel
+			const [totalCount, items] = await Promise.all([
+				ctx.db.image.count({
+					where,
+					cacheStrategy: CACHE_STRATEGIES.MODERATE,
+				}),
+				ctx.db.image.findMany({
+					where,
+					select: {
+						id: true,
+						source: true,
+						thumbnailSource: true,
+						alt: true,
+						category: true,
+						year: true,
+					},
+					orderBy: { createdAt: 'desc' },
+					take: limit,
+					skip: skip,
+					cacheStrategy: CACHE_STRATEGIES.MODERATE,
+				}),
+			]);
 
 			const totalPages = Math.ceil(totalCount / limit);
 

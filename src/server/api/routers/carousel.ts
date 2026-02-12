@@ -67,7 +67,7 @@ const getKeyFromUrl = (url: string): string | null => {
 };
 
 export const carouselRouter = createTRPCRouter({
-	getAllItems: publicProcedure.query(async ({ ctx }) => {
+	getAllItems: adminProcedure.query(async ({ ctx }) => {
 		return ctx.db.carousel.findMany({
 			select: {
 				id: true,

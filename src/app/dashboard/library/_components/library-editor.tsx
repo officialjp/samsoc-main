@@ -16,7 +16,6 @@ import {
 import Image from 'next/image';
 
 import { api } from '~/trpc/react';
-import { revalidateLibraryPage } from '~/server/actions/revalidate';
 import { cn } from '~/lib/utils';
 
 import {
@@ -132,7 +131,6 @@ const MangaEditorRow: React.FC<MangaEditorRowProps> = ({
 	const updateMangaMutation = api.manga.updateManga.useMutation({
 		onSuccess: (updatedManga) => {
 			onSuccess();
-			void revalidateLibraryPage();
 			form.reset({
 				id: updatedManga.id,
 				title: updatedManga.title,

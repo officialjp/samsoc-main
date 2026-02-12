@@ -4,15 +4,18 @@ import ImageAdd from './_components/image-add';
 import ImageRemove from './_components/image-removal';
 import { SectionContainer } from '~/components/layout/section-container';
 import { SectionHeading } from '~/components/layout/section-heading';
+import { CACHE_TTL } from '~/server/api/helpers/cache';
 
 const galleryPageObj = [
 	{
 		name: 'Add gallery images',
 		page: <ImageAdd />,
+		ttlSeconds: CACHE_TTL.MODERATE,
 	},
 	{
 		name: 'Remove gallery images',
 		page: <ImageRemove />,
+		ttlSeconds: CACHE_TTL.MODERATE,
 	},
 ];
 

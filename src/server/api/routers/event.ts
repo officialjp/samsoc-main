@@ -23,45 +23,11 @@ const createItemInputSchema = z.object({
 });
 
 export const eventRouter = createTRPCRouter({
-	getAllItems: publicProcedure.query(async ({ ctx }) => {
+	getAllItems: adminProcedure.query(async ({ ctx }) => {
 		return ctx.db.event.findMany({
 			select: {
 				id: true,
 				title: true,
-			},
-			cacheStrategy: CACHE_STRATEGIES.MODERATE,
-		});
-	}),
-
-	getSpecialEvents: publicProcedure.query(async ({ ctx }) => {
-		return ctx.db.event.findMany({
-			where: { is_regular_session: false },
-			select: {
-				id: true,
-				title: true,
-				description: true,
-				location: true,
-				date: true,
-				color: true,
-				is_regular_session: true,
-				session_count: true,
-			},
-			cacheStrategy: CACHE_STRATEGIES.MODERATE,
-		});
-	}),
-
-	getRegularSessions: publicProcedure.query(async ({ ctx }) => {
-		return ctx.db.event.findMany({
-			where: { is_regular_session: true },
-			select: {
-				id: true,
-				title: true,
-				description: true,
-				location: true,
-				date: true,
-				color: true,
-				is_regular_session: true,
-				session_count: true,
 			},
 			cacheStrategy: CACHE_STRATEGIES.MODERATE,
 		});
@@ -85,50 +51,48 @@ export const eventRouter = createTRPCRouter({
 			const monthStart = startOfMonth(new Date(year, month));
 			const monthEnd = endOfMonth(new Date(year, month));
 
-			// Fetch special events in the month
-			const specialEvents = await ctx.db.event.findMany({
-				where: {
-					is_regular_session: false,
-					date: {
-						gte: monthStart,
-						lte: monthEnd,
+			// Fetch special events and regular sessions in parallel
+			const [specialEvents, regularSessions] = await Promise.all([
+				ctx.db.event.findMany({
+					where: {
+						is_regular_session: false,
+						date: {
+							gte: monthStart,
+							lte: monthEnd,
+						},
 					},
-				},
-				select: {
-					id: true,
-					title: true,
-					description: true,
-					location: true,
-					date: true,
-					color: true,
-					is_regular_session: true,
-					session_count: true,
-				},
-				cacheStrategy: CACHE_STRATEGIES.MODERATE,
-			});
-
-			// Fetch regular sessions that could generate events in this month
-			// We need to fetch sessions that start before or during this month
-			// and could generate weekly sessions that fall within this month
-			const regularSessions = await ctx.db.event.findMany({
-				where: {
-					is_regular_session: true,
-					date: {
-						lte: monthEnd, // Session starts before or during this month
+					select: {
+						id: true,
+						title: true,
+						description: true,
+						location: true,
+						date: true,
+						color: true,
+						is_regular_session: true,
+						session_count: true,
 					},
-				},
-				select: {
-					id: true,
-					title: true,
-					description: true,
-					location: true,
-					date: true,
-					color: true,
-					is_regular_session: true,
-					session_count: true,
-				},
-				cacheStrategy: CACHE_STRATEGIES.MODERATE,
-			});
+					cacheStrategy: CACHE_STRATEGIES.MODERATE,
+				}),
+				ctx.db.event.findMany({
+					where: {
+						is_regular_session: true,
+						date: {
+							lte: monthEnd, // Session starts before or during this month
+						},
+					},
+					select: {
+						id: true,
+						title: true,
+						description: true,
+						location: true,
+						date: true,
+						color: true,
+						is_regular_session: true,
+						session_count: true,
+					},
+					cacheStrategy: CACHE_STRATEGIES.MODERATE,
+				}),
+			]);
 
 			// Generate weekly sessions and filter for current month
 			const weeklySessions = [];

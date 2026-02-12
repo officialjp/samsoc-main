@@ -4,15 +4,18 @@ import DashboardNavigationButtons from '../_components/dashboard-navigation-butt
 import DashboardTabs from '../_components/dashboard-tabs';
 import { SectionContainer } from '~/components/layout/section-container';
 import { SectionHeading } from '~/components/layout/section-heading';
+import { CACHE_TTL } from '~/server/api/helpers/cache';
 
 const calendarPageObj = [
 	{
 		name: 'Create calendar event',
 		page: <EventAdd />,
+		ttlSeconds: CACHE_TTL.MODERATE,
 	},
 	{
 		name: 'Remove calendar event',
 		page: <EventRemove />,
+		ttlSeconds: CACHE_TTL.MODERATE,
 	},
 ];
 

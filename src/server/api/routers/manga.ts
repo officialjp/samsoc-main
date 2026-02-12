@@ -94,21 +94,6 @@ const getKeyFromUrl = (url: string): string | null => {
 };
 
 // Type helpers for manga queries with nested genres
-const getLibraryDataSelect = {
-	id: true,
-	title: true,
-	author: true,
-	volume: true,
-	borrowed_by: true,
-	source: true,
-	genres: {
-		select: {
-			id: true,
-			name: true,
-		},
-	},
-} as const satisfies Prisma.MangaSelect;
-
 const getLibraryPaginatedSelect = {
 	id: true,
 	title: true,
@@ -125,23 +110,6 @@ const getLibraryPaginatedSelect = {
 } as const satisfies Prisma.MangaSelect;
 
 // Extract return types
-export type GetLibraryDataResult = Prisma.MangaGetPayload<{
-	select: {
-		id: true;
-		title: true;
-		author: true;
-		volume: true;
-		borrowed_by: true;
-		source: true;
-		genres: {
-			select: {
-				id: true;
-				name: true;
-			};
-		};
-	};
-}>[];
-
 export type GetLibraryPaginatedItemResult = Prisma.MangaGetPayload<{
 	select: {
 		id: true;
@@ -160,7 +128,7 @@ export type GetLibraryPaginatedItemResult = Prisma.MangaGetPayload<{
 }>;
 
 export const mangaRouter = createTRPCRouter({
-	getAllItems: publicProcedure.query(async ({ ctx }) => {
+	getAllItems: adminProcedure.query(async ({ ctx }) => {
 		return ctx.db.manga.findMany({
 			select: {
 				id: true,
@@ -173,20 +141,6 @@ export const mangaRouter = createTRPCRouter({
 			orderBy: { id: 'asc' },
 			cacheStrategy: CACHE_STRATEGIES.MODERATE,
 		});
-	}),
-
-	/**
-	 * Optimized query for the public library page.
-	 * Includes genres and uses efficient field selection.
-	 */
-	getLibraryData: publicProcedure.query(async ({ ctx }) => {
-		const allManga = await ctx.db.manga.findMany({
-			select: getLibraryDataSelect,
-			orderBy: { id: 'asc' },
-			cacheStrategy: CACHE_STRATEGIES.MODERATE,
-		});
-
-		return { data: allManga as GetLibraryDataResult };
 	}),
 
 	/**
@@ -246,24 +200,26 @@ export const mangaRouter = createTRPCRouter({
 					];
 				}
 
-				// Get total count for pagination metadata
-				const totalCount = await ctx.db.manga.count({
-					where,
-					cacheStrategy: CACHE_STRATEGIES.MODERATE,
-				});
-
 				// Calculate offset for pagination
 				const skip = (page - 1) * limit;
 
-				// Fetch paginated data
-				const items = (await ctx.db.manga.findMany({
-					where,
-					select: getLibraryPaginatedSelect,
-					orderBy: { id: 'asc' },
-					take: limit,
-					skip: skip,
-					cacheStrategy: CACHE_STRATEGIES.MODERATE,
-				})) as GetLibraryPaginatedItemResult[];
+				// Fetch total count and paginated data in parallel
+				const [totalCount, rawItems] = await Promise.all([
+					ctx.db.manga.count({
+						where,
+						cacheStrategy: CACHE_STRATEGIES.MODERATE,
+					}),
+					ctx.db.manga.findMany({
+						where,
+						select: getLibraryPaginatedSelect,
+						orderBy: { id: 'asc' },
+						take: limit,
+						skip: skip,
+						cacheStrategy: CACHE_STRATEGIES.MODERATE,
+					}),
+				]);
+				const items =
+					rawItems as unknown as GetLibraryPaginatedItemResult[];
 
 				const totalPages = Math.ceil(totalCount / limit);
 
@@ -338,9 +294,11 @@ export const mangaRouter = createTRPCRouter({
 				});
 				itemId = placeholderItem.id;
 
-				const [source] = await Promise.all([
-					uploadToR2(input.sourceImage, itemId, 'manga'),
-				]);
+				const source = await uploadToR2(
+					input.sourceImage,
+					itemId,
+					'manga',
+				);
 
 				const updatedMangaItem = await ctx.db.manga.update({
 					where: { id: itemId },
