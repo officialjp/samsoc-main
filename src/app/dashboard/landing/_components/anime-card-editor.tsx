@@ -52,7 +52,7 @@ const animeCardFormSchema = z.object({
 	title: z.string().min(1, 'Title is required.'),
 	episode: z.string().min(1, 'Episode is required.'),
 	mal_link: z.string().nonempty('MAL image link is required'),
-	total_episodes: z.number(),
+	total_episodes: z.coerce.number(),
 	show_type: z.string().nonempty('Show Type is required'),
 	source: z.string().nonempty('Source is required'),
 	studio: z.string().nonempty('Studio is required'),
