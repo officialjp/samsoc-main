@@ -1,7 +1,6 @@
 'use client';
 
 import { api } from '~/trpc/react';
-import { revalidateHomePage } from '~/server/actions/revalidate';
 import {
 	Form,
 	FormControl,
@@ -74,7 +73,6 @@ export default function CarouselForm() {
 
 			await createItem.mutateAsync(input);
 			void utils.carousel.getAllItems.invalidate();
-			void revalidateHomePage();
 
 			toast.success(
 				'Carousel item created and images uploaded successfully!',

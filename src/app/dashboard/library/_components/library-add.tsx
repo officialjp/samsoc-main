@@ -1,7 +1,6 @@
 'use client';
 
 import { api } from '~/trpc/react';
-import { revalidateLibraryPage } from '~/server/actions/revalidate';
 import {
 	Form,
 	FormControl,
@@ -73,7 +72,6 @@ export default function MangaAdd() {
 
 			await createItem.mutateAsync(input);
 			void utils.manga.getAllItems.invalidate();
-			void revalidateLibraryPage();
 
 			toast.success(
 				'Manga item created and images uploaded successfully!',

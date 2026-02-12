@@ -1,5 +1,6 @@
 import { SectionContainer } from '~/components/layout/section-container';
 import { SectionHeading } from '~/components/layout/section-heading';
+import { CACHE_TTL } from '~/server/api/helpers/cache';
 
 import DashboardTabs from '../_components/dashboard-tabs';
 import DashboardNavigationButtons from '../_components/dashboard-navigation-buttons';
@@ -11,14 +12,17 @@ const gamesPageObj = [
 	{
 		name: 'Change Daily Anime',
 		page: <AdminAnimeScheduler />,
+		ttlSeconds: CACHE_TTL.DAILY,
 	},
 	{
 		name: 'Change Daily Studio',
 		page: <AdminStudioScheduler />,
+		ttlSeconds: CACHE_TTL.DAILY,
 	},
 	{
 		name: 'Change Daily Banner',
 		page: <AdminBannerScheduler />,
+		ttlSeconds: CACHE_TTL.DAILY,
 	},
 ];
 

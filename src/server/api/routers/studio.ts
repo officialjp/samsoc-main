@@ -183,22 +183,19 @@ export const studioRouter = createTRPCRouter({
 		let hasFailedTodayFlag = false;
 
 		if (ctx.session?.user) {
-			const stats = await getGameStats(
-				ctx.db,
-				ctx.session.user.id,
-				GAME_TYPES.STUDIO,
-			);
-			hasWonTodayFlag = hasWonToday(stats);
-
-			const session = await ctx.db.gameSession.findUnique({
-				where: {
-					userId_date_gameType: {
-						userId: ctx.session.user.id,
-						date: today,
-						gameType: GAME_TYPES.STUDIO,
+			const [stats, session] = await Promise.all([
+				getGameStats(ctx.db, ctx.session.user.id, GAME_TYPES.STUDIO),
+				ctx.db.gameSession.findUnique({
+					where: {
+						userId_date_gameType: {
+							userId: ctx.session.user.id,
+							date: today,
+							gameType: GAME_TYPES.STUDIO,
+						},
 					},
-				},
-			});
+				}),
+			]);
+			hasWonTodayFlag = hasWonToday(stats);
 			hasFailedTodayFlag = session?.failed ?? false;
 		}
 
@@ -322,23 +319,25 @@ export const studioRouter = createTRPCRouter({
 		.mutation(async ({ ctx, input }) => {
 			const today = getLondonMidnightUTC();
 
-			await ctx.db.gameSession.update({
-				where: {
-					userId_date_gameType: {
-						userId: ctx.session.user.id,
-						date: today,
-						gameType: GAME_TYPES.STUDIO,
+			// Update session and user stats in parallel
+			await Promise.all([
+				ctx.db.gameSession.update({
+					where: {
+						userId_date_gameType: {
+							userId: ctx.session.user.id,
+							date: today,
+							gameType: GAME_TYPES.STUDIO,
+						},
 					},
-				},
-				data: { won: true },
-			});
-
-			await incrementWin(
-				ctx.db,
-				ctx.session.user.id,
-				GAME_TYPES.STUDIO,
-				input.tries,
-			);
+					data: { won: true },
+				}),
+				incrementWin(
+					ctx.db,
+					ctx.session.user.id,
+					GAME_TYPES.STUDIO,
+					input.tries,
+				),
+			]);
 
 			return { success: true };
 		}),

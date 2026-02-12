@@ -138,7 +138,7 @@ export type GetPublicCardsResult = Prisma.AnimeCardGetPayload<{
 }>[];
 
 export const animeCardsRouter = createTRPCRouter({
-	getAllCards: publicProcedure.query(async ({ ctx }) => {
+	getAllCards: adminProcedure.query(async ({ ctx }) => {
 		return ctx.db.animeCard.findMany({
 			orderBy: { id: 'asc' },
 		});

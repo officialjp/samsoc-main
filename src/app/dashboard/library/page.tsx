@@ -5,19 +5,23 @@ import ImageRemove from './_components/library-remove';
 import { MangaItemEditor } from './_components/library-editor';
 import { SectionContainer } from '~/components/layout/section-container';
 import { SectionHeading } from '~/components/layout/section-heading';
+import { CACHE_TTL } from '~/server/api/helpers/cache';
 
 const mangaPageObj = [
 	{
 		name: 'Create manga entry',
 		page: <ImageAdd />,
+		ttlSeconds: CACHE_TTL.MODERATE,
 	},
 	{
 		name: 'Delete manga entry',
 		page: <ImageRemove />,
+		ttlSeconds: CACHE_TTL.MODERATE,
 	},
 	{
 		name: 'Edit manga entry',
 		page: <MangaItemEditor />,
+		ttlSeconds: CACHE_TTL.MODERATE,
 	},
 ];
 

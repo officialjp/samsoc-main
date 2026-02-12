@@ -4,12 +4,15 @@ import React, { useState } from 'react';
 import { cn } from '~/lib/utils';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import CacheCountdown from './cache-countdown';
 
 export interface NavigationItem {
 	name: string;
 	href?: string;
 	page?: React.ReactElement;
 	icon?: React.ReactNode;
+	/** Prisma Accelerate cache TTL in seconds (omit if no caching) */
+	ttlSeconds?: number;
 }
 
 export interface GenericNavigationProps {
@@ -91,6 +94,11 @@ export default function GenericNavigation({
 					);
 				})}
 			</div>
+			{items[pageIndex]?.ttlSeconds && (
+				<div className="flex justify-end mb-4">
+					<CacheCountdown ttlSeconds={items[pageIndex].ttlSeconds} />
+				</div>
+			)}
 			<section
 				id={`tabpanel-${pageIndex}`}
 				role="tabpanel"

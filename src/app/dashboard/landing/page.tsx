@@ -4,6 +4,7 @@ import CarouselForm from './_components/carousel-add';
 import CarouselRemove from './_components/carousel-removal';
 import { CommitteeMemberEditor } from './_components/committee-editor';
 import { AnimeCardEditor } from './_components/anime-card-editor';
+import { CACHE_TTL } from '~/server/api/helpers/cache';
 
 import DashboardTabs from '../_components/dashboard-tabs';
 import DashboardNavigationButtons from '../_components/dashboard-navigation-buttons';
@@ -12,14 +13,17 @@ const carouselPageObj = [
 	{
 		name: 'Create carousel page',
 		page: <CarouselForm />,
+		ttlSeconds: CACHE_TTL.CAROUSEL,
 	},
 	{
 		name: 'Remove carousel page',
 		page: <CarouselRemove />,
+		ttlSeconds: CACHE_TTL.CAROUSEL,
 	},
 	{
 		name: 'Edit committee members',
 		page: <CommitteeMemberEditor />,
+		ttlSeconds: CACHE_TTL.STATIC,
 	},
 	{
 		name: 'Edit anime cards',

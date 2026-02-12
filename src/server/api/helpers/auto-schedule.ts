@@ -403,86 +403,75 @@ export async function generateMissingSchedules(
 		},
 	};
 
-	// --- WORDLE ---
-	if (await scheduleExists(db, today, GAME_TYPES.WORDLE)) {
-		results.results.wordle = {
-			created: false,
-			reason: 'already_scheduled',
-		};
-	} else {
-		const { anime, fallbackDays } = await selectWordleAnime(db);
-		if (anime) {
-			await createSchedule(db, today, GAME_TYPES.WORDLE, anime.id);
-			results.results.wordle = {
-				created: true,
-				animeId: anime.id,
-				title: anime.title,
-				fallbackUsed: fallbackDays !== null,
-				...(fallbackDays !== null ? { fallbackDays } : {}),
-			};
-		} else {
-			results.results.wordle = {
-				created: false,
-				reason: 'no_eligible_anime',
-			};
-		}
-	}
+	// Generate all three game schedules in parallel
+	const [wordleResult, studioResult, bannerResult] = await Promise.all([
+		// --- WORDLE ---
+		(async (): Promise<ScheduleResult> => {
+			if (await scheduleExists(db, today, GAME_TYPES.WORDLE)) {
+				return { created: false, reason: 'already_scheduled' };
+			}
+			const { anime, fallbackDays } = await selectWordleAnime(db);
+			if (anime) {
+				await createSchedule(db, today, GAME_TYPES.WORDLE, anime.id);
+				return {
+					created: true,
+					animeId: anime.id,
+					title: anime.title,
+					fallbackUsed: fallbackDays !== null,
+					...(fallbackDays !== null ? { fallbackDays } : {}),
+				};
+			}
+			return { created: false, reason: 'no_eligible_anime' };
+		})(),
 
-	// --- STUDIO ---
-	if (await scheduleExists(db, today, GAME_TYPES.STUDIO)) {
-		results.results.studio = {
-			created: false,
-			reason: 'already_scheduled',
-		};
-	} else {
-		const { studio, fallbackDays } = await selectStudio(db);
-		if (studio) {
-			await createSchedule(
-				db,
-				today,
-				GAME_TYPES.STUDIO,
-				undefined,
-				studio.id,
-			);
-			results.results.studio = {
-				created: true,
-				studioId: studio.id,
-				name: studio.name,
-				fallbackUsed: fallbackDays !== null,
-				...(fallbackDays !== null ? { fallbackDays } : {}),
-			};
-		} else {
-			results.results.studio = {
-				created: false,
-				reason: 'no_eligible_studio',
-			};
-		}
-	}
+		// --- STUDIO ---
+		(async (): Promise<ScheduleResult> => {
+			if (await scheduleExists(db, today, GAME_TYPES.STUDIO)) {
+				return { created: false, reason: 'already_scheduled' };
+			}
+			const { studio, fallbackDays } = await selectStudio(db);
+			if (studio) {
+				await createSchedule(
+					db,
+					today,
+					GAME_TYPES.STUDIO,
+					undefined,
+					studio.id,
+				);
+				return {
+					created: true,
+					studioId: studio.id,
+					name: studio.name,
+					fallbackUsed: fallbackDays !== null,
+					...(fallbackDays !== null ? { fallbackDays } : {}),
+				};
+			}
+			return { created: false, reason: 'no_eligible_studio' };
+		})(),
 
-	// --- BANNER ---
-	if (await scheduleExists(db, today, GAME_TYPES.BANNER)) {
-		results.results.banner = {
-			created: false,
-			reason: 'already_scheduled',
-		};
-	} else {
-		const { anime, fallbackDays } = await selectBannerAnime(db);
-		if (anime) {
-			await createSchedule(db, today, GAME_TYPES.BANNER, anime.id);
-			results.results.banner = {
-				created: true,
-				animeId: anime.id,
-				title: anime.title,
-				fallbackUsed: fallbackDays !== null,
-				...(fallbackDays !== null ? { fallbackDays } : {}),
-			};
-		} else {
-			results.results.banner = {
-				created: false,
-				reason: 'no_eligible_anime',
-			};
-		}
-	}
+		// --- BANNER ---
+		(async (): Promise<ScheduleResult> => {
+			if (await scheduleExists(db, today, GAME_TYPES.BANNER)) {
+				return { created: false, reason: 'already_scheduled' };
+			}
+			const { anime, fallbackDays } = await selectBannerAnime(db);
+			if (anime) {
+				await createSchedule(db, today, GAME_TYPES.BANNER, anime.id);
+				return {
+					created: true,
+					animeId: anime.id,
+					title: anime.title,
+					fallbackUsed: fallbackDays !== null,
+					...(fallbackDays !== null ? { fallbackDays } : {}),
+				};
+			}
+			return { created: false, reason: 'no_eligible_anime' };
+		})(),
+	]);
+
+	results.results.wordle = wordleResult;
+	results.results.studio = studioResult;
+	results.results.banner = bannerResult;
 
 	return results;
 }

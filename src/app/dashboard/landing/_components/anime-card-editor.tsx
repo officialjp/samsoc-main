@@ -16,7 +16,6 @@ import Image from 'next/image';
 
 import { cn } from '~/lib/utils';
 import { api } from '~/trpc/react';
-import { revalidateHomePage } from '~/server/actions/revalidate';
 
 import {
 	Dropzone,
@@ -118,7 +117,6 @@ const MemberEditorRow: React.FC<CardEditorRowProps> = ({ card, onSuccess }) => {
 	const updateCardMutation = api.animecard.updateCard.useMutation({
 		onSuccess: (updatedCard) => {
 			onSuccess();
-			void revalidateHomePage();
 			form.reset({
 				id: updatedCard.id,
 				title: updatedCard.title,
