@@ -94,17 +94,17 @@ export default function LibraryFilters({
 			</div>
 
 			<div className="mb-6">
-				<h3 className="mb-2 text-sm font-medium">Availability</h3>
+				<h3 className="mb-2 text-sm font-bold">Availability</h3>
 				<div className="flex flex-wrap gap-2">
 					{STATUS_OPTIONS.map(({ value, label, colorClass }) => (
 						<Button
 							key={value}
 							onClick={() => handleStatusChange(value)}
 							className={cn(
-								'border-2 border-black hover:cursor-pointer',
+								'border-2 border-black rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer transition-all',
 								filters.status === value
 									? `${colorClass} text-black`
-									: 'bg-white text-black hover:bg-gray-100',
+									: 'bg-white text-black hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-50',
 							)}
 						>
 							{label}
@@ -114,15 +114,15 @@ export default function LibraryFilters({
 			</div>
 
 			<div>
-				<h3 className="mb-2 text-sm font-medium">Genre</h3>
+				<h3 className="mb-2 text-sm font-bold">Genre</h3>
 				<div className="flex flex-wrap gap-2">
 					<Button
 						onClick={() => handleGenreChange('all')}
 						className={cn(
-							'border-2 border-black hover:cursor-pointer',
+							'border-2 border-black rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer transition-all',
 							filters.genre === 'all'
 								? 'bg-about1 text-black hover:bg-about1'
-								: 'bg-white text-black hover:bg-gray-100',
+								: 'bg-white text-black hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-50',
 						)}
 					>
 						All Genres
@@ -134,10 +134,10 @@ export default function LibraryFilters({
 								key={genre}
 								onClick={() => handleGenreChange(genre)}
 								className={cn(
-									'border-2 border-black hover:cursor-pointer',
+									'border-2 border-black rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer transition-all',
 									filters.genre === genre
 										? 'bg-green-300 text-black hover:bg-green-400'
-										: 'bg-white text-black hover:bg-gray-100',
+										: 'bg-white text-black hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-50',
 								)}
 							>
 								{genre}

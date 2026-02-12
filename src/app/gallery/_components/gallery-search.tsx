@@ -131,10 +131,10 @@ export function GallerySearch({
 								Currently showing:
 							</p>
 							<div className="flex flex-wrap gap-2">
-								<span className="rounded-2xl border border-pink-300 bg-pink-100 px-2 py-1 text-sm">
+								<span className="rounded-full border-2 border-black bg-pink-100 px-2 py-1 text-sm">
 									{filters.category}
 								</span>
-								<span className="rounded-2xl border border-cyan-300 bg-cyan-100 px-2 py-1 text-sm">
+								<span className="rounded-full border-2 border-black bg-cyan-100 px-2 py-1 text-sm">
 									{filters.year}
 								</span>
 							</div>

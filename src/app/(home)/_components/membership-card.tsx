@@ -29,13 +29,13 @@ export function MembershipCard({
 			id="join"
 		>
 			{recommended && (
-				<div className="absolute -top-4 -right-4 bg-membership2 px-3 py-1 rounded-full text-sm font-bold border-2 border-black rotate-6">
+				<div className="absolute -top-4 -right-4 bg-membership2 px-3 py-1 rounded-full text-sm font-bold border-2 border-black rotate-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
 					RECOMMENDED
 				</div>
 			)}
 			<div className="px-4 rounded-xl py-2 text-4xl font-bold inline-block mt-0 mb-4">
 				{title}
-				<p className="text-left text-sm text-text1 pt-2 font-base">
+				<p className="text-left text-sm text-gray-600 pt-2 font-base">
 					{flavorText}
 				</p>
 			</div>

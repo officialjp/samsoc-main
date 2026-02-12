@@ -7,6 +7,7 @@ import type { Event } from 'generated/prisma/client';
 import ScrollAnimationWrapper from '~/components/shared/scroll-animation-wrapper';
 import { Suspense } from 'react';
 import CalendarSkeleton from './_components/calendar-skeleton';
+import { Palette } from 'lucide-react';
 
 export const metadata: Metadata = {
 	title: 'Surrey Anime and Manga Society - Calendar',
@@ -53,12 +54,17 @@ function EventColorGuide() {
 
 	return (
 		<div className="mt-12 bg-white border-2 rounded-2xl border-black p-4 md:p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-			<h3 className="text-xl font-bold mb-4">Event Color Guide</h3>
+			<div className="flex items-center gap-3 mb-4">
+				<div className="w-8 h-8 bg-purple-100 rounded-xl border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+					<Palette className="w-4 h-4 text-gray-900" />
+				</div>
+				<h3 className="text-xl font-bold">Event Color Guide</h3>
+			</div>
 			<div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
 				{legendItems.map(({ color, label }) => (
 					<div key={label} className="flex items-center">
 						<div
-							className={`w-4 h-4 ${color} border border-black mr-2`}
+							className={`w-4 h-4 ${color} border-2 border-black rounded-sm mr-2`}
 						></div>
 						<span>{label}</span>
 					</div>
